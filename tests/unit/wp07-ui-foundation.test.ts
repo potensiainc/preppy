@@ -11,7 +11,7 @@ import type {
   OpportunityCardDTO,
 } from "@/src/modules/public/dto";
 
-import { FollowCtaPrototype } from "@/app/_components/follow-cta-prototype";
+import { FollowCta } from "@/app/_components/follow-cta";
 import {
   ArticleCard,
   InstitutionCard,
@@ -176,45 +176,40 @@ describe("WP-07 public UI foundation", () => {
     expect(markup).not.toContain('href="data:text/html,unsafe"');
   });
 
-  it("keeps the follow prototype local while exposing its truthful dialog explanation", () => {
-    // Mutation caught: replacing the temporary CTA with a misleading completion state or omitting its explanation.
-    const markup = renderToStaticMarkup(createElement(FollowCtaPrototype));
+  it("keeps the real Follow intent CTA local and avoids a misleading completion state", () => {
+    // Mutation caught: dropping the canonical intent payload or claiming persistence before WP-09.
+    const markup = renderToStaticMarkup(
+      createElement(FollowCta, {
+        institutionId: "550e8400-e29b-41d4-a716-446655440000",
+        context: "INSTITUTION",
+        returnPath: "/institutions/seoul-international-school",
+      }),
+    );
 
     expect(markup).toContain("업데이트 받기");
     expect(markup).toContain(
-      "카카오 로그인과 관심기관 알림 연결은 다음 단계에서 제공됩니다.",
+      "카카오 로그인 후 알림 설정을 이어갈 수 있습니다.",
     );
-    expect(markup).toContain("<dialog");
-    expect(markup).not.toContain(" open=");
-    expect(markup).toContain('aria-expanded="false"');
+    expect(markup).toContain("550e8400-e29b-41d4-a716-446655440000");
+    expect(markup).not.toMatch(/팔로우 완료|등록되었습니다/);
   });
 
-  it("uses native modal APIs and restores the opener when the local dialog closes", async () => {
-    // Mutation caught: replacing a modal dialog lifecycle with an inert open attribute or losing focus restoration.
+  it("persists intent before navigating to Kakao auth and reports errors locally", async () => {
+    // Mutation caught: navigating before intent persistence or omitting safe failure feedback.
     const source = await readFile(
-      new URL(
-        "../../app/_components/follow-cta-prototype.tsx",
-        import.meta.url,
-      ),
+      new URL("../../app/_components/follow-cta.tsx", import.meta.url),
       "utf8",
     );
 
-    expect(source).toMatch(/useRef<HTMLDialogElement>\(null\)/);
-    expect(source).toMatch(/showModal\(\)/);
-    expect(source).toMatch(/\.close\(\)/);
-    expect(source).toMatch(/onClose=\{handleClose\}/);
-    expect(source).toMatch(/onCancel=\{handleCancel\}/);
-    expect(source).toMatch(/openerRef\.current\?\.focus\(\)/);
-    expect(source).not.toMatch(/\bopen=\{/);
+    expect(source).toContain('fetch("/api/auth/follow-intent"');
+    expect(source).toContain("window.location.assign(result.redirectTo)");
+    expect(source).toContain('role="alert"');
   });
 
   it("allows the Follow Client Component to import React only", async () => {
     // Mutation caught: adding any server, data, REST, or application dependency to the interactive client island.
     const source = await readFile(
-      new URL(
-        "../../app/_components/follow-cta-prototype.tsx",
-        import.meta.url,
-      ),
+      new URL("../../app/_components/follow-cta.tsx", import.meta.url),
       "utf8",
     );
     const imports = Array.from(

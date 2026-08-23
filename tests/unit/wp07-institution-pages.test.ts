@@ -198,7 +198,7 @@ describe("WP-07 Institution pages", () => {
     expect(markup).toContain('href="/articles/school-visit-guide"');
     expect(markup).toContain("업데이트 받기");
     expect(markup).toContain(
-      "카카오 로그인과 관심기관 알림 연결은 다음 단계에서 제공됩니다.",
+      "카카오 로그인 후 알림 설정을 이어갈 수 있습니다.",
     );
     expect(markup).not.toContain("Last Verified");
     expect(markup).not.toContain("페이지 최종 확인");

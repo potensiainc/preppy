@@ -7,7 +7,7 @@ import type {
   OpportunityCardDTO,
 } from "@/src/modules/public/dto";
 
-import { FollowCtaPrototype } from "@/app/_components/follow-cta-prototype";
+import { FollowCta } from "@/app/_components/follow-cta";
 import {
   ArticleCard,
   InstitutionCard,
@@ -203,7 +203,11 @@ export function InstitutionDetailView({
                 <StateBadge state={institution.currentAdmissionsState} />
               ) : null}
             </div>
-            <FollowCtaPrototype />
+            <FollowCta
+              context="INSTITUTION"
+              institutionId={institution.id}
+              returnPath={`/institutions/${institution.slug}`}
+            />
           </div>
         </header>
 

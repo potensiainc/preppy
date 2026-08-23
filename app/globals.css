@@ -326,7 +326,6 @@ h3 {
 }
 
 .follow-cta > button,
-.follow-dialog button,
 .status-surface button {
   appearance: none;
   border: 1px solid var(--deep-green);
@@ -335,6 +334,50 @@ h3 {
   cursor: pointer;
   padding: 11px 17px;
   font-weight: 700;
+}
+
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.follow-cta {
+  max-width: 290px;
+}
+
+.follow-cta__hint,
+.follow-cta__error {
+  margin: 9px 0 0;
+  color: var(--muted-ink);
+  font-size: 0.78rem;
+  line-height: 1.55;
+}
+
+.follow-cta__error {
+  color: var(--cancelled);
+}
+
+.follow-cta button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.auth-control {
+  appearance: none;
+  padding: 5px 0;
+  border: 0;
+  background: transparent;
+  color: var(--deep-green);
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.auth-control--pending {
+  color: var(--muted-ink);
+  cursor: default;
 }
 
 .follow-dialog {
@@ -351,6 +394,125 @@ h3 {
 
 .follow-dialog__content {
   padding: 32px;
+}
+
+.onboarding-page {
+  display: grid;
+  grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+  gap: clamp(40px, 8vw, 112px);
+  align-items: start;
+}
+
+.onboarding-page__intro {
+  position: sticky;
+  top: 40px;
+  padding-top: 18px;
+  border-top: 1px solid var(--bronze);
+}
+
+.onboarding-page__intro h1 {
+  margin-bottom: 18px;
+  font-size: clamp(2.35rem, 5vw, 4.5rem);
+}
+
+.onboarding-page__intro > p:not(.eyebrow) {
+  color: var(--muted-ink);
+}
+
+.onboarding-form {
+  display: grid;
+  gap: 28px;
+  padding: clamp(26px, 5vw, 52px);
+  border: 1px solid var(--rule);
+  background: var(--surface);
+}
+
+.onboarding-form fieldset {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  margin: 0;
+  padding: 0 0 26px;
+  border: 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.onboarding-form legend,
+.onboarding-intent h2 {
+  margin-bottom: 14px;
+  color: var(--deep-green);
+  font-family: "Noto Serif KR", "Iowan Old Style", "Batang", serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.onboarding-form input[type="email"],
+.onboarding-form input[type="number"],
+.onboarding-form input[type="text"] {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.onboarding-form button {
+  justify-self: start;
+  appearance: none;
+  padding: 12px 19px;
+  border: 1px solid var(--deep-green);
+  background: var(--deep-green);
+  color: var(--surface);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.onboarding-intent {
+  padding: 22px;
+  border-left: 3px solid var(--bronze);
+  background: var(--paper);
+}
+
+.onboarding-intent h2,
+.onboarding-intent p {
+  margin-bottom: 8px;
+}
+
+.onboarding-form__notice {
+  margin: 0;
+  color: var(--muted-ink);
+  font-size: 0.86rem;
+}
+
+.onboarding-form__status {
+  min-height: 1.7em;
+  color: var(--cancelled);
+  font-size: 0.86rem;
+}
+
+.onboarding-form__status p {
+  margin-bottom: 10px;
+}
+
+.onboarding-form__status button {
+  padding: 7px 11px;
+  border-color: var(--bronze);
+  background: transparent;
+  color: var(--deep-green);
+}
+
+@media (max-width: 760px) {
+  .onboarding-page {
+    grid-template-columns: 1fr;
+  }
+
+  .onboarding-page__intro {
+    position: static;
+  }
+
+  .onboarding-form {
+    padding: 24px 20px;
+  }
 }
 
 .follow-dialog p:not(.eyebrow) {

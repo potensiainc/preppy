@@ -5,7 +5,7 @@ import type {
   PublicOpportunityDTO,
 } from "@/src/modules/public/dto";
 
-import { FollowCtaPrototype } from "@/app/_components/follow-cta-prototype";
+import { FollowCta } from "@/app/_components/follow-cta";
 import {
   ArticleCard,
   InstitutionCard,
@@ -61,6 +61,23 @@ function OpportunityDates({
   );
 }
 
+function uniqueArticleInstitution(article: PublicArticleDTO) {
+  const targets = new Map<string, { id: string; name: string }>();
+  for (const institution of article.relatedInstitutions) {
+    targets.set(institution.id, {
+      id: institution.id,
+      name: institution.name,
+    });
+  }
+  for (const opportunity of article.relatedOpportunities) {
+    targets.set(opportunity.institution.id, {
+      id: opportunity.institution.id,
+      name: opportunity.institution.name,
+    });
+  }
+  return targets.size === 1 ? [...targets.values()][0]! : null;
+}
+
 export function OpportunityDetailView({
   opportunity,
 }: {
@@ -99,7 +116,12 @@ export function OpportunityDetailView({
                 </p>
               ) : null}
             </div>
-            <FollowCtaPrototype />
+            <FollowCta
+              context="OPPORTUNITY"
+              institutionId={opportunity.institution.id}
+              opportunityId={opportunity.id}
+              returnPath={`/opportunities/${opportunity.slug}`}
+            />
           </div>
         </header>
 
@@ -203,6 +225,7 @@ export function OpportunityDetailView({
 }
 
 export function ArticleDetailView({ article }: { article: PublicArticleDTO }) {
+  const followTarget = uniqueArticleInstitution(article);
   return (
     <PageContainer>
       <article className="article-detail">
@@ -263,7 +286,21 @@ export function ArticleDetailView({ article }: { article: PublicArticleDTO }) {
                 />
               ))}
             </div>
-            <FollowCtaPrototype />
+          </section>
+        ) : null}
+
+        {followTarget ? (
+          <section
+            className="article-detail__section article-follow"
+            aria-label="관심기관 알림"
+          >
+            <FollowCta
+              articleId={article.id}
+              context="ARTICLE"
+              institutionId={followTarget.id}
+              label={`${followTarget.name} 업데이트 받기`}
+              returnPath={`/articles/${article.slug}`}
+            />
           </section>
         ) : null}
       </article>

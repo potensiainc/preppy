@@ -7,7 +7,6 @@ import {
   InstitutionCard,
   OpportunityCard,
 } from "@/app/_components/public-cards";
-import { FollowCtaPrototype } from "@/app/_components/follow-cta-prototype";
 import {
   EmptyState,
   PageContainer,
@@ -167,7 +166,12 @@ export function HomePageView({ data }: { data: HomePageDTO }) {
             관심기관의 새로운 모집·입학정보를 놓치지 않도록 알려드릴 준비를 하고
             있습니다.
           </p>
-          <FollowCtaPrototype />
+          <Link
+            className="button-link button-link--primary"
+            href="/institutions"
+          >
+            관심기관 찾기
+          </Link>
         </section>
       </PageContainer>
     </div>
