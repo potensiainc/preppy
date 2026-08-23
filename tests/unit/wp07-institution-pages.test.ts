@@ -21,6 +21,7 @@ const institution = {
   name: "서울국제학교",
   category: "INTERNATIONAL_SCHOOL" as const,
   region: "서울",
+  followable: true,
   currentAdmissionsState: "OPEN" as const,
   currentOpportunity: {
     id: "opportunity-1",
@@ -46,6 +47,7 @@ const opportunity = {
     name: institution.name,
     category: institution.category,
     region: institution.region,
+    followable: institution.followable,
   },
   lastVerifiedAt: "2026-08-23T03:30:00.000Z",
   indexability: "INDEX" as const,
@@ -196,9 +198,9 @@ describe("WP-07 Institution pages", () => {
     expect(markup).toContain("학교 공식 홈페이지");
     expect(markup).toContain("국제학교 방문 전 확인할 점");
     expect(markup).toContain('href="/articles/school-visit-guide"');
-    expect(markup).toContain("업데이트 받기");
+    expect(markup).toContain("관심기관 상태 확인 중");
     expect(markup).toContain(
-      "카카오 로그인 후 알림 설정을 이어갈 수 있습니다.",
+      "현재 관심기관 상태를 안전하게 확인하고 있습니다.",
     );
     expect(markup).not.toContain("Last Verified");
     expect(markup).not.toContain("페이지 최종 확인");

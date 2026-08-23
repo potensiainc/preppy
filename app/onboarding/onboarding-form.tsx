@@ -86,10 +86,7 @@ export function OnboardingForm({
         setSubmission({ pending: false, error, stalePolicy: false });
         return;
       }
-      if (
-        result.redirectTo !== "/" &&
-        !result.redirectTo?.startsWith("/institutions/")
-      ) {
+      if (result.redirectTo !== "/" && result.redirectTo !== "/my-preppy") {
         throw new Error("Unexpected completion destination");
       }
       window.location.assign(result.redirectTo);
@@ -124,9 +121,7 @@ export function OnboardingForm({
         <aside className="onboarding-intent" aria-label="이어갈 관심기관">
           <p className="eyebrow">Your interest</p>
           <h2>{pendingInstitution.displayName}</h2>
-          <p>
-            기본 설정을 마치면 이 기관의 관심 등록은 다음 단계에서 이어집니다.
-          </p>
+          <p>기본 설정이 정상적으로 완료되면 이 기관도 함께 관심 등록됩니다.</p>
           <Link href={`/institutions/${pendingInstitution.slug}`}>
             기관 정보 다시 보기
           </Link>
@@ -201,8 +196,7 @@ export function OnboardingForm({
       </label>
 
       <p className="onboarding-form__notice">
-        설정 저장 후 관심 등록은 다음 단계에서 이어집니다. 아직 알림 신청이
-        완료된 것은 아닙니다.
+        제출이 완료되기 전에는 관심기관 등록과 알림 설정이 확정되지 않습니다.
       </p>
       <div aria-live="polite" className="onboarding-form__status" role="status">
         {submission.error ? <p>{submission.error}</p> : null}
@@ -213,7 +207,7 @@ export function OnboardingForm({
         ) : null}
       </div>
       <button disabled={submission.pending} type="submit">
-        {submission.pending ? "저장 중…" : "동의하고 계속"}
+        {submission.pending ? "저장 중…" : "동의하고 완료"}
       </button>
     </form>
   );

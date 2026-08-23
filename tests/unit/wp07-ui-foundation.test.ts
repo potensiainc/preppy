@@ -36,6 +36,7 @@ const institution: InstitutionCardDTO = {
   name: "Seoul International School",
   category: "INTERNATIONAL_SCHOOL",
   region: "서울",
+  followable: true,
   currentAdmissionsState: "OPEN",
   currentOpportunity: {
     id: "opportunity-1",
@@ -61,6 +62,7 @@ const opportunity: OpportunityCardDTO = {
     name: "Seoul International School",
     category: "INTERNATIONAL_SCHOOL",
     region: "서울",
+    followable: true,
   },
   lastVerifiedAt: "2026-08-23T03:30:00.000Z",
   indexability: "INDEX",
@@ -176,8 +178,8 @@ describe("WP-07 public UI foundation", () => {
     expect(markup).not.toContain('href="data:text/html,unsafe"');
   });
 
-  it("keeps the real Follow intent CTA local and avoids a misleading completion state", () => {
-    // Mutation caught: dropping the canonical intent payload or claiming persistence before WP-09.
+  it("keeps the Follow island neutral until authoritative private status resolves", () => {
+    // Mutation caught: dropping the canonical target or hydrating a guessed completion/auth state.
     const markup = renderToStaticMarkup(
       createElement(FollowCta, {
         institutionId: "550e8400-e29b-41d4-a716-446655440000",
@@ -186,9 +188,9 @@ describe("WP-07 public UI foundation", () => {
       }),
     );
 
-    expect(markup).toContain("업데이트 받기");
+    expect(markup).toContain("관심기관 상태 확인 중");
     expect(markup).toContain(
-      "카카오 로그인 후 알림 설정을 이어갈 수 있습니다.",
+      "현재 관심기관 상태를 안전하게 확인하고 있습니다.",
     );
     expect(markup).toContain("550e8400-e29b-41d4-a716-446655440000");
     expect(markup).not.toMatch(/팔로우 완료|등록되었습니다/);
@@ -201,8 +203,8 @@ describe("WP-07 public UI foundation", () => {
       "utf8",
     );
 
-    expect(source).toContain('fetch("/api/auth/follow-intent"');
-    expect(source).toContain("window.location.assign(result.redirectTo)");
+    expect(source).toContain('fetcher("/api/auth/follow-intent"');
+    expect(source).toContain("window.location.assign(path)");
     expect(source).toContain('role="alert"');
   });
 

@@ -19,6 +19,7 @@ const detail: InstitutionDetailDTO = {
     name: "서울국제학교",
     category: "INTERNATIONAL_SCHOOL",
     region: "서울",
+    followable: true,
     currentAdmissionsState: "OPEN",
     currentOpportunity: null,
     lastVerifiedAt: null,
@@ -42,7 +43,7 @@ describe("WP-08 auth-aware public UI", () => {
         context: "INSTITUTION",
       }),
     );
-    expect(markup).toContain("업데이트 받기");
+    expect(markup).toContain("관심기관 상태 확인 중");
     expect(markup).toContain(institutionId);
     expect(markup).toContain("/institutions/seoul-international-school");
     expect(markup).not.toContain("팔로우 완료");
@@ -62,7 +63,18 @@ describe("WP-08 auth-aware public UI", () => {
         label: "서울국제학교 업데이트 받기",
       } as never),
     );
-    expect(labeledMarkup).toContain("서울국제학교 업데이트 받기");
+    expect(labeledMarkup).toContain("관심기관 상태 확인 중");
+
+    const closedMarkup = renderToStaticMarkup(
+      createElement(InstitutionDetailView, {
+        data: {
+          ...detail,
+          institution: { ...detail.institution, followable: false },
+        },
+      } as never),
+    );
+    expect(closedMarkup).toContain("현재 업데이트를 신청할 수 없습니다");
+    expect(closedMarkup).not.toContain("관심기관 상태 확인 중");
   });
 
   it("renders an Article CTA only for one unique canonical Institution target", () => {
@@ -92,7 +104,8 @@ describe("WP-08 auth-aware public UI", () => {
     const oneTarget = renderToStaticMarkup(
       createElement(ArticleDetailView, { article }),
     );
-    expect(oneTarget).toContain("서울국제학교 업데이트 받기");
+    expect(oneTarget).toContain(institutionId);
+    expect(oneTarget).toContain("관심기관 상태 확인 중");
 
     const ambiguous = renderToStaticMarkup(
       createElement(ArticleDetailView, {
@@ -110,7 +123,7 @@ describe("WP-08 auth-aware public UI", () => {
         },
       }),
     );
-    expect(ambiguous).not.toContain("업데이트 받기");
+    expect(ambiguous).not.toContain('class="follow-cta"');
   });
 
   it("posts intent before navigating to exact Kakao start and reports a safe error", async () => {
@@ -119,12 +132,12 @@ describe("WP-08 auth-aware public UI", () => {
       new URL("../../app/_components/follow-cta.tsx", import.meta.url),
       "utf8",
     );
-    expect(source).toContain('fetch("/api/auth/follow-intent"');
+    expect(source).toContain('fetcher("/api/auth/follow-intent"');
     expect(source).toContain("institutionId");
     expect(source).toContain("returnPath");
-    expect(source).toContain("window.location.assign(result.redirectTo)");
+    expect(source).toContain("window.location.assign(path)");
     expect(source).toMatch(/catch|response\.ok/);
-    expect(source).not.toMatch(/followed|팔로우 완료|등록되었습니다/);
+    expect(source).not.toMatch(/팔로우 완료/);
   });
 
   it("removes the prototype boundary and gives every remaining CTA canonical context", async () => {
@@ -171,9 +184,14 @@ describe("WP-08 auth-aware public UI", () => {
     expect(controlSource).toContain('"use client"');
     expect(controlSource).toContain('fetch("/api/auth/session"');
     expect(controlSource).toContain('cache: "no-store"');
-    expect(controlSource).toContain('fetch("/api/auth/logout"');
+    expect(controlSource).toContain('fetcher("/api/auth/logout"');
     expect(controlSource).toContain('method: "POST"');
-    expect(`${headerSource}\n${controlSource}`).not.toContain("/my-preppy");
+    expect(controlSource).toContain("window.location.replace(");
+    expect(controlSource).toContain("new URL(path, window.location.origin)");
+    expect(controlSource).toContain('href="/my-preppy"');
+    expect(controlSource).toContain("내 프레피");
+    expect(controlSource).toContain("카카오로 시작하기");
+    expect(controlSource).not.toMatch(/userEmail|emailAddress|@example/);
   });
 
   it("renders optional onboarding fields, current server policy versions, and truthful next-step copy", () => {
@@ -213,7 +231,12 @@ describe("WP-08 auth-aware public UI", () => {
     expect(markup).toContain('aria-live="polite"');
     expect(markup).toContain("선택");
     expect(markup).toContain("서울국제학교");
-    expect(markup).toContain("관심 등록은 다음 단계에서 이어집니다");
+    expect(markup).toContain(
+      "정상적으로 완료되면 이 기관도 함께 관심 등록됩니다",
+    );
+    expect(markup).toContain(
+      "제출이 완료되기 전에는 관심기관 등록과 알림 설정이 확정되지 않습니다",
+    );
     expect(markup).not.toMatch(/팔로우 완료|관심기관 등록이 완료/);
   });
 

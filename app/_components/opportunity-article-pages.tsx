@@ -62,17 +62,24 @@ function OpportunityDates({
 }
 
 function uniqueArticleInstitution(article: PublicArticleDTO) {
-  const targets = new Map<string, { id: string; name: string }>();
+  const targets = new Map<
+    string,
+    { id: string; name: string; followable: boolean }
+  >();
   for (const institution of article.relatedInstitutions) {
     targets.set(institution.id, {
       id: institution.id,
       name: institution.name,
+      followable: institution.followable,
     });
   }
   for (const opportunity of article.relatedOpportunities) {
+    const existing = targets.get(opportunity.institution.id);
     targets.set(opportunity.institution.id, {
       id: opportunity.institution.id,
       name: opportunity.institution.name,
+      followable:
+        opportunity.institution.followable && (existing?.followable ?? true),
     });
   }
   return targets.size === 1 ? [...targets.values()][0]! : null;
@@ -118,6 +125,7 @@ export function OpportunityDetailView({
             </div>
             <FollowCta
               context="OPPORTUNITY"
+              followable={opportunity.institution.followable}
               institutionId={opportunity.institution.id}
               opportunityId={opportunity.id}
               returnPath={`/opportunities/${opportunity.slug}`}
@@ -297,6 +305,7 @@ export function ArticleDetailView({ article }: { article: PublicArticleDTO }) {
             <FollowCta
               articleId={article.id}
               context="ARTICLE"
+              followable={followTarget.followable}
               institutionId={followTarget.id}
               label={`${followTarget.name} 업데이트 받기`}
               returnPath={`/articles/${article.slug}`}

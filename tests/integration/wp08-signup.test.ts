@@ -13,15 +13,38 @@ import { migrateDatabase } from "@/src/db/migrate";
 import {
   closeRuntimeDatabase,
   getRuntimeDatabase,
+  type TransactionManager,
 } from "@/src/infrastructure/db/runtime.server";
 import {
   completeSignup,
   defaultCompleteSignupPersistence,
 } from "@/src/modules/auth/complete-signup.server";
+import {
+  createKakaoCallbackHandler,
+  createOnboardingCompleteHandler,
+} from "@/src/modules/auth/http.server";
 import { resolveKakaoIdentity } from "@/src/modules/auth/identity-service.server";
+import type { KakaoAuthProvider } from "@/src/modules/auth/kakao-provider.server";
+import {
+  createOAuthState,
+  OAUTH_STATE_COOKIE_NAME,
+} from "@/src/modules/auth/oauth-state.server";
 import { getOnboardingState } from "@/src/modules/auth/onboarding-query.server";
-import { createPendingFollowIntent } from "@/src/modules/auth/pending-follow-intent.server";
-import { createUserSessionCookie } from "@/src/modules/auth/session.server";
+import {
+  createPendingFollowIntent,
+  PENDING_FOLLOW_INTENT_COOKIE_NAME,
+} from "@/src/modules/auth/pending-follow-intent.server";
+import { resolveCanonicalPendingFollowTarget } from "@/src/modules/auth/pending-follow-target.server";
+import {
+  createUserSessionCookie,
+  USER_SESSION_COOKIE_NAME,
+} from "@/src/modules/auth/session.server";
+import {
+  activateFollow,
+  defaultActivateFollowPersistence,
+} from "@/src/modules/follow/activate-follow.server";
+import { hasMonitorableSourceCoverage } from "@/src/modules/follow/followability-policy.server";
+import { findInstitutionById } from "@/src/modules/institution/repository.server";
 import { assertDedicatedTestDatabaseUrl } from "@/tests/support/test-database";
 
 const databaseUrl = process.env.TEST_DATABASE_URL;
@@ -42,10 +65,14 @@ const runtime = getRuntimeDatabase({
 const schemaLockSql = postgres(databaseUrl, { max: 1 });
 const sessionSecret = "signup-session-secret-that-is-at-least-32-characters";
 const intentSecret = "signup-intent-secret-that-is-at-least-32-characters";
+const oauthStateSecret =
+  "signup-oauth-state-secret-that-is-at-least-32-characters";
 const now = new Date("2026-08-23T09:12:34.000Z");
 const policyVersions = getCurrentLegalPolicyVersions();
 const trackedUserIds = new Set<string>();
 const trackedInstitutionIds = new Set<string>();
+const trackedOpportunityIds = new Set<string>();
+const trackedSourceIds = new Set<string>();
 
 function signupContext(userId: string, occurredAt: Date = now) {
   return createUserCommandContext({ userId, occurredAt });
@@ -124,7 +151,9 @@ async function createUserFixture(
   return userId;
 }
 
-async function createInstitutionFixture(): Promise<string> {
+async function createInstitutionFixture(
+  options: { monitorableCoverage?: boolean } = {},
+): Promise<string> {
   const institutionId = randomUUID();
   trackedInstitutionIds.add(institutionId);
   await runtime.client`
@@ -137,7 +166,71 @@ async function createInstitutionFixture(): Promise<string> {
       'sensitive address', 'https://secret.example.test', 'sensitive copy', ${now.toISOString()}
     )
   `;
+  if (options.monitorableCoverage !== false) {
+    await addNativeMonitorableCoverage(institutionId);
+  }
   return institutionId;
+}
+
+async function addNativeMonitorableCoverage(institutionId: string) {
+  const sourceId = randomUUID();
+  const opportunityId = randomUUID();
+  const versionId = randomUUID();
+  trackedSourceIds.add(sourceId);
+  trackedOpportunityIds.add(opportunityId);
+  await runtime.client.begin(async (transaction) => {
+    await transaction`
+      insert into sources (
+        id, canonical_url, source_type, authority_level, lifecycle_status, source_name
+      ) values (
+        ${sourceId}, ${`https://signup-source.example.test/${sourceId}`},
+        'OFFICIAL_ADMISSION_PAGE', 'PRIMARY', 'ACTIVE', 'Signup official source'
+      )
+    `;
+    await transaction`
+      insert into source_monitor_configs (
+        source_id, collection_strategy, monitoring_profile, is_enabled
+      ) values (${sourceId}, 'HTTP', 'STANDARD_SEASONAL', true)
+    `;
+    await transaction`
+      insert into opportunities (
+        id, institution_id, slug, kind, truth_mode, publication_state, published_at
+      ) values (
+        ${opportunityId}, ${institutionId}, ${`signup-coverage-${opportunityId}`},
+        'APPLICATION', 'NATIVE', 'PUBLISHED', ${now.toISOString()}
+      )
+    `;
+    await transaction`
+      insert into opportunity_versions (
+        id, opportunity_id, truth_mode, version_number, verification_state,
+        business_state, is_current, title, verified_at
+      ) values (
+        ${versionId}, ${opportunityId}, 'NATIVE', 1, 'VERIFIED', 'OPEN', true,
+        'Signup monitorable opportunity', ${now.toISOString()}
+      )
+    `;
+    await transaction`
+      insert into opportunity_version_evidence (
+        opportunity_version_id, source_id, evidence_role
+      ) values (${versionId}, ${sourceId}, 'PRIMARY')
+    `;
+  });
+}
+
+async function removeInstitutionCoverage(institutionId: string) {
+  await runtime.client.begin(async (transaction) => {
+    await transaction`delete from opportunity_version_evidence
+      where opportunity_version_id in (
+        select version.id from opportunity_versions version
+        join opportunities opportunity on opportunity.id = version.opportunity_id
+        where opportunity.institution_id = ${institutionId}
+      )`;
+    await transaction`delete from opportunity_versions
+      where opportunity_id in (
+        select id from opportunities where institution_id = ${institutionId}
+      )`;
+    await transaction`delete from opportunities where institution_id = ${institutionId}`;
+  });
 }
 
 async function createKakaoUserFixture(emailClaim: {
@@ -165,6 +258,10 @@ async function clearFixtures(): Promise<void> {
   if (trackedUserIds.size > 0) {
     const ids = [...trackedUserIds];
     await runtime.client.begin(async (transaction) => {
+      await transaction`delete from follow_episodes where follow_id in (
+        select id from follows where user_id in ${transaction(ids)}
+      )`;
+      await transaction`delete from follows where user_id in ${transaction(ids)}`;
       await transaction.unsafe("set local session_replication_role = replica");
       await transaction`delete from notification_preferences where user_id in ${transaction(ids)}`;
       await transaction`delete from consent_decisions where user_id in ${transaction(ids)}`;
@@ -177,12 +274,33 @@ async function clearFixtures(): Promise<void> {
     });
   }
   if (trackedInstitutionIds.size > 0) {
-    await runtime.client`
-      delete from institutions where id in ${runtime.client([...trackedInstitutionIds])}
-    `;
+    const institutionIds = [...trackedInstitutionIds];
+    await runtime.client.begin(async (transaction) => {
+      if (trackedOpportunityIds.size > 0) {
+        const opportunityIds = [...trackedOpportunityIds];
+        await transaction`delete from opportunity_version_evidence
+          where opportunity_version_id in (
+            select version.id from opportunity_versions version
+            where version.opportunity_id in ${transaction(opportunityIds)}
+          )`;
+        await transaction`delete from opportunity_versions
+          where opportunity_id in ${transaction(opportunityIds)}`;
+        await transaction`delete from opportunities
+          where id in ${transaction(opportunityIds)}`;
+      }
+      await transaction`delete from institutions where id in ${transaction(institutionIds)}`;
+      if (trackedSourceIds.size > 0) {
+        await transaction`delete from source_monitor_configs
+          where source_id in ${transaction([...trackedSourceIds])}`;
+        await transaction`delete from sources
+          where id in ${transaction([...trackedSourceIds])}`;
+      }
+    });
   }
   trackedUserIds.clear();
   trackedInstitutionIds.clear();
+  trackedOpportunityIds.clear();
+  trackedSourceIds.clear();
 }
 
 async function forbiddenSideEffectsForUser(userId: string) {
@@ -244,6 +362,23 @@ async function signupStateForUser(userId: string) {
   return { user, emails, profiles, regions, categories, consents, preferences };
 }
 
+async function followStateForUser(userId: string) {
+  const [follows, episodes] = await Promise.all([
+    runtime.client`
+      select id, institution_id, status, current_activated_at, deactivated_at
+      from follows where user_id = ${userId} order by institution_id
+    `,
+    runtime.client`
+      select episode.follow_id, episode.activated_at, episode.deactivated_at
+      from follow_episodes as episode
+      join follows as follow on follow.id = episode.follow_id
+      where follow.user_id = ${userId}
+      order by episode.activated_at
+    `,
+  ]);
+  return { follows, episodes };
+}
+
 beforeAll(async () => {
   await schemaLockSql`select pg_advisory_lock(880008)`;
   try {
@@ -278,7 +413,7 @@ describe("CompleteSignup", () => {
       { transactionManager: runtime.transactionManager, tracker },
     );
 
-    expect(result).toEqual({ userId, userState: "ACTIVE" });
+    expect(result).toEqual({ userId, userState: "ACTIVE", follow: null });
     const [storedUser] = await runtime.client<
       { status: string; activated_at: Date }[]
     >`select status, activated_at from users where id = ${userId}`;
@@ -394,7 +529,7 @@ describe("CompleteSignup", () => {
         signupInput({ serviceEmailUpdatesConsent: false }),
         { transactionManager: runtime.transactionManager, tracker },
       ),
-    ).resolves.toEqual({ userId, userState: "ACTIVE" });
+    ).resolves.toEqual({ userId, userState: "ACTIVE", follow: null });
 
     await expect(
       runtime.client`select status from users where id = ${userId}`,
@@ -482,7 +617,7 @@ describe("CompleteSignup", () => {
             tracker: new TestAnalyticsTracker(),
           },
         ),
-      ).resolves.toEqual({ userId, userState: "ACTIVE" });
+      ).resolves.toEqual({ userId, userState: "ACTIVE", follow: null });
       await expect(
         runtime.client`select child_birth_year from user_profiles where user_id = ${userId}`,
       ).resolves.toEqual([{ child_birth_year: year }]);
@@ -811,6 +946,398 @@ describe("CompleteSignup", () => {
       { name: "signup_complete", properties: { context: "MY_PREPPY" } },
     ]);
   });
+
+  it("commits signup and a valid pending Follow in exactly one root transaction", async () => {
+    // Mutations caught: a second/root Follow transaction, a missing Episode,
+    // pre-commit analytics, or signup accepting a browser-owned User target.
+    const userId = await createUserFixture({ withExistingData: true });
+    const institutionId = await createInstitutionFixture();
+    const tracker = new TestAnalyticsTracker();
+    let rootTransactions = 0;
+    const transactionManager = {
+      run<T>(operation: Parameters<TransactionManager["run"]>[0]) {
+        rootTransactions += 1;
+        return runtime.transactionManager.run(operation) as Promise<T>;
+      },
+    } as TransactionManager;
+
+    const result = await completeSignup(
+      signupContext(userId),
+      signupInput({
+        email: "atomic@example.test",
+        childBirthYear: 2020,
+        interestRegions: ["SEOUL"],
+      }),
+      { transactionManager, tracker },
+      { pendingFollow: { institutionId } },
+    );
+
+    expect(rootTransactions).toBe(1);
+    expect(result).toEqual({
+      userId,
+      userState: "ACTIVE",
+      follow: {
+        followId: expect.any(String),
+        institutionId,
+        state: "ACTIVE",
+        activatedAt: now.toISOString(),
+        created: true,
+        reactivated: false,
+        activeFollowCount: 1,
+      },
+    });
+    const state = await signupStateForUser(userId);
+    expect(state.user).toMatchObject([{ status: "ACTIVE" }]);
+    expect(state.emails).toMatchObject([
+      { email_normalized: "atomic@example.test", source: "USER_INPUT" },
+    ]);
+    const followState = await followStateForUser(userId);
+    expect(followState.follows).toMatchObject([
+      { institution_id: institutionId, status: "ACTIVE" },
+    ]);
+    expect(followState.episodes).toMatchObject([{ deactivated_at: null }]);
+    expect(tracker.snapshot()).toEqual([
+      { name: "signup_complete", properties: { context: "MY_PREPPY" } },
+      {
+        name: "follow_created",
+        properties: { institutionId, followCount: 1 },
+      },
+    ]);
+    expect(await forbiddenSideEffectsForUser(userId)).toEqual({
+      follows: 1,
+      episodes: 1,
+      notifications: 0,
+      deliveries: 0,
+      customer_outbox: 0,
+    });
+  });
+
+  it("commits signup but omits a source-less pending Institution", async () => {
+    const userId = await createUserFixture();
+    const institutionId = await createInstitutionFixture({
+      monitorableCoverage: false,
+    });
+    const tracker = new TestAnalyticsTracker();
+
+    await expect(
+      completeSignup(
+        signupContext(userId),
+        signupInput(),
+        { transactionManager: runtime.transactionManager, tracker },
+        { pendingFollow: { institutionId } },
+      ),
+    ).resolves.toEqual({ userId, userState: "ACTIVE", follow: null });
+    await expect(
+      runtime.client`select status from users where id = ${userId}`,
+    ).resolves.toEqual([{ status: "ACTIVE" }]);
+    expect(await followStateForUser(userId)).toEqual({
+      follows: [],
+      episodes: [],
+    });
+    expect(tracker.snapshot()).toEqual([
+      { name: "signup_complete", properties: { context: "MY_PREPPY" } },
+    ]);
+  });
+
+  it("rolls back every signup and Follow write when the composed Follow fails", async () => {
+    // Mutations caught: committing User/consent/profile before Follow, using a
+    // nested command transaction, or emitting analytics on rollback.
+    const userId = await createUserFixture({ withExistingData: true });
+    const institutionId = await createInstitutionFixture();
+    const beforeSignup = await signupStateForUser(userId);
+    const beforeFollow = await followStateForUser(userId);
+    const tracker = new TestAnalyticsTracker();
+
+    await expect(
+      completeSignup(
+        signupContext(userId),
+        signupInput({
+          email: "must-rollback@example.test",
+          childBirthYear: 2021,
+          interestRegions: ["SEOUL"],
+          interestCategories: ["ENGLISH_KINDERGARTEN"],
+        }),
+        {
+          transactionManager: runtime.transactionManager,
+          tracker,
+          followPersistence: {
+            ...defaultActivateFollowPersistence,
+            openEpisode: async () => {
+              throw new Error("forced composed Follow failure");
+            },
+          },
+        },
+        { pendingFollow: { institutionId } },
+      ),
+    ).rejects.toThrow("forced composed Follow failure");
+
+    expect(await signupStateForUser(userId)).toEqual(beforeSignup);
+    expect(await followStateForUser(userId)).toEqual(beforeFollow);
+    expect(tracker.snapshot()).toEqual([]);
+    expect(await forbiddenSideEffectsForUser(userId)).toEqual({
+      follows: 0,
+      episodes: 0,
+      notifications: 0,
+      deliveries: 0,
+      customer_outbox: 0,
+    });
+  });
+
+  it.each(["missing", "deleted", "unpublished", "closed"] as const)(
+    "commits signup without a Follow when the pending Institution is %s",
+    async (targetState) => {
+      // Mutations caught: trusting a stale signed target, rejecting account
+      // activation, retaining a partial Follow, or emitting a false conversion.
+      const userId = await createUserFixture();
+      const institutionId =
+        targetState === "missing"
+          ? randomUUID()
+          : await createInstitutionFixture();
+      if (targetState === "deleted") {
+        await removeInstitutionCoverage(institutionId);
+        await runtime.client`delete from institutions where id = ${institutionId}`;
+      } else if (targetState === "unpublished") {
+        await runtime.client`
+          update institutions set publication_state = 'DRAFT'
+          where id = ${institutionId}
+        `;
+      } else if (targetState === "closed") {
+        await runtime.client`
+          update institutions set operational_state = 'CLOSED'
+          where id = ${institutionId}
+        `;
+      }
+      const tracker = new TestAnalyticsTracker();
+
+      await expect(
+        completeSignup(
+          signupContext(userId),
+          signupInput(),
+          { transactionManager: runtime.transactionManager, tracker },
+          { pendingFollow: { institutionId } },
+        ),
+      ).resolves.toEqual({ userId, userState: "ACTIVE", follow: null });
+
+      await expect(
+        runtime.client`select status from users where id = ${userId}`,
+      ).resolves.toEqual([{ status: "ACTIVE" }]);
+      expect(await followStateForUser(userId)).toEqual({
+        follows: [],
+        episodes: [],
+      });
+      expect(tracker.snapshot()).toEqual([
+        { name: "signup_complete", properties: { context: "MY_PREPPY" } },
+      ]);
+      expect(await forbiddenSideEffectsForUser(userId)).toEqual({
+        follows: 0,
+        episodes: 0,
+        notifications: 0,
+        deliveries: 0,
+        customer_outbox: 0,
+      });
+    },
+  );
+
+  it("rejects hostile JSON authority fields before selecting a User or Follow target", async () => {
+    const sessionUserId = await createUserFixture();
+    const attackerSelectedUserId = await createUserFixture();
+    const attackerSelectedInstitutionId = await createInstitutionFixture();
+    const tracker = new TestAnalyticsTracker();
+    const session = createUserSessionCookie(sessionUserId, {
+      secret: sessionSecret,
+      now,
+    });
+    const handler = createOnboardingCompleteHandler({
+      appBaseUrl: "https://preppy.example",
+      sessionSecret,
+      followIntentSecret: intentSecret,
+      completeSignup: (context, input, serverInput) =>
+        completeSignup(
+          context,
+          input,
+          { transactionManager: runtime.transactionManager, tracker },
+          serverInput,
+        ),
+      now: () => now,
+      production: true,
+    });
+
+    const response = await handler(
+      new Request("https://preppy.example/api/me/onboarding/complete", {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "content-type": "application/json",
+          origin: "https://preppy.example",
+          cookie: `${USER_SESSION_COOKIE_NAME}=${encodeURIComponent(session.value)}`,
+        },
+        body: JSON.stringify(
+          signupInput({
+            userId: attackerSelectedUserId,
+            institutionId: attackerSelectedInstitutionId,
+            pendingFollow: { institutionId: attackerSelectedInstitutionId },
+          }),
+        ),
+      }),
+    );
+
+    expect(response.status).toBe(400);
+    await expect(
+      runtime.client`
+        select id, status from users
+        where id in (${sessionUserId}, ${attackerSelectedUserId})
+        order by id
+      `,
+    ).resolves.toEqual(
+      [sessionUserId, attackerSelectedUserId]
+        .sort()
+        .map((id) => ({ id, status: "PENDING" })),
+    );
+    expect(await followStateForUser(sessionUserId)).toEqual({
+      follows: [],
+      episodes: [],
+    });
+    expect(await followStateForUser(attackerSelectedUserId)).toEqual({
+      follows: [],
+      episodes: [],
+    });
+    expect(tracker.snapshot()).toEqual([]);
+  });
+
+  it("serializes concurrent signup plus Follow completion to one pair and one open Episode", async () => {
+    // Mutations caught: duplicate logical rows/episodes, raw database errors,
+    // or conversion events from the losing completion.
+    const userId = await createUserFixture();
+    const institutionId = await createInstitutionFixture();
+    const tracker = new TestAnalyticsTracker();
+    const dependencies = {
+      transactionManager: runtime.transactionManager,
+      tracker,
+    };
+    const serverInput = { pendingFollow: { institutionId } };
+
+    const outcomes = await Promise.allSettled([
+      completeSignup(
+        signupContext(userId),
+        signupInput(),
+        dependencies,
+        serverInput,
+      ),
+      completeSignup(
+        signupContext(userId),
+        signupInput(),
+        dependencies,
+        serverInput,
+      ),
+    ]);
+
+    expect(
+      outcomes.filter((outcome) => outcome.status === "fulfilled"),
+    ).toHaveLength(1);
+    const rejected = outcomes.filter(
+      (outcome) => outcome.status === "rejected",
+    );
+    expect(rejected).toHaveLength(1);
+    expect(rejected[0]).toMatchObject({ reason: { code: "CONFLICT" } });
+    const followState = await followStateForUser(userId);
+    expect(followState.follows).toHaveLength(1);
+    expect(followState.episodes).toHaveLength(1);
+    expect(followState.episodes).toMatchObject([{ deactivated_at: null }]);
+    expect(tracker.snapshot()).toEqual([
+      { name: "signup_complete", properties: { context: "MY_PREPPY" } },
+      {
+        name: "follow_created",
+        properties: { institutionId, followCount: 1 },
+      },
+    ]);
+  });
+});
+
+describe("ACTIVE Kakao pending Follow continuation", () => {
+  it("runs the standalone Follow command against the real database before redirecting and clearing intent", async () => {
+    // Mutations caught: a callback-only fake result, clearing before the real
+    // transaction, or failing to preserve Task 1 idempotent persistence.
+    const userId = await createUserFixture({ status: "ACTIVE" });
+    const institutionId = await createInstitutionFixture();
+    const tracker = new TestAnalyticsTracker();
+    const oauthState = createOAuthState({ secret: oauthStateSecret, now });
+    const intent = createPendingFollowIntent(
+      {
+        institutionId,
+        context: "INSTITUTION",
+        returnPath: `/institutions/signup-school-${institutionId}`,
+      },
+      { secret: intentSecret, now },
+    );
+    const provider: KakaoAuthProvider = {
+      buildAuthorizationUrl: () => "https://unused.example",
+      exchangeCode: async () => ({}) as never,
+      resolveIdentity: async () => ({ subject: "existing-active-user" }),
+    };
+    const handler = createKakaoCallbackHandler({
+      oauthStateSecret,
+      sessionSecret,
+      followIntentSecret: intentSecret,
+      provider,
+      replayStore: {
+        register: () => true,
+        consume: () => "REGISTERED",
+      },
+      rateLimiter: {
+        consume: () => ({
+          allowed: true,
+          remaining: 119,
+          retryAfterSeconds: 0,
+        }),
+      },
+      resolveIdentity: async () => ({ id: userId, status: "ACTIVE" }),
+      resolvePendingFollowTarget: (id) =>
+        resolveCanonicalPendingFollowTarget(
+          id,
+          (candidateId) => findInstitutionById(runtime.executor, candidateId),
+          (candidateId) =>
+            hasMonitorableSourceCoverage(runtime.executor, candidateId),
+        ),
+      activateFollow: (context, input) =>
+        activateFollow(context, input, {
+          transactionManager: runtime.transactionManager,
+          tracker,
+        }),
+      tracker,
+      now: () => now,
+      production: true,
+    });
+    const response = await handler(
+      new Request(
+        `https://preppy.example/auth/kakao/callback?code=provider-code&state=${oauthState.state}`,
+        {
+          headers: {
+            cookie: [
+              `${OAUTH_STATE_COOKIE_NAME}=${encodeURIComponent(oauthState.cookieValue)}`,
+              `${PENDING_FOLLOW_INTENT_COOKIE_NAME}=${encodeURIComponent(intent)}`,
+            ].join("; "),
+          },
+        },
+      ),
+    );
+
+    expect(response.status).toBe(303);
+    expect(response.headers.get("location")).toBe("/my-preppy");
+    expect(response.headers.get("set-cookie")).toContain(
+      `${PENDING_FOLLOW_INTENT_COOKIE_NAME}=;`,
+    );
+    const followState = await followStateForUser(userId);
+    expect(followState.follows).toMatchObject([
+      { institution_id: institutionId, status: "ACTIVE" },
+    ]);
+    expect(followState.episodes).toMatchObject([{ deactivated_at: null }]);
+    expect(tracker.snapshot()).toEqual([
+      {
+        name: "follow_created",
+        properties: { institutionId, followCount: 1 },
+      },
+    ]);
+  });
 });
 
 describe("onboarding query", () => {
@@ -927,6 +1454,9 @@ describe("onboarding query", () => {
         },
         { secret: intentSecret, now },
       );
+      if (_label === "deleted") {
+        await removeInstitutionCoverage(institutionId);
+      }
       await runtime.client.unsafe(mutationSql, [institutionId]);
 
       await expect(

@@ -19,6 +19,10 @@ import {
   sources,
 } from "@/src/db/schema";
 import type { DatabaseExecutor } from "@/src/infrastructure/db/runtime.server";
+import {
+  hasMonitorableSourceCoverage,
+  isInstitutionFollowable,
+} from "@/src/modules/follow/followability-policy.server";
 
 import type {
   ArticleCardDTO,
@@ -159,6 +163,7 @@ async function getRootBySlug(
       institutionCategory: institutions.category,
       institutionRegion: institutions.regionCode,
       institutionPublicationState: institutions.publicationState,
+      institutionOperationalState: institutions.operationalState,
     })
     .from(opportunities)
     .innerJoin(institutions, eq(institutions.id, opportunities.institutionId))
@@ -172,6 +177,10 @@ async function getRootBySlug(
   ) {
     throw new NotFoundError();
   }
+  const monitorable = await hasMonitorableSourceCoverage(
+    executor,
+    root.institutionId,
+  );
 
   return {
     id: root.id,
@@ -185,6 +194,13 @@ async function getRootBySlug(
       name: root.institutionName,
       category: root.institutionCategory,
       region: root.institutionRegion,
+      followable: isInstitutionFollowable(
+        {
+          publicationState: root.institutionPublicationState,
+          operationalState: root.institutionOperationalState,
+        },
+        monitorable,
+      ),
     },
   };
 }

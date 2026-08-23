@@ -48,6 +48,7 @@ const opportunity: PublicOpportunityDTO = {
     name: "서울국제학교",
     category: "INTERNATIONAL_SCHOOL",
     region: "서울",
+    followable: true,
   },
   targetAudience: "2027학년도 초등 입학을 준비하는 가정",
   summary: "공식 모집 안내를 바탕으로 주요 일정을 정리했습니다.",
@@ -95,6 +96,7 @@ const unsafeArticle: UnsafeStoredArticleDetailDTO = {
       name: "서울국제학교",
       category: "INTERNATIONAL_SCHOOL",
       region: "서울",
+      followable: true,
       currentAdmissionsState: "OPEN",
       currentOpportunity: {
         id: opportunity.id,
@@ -142,9 +144,9 @@ describe("WP-07 Opportunity and Article detail pages", () => {
     expect(markup).toContain("원서 접수 마감 시간이 반영되었습니다.");
     expect(markup).toContain("입학설명회 전 확인할 체크리스트");
     expect(markup).toContain('href="/articles/admissions-visit-checklist"');
-    expect(markup).toContain("업데이트 받기");
+    expect(markup).toContain("관심기관 상태 확인 중");
     expect(markup).toContain(
-      "카카오 로그인 후 알림 설정을 이어갈 수 있습니다.",
+      "현재 관심기관 상태를 안전하게 확인하고 있습니다.",
     );
     expect(markup).not.toContain("INDEX");
   });
@@ -174,7 +176,7 @@ describe("WP-07 Opportunity and Article detail pages", () => {
     expect(markup).toContain(
       'href="/opportunities/2027-seoul-international-admissions"',
     );
-    expect(markup).toContain("업데이트 받기");
+    expect(markup).toContain("관심기관 상태 확인 중");
     expect(markup).not.toContain(unsafeSentinel);
     expect(markup).not.toContain("<script>");
     expect(markup).not.toContain('alert("unsafe")');

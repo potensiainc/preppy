@@ -79,6 +79,10 @@ async function createNativeOpportunity(
       values (${sourceId}, ${`https://source.example.test/${prefix}/${sourceId}`}, 'OFFICIAL_ADMISSION_PAGE', 'PRIMARY', 'ACTIVE', 'Official')
     `;
     await transaction`
+      insert into source_monitor_configs (source_id, collection_strategy, monitoring_profile, is_enabled)
+      values (${sourceId}, 'HTTP', 'STANDARD_SEASONAL', true)
+    `;
+    await transaction`
       insert into opportunities (id, institution_id, slug, kind, truth_mode, publication_state, published_at)
       values (${id}, ${institutionId}, ${slug}, 'APPLICATION', 'NATIVE', ${published ? "PUBLISHED" : "DRAFT"},
         ${published ? "2026-08-01T00:00:00.000Z" : null})
@@ -111,6 +115,8 @@ async function createLegacyOpportunity(institutionId: string) {
     await transaction`insert into admission_events (id, admission_cycle_id, event_key, event_type, occurrence_no, canonical_title, is_public) values (${eventId}, ${cycleId}, ${`${prefix}-event-${eventId}`}, 'APPLICATION', 1, 'Legacy opportunity', true)`;
     await transaction`insert into admission_event_versions (id, admission_event_id, version_no, is_current, verification_status, knowledge_state, event_status, display_title, registration_close_date, timezone, official_notes, verified_at) values (${versionId}, ${eventId}, 1, true, 'VERIFIED', 'KNOWN', 'ACTIVE', 'Legacy OPEN', '2026-09-02', 'Asia/Seoul', 'Verified legacy summary.', '2026-08-12T02:03:04.000Z')`;
     await transaction`insert into sources (id, canonical_url, source_type, authority_level, lifecycle_status, source_name) values (${sourceId}, ${`https://source.example.test/${prefix}/${sourceId}`}, 'OFFICIAL_ADMISSION_PAGE', 'PRIMARY', 'ACTIVE', 'Legacy official')`;
+    await transaction`insert into source_monitor_configs (source_id, collection_strategy, monitoring_profile, is_enabled) values (${sourceId}, 'HTTP', 'STANDARD_SEASONAL', true)`;
+    await transaction`insert into source_bindings (source_id, school_id, source_role, priority, is_active) values (${sourceId}, ${schoolId}, 'PRIMARY_ADMISSIONS', 1, true)`;
     await transaction`insert into event_version_evidence (event_version_id, source_id, is_primary) values (${versionId}, ${sourceId}, true)`;
     await transaction`insert into opportunities (id, institution_id, slug, kind, truth_mode, publication_state, published_at) values (${id}, ${institutionId}, ${slug}, 'APPLICATION', 'LEGACY_BACKED', 'PUBLISHED', '2026-08-01T00:00:00.000Z')`;
     await transaction`insert into opportunity_admission_event_links (opportunity_id, institution_id, truth_mode, admission_event_id, admission_cycle_id, school_id) values (${id}, ${institutionId}, 'LEGACY_BACKED', ${eventId}, ${cycleId}, ${schoolId})`;
@@ -162,9 +168,11 @@ async function cleanup(): Promise<void> {
     await transaction`delete from admission_events where event_key like ${`${prefix}%`}`;
     await transaction`delete from admission_cycles where school_id in (select id from schools where slug like ${`${prefix}%`})`;
     await transaction`delete from institution_school_links where school_id in (select id from schools where slug like ${`${prefix}%`})`;
+    await transaction`delete from source_bindings where school_id in (select id from schools where slug like ${`${prefix}%`})`;
     await transaction`delete from schools where slug like ${`${prefix}%`}`;
     await transaction`delete from institutions where slug like ${`${prefix}%`}`;
     await transaction`delete from admin_users where external_auth_subject like ${`${prefix}-%`}`;
+    await transaction`delete from source_monitor_configs where source_id in (select id from sources where canonical_url like ${`https://source.example.test/${prefix}/%`})`;
     await transaction`delete from sources where canonical_url like ${`https://source.example.test/${prefix}/%`}`;
   });
 }

@@ -7,6 +7,8 @@ import type { UserCommandContext } from "@/src/application/context";
 import {
   ConflictError,
   ForbiddenError,
+  NotEligibleError,
+  NotFoundError,
   UnauthenticatedError,
   ValidationError,
 } from "@/src/application/errors";
@@ -30,6 +32,13 @@ import {
   upsertUserProfile,
   type UserInterestCategory,
 } from "@/src/modules/identity/repository.server";
+import {
+  activateFollowInTransaction,
+  defaultActivateFollowPersistence,
+  type ActivateFollowPersistence,
+  type ActivateFollowResult,
+} from "@/src/modules/follow/activate-follow.server";
+import { mapFollowDatabaseError } from "@/src/modules/follow/database-errors.server";
 
 const requiredConsentSchema = z
   .object({
@@ -105,6 +114,22 @@ const completeSignupInputSchema = z
 
 export type CompleteSignupInput = z.output<typeof completeSignupInputSchema>;
 
+const completeSignupServerInputSchema = z
+  .object({
+    pendingFollow: z.object({ institutionId: z.uuid() }).strict().nullable(),
+  })
+  .strict();
+
+export type CompleteSignupServerInput = z.output<
+  typeof completeSignupServerInputSchema
+>;
+
+export type CompleteSignupResult = {
+  userId: string;
+  userState: "ACTIVE";
+  follow: ActivateFollowResult | null;
+};
+
 export type CompleteSignupPersistence = {
   findUserForUpdate: typeof findUserForUpdate;
   findUserEmail: typeof findUserEmail;
@@ -133,12 +158,20 @@ export type CompleteSignupDependencies = {
   transactionManager: TransactionManager;
   tracker: AnalyticsTracker;
   persistence?: CompleteSignupPersistence;
+  followPersistence?: ActivateFollowPersistence;
 };
 
 function parseCompleteSignupInput(input: unknown): CompleteSignupInput {
   const parsed = completeSignupInputSchema.safeParse(input);
   if (!parsed.success) throw ValidationError.fromZodError(parsed.error);
   return parsed.data;
+}
+
+function parseCompleteSignupServerInput(
+  input: unknown,
+): CompleteSignupServerInput {
+  const parsed = completeSignupServerInputSchema.safeParse(input);
+  return parsed.success ? parsed.data : { pendingFollow: null };
 }
 
 function requiredConsentVersion(
@@ -242,25 +275,52 @@ export async function completeSignup(
   ctx: UserCommandContext,
   rawInput: unknown,
   dependencies: CompleteSignupDependencies,
-): Promise<{ userId: string; userState: "ACTIVE" }> {
+  rawServerInput: unknown = { pendingFollow: null },
+): Promise<CompleteSignupResult> {
   const parsedUserId = z.uuid().safeParse(ctx.userId);
   if (!parsedUserId.success) {
     throw ValidationError.fromZodError(parsedUserId.error);
   }
   const input = parseCompleteSignupInput(rawInput);
+  const serverInput = parseCompleteSignupServerInput(rawServerInput);
   assertPlausibleChildBirthYear(input.childBirthYear, ctx.occurredAt);
   const persistence =
     dependencies.persistence ?? defaultCompleteSignupPersistence;
+  const followPersistence =
+    dependencies.followPersistence ?? defaultActivateFollowPersistence;
 
-  await dependencies.transactionManager.run((executor) =>
-    persistSignup(
-      executor,
-      parsedUserId.data,
-      input,
-      ctx.occurredAt,
-      persistence,
-    ),
-  );
+  let follow: ActivateFollowResult | null;
+  try {
+    follow = await dependencies.transactionManager.run(async (executor) => {
+      await persistSignup(
+        executor,
+        parsedUserId.data,
+        input,
+        ctx.occurredAt,
+        persistence,
+      );
+
+      if (!serverInput.pendingFollow) return null;
+      try {
+        return await activateFollowInTransaction(
+          executor,
+          { ...ctx, userId: parsedUserId.data },
+          serverInput.pendingFollow,
+          followPersistence,
+        );
+      } catch (error) {
+        if (
+          error instanceof NotFoundError ||
+          error instanceof NotEligibleError
+        ) {
+          return null;
+        }
+        throw error;
+      }
+    });
+  } catch (error) {
+    throw mapFollowDatabaseError(error);
+  }
 
   try {
     dependencies.tracker.track("signup_complete", { context: "MY_PREPPY" });
@@ -268,5 +328,23 @@ export async function completeSignup(
     // Analytics is deliberately best effort and runs only after commit.
   }
 
-  return { userId: parsedUserId.data, userState: "ACTIVE" };
+  if (follow?.created || follow?.reactivated) {
+    try {
+      if (follow.activeFollowCount === 1) {
+        dependencies.tracker.track("follow_created", {
+          institutionId: follow.institutionId,
+          followCount: follow.activeFollowCount,
+        });
+      } else {
+        dependencies.tracker.track("additional_follow", {
+          institutionId: follow.institutionId,
+          followCount: follow.activeFollowCount,
+        });
+      }
+    } catch {
+      // Follow analytics is independently best effort after the shared commit.
+    }
+  }
+
+  return { userId: parsedUserId.data, userState: "ACTIVE", follow };
 }

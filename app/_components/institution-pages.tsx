@@ -205,6 +205,7 @@ export function InstitutionDetailView({
             </div>
             <FollowCta
               context="INSTITUTION"
+              followable={institution.followable}
               institutionId={institution.id}
               returnPath={`/institutions/${institution.slug}`}
             />

@@ -44,6 +44,8 @@ export type InstitutionCardDTO = {
   name: string;
   category: InstitutionCategory;
   region: string | null;
+  /** Public Institution eligibility only; never personalized Follow state. */
+  followable: boolean;
   currentAdmissionsState: OpportunityBusinessState | null;
   currentOpportunity?: {
     id: string;
@@ -70,7 +72,7 @@ export type OpportunityCardDTO = {
   keyDate: string | null;
   institution: Pick<
     InstitutionCardDTO,
-    "id" | "slug" | "name" | "category" | "region"
+    "id" | "slug" | "name" | "category" | "region" | "followable"
   >;
   lastVerifiedAt: string | null;
   indexability: Indexability;

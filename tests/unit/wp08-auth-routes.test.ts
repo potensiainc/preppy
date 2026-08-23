@@ -94,6 +94,15 @@ function allowingCallbackGuards() {
       },
       canonicalPath: "/institutions/seoul-international-school",
     }),
+    activateFollow: async () => ({
+      followId: "7ba7b810-9dad-11d1-80b4-00c04fd430c8",
+      institutionId,
+      state: "ACTIVE" as const,
+      activatedAt: now.toISOString(),
+      created: true,
+      reactivated: false,
+      activeFollowCount: 1,
+    }),
   };
 }
 
@@ -112,6 +121,7 @@ describe("WP-08 auth Route Handler factories", () => {
       followIntentSecret: followSecret,
       tracker,
       findInstitution,
+      hasMonitorableSourceCoverage: async () => true,
       now: () => now,
       production: true,
     });
@@ -182,6 +192,7 @@ describe("WP-08 auth Route Handler factories", () => {
       followIntentSecret: followSecret,
       tracker,
       findInstitution,
+      hasMonitorableSourceCoverage: async () => true,
       now: () => now,
     });
     const form = new URLSearchParams({
@@ -318,8 +329,9 @@ describe("WP-08 auth Route Handler factories", () => {
     expect(response.headers.get("set-cookie")).not.toContain("123456789");
   });
 
-  it("preserves a safe pending continuation for ACTIVE users", async () => {
-    // Mutation caught: dropping the canonical return path or redirecting to a browser-supplied external URL.
+  it("completes a valid pending Follow for ACTIVE users before My Preppy", async () => {
+    // Mutation caught: dropping the standalone Follow activation or retaining
+    // the completed intent after redirect.
     const issued = createOAuthState({ secret: stateSecret, now });
     const intent = createPendingFollowIntent(
       {
@@ -351,8 +363,9 @@ describe("WP-08 auth Route Handler factories", () => {
       ),
     );
     expect(response.status).toBe(303);
-    expect(response.headers.get("location")).toBe(
-      "/institutions/seoul-international-school",
+    expect(response.headers.get("location")).toBe("/my-preppy");
+    expect(response.headers.get("set-cookie")).toContain(
+      `${PENDING_FOLLOW_INTENT_COOKIE_NAME}=;`,
     );
   });
 
@@ -496,14 +509,21 @@ describe("WP-08 auth Route Handler factories", () => {
     const completeSignup = vi.fn(async () => ({
       userId,
       userState: "ACTIVE" as const,
+      follow: {
+        followId: "7ba7b810-9dad-11d1-80b4-00c04fd430c8",
+        institutionId,
+        state: "ACTIVE" as const,
+        activatedAt: now.toISOString(),
+        created: true,
+        reactivated: false,
+        activeFollowCount: 1,
+      },
     }));
     const complete = createOnboardingCompleteHandler({
       appBaseUrl,
       sessionSecret,
       followIntentSecret: followSecret,
       completeSignup,
-      resolveCompletionInstitutionPath: async () =>
-        "/institutions/seoul-international-school",
       now: () => now,
       production: true,
     });
@@ -537,9 +557,7 @@ describe("WP-08 auth Route Handler factories", () => {
       ),
     );
     expect(completeResponse.status).toBe(303);
-    expect(completeResponse.headers.get("location")).toBe(
-      "/institutions/seoul-international-school",
-    );
+    expect(completeResponse.headers.get("location")).toBe("/my-preppy");
     expect(completeSignup).toHaveBeenCalledWith(
       expect.objectContaining({ userId, occurredAt: now }),
       {
@@ -561,10 +579,11 @@ describe("WP-08 auth Route Handler factories", () => {
         interestRegions: ["kr-11", "KR-26"],
         interestCategories: ["INTERNATIONAL_SCHOOL"],
       },
+      { pendingFollow: { institutionId } },
     );
     const setCookie = completeResponse.headers.get("set-cookie") ?? "";
     expect(setCookie).toContain(`${USER_SESSION_COOKIE_NAME}=`);
-    expect(setCookie).not.toContain(`${PENDING_FOLLOW_INTENT_COOKIE_NAME}=`);
+    expect(setCookie).toContain(`${PENDING_FOLLOW_INTENT_COOKIE_NAME}=;`);
     expect(await completeResponse.text()).not.toMatch(
       /팔로우.*완료|관심기관.*등록.*완료/,
     );

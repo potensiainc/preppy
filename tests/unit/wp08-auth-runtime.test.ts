@@ -39,13 +39,18 @@ describe("WP-08 completion Institution resolver", () => {
       .mockResolvedValueOnce(null);
 
     await expect(
-      resolveCanonicalCompletionInstitutionPath(institutionId, findInstitution),
+      resolveCanonicalCompletionInstitutionPath(
+        institutionId,
+        findInstitution,
+        async () => true,
+      ),
     ).resolves.toBe("/institutions/seoul-international-school");
     for (let index = 0; index < 3; index += 1) {
       await expect(
         resolveCanonicalCompletionInstitutionPath(
           institutionId,
           findInstitution,
+          async () => true,
         ),
       ).resolves.toBeNull();
     }

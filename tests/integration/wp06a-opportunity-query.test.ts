@@ -124,6 +124,11 @@ async function insertSource({
       ${id}, ${url}, ${sourceType}, ${authorityLevel}, 'ACTIVE', ${sourceName}
     )
   `;
+  await runtime.client`
+    insert into source_monitor_configs (
+      source_id, collection_strategy, monitoring_profile, is_enabled
+    ) values (${id}, 'HTTP', 'STANDARD_SEASONAL', true)
+  `;
   return { id, url, sourceName, authorityLevel };
 }
 
@@ -251,6 +256,11 @@ async function createLegacyFixture({
     values (${institution.id}, ${schoolId}, 'WP-06A test bridge')
   `;
   await runtime.client`
+    insert into source_bindings (
+      source_id, school_id, source_role, priority, is_active
+    ) values (${source.id}, ${schoolId}, 'PRIMARY_ADMISSIONS', 1, true)
+  `;
+  await runtime.client`
     insert into admission_cycles (
       id, school_id, academic_year, lifecycle_status, admission_mode
     ) values (${cycleId}, ${schoolId}, 2027, 'ACTIVE', 'FIXED_WINDOW')
@@ -374,8 +384,18 @@ async function cleanupFixtures(): Promise<void> {
       delete from institution_school_links
       where school_id in (select id from schools where slug like ${`${prefix}%`})
     `;
+    await transaction`
+      delete from source_bindings
+      where school_id in (select id from schools where slug like ${`${prefix}%`})
+    `;
     await transaction`delete from schools where slug like ${`${prefix}%`}`;
     await transaction`delete from institutions where slug like ${`${prefix}%`}`;
+    await transaction`
+      delete from source_monitor_configs
+      where source_id in (
+        select id from sources where canonical_url like ${`https://source.example.test/${prefix}/%`}
+      )
+    `;
     await transaction`
       delete from sources
       where canonical_url like ${`https://source.example.test/${prefix}/%`}
@@ -451,6 +471,8 @@ describe("WP-06A canonical Opportunity query", () => {
     });
     expect(nativeResult.officialSource?.url).toContain("source.example.test");
     expect(legacyResult.officialSource?.url).toContain("source.example.test");
+    expect(nativeResult.institution.followable).toBe(true);
+    expect(legacyResult.institution.followable).toBe(true);
     assertNoForbiddenKeys(nativeResult);
     assertNoForbiddenKeys(legacyResult);
   });

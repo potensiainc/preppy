@@ -8,6 +8,11 @@ import type { AnalyticsTracker } from "@/src/analytics/tracker";
 import { ApplicationError } from "@/src/application/errors";
 import type { UserCommandContext } from "@/src/application/context";
 import type {
+  CompleteSignupResult,
+  CompleteSignupServerInput,
+} from "@/src/modules/auth/complete-signup.server";
+import type { ActivateFollowResult } from "@/src/modules/follow/activate-follow.server";
+import type {
   KakaoAuthProvider,
   KakaoIdentity,
 } from "@/src/modules/auth/kakao-provider.server";
@@ -31,7 +36,6 @@ import {
   type ResolvedPendingFollowTarget,
 } from "@/src/modules/auth/pending-follow-target.server";
 import type { RateLimiter } from "@/src/modules/auth/rate-limit.server";
-import { safeRedirectPath } from "@/src/modules/auth/safe-redirect";
 import {
   clearUserSessionCookie,
   createUserSessionCookie,
@@ -332,6 +336,7 @@ export function createFollowIntentHandler(dependencies: {
   followIntentSecret: string;
   tracker: AnalyticsTracker;
   findInstitution(id: string): Promise<PublicIntentInstitution | null>;
+  hasMonitorableSourceCoverage(id: string): Promise<boolean>;
   now?: Clock;
   production?: boolean;
 }): (request: Request) => Promise<Response> {
@@ -354,6 +359,7 @@ export function createFollowIntentHandler(dependencies: {
       resolvedTarget = await resolveCanonicalPendingFollowTarget(
         input.institutionId,
         dependencies.findInstitution,
+        dependencies.hasMonitorableSourceCoverage,
       );
     } catch {
       return safeMutationFailure(503);
@@ -488,6 +494,10 @@ export function createKakaoCallbackHandler(dependencies: {
   resolvePendingFollowTarget(
     institutionId: string,
   ): Promise<Pick<ResolvedPendingFollowTarget, "canonicalPath"> | null>;
+  activateFollow(
+    context: UserCommandContext,
+    input: { institutionId: string },
+  ): Promise<ActivateFollowResult>;
   tracker: AnalyticsTracker;
   now?: Clock;
   production?: boolean;
@@ -590,24 +600,34 @@ export function createKakaoCallbackHandler(dependencies: {
           )
         : null;
       const validPendingIntent = pendingTarget ? pendingIntent : null;
-      const shouldClearPendingIntent =
-        pendingIntentCookie !== null && validPendingIntent === null;
       if (user.status === "PENDING") {
         bestEffortTrack(dependencies.tracker, "signup_start", {
           context: validPendingIntent?.context ?? "HOME",
         });
       }
-      const activeContinuation =
-        validPendingIntent && pendingTarget
-          ? validPendingIntent.context === "INSTITUTION"
-            ? pendingTarget.canonicalPath
-            : validPendingIntent.returnPath
-          : "/";
+      let completedActiveFollow = false;
+      if (user.status === "ACTIVE" && validPendingIntent) {
+        await dependencies.activateFollow(
+          {
+            userId: user.id,
+            correlationId: randomUUID(),
+            occurredAt: now,
+          },
+          { institutionId: validPendingIntent.institutionId },
+        );
+        completedActiveFollow = true;
+      }
+      const shouldClearPendingIntent =
+        user.status === "ACTIVE" &&
+        pendingIntentCookie !== null &&
+        (validPendingIntent === null || completedActiveFollow);
       const headers = privateHeaders({
         location:
           user.status === "PENDING"
             ? "/onboarding"
-            : safeRedirectPath(activeContinuation, "/"),
+            : completedActiveFollow
+              ? "/my-preppy"
+              : "/",
       });
       headers.append(
         "set-cookie",
@@ -724,10 +744,8 @@ export function createOnboardingCompleteHandler(dependencies: {
   completeSignup(
     context: UserCommandContext,
     input: unknown,
-  ): Promise<{ userId: string; userState: "ACTIVE" }>;
-  resolveCompletionInstitutionPath(
-    institutionId: string,
-  ): Promise<string | null>;
+    serverInput: CompleteSignupServerInput,
+  ): Promise<CompleteSignupResult>;
   now?: Clock;
   production?: boolean;
 }): (request: Request) => Promise<Response> {
@@ -753,6 +771,14 @@ export function createOnboardingCompleteHandler(dependencies: {
     }
 
     try {
+      const pendingIntentCookie = readCookie(
+        request,
+        PENDING_FOLLOW_INTENT_COOKIE_NAME,
+      );
+      const pendingIntent = readPendingFollowIntent(pendingIntentCookie, {
+        secret: dependencies.followIntentSecret,
+        now,
+      });
       const result = await dependencies.completeSignup(
         {
           userId: session.userId,
@@ -760,29 +786,18 @@ export function createOnboardingCompleteHandler(dependencies: {
           occurredAt: now,
         },
         rawInput,
+        {
+          pendingFollow: pendingIntent
+            ? { institutionId: pendingIntent.institutionId }
+            : null,
+        },
       );
       const refreshed = createUserSessionCookie(result.userId, {
         secret: dependencies.sessionSecret,
         now,
         production: dependencies.production,
       });
-      const pendingIntent = readPendingFollowIntent(
-        readCookie(request, PENDING_FOLLOW_INTENT_COOKIE_NAME),
-        { secret: dependencies.followIntentSecret, now },
-      );
-      let redirectTo = "/";
-      if (pendingIntent) {
-        try {
-          redirectTo = safeRedirectPath(
-            await dependencies.resolveCompletionInstitutionPath(
-              pendingIntent.institutionId,
-            ),
-            "/",
-          );
-        } catch {
-          redirectTo = "/";
-        }
-      }
+      const redirectTo = result.follow ? "/my-preppy" : "/";
       const wantsJson = request.headers
         .get("accept")
         ?.split(",")
@@ -792,8 +807,29 @@ export function createOnboardingCompleteHandler(dependencies: {
         "set-cookie",
         serializeCookie(refreshed.name, refreshed.value, refreshed.attributes),
       );
+      if (pendingIntentCookie !== null) {
+        headers.append(
+          "set-cookie",
+          serializeCookie(
+            PENDING_FOLLOW_INTENT_COOKIE_NAME,
+            "",
+            clearCookieAttributes({
+              ...pendingFollowIntentCookieAttributes,
+              secure:
+                dependencies.production ??
+                process.env.NODE_ENV === "production",
+            }),
+          ),
+        );
+      }
+      const responseBody = result.follow
+        ? {
+            redirectTo,
+            message: "관심기관 등록이 완료되었습니다.",
+          }
+        : { redirectTo };
       return wantsJson
-        ? Response.json({ redirectTo }, { status: 200, headers })
+        ? Response.json(responseBody, { status: 200, headers })
         : new Response(null, { status: 303, headers });
     } catch (error) {
       return safeMutationFailure(applicationErrorStatus(error));

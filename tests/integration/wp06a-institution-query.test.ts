@@ -57,6 +57,7 @@ async function createInstitution({
   region = "SEOUL",
   state = "PUBLISHED",
   description = "A meaningful public profile.",
+  operationalState = "ACTIVE",
 }: {
   name?: string;
   category?:
@@ -64,12 +65,13 @@ async function createInstitution({
   region?: string;
   state?: "DRAFT" | "PUBLISHED" | "HIDDEN" | "ARCHIVED";
   description?: string | null;
+  operationalState?: "ACTIVE" | "INACTIVE" | "CLOSED" | "UNKNOWN";
 } = {}) {
   const id = randomUUID();
   const slug = `${prefix}-institution-${id}`;
   await runtime.client`
-    insert into institutions (id, slug, display_name, category, publication_state, region_code, short_description, published_at)
-    values (${id}, ${slug}, ${name}, ${category}, ${state}, ${region}, ${description},
+    insert into institutions (id, slug, display_name, category, publication_state, operational_state, region_code, short_description, published_at)
+    values (${id}, ${slug}, ${name}, ${category}, ${state}, ${operationalState}, ${region}, ${description},
       ${state === "PUBLISHED" ? "2026-08-01T00:00:00.000Z" : null})
   `;
   return { id, slug };
@@ -87,6 +89,11 @@ async function createSource({
   await runtime.client`
     insert into sources (id, canonical_url, source_type, authority_level, lifecycle_status, source_name)
     values (${id}, ${url}, ${sourceType}, ${authority}, 'ACTIVE', 'Institution source')
+  `;
+  await runtime.client`
+    insert into source_monitor_configs (
+      source_id, collection_strategy, monitoring_profile, is_enabled
+    ) values (${id}, 'HTTP', 'STANDARD_SEASONAL', true)
   `;
   return { id, url };
 }
@@ -263,6 +270,9 @@ async function cleanup(): Promise<void> {
     await transaction`delete from institution_school_links where school_id in (select id from schools where slug like ${`${prefix}%`})`;
     await transaction`delete from schools where slug like ${`${prefix}%`}`;
     await transaction`delete from institutions where slug like ${`${prefix}%`}`;
+    await transaction`delete from source_monitor_configs where source_id in (
+      select id from sources where canonical_url like ${`https://institution-source.example.test/${prefix}/%`}
+    )`;
     await transaction`delete from sources where canonical_url like ${`https://institution-source.example.test/${prefix}/%`}`;
   });
 }
@@ -429,6 +439,72 @@ describe("WP-06A Institution public query", () => {
     await expect(
       getInstitutionBySlug(runtime.executor, hidden.slug),
     ).rejects.toBeInstanceOf(NotFoundError);
+  });
+
+  it("projects CLOSED as not followable and excludes unpublished Institutions", async () => {
+    // Mutation caught: omitting non-personal operational/publication eligibility from CTA projections.
+    const active = await createInstitution({ operationalState: "ACTIVE" });
+    const closed = await createInstitution({ operationalState: "CLOSED" });
+    const unpublished = await createInstitution({
+      state: "DRAFT",
+      operationalState: "ACTIVE",
+    });
+    await createNativeOpportunity(active.id);
+
+    const activeDetail = await getInstitutionBySlug(
+      runtime.executor,
+      active.slug,
+    );
+    const closedDetail = await getInstitutionBySlug(
+      runtime.executor,
+      closed.slug,
+    );
+    const list = await listInstitutions(runtime.executor, {
+      query: "WP-06A Institution",
+      page: 1,
+      pageSize: 10,
+    });
+    const followableById = new Map(
+      list.items.map((item) => [item.id, item.followable]),
+    );
+
+    expect(activeDetail.institution.followable).toBe(true);
+    expect(closedDetail.institution.followable).toBe(false);
+    expect(followableById.get(active.id)).toBe(true);
+    expect(followableById.get(closed.id)).toBe(false);
+    await expect(
+      getInstitutionBySlug(runtime.executor, unpublished.slug),
+    ).rejects.toBeInstanceOf(NotFoundError);
+  });
+
+  it("projects a public source-less Institution as not followable", async () => {
+    const name = `${prefix} Coverage list`;
+    const sourceLess = await createInstitution({
+      name,
+      operationalState: "ACTIVE",
+    });
+    const covered = await createInstitution({
+      name,
+      operationalState: "ACTIVE",
+    });
+    await createNativeOpportunity(covered.id);
+
+    const detail = await getInstitutionBySlug(
+      runtime.executor,
+      sourceLess.slug,
+    );
+    const list = await listInstitutions(runtime.executor, {
+      query: name,
+      page: 1,
+      pageSize: 10,
+    });
+    const followableById = new Map(
+      list.items.map((item) => [item.id, item.followable]),
+    );
+
+    expect(detail.institution.followable).toBe(false);
+    expect(followableById.get(sourceLess.id)).toBe(false);
+    expect(followableById.get(covered.id)).toBe(true);
   });
 
   it("bounds each detail section in SQL and keeps UNKNOWN neutral", async () => {

@@ -6,6 +6,7 @@ import { getSessionUser } from "@/src/application/current-user.server";
 import type { DatabaseExecutor } from "@/src/infrastructure/db/runtime.server";
 import { readPendingFollowIntent } from "@/src/modules/auth/pending-follow-intent.server";
 import { resolveCanonicalPendingFollowTarget } from "@/src/modules/auth/pending-follow-target.server";
+import { hasMonitorableSourceCoverage } from "@/src/modules/follow/followability-policy.server";
 import { findOnboardingDefaults } from "@/src/modules/identity/repository.server";
 import { findInstitutionById } from "@/src/modules/institution/repository.server";
 
@@ -59,6 +60,7 @@ async function findPendingInstitution(
   const target = await resolveCanonicalPendingFollowTarget(
     intent.institutionId,
     (institutionId) => findInstitutionById(executor, institutionId),
+    (institutionId) => hasMonitorableSourceCoverage(executor, institutionId),
   );
   if (!target) return null;
   return {

@@ -14,6 +14,8 @@ import {
   type PendingFollowInstitutionRecord,
 } from "@/src/modules/auth/pending-follow-target.server";
 import { ProcessLocalRateLimiter } from "@/src/modules/auth/rate-limit.server";
+import { activateFollow } from "@/src/modules/follow/activate-follow.server";
+import { hasMonitorableSourceCoverage } from "@/src/modules/follow/followability-policy.server";
 import { findInstitutionById } from "@/src/modules/institution/repository.server";
 
 const tracker = new NoopAnalyticsTracker();
@@ -31,10 +33,12 @@ export async function resolveCanonicalCompletionInstitutionPath(
   findInstitution: (
     id: string,
   ) => Promise<PendingFollowInstitutionRecord | null>,
+  monitorableCoverage: (id: string) => Promise<boolean>,
 ): Promise<string | null> {
   const target = await resolveCanonicalPendingFollowTarget(
     institutionId,
     findInstitution,
+    monitorableCoverage,
   );
   return target?.canonicalPath ?? null;
 }
@@ -70,6 +74,8 @@ export function getAuthRuntime() {
     rateLimiter,
     replayStore,
     findInstitution: (id: string) => findInstitutionById(database.executor, id),
+    hasMonitorableSourceCoverage: (id: string) =>
+      hasMonitorableSourceCoverage(database.executor, id),
     resolveIdentity: async (
       identity: Parameters<typeof resolveKakaoIdentity>[0],
     ) => {
@@ -83,9 +89,19 @@ export function getAuthRuntime() {
       };
     },
     resolvePendingFollowTarget: (institutionId: string) =>
-      resolveCanonicalPendingFollowTarget(institutionId, (id) =>
-        findInstitutionById(database.executor, id),
+      resolveCanonicalPendingFollowTarget(
+        institutionId,
+        (id) => findInstitutionById(database.executor, id),
+        (id) => hasMonitorableSourceCoverage(database.executor, id),
       ),
+    activateFollow: (
+      context: Parameters<typeof activateFollow>[0],
+      input: Parameters<typeof activateFollow>[1],
+    ) =>
+      activateFollow(context, input, {
+        transactionManager: database.transactionManager,
+        tracker,
+      }),
     getOnboardingState: (
       sessionCookie: string | null,
       intentCookie: string | null,
@@ -98,14 +114,16 @@ export function getAuthRuntime() {
     completeSignup: (
       context: Parameters<typeof completeSignup>[0],
       input: unknown,
+      serverInput: Parameters<typeof completeSignup>[3],
     ) =>
-      completeSignup(context, input, {
-        transactionManager: database.transactionManager,
-        tracker,
-      }),
-    resolveCompletionInstitutionPath: (institutionId: string) =>
-      resolveCanonicalCompletionInstitutionPath(institutionId, (id) =>
-        findInstitutionById(database.executor, id),
+      completeSignup(
+        context,
+        input,
+        {
+          transactionManager: database.transactionManager,
+          tracker,
+        },
+        serverInput,
       ),
     getCurrentUser: (sessionCookie: string | null) =>
       getCurrentUser(sessionCookie, {

@@ -2,7 +2,7 @@ import "server-only";
 
 import { and, count, eq, isNull } from "drizzle-orm";
 
-import { followEpisodes, follows } from "@/src/db/schema";
+import { followEpisodes, follows, users } from "@/src/db/schema";
 import type {
   DatabaseExecutor,
   TransactionExecutor,
@@ -24,11 +24,38 @@ export async function findFollow(
   return follow ?? null;
 }
 
+/**
+ * One-statement private authorization and Follow projection. The ACTIVE User
+ * predicate and requested logical Follow share the same PostgreSQL snapshot.
+ */
+export async function findAuthorizedFollowStatus(
+  executor: DatabaseExecutor,
+  userId: string,
+  institutionId: string,
+): Promise<{ authenticated: true; following: boolean } | null> {
+  const [row] = await executor.drizzle
+    .select({ followStatus: follows.status })
+    .from(users)
+    .leftJoin(
+      follows,
+      and(
+        eq(follows.userId, users.id),
+        eq(follows.institutionId, institutionId),
+      ),
+    )
+    .where(and(eq(users.id, userId), eq(users.status, "ACTIVE")))
+    .limit(1);
+
+  return row
+    ? { authenticated: true, following: row.followStatus === "ACTIVE" }
+    : null;
+}
+
 export async function findFollowForUpdate(
   executor: TransactionExecutor,
   userId: string,
   institutionId: string,
-) {
+): Promise<typeof follows.$inferSelect | null> {
   const [follow] = await executor.drizzle
     .select()
     .from(follows)
@@ -66,10 +93,69 @@ export async function createLogicalFollow(
   return follow!;
 }
 
+export async function createLogicalFollowIfAbsent(
+  executor: TransactionExecutor,
+  input: {
+    id?: string;
+    userId: string;
+    institutionId: string;
+    activatedAt: Date;
+  },
+): Promise<typeof follows.$inferSelect | null> {
+  const [follow] = await executor.drizzle
+    .insert(follows)
+    .values({
+      id: input.id,
+      userId: input.userId,
+      institutionId: input.institutionId,
+      status: "ACTIVE",
+      firstActivatedAt: input.activatedAt,
+      currentActivatedAt: input.activatedAt,
+      deactivatedAt: null,
+    })
+    .onConflictDoNothing({ target: [follows.userId, follows.institutionId] })
+    .returning();
+
+  return follow ?? null;
+}
+
+export async function activateLogicalFollow(
+  executor: TransactionExecutor,
+  followId: string,
+  activatedAt: Date,
+) {
+  const [follow] = await executor.drizzle
+    .update(follows)
+    .set({
+      status: "ACTIVE",
+      currentActivatedAt: activatedAt,
+      deactivatedAt: null,
+      updatedAt: activatedAt,
+    })
+    .where(and(eq(follows.id, followId), eq(follows.status, "INACTIVE")))
+    .returning();
+
+  return follow ?? null;
+}
+
+export async function deactivateLogicalFollow(
+  executor: TransactionExecutor,
+  followId: string,
+  deactivatedAt: Date,
+) {
+  const [follow] = await executor.drizzle
+    .update(follows)
+    .set({ status: "INACTIVE", deactivatedAt, updatedAt: deactivatedAt })
+    .where(and(eq(follows.id, followId), eq(follows.status, "ACTIVE")))
+    .returning();
+
+  return follow ?? null;
+}
+
 export async function findOpenEpisode(
   executor: DatabaseExecutor,
   followId: string,
-) {
+): Promise<typeof followEpisodes.$inferSelect | null> {
   const [episode] = await executor.drizzle
     .select()
     .from(followEpisodes)

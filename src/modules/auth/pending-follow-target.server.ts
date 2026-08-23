@@ -1,5 +1,7 @@
 import "server-only";
 
+import { isInstitutionFollowable } from "@/src/modules/follow/followability-policy.server";
+
 export type PendingFollowInstitutionRecord = {
   id: string;
   slug: string;
@@ -20,13 +22,16 @@ export async function resolveCanonicalPendingFollowTarget<
 >(
   institutionId: string,
   findInstitution: (id: string) => Promise<Institution | null>,
+  hasMonitorableSourceCoverage: (id: string) => Promise<boolean>,
 ): Promise<ResolvedPendingFollowTarget<Institution> | null> {
   const institution = await findInstitution(institutionId);
+  const monitorable = institution
+    ? await hasMonitorableSourceCoverage(institution.id)
+    : false;
   if (
     !institution ||
     institution.id.toLowerCase() !== institutionId.toLowerCase() ||
-    institution.publicationState !== "PUBLISHED" ||
-    institution.operationalState === "CLOSED"
+    !isInstitutionFollowable(institution, monitorable)
   ) {
     return null;
   }

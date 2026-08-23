@@ -76,6 +76,15 @@ function allowingCallbackGuards() {
       }),
     },
     resolvePendingFollowTarget: async () => null,
+    activateFollow: async () => ({
+      followId: "8ba7b810-9dad-11d1-80b4-00c04fd430c8",
+      institutionId,
+      state: "ACTIVE" as const,
+      activatedAt: now.toISOString(),
+      created: true,
+      reactivated: false,
+      activeFollowCount: 1,
+    }),
   };
 }
 
@@ -342,24 +351,24 @@ describe("WP-08 Task 4 review fixes", () => {
       "INSTITUTION",
       "/institutions/old-school-slug",
       { canonicalPath: "/institutions/current-school-slug" },
-      "/institutions/current-school-slug",
-      false,
+      "/my-preppy",
+      true,
     ],
     [
       "valid Article source",
       "ARTICLE",
       "/articles/admissions-guide",
       { canonicalPath: "/institutions/current-school-slug" },
-      "/articles/admissions-guide",
-      false,
+      "/my-preppy",
+      true,
     ],
     [
       "valid Opportunity source",
       "OPPORTUNITY",
       "/opportunities/open-house",
       { canonicalPath: "/institutions/current-school-slug" },
-      "/opportunities/open-house",
-      false,
+      "/my-preppy",
+      true,
     ],
     [
       "Article with invalid Institution",
@@ -401,6 +410,15 @@ describe("WP-08 Task 4 review fixes", () => {
         { secret: followSecret, now },
       );
       const resolvePendingFollowTarget = vi.fn(async () => resolvedTarget);
+      const activateFollow = vi.fn(async () => ({
+        followId: "8ba7b810-9dad-11d1-80b4-00c04fd430c8",
+        institutionId,
+        state: "ACTIVE" as const,
+        activatedAt: now.toISOString(),
+        created: true,
+        reactivated: false,
+        activeFollowCount: 1,
+      }));
       const response = await createKakaoCallbackHandler({
         oauthStateSecret: stateSecret,
         sessionSecret,
@@ -419,6 +437,7 @@ describe("WP-08 Task 4 review fixes", () => {
         },
         resolveIdentity: async () => ({ id: userId, status: "ACTIVE" }),
         resolvePendingFollowTarget,
+        activateFollow,
         tracker: new TestAnalyticsTracker(),
         now: () => now,
       } as never)(
@@ -434,6 +453,7 @@ describe("WP-08 Task 4 review fixes", () => {
       expect(response.status).toBe(303);
       expect(response.headers.get("location")).toBe(expectedLocation);
       expect(resolvePendingFollowTarget).toHaveBeenCalledWith(institutionId);
+      expect(activateFollow).toHaveBeenCalledTimes(resolvedTarget ? 1 : 0);
       const cookies = response.headers.get("set-cookie") ?? "";
       if (shouldClearIntent) {
         expect(cookies).toMatch(
@@ -610,6 +630,7 @@ describe("WP-08 Task 4 review fixes", () => {
       followIntentSecret: followSecret,
       tracker: new TestAnalyticsTracker(),
       findInstitution,
+      hasMonitorableSourceCoverage: async () => true,
       now: () => now,
     });
     const declared = new ReadableStream<Uint8Array>({
@@ -688,6 +709,7 @@ describe("WP-08 Task 4 review fixes", () => {
       findInstitution: async () => {
         throw new Error("private database host");
       },
+      hasMonitorableSourceCoverage: async () => true,
     })(
       new Request(`${appBaseUrl}/api/auth/follow-intent`, {
         method: "POST",
@@ -777,8 +799,9 @@ describe("WP-08 Task 4 review fixes", () => {
     });
   });
 
-  it("uses revalidated canonical Institution completion paths, supports JSON success, and ignores signed source returnPath", async () => {
-    // Mutation caught: trusting the pending Article path after activation or returning a redirect without refreshed session.
+  it("uses committed Follow completion for the onboarding destination and clears the source intent", async () => {
+    // Mutation caught: trusting the signed source path after activation or
+    // returning before the committed Follow result is available.
     const session = createUserSessionCookie(userId, {
       secret: sessionSecret,
       now,
@@ -792,15 +815,31 @@ describe("WP-08 Task 4 review fixes", () => {
       },
       { secret: followSecret, now },
     );
-    const resolveCompletionInstitutionPath = vi.fn<
-      (id: string) => Promise<string | null>
-    >(async () => "/institutions/seoul-international-school");
+    const completeSignup = vi
+      .fn()
+      .mockResolvedValueOnce({
+        userId,
+        userState: "ACTIVE" as const,
+        follow: {
+          followId: "8ba7b810-9dad-11d1-80b4-00c04fd430c8",
+          institutionId,
+          state: "ACTIVE" as const,
+          activatedAt: now.toISOString(),
+          created: true,
+          reactivated: false,
+          activeFollowCount: 1,
+        },
+      })
+      .mockResolvedValueOnce({
+        userId,
+        userState: "ACTIVE" as const,
+        follow: null,
+      });
     const handler = createOnboardingCompleteHandler({
       appBaseUrl,
       sessionSecret,
       followIntentSecret: followSecret,
-      completeSignup: async () => ({ userId, userState: "ACTIVE" }),
-      resolveCompletionInstitutionPath,
+      completeSignup,
       now: () => now,
     } as never);
     const response = await handler(
@@ -823,19 +862,21 @@ describe("WP-08 Task 4 review fixes", () => {
     );
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual({
-      redirectTo: "/institutions/seoul-international-school",
+      redirectTo: "/my-preppy",
+      message: "관심기관 등록이 완료되었습니다.",
     });
-    expect(resolveCompletionInstitutionPath).toHaveBeenCalledWith(
-      institutionId,
+    expect(completeSignup).toHaveBeenCalledWith(
+      expect.objectContaining({ userId }),
+      expect.any(Object),
+      { pendingFollow: { institutionId } },
     );
     expect(response.headers.get("set-cookie")).toContain(
       USER_SESSION_COOKIE_NAME,
     );
-    expect(response.headers.get("set-cookie")).not.toContain(
-      PENDING_FOLLOW_INTENT_COOKIE_NAME,
+    expect(response.headers.get("set-cookie")).toContain(
+      `${PENDING_FOLLOW_INTENT_COOKIE_NAME}=;`,
     );
 
-    resolveCompletionInstitutionPath.mockResolvedValueOnce(null);
     const neutral = await handler(
       cookiesRequest(
         `${appBaseUrl}/api/me/onboarding/complete`,

@@ -40,6 +40,7 @@ const homePage: HomePageDTO = {
         name: "서울국제학교",
         category: "INTERNATIONAL_SCHOOL",
         region: "서울",
+        followable: true,
       },
       lastVerifiedAt: "2026-08-23T03:30:00.000Z",
       indexability: "INDEX",
@@ -52,6 +53,7 @@ const homePage: HomePageDTO = {
       name: "서울국제학교",
       category: "INTERNATIONAL_SCHOOL",
       region: "서울",
+      followable: true,
       currentAdmissionsState: "OPEN",
       currentOpportunity: {
         id: "opportunity-1",

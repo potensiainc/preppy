@@ -17,6 +17,10 @@ import {
   sources,
 } from "@/src/db/schema";
 import type { DatabaseExecutor } from "@/src/infrastructure/db/runtime.server";
+import {
+  getMonitorableInstitutionIds,
+  isInstitutionFollowable,
+} from "@/src/modules/follow/followability-policy.server";
 
 import type {
   InstitutionCardDTO,
@@ -70,7 +74,19 @@ type InstitutionRow = {
   category: InstitutionCardDTO["category"];
   region: string | null;
   shortDescription: string | null;
+  operationalState: "ACTIVE" | "INACTIVE" | "CLOSED" | "UNKNOWN";
+  hasMonitorableSourceCoverage: boolean;
 };
+
+function publicFollowable(institution: InstitutionRow): boolean {
+  return isInstitutionFollowable(
+    {
+      publicationState: "PUBLISHED",
+      operationalState: institution.operationalState,
+    },
+    institution.hasMonitorableSourceCoverage,
+  );
+}
 
 function toIso(value: Date): string {
   return value.toISOString();
@@ -388,6 +404,7 @@ async function getInstitutionsByIds(
       category: institutions.category,
       region: institutions.regionCode,
       shortDescription: institutions.shortDescription,
+      operationalState: institutions.operationalState,
     })
     .from(institutions)
     .where(
@@ -396,7 +413,16 @@ async function getInstitutionsByIds(
         eq(institutions.publicationState, "PUBLISHED"),
       ),
     );
-  return new Map(rows.map((row) => [row.id, row]));
+  const covered = await getMonitorableInstitutionIds(
+    executor,
+    rows.map((row) => row.id),
+  );
+  return new Map(
+    rows.map((row) => [
+      row.id,
+      { ...row, hasMonitorableSourceCoverage: covered.has(row.id) },
+    ]),
+  );
 }
 
 /** Bounded set-based canonical cards for Article relation projections. */
@@ -482,6 +508,7 @@ function opportunityCard(
       name: institution.name,
       category: institution.category,
       region: institution.region,
+      followable: publicFollowable(institution),
     },
     lastVerifiedAt: truth.lastVerifiedAt,
     indexability: getIndexability({
@@ -507,6 +534,7 @@ function cardFromInstitution(
     name: institution.name,
     category: institution.category,
     region: institution.region,
+    followable: publicFollowable(institution),
     currentAdmissionsState: selected?.businessState ?? null,
     currentOpportunity:
       selected === undefined
@@ -578,6 +606,7 @@ export async function listInstitutions(
         category: institutions.category,
         region: institutions.regionCode,
         shortDescription: institutions.shortDescription,
+        operationalState: institutions.operationalState,
       })
       .from(institutions)
       .where(where)
@@ -585,6 +614,10 @@ export async function listInstitutions(
       .limit(query.pageSize)
       .offset((query.page - 1) * query.pageSize),
   ]);
+  const covered = await getMonitorableInstitutionIds(
+    executor,
+    rows.map((row) => row.id),
+  );
   const items: InstitutionRow[] = rows.map((row) => ({
     id: row.id,
     slug: row.slug,
@@ -592,6 +625,8 @@ export async function listInstitutions(
     category: row.category,
     region: row.region,
     shortDescription: row.shortDescription,
+    operationalState: row.operationalState,
+    hasMonitorableSourceCoverage: covered.has(row.id),
   }));
   const truths = await getOpportunityTruths(
     executor,
@@ -729,6 +764,7 @@ export async function getInstitutionBySlug(
       category: institutions.category,
       region: institutions.regionCode,
       shortDescription: institutions.shortDescription,
+      operationalState: institutions.operationalState,
     })
     .from(institutions)
     .where(
@@ -739,18 +775,18 @@ export async function getInstitutionBySlug(
     )
     .limit(1);
   if (row === undefined) throw new NotFoundError();
-  const institution: InstitutionRow = row;
-  const [truths, factsResult, legacySources, relatedArticles] =
+  const [truths, factsResult, legacySources, relatedArticles, covered] =
     await Promise.all([
-      getOpportunityTruths(
-        executor,
-        { institutionIds: [institution.id] },
-        "DETAIL",
-      ),
-      getFactProjection(executor, institution.id),
-      getLegacyInstitutionSources(executor, institution.id),
-      getRelatedArticles(executor, { institutionId: institution.id }),
+      getOpportunityTruths(executor, { institutionIds: [row.id] }, "DETAIL"),
+      getFactProjection(executor, row.id),
+      getLegacyInstitutionSources(executor, row.id),
+      getRelatedArticles(executor, { institutionId: row.id }),
+      getMonitorableInstitutionIds(executor, [row.id]),
     ]);
+  const institution: InstitutionRow = {
+    ...row,
+    hasMonitorableSourceCoverage: covered.has(row.id),
+  };
   const cardsFor = (states: OpportunityCardDTO["businessState"][]) =>
     truths
       .filter((truth) => states.includes(truth.businessState))
