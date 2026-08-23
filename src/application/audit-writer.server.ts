@@ -26,6 +26,10 @@ const METADATA_KEYS = new Set([
   "observationId",
   "changedFields",
   "outcomeCode",
+  "moveMode",
+  "targetId",
+  "versionId",
+  "changeId",
 ]);
 
 export type AuditSafeMetadata = Readonly<{
@@ -35,6 +39,10 @@ export type AuditSafeMetadata = Readonly<{
   observationId?: string;
   changedFields?: readonly string[];
   outcomeCode?: string;
+  moveMode?: string;
+  targetId?: string;
+  versionId?: string;
+  changeId?: string;
 }>;
 
 export type AuditEntry = Readonly<{
@@ -67,6 +75,13 @@ type ValidAuditEntry = {
 
 function isUuid(value: unknown): value is string {
   return typeof value === "string" && UUID_PATTERN.test(value);
+}
+
+function isObservationId(value: unknown): value is string {
+  return (
+    typeof value === "string" &&
+    (UUID_PATTERN.test(value) || /^[1-9]\d{0,18}$/.test(value))
+  );
 }
 
 function isCanonicalIdentifier(value: unknown): value is string {
@@ -158,6 +173,10 @@ function cloneMetadata(value: unknown): AuditSafeMetadata | null {
     observationId?: string;
     changedFields?: string[];
     outcomeCode?: string;
+    moveMode?: string;
+    targetId?: string;
+    versionId?: string;
+    changeId?: string;
   } = {};
   for (const [key, candidate] of Object.entries(metadata)) {
     switch (key) {
@@ -167,9 +186,15 @@ function cloneMetadata(value: unknown): AuditSafeMetadata | null {
         result[key] = candidate;
         break;
       case "sourceId":
-      case "observationId":
+      case "targetId":
+      case "versionId":
+      case "changeId":
         if (!isUuid(candidate)) return null;
         result[key] = candidate;
+        break;
+      case "observationId":
+        if (!isObservationId(candidate)) return null;
+        result.observationId = candidate;
         break;
       case "changedFields": {
         const changedFields = cloneChangedFields(candidate);
@@ -178,8 +203,9 @@ function cloneMetadata(value: unknown): AuditSafeMetadata | null {
         break;
       }
       case "outcomeCode":
+      case "moveMode":
         if (!isCanonicalIdentifier(candidate)) return null;
-        result.outcomeCode = candidate;
+        result[key] = candidate;
         break;
       default:
         return null;
