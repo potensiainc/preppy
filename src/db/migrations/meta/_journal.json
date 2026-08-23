@@ -64,6 +64,13 @@
       "when": 1787411368110,
       "tag": "0008_short_toxin",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1787486098817,
+      "tag": "0009_exotic_nico_minoru",
+      "breakpoints": true
     }
   ]
 }

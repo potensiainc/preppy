@@ -1365,6 +1365,69 @@ export const institutionSchoolLinks = pgTable(
   ],
 );
 
+export const institutionSourceBindingRoleValues = [
+  "OFFICIAL_MAIN",
+  "ADMISSIONS",
+  "TUITION",
+  "CURRICULUM",
+  "APPLICATION",
+  "OTHER",
+] as const;
+
+export type InstitutionSourceBindingRole =
+  (typeof institutionSourceBindingRoleValues)[number];
+
+export const institutionSourceBindings = pgTable(
+  "institution_source_bindings",
+  {
+    institutionId: uuid("institution_id")
+      .notNull()
+      .references(() => institutions.id, { onDelete: "restrict" }),
+    sourceId: uuid("source_id")
+      .notNull()
+      .references(() => sources.id, { onDelete: "restrict" }),
+    role: text("role").$type<InstitutionSourceBindingRole>().notNull(),
+    isPrimary: boolean("is_primary").notNull().default(false),
+    isActive: boolean("is_active").notNull().default(true),
+    boundAt: timestamp("bound_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    unboundAt: timestamp("unbound_at", { withTimezone: true }),
+  },
+  (table) => [
+    unique("institution_source_bindings_target_source_role_unique").on(
+      table.institutionId,
+      table.sourceId,
+      table.role,
+    ),
+    index("institution_source_bindings_institution_active_idx").on(
+      table.institutionId,
+      table.isActive,
+    ),
+    index("institution_source_bindings_source_active_idx").on(
+      table.sourceId,
+      table.isActive,
+    ),
+    index("institution_source_bindings_role_active_idx").on(
+      table.role,
+      table.isActive,
+    ),
+    uniqueIndex("institution_source_bindings_active_primary_main_unique")
+      .on(table.institutionId)
+      .where(
+        sql`${table.isPrimary} = true and ${table.isActive} = true and ${table.role} = 'OFFICIAL_MAIN'`,
+      ),
+    check(
+      "institution_source_bindings_role_check",
+      sql`${table.role} in ('OFFICIAL_MAIN', 'ADMISSIONS', 'TUITION', 'CURRICULUM', 'APPLICATION', 'OTHER')`,
+    ),
+    check(
+      "institution_source_bindings_lifecycle_check",
+      sql`(${table.isActive} = true and ${table.unboundAt} is null) or (${table.isActive} = false and ${table.unboundAt} is not null)`,
+    ),
+  ],
+);
+
 export const opportunityKindValues = [
   "RECRUITMENT",
   "ADDITIONAL_RECRUITMENT",
@@ -1520,6 +1583,66 @@ export const opportunityAdmissionEventLinks = pgTable(
       columns: [table.admissionCycleId, table.schoolId],
       foreignColumns: [admissionCycles.id, admissionCycles.schoolId],
     }).onDelete("restrict"),
+  ],
+);
+
+export const opportunitySourceBindingRoleValues = [
+  "PRIMARY_NOTICE",
+  "APPLICATION",
+  "DETAILS",
+  "SUPPORTING",
+  "OTHER",
+] as const;
+
+export type OpportunitySourceBindingRole =
+  (typeof opportunitySourceBindingRoleValues)[number];
+
+export const opportunitySourceBindings = pgTable(
+  "opportunity_source_bindings",
+  {
+    opportunityId: uuid("opportunity_id")
+      .notNull()
+      .references(() => opportunities.id, { onDelete: "restrict" }),
+    sourceId: uuid("source_id")
+      .notNull()
+      .references(() => sources.id, { onDelete: "restrict" }),
+    role: text("role").$type<OpportunitySourceBindingRole>().notNull(),
+    isPrimary: boolean("is_primary").notNull().default(false),
+    isActive: boolean("is_active").notNull().default(true),
+    boundAt: timestamp("bound_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    unboundAt: timestamp("unbound_at", { withTimezone: true }),
+  },
+  (table) => [
+    unique("opportunity_source_bindings_target_source_role_unique").on(
+      table.opportunityId,
+      table.sourceId,
+      table.role,
+    ),
+    index("opportunity_source_bindings_opportunity_active_idx").on(
+      table.opportunityId,
+      table.isActive,
+    ),
+    index("opportunity_source_bindings_source_active_idx").on(
+      table.sourceId,
+      table.isActive,
+    ),
+    index("opportunity_source_bindings_role_active_idx").on(
+      table.role,
+      table.isActive,
+    ),
+    uniqueIndex("opportunity_source_bindings_active_primary_role_unique")
+      .on(table.opportunityId, table.role)
+      .where(sql`${table.isPrimary} = true and ${table.isActive} = true`),
+    check(
+      "opportunity_source_bindings_role_check",
+      sql`${table.role} in ('PRIMARY_NOTICE', 'APPLICATION', 'DETAILS', 'SUPPORTING', 'OTHER')`,
+    ),
+    check(
+      "opportunity_source_bindings_lifecycle_check",
+      sql`(${table.isActive} = true and ${table.unboundAt} is null) or (${table.isActive} = false and ${table.unboundAt} is not null)`,
+    ),
   ],
 );
 

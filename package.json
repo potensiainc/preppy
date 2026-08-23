@@ -21,7 +21,8 @@
     "db:migrate": "tsx scripts/db/migrate.ts",
     "db:check": "tsx scripts/db/check-connection.ts",
     "db:backfill:institutions": "tsx --tsconfig scripts/db/tsconfig.json scripts/db/backfill-institutions.ts",
-    "db:backfill:opportunities": "tsx --tsconfig scripts/db/tsconfig.json scripts/db/backfill-opportunities.ts"
+    "db:backfill:opportunities": "tsx --tsconfig scripts/db/tsconfig.json scripts/db/backfill-opportunities.ts",
+    "db:backfill:source-bindings": "tsx --tsconfig scripts/db/tsconfig.json scripts/db/backfill-source-bindings.ts"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",
