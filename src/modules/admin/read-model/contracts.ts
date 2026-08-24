@@ -182,6 +182,20 @@ export type AdminOutboxDTO = Readonly<{
   lastErrorAt: string | null;
   deadLetteredAt: string | null;
   createdAt: string;
+  deliveryId: string | null;
+  latestAttempt: Readonly<{
+    id: string;
+    provider: string;
+    providerMessageId: string | null;
+    status: "STARTED" | "ACCEPTED" | "FAILED_RETRYABLE" | "FAILED_TERMINAL";
+    errorCode: string | null;
+    attemptedAt: string;
+  }> | null;
+  actions: Readonly<{
+    canRetry: boolean;
+    canCancel: boolean;
+    canReconcileResend: boolean;
+  }>;
 }>;
 
 export type AdminDeliveryAttemptDTO = Readonly<{

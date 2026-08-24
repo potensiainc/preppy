@@ -2667,6 +2667,86 @@ export const notificationDeliveryAttempts = pgTable(
   ],
 );
 
+export const emailProviderEventProcessingStatusValues = [
+  "RECEIVED",
+  "PROCESSED",
+  "IGNORED",
+  "FAILED",
+] as const;
+
+export type EmailProviderEventProcessingStatus =
+  (typeof emailProviderEventProcessingStatusValues)[number];
+
+export const emailProviderEvents = pgTable(
+  "email_provider_events",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    provider: text("provider").notNull(),
+    providerEventId: text("provider_event_id").notNull(),
+    providerMessageId: text("provider_message_id"),
+    eventType: text("event_type").notNull(),
+    providerCreatedAt: timestamp("provider_created_at", { withTimezone: true }),
+    receivedAt: timestamp("received_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    processingStatus: text("processing_status")
+      .$type<EmailProviderEventProcessingStatus>()
+      .notNull()
+      .default("RECEIVED"),
+    processedAt: timestamp("processed_at", { withTimezone: true }),
+    payloadHash: text("payload_hash").notNull(),
+    safeErrorCode: text("safe_error_code"),
+    createdAt: createdAt(),
+  },
+  (table) => [
+    uniqueIndex("email_provider_events_provider_event_unique").on(
+      table.provider,
+      table.providerEventId,
+    ),
+    index("email_provider_events_provider_message_idx").on(
+      table.provider,
+      table.providerMessageId,
+    ),
+    index("email_provider_events_status_received_idx").on(
+      table.processingStatus,
+      table.receivedAt,
+    ),
+    check(
+      "email_provider_events_provider_check",
+      sql`length(${table.provider}) between 1 and 32 and ${table.provider} ~ '^[A-Z0-9_]+$'`,
+    ),
+    check(
+      "email_provider_events_provider_event_id_check",
+      sql`length(${table.providerEventId}) between 1 and 255 and ${table.providerEventId} ~ '^[!-~]+$'`,
+    ),
+    check(
+      "email_provider_events_provider_message_id_check",
+      sql`${table.providerMessageId} is null or (length(${table.providerMessageId}) between 1 and 255 and ${table.providerMessageId} ~ '^[!-~]+$')`,
+    ),
+    check(
+      "email_provider_events_event_type_check",
+      sql`length(${table.eventType}) between 1 and 128 and ${table.eventType} ~ '^[a-z0-9._-]+$'`,
+    ),
+    check(
+      "email_provider_events_processing_status_check",
+      sql`${table.processingStatus} in ('RECEIVED', 'PROCESSED', 'IGNORED', 'FAILED')`,
+    ),
+    check(
+      "email_provider_events_processing_lifecycle_check",
+      sql`(${table.processingStatus} = 'RECEIVED' and ${table.processedAt} is null)
+        or (${table.processingStatus} <> 'RECEIVED' and ${table.processedAt} is not null)`,
+    ),
+    check(
+      "email_provider_events_payload_hash_check",
+      sql`${table.payloadHash} ~ '^sha256:[a-f0-9]{64}$'`,
+    ),
+    check(
+      "email_provider_events_safe_error_code_check",
+      sql`${table.safeErrorCode} is null or (length(${table.safeErrorCode}) between 1 and 128 and ${table.safeErrorCode} ~ '^[A-Z0-9._:-]+$')`,
+    ),
+  ],
+);
+
 export const articleTypeValues = ["GUIDE", "UPDATE", "ROUNDUP"] as const;
 export type ArticleType = (typeof articleTypeValues)[number];
 

@@ -12,6 +12,8 @@ import type {
   RenderedEmailMessage,
   SendEmailResult,
 } from "@/src/modules/notification/email-sender";
+import { getResendSendConfig } from "@/src/modules/notification/resend-config.server";
+import { ResendEmailSender } from "@/src/modules/notification/resend-email-sender.server";
 import {
   parseWorkerCliArguments,
   type FakeWorkerOutcome,
@@ -56,10 +58,18 @@ class RepeatingFakeEmailSender implements EmailSender {
   }
 }
 
+class DisabledResendEmailSender implements EmailSender {
+  readonly provider = "RESEND";
+
+  async send(): Promise<SendEmailResult> {
+    throw new Error("Disabled Resend sender must not be called.");
+  }
+}
+
 export async function runWorkerCommand(arguments_: readonly string[]) {
   const cli = parseWorkerCliArguments(arguments_);
   if (!cli) return { exitCode: 2, output: "Invalid worker arguments." };
-  if (process.env.NODE_ENV === "production") {
+  if (process.env.NODE_ENV === "production" && "fakeOutcome" in cli) {
     return {
       exitCode: 2,
       output: "Fake sender mode is forbidden in production.",
@@ -69,6 +79,12 @@ export async function runWorkerCommand(arguments_: readonly string[]) {
   const sideEffects = getSideEffectEnv();
   const runtime = getRuntimeDatabase();
   try {
+    const sender: EmailSender =
+      "provider" in cli
+        ? sideEffects.EMAIL_SEND_ENABLED
+          ? new ResendEmailSender(getResendSendConfig())
+          : new DisabledResendEmailSender()
+        : new RepeatingFakeEmailSender(cli.fakeOutcome);
     const result = await runWorkerOnce(
       {
         enabled: sideEffects.WORKER_ENABLED,
@@ -80,7 +96,7 @@ export async function runWorkerCommand(arguments_: readonly string[]) {
       },
       {
         transactionManager: runtime.transactionManager,
-        sender: new RepeatingFakeEmailSender(cli.fakeOutcome),
+        sender,
         tracker: new NoopAnalyticsTracker(),
         ...(process.env.APP_BASE_URL === undefined
           ? {}

@@ -7,6 +7,7 @@ import {
   formatAdminCode,
   formatAdminDate,
 } from "@/app/admin/_components/read-ui";
+import { AdminOutboxActions } from "@/app/admin/_components/outbox-actions";
 import { getAdminExecutor } from "@/app/admin/_lib/admin-page.server";
 import type {
   AdminOutboxDTO,
@@ -30,7 +31,7 @@ export function AdminOutboxView({
       <AdminPageHeader
         kicker="Operations / Outbox"
         title="Outbox event ledger"
-        description="Inspection only. Canonical event state and bounded delivery pressure are visible; transitions are deferred to a later command boundary."
+        description="Inspect safe operational fields. Retry, Cancel, and Resend reconciliation appear only when the server projection proves that exact action eligible."
       />
       <section aria-labelledby="outbox-ledger-heading">
         <div className="admin-section-heading">
@@ -49,8 +50,10 @@ export function AdminOutboxView({
                 <th scope="col">Aggregate</th>
                 <th scope="col">Status</th>
                 <th scope="col">Attempts</th>
+                <th scope="col">Provider attempt</th>
                 <th scope="col">Safe failure</th>
                 <th scope="col">Timing</th>
+                <th scope="col">Safe actions</th>
               </tr>
             </thead>
             <tbody>
@@ -68,12 +71,32 @@ export function AdminOutboxView({
                   <td>
                     {item.attemptCount} / {item.maxAttempts ?? "unbounded"}
                   </td>
+                  <td>
+                    {item.latestAttempt === null ? (
+                      "None"
+                    ) : (
+                      <>
+                        {formatAdminCode(item.latestAttempt.provider)} ·{" "}
+                        {formatAdminCode(item.latestAttempt.status)}
+                        <span className="admin-cell-note">
+                          Attempt {item.latestAttempt.id}
+                        </span>
+                        <span className="admin-cell-note">
+                          Provider message{" "}
+                          {item.latestAttempt.providerMessageId ?? "None"}
+                        </span>
+                      </>
+                    )}
+                  </td>
                   <td>{item.errorCode ?? "None"}</td>
                   <td>
                     Available {formatAdminDate(item.availableAt)}
                     <span className="admin-cell-note">
                       Dead letter {formatAdminDate(item.deadLetteredAt)}
                     </span>
+                  </td>
+                  <td>
+                    <AdminOutboxActions item={item} />
                   </td>
                 </tr>
               ))}

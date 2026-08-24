@@ -37,7 +37,7 @@ export function AdminOperationsView({ health }: { health: AdminHealthDTO }) {
       <AdminPageHeader
         kicker="Inspection / Operations"
         title="Operations control room"
-        description="A read-only view of canonical operational state. Inspection only: state transitions remain deferred until hardened application commands exist."
+        description="Inspect canonical operational state and use only server-approved, event-aware commands. Ambiguous provider results require explicit reconciliation."
       />
       <section aria-labelledby="operations-status-heading">
         <div className="admin-section-heading">
@@ -70,7 +70,7 @@ export function AdminOperationsView({ health }: { health: AdminHealthDTO }) {
       <section aria-labelledby="operations-ledgers-heading">
         <div className="admin-section-heading">
           <h2 id="operations-ledgers-heading">Inspection ledgers</h2>
-          <AdminStateChip>Read only</AdminStateChip>
+          <AdminStateChip>Command guarded</AdminStateChip>
         </div>
         <div className="admin-action-grid">
           {operationsLinks.map((item) => (

@@ -7,13 +7,16 @@ export const fakeWorkerOutcomeValues = [
 
 export type FakeWorkerOutcome = (typeof fakeWorkerOutcomeValues)[number];
 
-export type WorkerCliArguments = Readonly<{
+type WorkerCliBase = Readonly<{
   once: true;
-  fakeOutcome: FakeWorkerOutcome;
   workerId: string;
   batchSize: number;
   leaseDurationMs: number;
 }>;
+
+export type WorkerCliArguments =
+  | (WorkerCliBase & Readonly<{ fakeOutcome: FakeWorkerOutcome }>)
+  | (WorkerCliBase & Readonly<{ provider: "RESEND" }>);
 
 function integer(value: string | undefined) {
   if (!value || !/^[1-9]\d*$/.test(value)) return null;
@@ -33,9 +36,13 @@ export function parseWorkerCliArguments(
     const key = argument.slice(0, separator);
     const value = argument.slice(separator + 1);
     if (
-      !["--fake-outcome", "--worker-id", "--batch", "--lease-ms"].includes(
-        key,
-      ) ||
+      ![
+        "--fake-outcome",
+        "--provider",
+        "--worker-id",
+        "--batch",
+        "--lease-ms",
+      ].includes(key) ||
       values.has(key)
     ) {
       return null;
@@ -43,17 +50,24 @@ export function parseWorkerCliArguments(
     values.set(key, value);
   }
   const fakeOutcome = values.get("--fake-outcome");
-  if (!fakeWorkerOutcomeValues.some((candidate) => candidate === fakeOutcome)) {
+  const provider = values.get("--provider");
+  const fakeMode = fakeWorkerOutcomeValues.some(
+    (candidate) => candidate === fakeOutcome,
+  );
+  const resendMode = provider === "resend";
+  if (fakeMode === resendMode || (provider !== undefined && !resendMode)) {
     return null;
   }
   const batchSize = integer(values.get("--batch") ?? "10");
   const leaseDurationMs = integer(values.get("--lease-ms") ?? "300000");
   if (!batchSize || !leaseDurationMs) return null;
-  return {
+  const base = {
     once: true,
-    fakeOutcome: fakeOutcome as FakeWorkerOutcome,
     workerId: values.get("--worker-id") ?? `worker-${process.pid}`,
     batchSize,
     leaseDurationMs,
-  };
+  } as const;
+  return resendMode
+    ? { ...base, provider: "RESEND" }
+    : { ...base, fakeOutcome: fakeOutcome as FakeWorkerOutcome };
 }

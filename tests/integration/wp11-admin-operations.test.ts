@@ -326,6 +326,13 @@ describe("WP-11 Admin Operations projections", () => {
         lastErrorAt: now.toISOString(),
         deadLetteredAt: now.toISOString(),
         createdAt: now.toISOString(),
+        deliveryId: null,
+        latestAttempt: null,
+        actions: {
+          canRetry: false,
+          canCancel: false,
+          canReconcileResend: false,
+        },
       });
       expect(Object.keys(deliveries.items[0]!).sort()).toEqual(
         [

@@ -13,7 +13,15 @@ export type OutboxEventPayloadMap = {
     readonly policyVersion: string;
     readonly signalPublishedAt: string;
   };
-  DELIVERY_EMAIL_SEND: { readonly deliveryId: string };
+  DELIVERY_EMAIL_SEND: {
+    readonly deliveryId: string;
+    readonly providerRequest?: Readonly<{
+      provider: "RESEND";
+      version: 1;
+      idempotencyKey: string;
+      payloadHash: string;
+    }>;
+  };
 };
 
 const UUID_PATTERN =
@@ -27,18 +35,45 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return prototype === Object.prototype || prototype === null;
 }
 
-function hasExactUuidKey(
-  value: unknown,
-  key: "opportunityChangeId" | "deliveryId",
-): value is Record<typeof key, string> {
-  if (!isRecord(value)) return false;
-  const keys = Object.keys(value);
-  return (
-    keys.length === 1 &&
-    keys[0] === key &&
-    typeof value[key] === "string" &&
-    UUID_PATTERN.test(value[key])
-  );
+function parseDeliveryPayload(value: unknown) {
+  if (!isRecord(value)) return null;
+  const keys = Object.keys(value).sort().join("|");
+  if (
+    (keys !== "deliveryId" && keys !== "deliveryId|providerRequest") ||
+    typeof value.deliveryId !== "string" ||
+    !UUID_PATTERN.test(value.deliveryId)
+  ) {
+    return null;
+  }
+  if (keys === "deliveryId") return { deliveryId: value.deliveryId };
+  const request = value.providerRequest;
+  if (
+    !isRecord(request) ||
+    Object.keys(request).sort().join("|") !==
+      "idempotencyKey|payloadHash|provider|version"
+  ) {
+    return null;
+  }
+  if (
+    request.provider !== "RESEND" ||
+    request.version !== 1 ||
+    typeof request.idempotencyKey !== "string" ||
+    request.idempotencyKey !== `preppy-delivery/${value.deliveryId}/v1` ||
+    request.idempotencyKey.length > 256 ||
+    typeof request.payloadHash !== "string" ||
+    !/^sha256:[a-f0-9]{64}$/.test(request.payloadHash)
+  ) {
+    return null;
+  }
+  return {
+    deliveryId: value.deliveryId,
+    providerRequest: {
+      provider: "RESEND" as const,
+      version: 1 as const,
+      idempotencyKey: request.idempotencyKey,
+      payloadHash: request.payloadHash,
+    },
+  };
 }
 
 function parseOpportunityChangePayload(value: unknown) {
@@ -96,9 +131,7 @@ export function parseOutboxPayload(
     return parseOpportunityChangePayload(value);
   }
   if (eventType === "DELIVERY_EMAIL_SEND") {
-    return hasExactUuidKey(value, "deliveryId")
-      ? { deliveryId: value.deliveryId }
-      : null;
+    return parseDeliveryPayload(value);
   }
   return null;
 }

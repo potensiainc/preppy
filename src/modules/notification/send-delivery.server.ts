@@ -29,6 +29,7 @@ const WORKER_ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/;
 const PROVIDER_PATTERN = /^[A-Z][A-Z0-9_]{0,63}$/;
 const ERROR_CODE_PATTERN = /^[A-Z0-9][A-Z0-9._:-]{0,127}$/;
 const PROVIDER_MESSAGE_ID_PATTERN = /^[\x21-\x7e]{1,255}$/;
+const REQUEST_HASH_PATTERN = /^sha256:[a-f0-9]{64}$/;
 
 type ProcessEmailDeliveryInput = Readonly<{
   eventId: string;
@@ -91,7 +92,12 @@ function safeResult(
     } else if (
       (result.kind === "RETRYABLE_FAILURE" ||
         result.kind === "TERMINAL_FAILURE") &&
-      ERROR_CODE_PATTERN.test(result.errorCode)
+      ERROR_CODE_PATTERN.test(result.errorCode) &&
+      (result.kind !== "RETRYABLE_FAILURE" ||
+        result.retryAfterMs === undefined ||
+        (Number.isSafeInteger(result.retryAfterMs) &&
+          result.retryAfterMs >= 1 &&
+          result.retryAfterMs <= 300_000))
     ) {
       return result;
     }
@@ -205,6 +211,63 @@ export async function processEmailDelivery(
       where notification_delivery_id=${input.deliveryId}
     `)) as unknown as Array<{ attemptNumber: number }>;
     const attemptNumber = number?.attemptNumber ?? 1;
+    const message = renderOpportunityChangeEmail(
+      {
+        to: eligibility.emailNormalized,
+        notificationId: eligibility.notificationId,
+        deliveryId: input.deliveryId,
+        institutionName: eligibility.institutionName,
+        opportunityTitle: eligibility.opportunityTitle,
+        changeSummary: eligibility.changeSummary,
+        deepLinkPath: eligibility.deepLinkPath,
+      },
+      dependencies.appBaseUrl === undefined
+        ? {}
+        : { appBaseUrl: dependencies.appBaseUrl },
+    );
+    const sendContext = { deliveryId: input.deliveryId, attemptNumber };
+    const requestIdentity = dependencies.sender.describeRequest?.(
+      message,
+      sendContext,
+    );
+    if (requestIdentity !== undefined) {
+      if (
+        requestIdentity.provider !== dependencies.sender.provider ||
+        requestIdentity.version !== 1 ||
+        requestIdentity.idempotencyKey.length > 256 ||
+        !REQUEST_HASH_PATTERN.test(requestIdentity.payloadHash) ||
+        !REQUEST_HASH_PATTERN.test(requestIdentity.recipientHash)
+      ) {
+        throw ValidationError.invalidRequest();
+      }
+      const safePayload = JSON.stringify({
+        deliveryId: input.deliveryId,
+        providerRequest: {
+          provider: requestIdentity.provider,
+          version: requestIdentity.version,
+          idempotencyKey: requestIdentity.idempotencyKey,
+          payloadHash: requestIdentity.payloadHash,
+        },
+      });
+      const [deliveryIdentity] = (await executor.raw(sql`
+        update notification_deliveries
+        set recipient_hash=${requestIdentity.recipientHash}
+        where id=${input.deliveryId}
+          and (recipient_hash is null or recipient_hash=${requestIdentity.recipientHash})
+        returning id
+      `)) as unknown as Array<{ id: string }>;
+      const [eventIdentity] = (await executor.raw(sql`
+        update outbox_events
+        set payload=${safePayload}::jsonb
+        where id=${input.eventId}
+          and (
+            payload=${JSON.stringify({ deliveryId: input.deliveryId })}::jsonb
+            or payload=${safePayload}::jsonb
+          )
+        returning id
+      `)) as unknown as Array<{ id: string }>;
+      if (!deliveryIdentity || !eventIdentity) throw new ConflictError();
+    }
     const [attempt] = (await executor.raw(sql`
       insert into notification_delivery_attempts(
         notification_delivery_id, attempt_number, provider, attempt_status,
@@ -222,20 +285,7 @@ export async function processEmailDelivery(
       attemptNumber,
       notificationId: eligibility.notificationId,
       opportunityId: eligibility.opportunityId,
-      message: renderOpportunityChangeEmail(
-        {
-          to: eligibility.email,
-          notificationId: eligibility.notificationId,
-          deliveryId: input.deliveryId,
-          institutionName: eligibility.institutionName,
-          opportunityTitle: eligibility.opportunityTitle,
-          changeSummary: eligibility.changeSummary,
-          deepLinkPath: eligibility.deepLinkPath,
-        },
-        dependencies.appBaseUrl === undefined
-          ? {}
-          : { appBaseUrl: dependencies.appBaseUrl },
-      ),
+      message,
     } satisfies PreparedSend;
   });
 
@@ -329,7 +379,8 @@ export async function processEmailDelivery(
           workerId: input.workerId,
           now: input.now,
           availableAt: new Date(
-            input.now.getTime() + retryDelayMs(event.attemptCount),
+            input.now.getTime() +
+              (providerResult.retryAfterMs ?? retryDelayMs(event.attemptCount)),
           ),
           errorCode: providerResult.errorCode,
         });

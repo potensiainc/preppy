@@ -90,8 +90,8 @@ const warnings = {
   ],
 };
 
-describe("WP-11 read-only Operations UI", () => {
-  it("renders bounded inspection pages with no mutation affordance or PII", async () => {
+describe("WP-11/WP-12B Operations UI", () => {
+  it("renders bounded inspection pages with only server-projected actions and no PII", async () => {
     const pages = await importPages();
     expect(pages).not.toBeNull();
     if (!pages) return;
@@ -118,6 +118,13 @@ describe("WP-11 read-only Operations UI", () => {
                 lastErrorAt: health.checkedAt,
                 deadLetteredAt: health.checkedAt,
                 createdAt: health.checkedAt,
+                deliveryId: null,
+                latestAttempt: null,
+                actions: {
+                  canRetry: false,
+                  canCancel: false,
+                  canReconcileResend: false,
+                },
               },
             ],
             pagination,
@@ -220,11 +227,19 @@ describe("WP-11 read-only Operations UI", () => {
     expect(markup).not.toMatch(/<button|<form|secret|sql|stack/i);
   });
 
-  it("has no Operations API handlers, mutation imports, or public health-route drift", async () => {
+  it("has only the explicit Operations command handlers and no public health-route drift", async () => {
     const apiFiles = await filesBelow(
       resolve(repositoryRoot, "app/api/admin/operations"),
     );
-    expect(apiFiles).toEqual([]);
+    expect(
+      apiFiles
+        .map((path) => path.slice(repositoryRoot.length).replaceAll("\\", "/"))
+        .sort(),
+    ).toEqual([
+      "/app/api/admin/operations/deliveries/[deliveryId]/reconcile-resend/route.ts",
+      "/app/api/admin/operations/outbox/[eventId]/cancel/route.ts",
+      "/app/api/admin/operations/outbox/[eventId]/retry/route.ts",
+    ]);
 
     for (const path of [
       "src/modules/admin/read-model/operations-query.server.ts",

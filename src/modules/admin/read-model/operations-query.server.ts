@@ -131,6 +131,11 @@ function safeIdentifierOutput(value: string): string {
   return IDENTIFIER.test(value) ? value : "INVALID_IDENTIFIER";
 }
 
+function safeProviderMessageId(value: string | null): string | null {
+  if (value === null) return null;
+  return /^[\x21-\x7e]{1,256}$/.test(value) ? value : null;
+}
+
 function page<T>(
   items: readonly T[],
   input: Readonly<{ page: number; pageSize: number }>,
@@ -180,6 +185,66 @@ export async function listAdminOutbox(
         lastErrorAt: outboxEvents.lastErrorAt,
         deadLetteredAt: outboxEvents.deadLetteredAt,
         createdAt: outboxEvents.createdAt,
+        payloadHasResendIdentity: sql<boolean>`coalesce(
+          ${outboxEvents.payload} #>> '{providerRequest,provider}' = 'RESEND', false)`,
+        deliveryId: sql<string | null>`case
+          when ${outboxEvents.eventType}='DELIVERY_EMAIL_SEND'
+            and ${outboxEvents.aggregateType}='NOTIFICATION_DELIVERY'
+          then ${outboxEvents.aggregateId}::text else null end`,
+        deliveryStatus: sql<string | null>`(
+          select delivery.status from notification_deliveries delivery
+          where delivery.id=${outboxEvents.aggregateId}
+            and ${outboxEvents.eventType}='DELIVERY_EMAIL_SEND'
+        )`,
+        attemptId: sql<string | null>`(
+          select attempt.id::text from notification_delivery_attempts attempt
+          where attempt.notification_delivery_id=${outboxEvents.aggregateId}
+            and ${outboxEvents.eventType}='DELIVERY_EMAIL_SEND'
+          order by attempt.attempt_number desc limit 1
+        )`,
+        attemptProvider: sql<string | null>`(
+          select left(attempt.provider, 65) from notification_delivery_attempts attempt
+          where attempt.notification_delivery_id=${outboxEvents.aggregateId}
+            and ${outboxEvents.eventType}='DELIVERY_EMAIL_SEND'
+          order by attempt.attempt_number desc limit 1
+        )`,
+        providerMessageId: sql<string | null>`(
+          select left(attempt.provider_message_id, 256)
+          from notification_delivery_attempts attempt
+          where attempt.notification_delivery_id=${outboxEvents.aggregateId}
+            and ${outboxEvents.eventType}='DELIVERY_EMAIL_SEND'
+          order by attempt.attempt_number desc limit 1
+        )`,
+        attemptStatus: sql<string | null>`(
+          select attempt.attempt_status from notification_delivery_attempts attempt
+          where attempt.notification_delivery_id=${outboxEvents.aggregateId}
+            and ${outboxEvents.eventType}='DELIVERY_EMAIL_SEND'
+          order by attempt.attempt_number desc limit 1
+        )`,
+        attemptErrorCode: sql<string | null>`(
+          select left(attempt.error_code, 129) from notification_delivery_attempts attempt
+          where attempt.notification_delivery_id=${outboxEvents.aggregateId}
+            and ${outboxEvents.eventType}='DELIVERY_EMAIL_SEND'
+          order by attempt.attempt_number desc limit 1
+        )`,
+        attemptedAt: sql<Date | string | null>`(
+          select attempt.attempted_at from notification_delivery_attempts attempt
+          where attempt.notification_delivery_id=${outboxEvents.aggregateId}
+            and ${outboxEvents.eventType}='DELIVERY_EMAIL_SEND'
+          order by attempt.attempt_number desc limit 1
+        )`,
+        startedAttempts: sql<number>`(
+          select count(*)::int from notification_delivery_attempts attempt
+          where attempt.notification_delivery_id=${outboxEvents.aggregateId}
+            and attempt.attempt_status='STARTED'
+            and ${outboxEvents.eventType}='DELIVERY_EMAIL_SEND'
+        )`,
+        acceptedAttempts: sql<number>`(
+          select count(*)::int from notification_delivery_attempts attempt
+          where attempt.notification_delivery_id=${outboxEvents.aggregateId}
+            and attempt.attempt_status='ACCEPTED'
+            and ${outboxEvents.eventType}='DELIVERY_EMAIL_SEND'
+        )`,
       })
       .from(outboxEvents)
       .where(where)
@@ -191,21 +256,79 @@ export async function listAdminOutbox(
       .from(outboxEvents)
       .where(where),
   ]);
-  const items = rows.map((row) => ({
-    id: row.id,
-    eventType: safeIdentifierOutput(row.eventType),
-    aggregateType: safeIdentifierOutput(row.aggregateType),
-    aggregateId: row.aggregateId,
-    status: row.status as AdminOutboxDTO["status"],
-    availableAt: iso(row.availableAt)!,
-    processedAt: iso(row.processedAt),
-    attemptCount: row.attemptCount,
-    maxAttempts: row.maxAttempts,
-    errorCode: row.lastErrorCode,
-    lastErrorAt: iso(row.lastErrorAt),
-    deadLetteredAt: iso(row.deadLetteredAt),
-    createdAt: iso(row.createdAt)!,
-  }));
+  const now = Date.now();
+  const items = rows.map((row) => {
+    const eventType = safeIdentifierOutput(row.eventType);
+    const aggregateType = safeIdentifierOutput(row.aggregateType);
+    const status = row.status as AdminOutboxDTO["status"];
+    const mutableStatus = ["PENDING", "FAILED", "DEAD_LETTER"].includes(status);
+    const failedStatus = ["FAILED", "DEAD_LETTER"].includes(status);
+    const isResolver =
+      eventType === "OPPORTUNITY_CHANGE_PUBLISHED" &&
+      aggregateType === "OPPORTUNITY_CHANGE";
+    const isEmail =
+      eventType === "DELIVERY_EMAIL_SEND" &&
+      aggregateType === "NOTIFICATION_DELIVERY";
+    const attemptStatus = row.attemptStatus as
+      "STARTED" | "ACCEPTED" | "FAILED_RETRYABLE" | "FAILED_TERMINAL" | null;
+    const attemptedAt = iso(row.attemptedAt);
+    const withinResendWindow =
+      attemptedAt !== null &&
+      now >= new Date(attemptedAt).getTime() &&
+      now < new Date(attemptedAt).getTime() + 24 * 60 * 60 * 1_000;
+    const hasPossibleAcceptance =
+      row.startedAttempts > 0 || row.acceptedAttempts > 0;
+    const canReconcileResend =
+      isEmail &&
+      status === "FAILED" &&
+      attemptStatus === "STARTED" &&
+      row.attemptProvider === "RESEND" &&
+      safeErrorCode(row.attemptErrorCode) === "PROVIDER_RESULT_UNKNOWN" &&
+      withinResendWindow;
+    const canRetry =
+      (isResolver && failedStatus) ||
+      (isEmail &&
+        failedStatus &&
+        !hasPossibleAcceptance &&
+        row.payloadHasResendIdentity &&
+        row.attemptProvider === "RESEND" &&
+        attemptStatus === "FAILED_RETRYABLE" &&
+        withinResendWindow &&
+        ["QUEUED", "FAILED"].includes(row.deliveryStatus ?? ""));
+    const canCancel =
+      mutableStatus && (isResolver || (isEmail && !hasPossibleAcceptance));
+    return {
+      id: row.id,
+      eventType,
+      aggregateType,
+      aggregateId: row.aggregateId,
+      status,
+      availableAt: iso(row.availableAt)!,
+      processedAt: iso(row.processedAt),
+      attemptCount: row.attemptCount,
+      maxAttempts: row.maxAttempts,
+      errorCode: safeErrorCode(row.lastErrorCode),
+      lastErrorAt: iso(row.lastErrorAt),
+      deadLetteredAt: iso(row.deadLetteredAt),
+      createdAt: iso(row.createdAt)!,
+      deliveryId: row.deliveryId,
+      latestAttempt:
+        row.attemptId === null ||
+        row.attemptProvider === null ||
+        attemptStatus === null ||
+        attemptedAt === null
+          ? null
+          : {
+              id: row.attemptId,
+              provider: safeIdentifierOutput(row.attemptProvider),
+              providerMessageId: safeProviderMessageId(row.providerMessageId),
+              status: attemptStatus,
+              errorCode: safeErrorCode(row.attemptErrorCode),
+              attemptedAt,
+            },
+      actions: { canRetry, canCancel, canReconcileResend },
+    } satisfies AdminOutboxDTO;
+  });
   return page(items, input, totals[0]?.total ?? 0);
 }
 

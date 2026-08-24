@@ -112,4 +112,32 @@ describe("WP-12A bounded worker runner", () => {
       parseWorkerCliArguments(["--once", "--fake-outcome=LIVE_PROVIDER"]),
     ).toBeNull();
   });
+
+  it("parses an explicit Resend mode without accepting mixed fake policy", () => {
+    expect(
+      parseWorkerCliArguments([
+        "--once",
+        "--provider=resend",
+        "--worker-id=worker-live",
+        "--batch=5",
+        "--lease-ms=300000",
+      ]),
+    ).toEqual({
+      once: true,
+      provider: "RESEND",
+      workerId: "worker-live",
+      batchSize: 5,
+      leaseDurationMs: 300_000,
+    });
+    expect(
+      parseWorkerCliArguments([
+        "--once",
+        "--provider=resend",
+        "--fake-outcome=ACCEPTED",
+      ]),
+    ).toBeNull();
+    expect(
+      parseWorkerCliArguments(["--once", "--provider=automatic"]),
+    ).toBeNull();
+  });
 });

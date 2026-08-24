@@ -8,6 +8,7 @@ import type { TransactionExecutor } from "@/src/infrastructure/db/runtime.server
 export type EligibleDelivery = Readonly<{
   eligible: true;
   email: string;
+  emailNormalized: string;
   notificationId: string;
   opportunityId: string;
   institutionName: string;
@@ -32,6 +33,7 @@ type EligibilityRow = {
   userStatus: string;
   followStatus: string | null;
   email: string | null;
+  emailNormalized: string | null;
   verificationState: string | null;
   deliveryState: string | null;
   removedAt: Date | string | null;
@@ -54,6 +56,7 @@ export async function evaluateDeliveryEligibility(
       identity.status as "userStatus",
       follow.status as "followStatus",
       email.email,
+      email.email_normalized as "emailNormalized",
       email.verification_state as "verificationState",
       email.delivery_state as "deliveryState",
       email.removed_at as "removedAt",
@@ -98,6 +101,7 @@ export async function evaluateDeliveryEligibility(
   }
   if (
     row.email === null ||
+    row.emailNormalized === null ||
     row.verificationState !== "VERIFIED" ||
     row.removedAt !== null ||
     row.deliveryState === "REMOVED"
@@ -116,6 +120,7 @@ export async function evaluateDeliveryEligibility(
   return {
     eligible: true,
     email: row.email,
+    emailNormalized: row.emailNormalized,
     notificationId: row.notificationId,
     opportunityId: row.opportunityId,
     institutionName: row.institutionName,
