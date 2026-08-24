@@ -20,9 +20,6 @@ const databaseEnvSchema = z.object({
 
 const serverEnvSchema = databaseEnvSchema.extend({
   APP_BASE_URL: urlWithProtocols(["http:", "https:"]),
-  ADMIN_AUTH_ISSUER: urlWithProtocols(["http:", "https:"]),
-  ADMIN_AUTH_CLIENT_ID: z.string().min(1),
-  ADMIN_AUTH_CLIENT_SECRET: z.string().min(32),
 });
 
 export type ServerEnv = z.infer<typeof serverEnvSchema>;

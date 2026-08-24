@@ -1,17 +1,15 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { parseDatabaseEnv, parseServerEnv } from "@/src/config/env";
+import type { AdminAuthConfig } from "@/src/modules/admin/auth/config.server";
 
 const validEnv = {
   DATABASE_URL: "postgres://user:password@localhost:5432/admissionradar",
   APP_BASE_URL: "http://localhost:3000",
-  ADMIN_AUTH_ISSUER: "https://identity.example.com",
-  ADMIN_AUTH_CLIENT_ID: "admissionradar-local",
-  ADMIN_AUTH_CLIENT_SECRET: "a-secure-local-secret-that-is-long-enough",
 };
 
 describe("parseServerEnv", () => {
-  it("returns typed server configuration for a valid environment", () => {
+  it("parses generic server configuration without Admin OIDC settings", () => {
     expect(parseServerEnv(validEnv)).toEqual(validEnv);
   });
 
@@ -45,10 +43,14 @@ describe("parseServerEnv", () => {
     ).toThrow(/APP_BASE_URL/);
   });
 
-  it("rejects an undersized admin client secret", () => {
-    expect(() =>
-      parseServerEnv({ ...validEnv, ADMIN_AUTH_CLIENT_SECRET: "short" }),
-    ).toThrow(/ADMIN_AUTH_CLIENT_SECRET/);
+  it("does not eagerly validate Admin capability settings", () => {
+    expect(
+      parseServerEnv({
+        ...validEnv,
+        ADMIN_AUTH_ISSUER: "not-an-issuer",
+        ADMIN_AUTH_CLIENT_SECRET: "short",
+      }),
+    ).toEqual(validEnv);
   });
 });
 
@@ -57,5 +59,37 @@ describe("parseDatabaseEnv", () => {
     expect(parseDatabaseEnv({ DATABASE_URL: validEnv.DATABASE_URL })).toEqual({
       DATABASE_URL: validEnv.DATABASE_URL,
     });
+  });
+});
+
+describe("environment capability isolation", () => {
+  it("allows public server modules to import without Admin OIDC settings", async () => {
+    const adminNames = [
+      "ADMIN_AUTH_ISSUER",
+      "ADMIN_AUTH_CLIENT_ID",
+      "ADMIN_AUTH_CLIENT_SECRET",
+      "ADMIN_SESSION_SECRET",
+      "ADMIN_OIDC_FLOW_SECRET",
+    ] as const;
+    const previousValues = Object.fromEntries(
+      adminNames.map((name) => [name, process.env[name]]),
+    );
+    for (const name of adminNames) delete process.env[name];
+
+    try {
+      const publicModule = await import("@/src/modules/public/indexability");
+
+      expect(publicModule.getIndexability).toBeTypeOf("function");
+    } finally {
+      for (const name of adminNames) {
+        const previous = previousValues[name];
+        if (previous === undefined) delete process.env[name];
+        else process.env[name] = previous;
+      }
+    }
+  });
+
+  it("keeps type-only Admin configuration imports runtime-inert", () => {
+    expectTypeOf<AdminAuthConfig["redirectUri"]>().toEqualTypeOf<string>();
   });
 });

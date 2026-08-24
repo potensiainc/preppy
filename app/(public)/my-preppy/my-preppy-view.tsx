@@ -4,7 +4,7 @@ import {
   formatPublicDate,
   opportunityStateLabel,
 } from "@/app/_lib/presentation";
-import { UnfollowControl } from "@/app/my-preppy/unfollow-control";
+import { UnfollowControl } from "@/app/(public)/my-preppy/unfollow-control";
 import type {
   MyPreppyData,
   MyPreppyOpportunitySummary,

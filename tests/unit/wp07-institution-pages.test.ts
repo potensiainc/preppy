@@ -210,11 +210,14 @@ describe("WP-07 Institution pages", () => {
     // Mutation caught: raw database/REST/client fetching, bypassing canonical not-found mapping, or retaining anchors for known internal routes.
     const [listRoute, detailRoute, cards, primitives] = await Promise.all([
       readFile(
-        new URL("../../app/institutions/page.tsx", import.meta.url),
+        new URL("../../app/(public)/institutions/page.tsx", import.meta.url),
         "utf8",
       ),
       readFile(
-        new URL("../../app/institutions/[slug]/page.tsx", import.meta.url),
+        new URL(
+          "../../app/(public)/institutions/[slug]/page.tsx",
+          import.meta.url,
+        ),
         "utf8",
       ),
       readFile(

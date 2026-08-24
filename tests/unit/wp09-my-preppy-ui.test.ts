@@ -5,11 +5,11 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
 import { AuthControlPresentation } from "@/app/_components/auth-control";
-import { MyPreppyView } from "@/app/my-preppy/my-preppy-view";
+import { MyPreppyView } from "@/app/(public)/my-preppy/my-preppy-view";
 import {
   runMyPreppyUnfollow,
   UnfollowPresentation,
-} from "@/app/my-preppy/unfollow-control";
+} from "@/app/(public)/my-preppy/unfollow-control";
 
 const institutionId = "550e8400-e29b-41d4-a716-446655440000";
 
@@ -27,7 +27,7 @@ function emptyData() {
 describe("WP-09 My Preppy UI and private route", () => {
   it("locks private dynamic/no-store/noindex/nofollow route metadata and auth routing", async () => {
     const source = await readFile(
-      new URL("../../app/my-preppy/page.tsx", import.meta.url),
+      new URL("../../app/(public)/my-preppy/page.tsx", import.meta.url),
       "utf8",
     );
     expect(source).toContain('export const dynamic = "force-dynamic"');
@@ -210,9 +210,9 @@ describe("WP-09 My Preppy UI and private route", () => {
       [
         "../../src/modules/my-preppy/query.server.ts",
         "../../src/modules/my-preppy/runtime.server.ts",
-        "../../app/my-preppy/page.tsx",
-        "../../app/my-preppy/my-preppy-view.tsx",
-        "../../app/my-preppy/unfollow-control.tsx",
+        "../../app/(public)/my-preppy/page.tsx",
+        "../../app/(public)/my-preppy/my-preppy-view.tsx",
+        "../../app/(public)/my-preppy/unfollow-control.tsx",
       ].map((path) => readFile(new URL(path, import.meta.url), "utf8")),
     );
     const joined = sources.join("\n");

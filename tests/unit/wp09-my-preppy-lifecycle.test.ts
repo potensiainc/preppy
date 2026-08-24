@@ -4,7 +4,7 @@ import { resolve } from "node:path";
 import { describe, expect, it, vi } from "vitest";
 
 import { runLogout } from "@/app/_components/auth-control";
-import { runMyPreppyUnfollow } from "@/app/my-preppy/unfollow-control";
+import { runMyPreppyUnfollow } from "@/app/(public)/my-preppy/unfollow-control";
 
 const institutionId = "550e8400-e29b-41d4-a716-446655440000";
 
@@ -15,7 +15,7 @@ describe("WP-09 private lifecycle transitions", () => {
       "utf8",
     );
     const unfollowSource = readFileSync(
-      resolve(process.cwd(), "app/my-preppy/unfollow-control.tsx"),
+      resolve(process.cwd(), "app/(public)/my-preppy/unfollow-control.tsx"),
       "utf8",
     );
 

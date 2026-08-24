@@ -7,12 +7,11 @@ export default function GlobalError({
   reset: () => void;
 }>) {
   return (
-    <section className="status-surface" role="alert">
-      <p className="eyebrow">PREPPY</p>
-      <h1>정보를 불러오는 중 잠시 문제가 생겼습니다.</h1>
-      <p>잠시 후 다시 시도해 주세요.</p>
+    <section lang="en" role="alert" aria-labelledby="root-error-heading">
+      <h1 id="root-error-heading">Unable to display this page</h1>
+      <p>Try again, or return to the previous page.</p>
       <button type="button" onClick={reset}>
-        다시 시도
+        Try again
       </button>
     </section>
   );

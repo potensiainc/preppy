@@ -232,11 +232,14 @@ describe("WP-07 Opportunity and Article detail pages", () => {
     // Mutation caught: raw DB/REST/client access, bypassing canonical not-found handling, or reading unsafe HTML in the renderer.
     const [opportunityRoute, articleRoute, viewSource] = await Promise.all([
       readFile(
-        new URL("../../app/opportunities/[slug]/page.tsx", import.meta.url),
+        new URL(
+          "../../app/(public)/opportunities/[slug]/page.tsx",
+          import.meta.url,
+        ),
         "utf8",
       ),
       readFile(
-        new URL("../../app/articles/[slug]/page.tsx", import.meta.url),
+        new URL("../../app/(public)/articles/[slug]/page.tsx", import.meta.url),
         "utf8",
       ),
       readFile(

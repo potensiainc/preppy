@@ -18,7 +18,11 @@ import {
 import { assertSameOriginForMutation } from "@/src/modules/auth/origin.server";
 import { ProcessLocalRateLimiter } from "@/src/modules/auth/rate-limit.server";
 import { isSafeRedirectPath } from "@/src/modules/auth/safe-redirect";
-import { secureCookieAttributes } from "@/src/modules/auth/secure-cookie.server";
+import {
+  openSecureCookie,
+  sealSecureCookie,
+  secureCookieAttributes,
+} from "@/src/modules/auth/secure-cookie.server";
 
 const stateSecret = "state-secret-that-is-at-least-thirty-two-characters";
 const followSecret = "follow-secret-that-is-at-least-thirty-two-characters";
@@ -141,6 +145,25 @@ describe("auth cookie contracts", () => {
       path: "/",
       maxAge: 60,
     });
+  });
+
+  it("preserves the consumer payload-only secure-cookie opener contract", () => {
+    // Mutation caught: exposing envelope metadata through the existing consumer-facing opener result.
+    const payload = { version: 1, consumerValue: "unchanged" };
+    const token = sealSecureCookie(payload, {
+      purpose: "consumer-regression",
+      secret: stateSecret,
+      ttlSeconds: 60,
+      now,
+    });
+
+    expect(
+      openSecureCookie(token, {
+        purpose: "consumer-regression",
+        secret: stateSecret,
+        now,
+      }),
+    ).toEqual(payload);
   });
 });
 

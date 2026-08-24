@@ -7,7 +7,7 @@ import { describe, expect, it } from "vitest";
 import { FollowCta } from "@/app/_components/follow-cta";
 import { InstitutionDetailView } from "@/app/_components/institution-pages";
 import { ArticleDetailView } from "@/app/_components/opportunity-article-pages";
-import { OnboardingForm } from "@/app/onboarding/onboarding-form";
+import { OnboardingForm } from "@/app/(public)/onboarding/onboarding-form";
 import type { InstitutionDetailDTO } from "@/src/modules/public/dto";
 
 const institutionId = "550e8400-e29b-41d4-a716-446655440000";
@@ -243,7 +243,10 @@ describe("WP-08 auth-aware public UI", () => {
   it("keeps expected onboarding failures in the controlled form with accessible Korean recovery guidance", async () => {
     // Mutation caught: native-navigation to raw JSON on 400/401/409 or omitting stale-policy recovery.
     const source = await readFile(
-      new URL("../../app/onboarding/onboarding-form.tsx", import.meta.url),
+      new URL(
+        "../../app/(public)/onboarding/onboarding-form.tsx",
+        import.meta.url,
+      ),
       "utf8",
     );
     expect(source).toContain('"use client"');
@@ -260,7 +263,7 @@ describe("WP-08 auth-aware public UI", () => {
     // Mutation caught: caching private state or moving DB/provider work into Next route modules.
     const files = await Promise.all(
       [
-        "../../app/onboarding/page.tsx",
+        "../../app/(public)/onboarding/page.tsx",
         "../../app/api/me/onboarding/route.ts",
         "../../app/api/me/onboarding/complete/route.ts",
         "../../app/api/auth/session/route.ts",

@@ -147,7 +147,7 @@ describe("WP-07 Home page", () => {
   it("keeps the Home route server-only and calls the canonical query directly", async () => {
     // Mutation caught: routing Home through REST, raw database access, or client-side data fetching.
     const source = await readFile(
-      new URL("../../app/page.tsx", import.meta.url),
+      new URL("../../app/(public)/page.tsx", import.meta.url),
       "utf8",
     );
 

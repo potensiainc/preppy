@@ -2,7 +2,7 @@ import { unstable_noStore as noStore } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-import { OnboardingForm } from "@/app/onboarding/onboarding-form";
+import { OnboardingForm } from "@/app/(public)/onboarding/onboarding-form";
 import { getAuthRuntime } from "@/src/modules/auth/runtime.server";
 import { PENDING_FOLLOW_INTENT_COOKIE_NAME } from "@/src/modules/auth/pending-follow-intent.server";
 import { USER_SESSION_COOKIE_NAME } from "@/src/modules/auth/session.server";

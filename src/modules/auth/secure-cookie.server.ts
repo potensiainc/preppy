@@ -43,11 +43,19 @@ export type OpenSecureCookieOptions = {
   maxTokenBytes?: number;
 };
 
-export type SecureCookieAttributes = {
+export type AuthenticatedSecureCookie = Readonly<{
+  payload: unknown | null;
+  issuedAt: number;
+  expiresAt: number;
+}>;
+
+export type SecureCookiePath = "/" | "/admin/auth";
+
+export type SecureCookieAttributes<Path extends SecureCookiePath = "/"> = {
   httpOnly: true;
   secure: boolean;
   sameSite: "lax";
-  path: "/";
+  path: Path;
   maxAge: number;
 };
 
@@ -93,18 +101,25 @@ function decodeBase64Url(value: string, expectedBytes?: number): Buffer | null {
   }
 }
 
-export function secureCookieAttributes(options: {
+export function secureCookieAttributes<
+  Path extends SecureCookiePath = "/",
+>(options: {
   maxAgeSeconds: number;
   production?: boolean;
-}): SecureCookieAttributes {
+  path?: Path;
+}): SecureCookieAttributes<Path> {
   if (!Number.isInteger(options.maxAgeSeconds) || options.maxAgeSeconds <= 0) {
     throw new Error("Cookie max age must be a positive integer");
+  }
+  const path = options.path ?? "/";
+  if (path !== "/" && path !== "/admin/auth") {
+    throw new Error("Cookie path is invalid");
   }
   return {
     httpOnly: true,
     secure: options.production ?? process.env.NODE_ENV === "production",
     sameSite: "lax",
-    path: "/",
+    path: path as Path,
     maxAge: options.maxAgeSeconds,
   };
 }
@@ -168,10 +183,10 @@ export function sealSecureCookie(
   return token;
 }
 
-export function openSecureCookie(
+export function openSecureCookieWithMetadata(
   token: string | null | undefined,
   options: OpenSecureCookieOptions,
-): unknown | null {
+): AuthenticatedSecureCookie | null {
   try {
     assertPurpose(options.purpose);
     assertSecret(options.secret);
@@ -236,8 +251,19 @@ export function openSecureCookie(
     ) {
       return null;
     }
-    return envelope.payload ?? null;
+    return {
+      payload: envelope.payload ?? null,
+      issuedAt: envelope.issuedAt as number,
+      expiresAt: envelope.expiresAt as number,
+    };
   } catch {
     return null;
   }
+}
+
+export function openSecureCookie(
+  token: string | null | undefined,
+  options: OpenSecureCookieOptions,
+): unknown | null {
+  return openSecureCookieWithMetadata(token, options)?.payload ?? null;
 }

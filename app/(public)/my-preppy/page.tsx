@@ -3,7 +3,7 @@ import { unstable_noStore as noStore } from "next/cache";
 import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 
-import { MyPreppyView } from "@/app/my-preppy/my-preppy-view";
+import { MyPreppyView } from "@/app/(public)/my-preppy/my-preppy-view";
 import { USER_SESSION_COOKIE_NAME } from "@/src/modules/auth/session.server";
 import { getMyPreppyRuntime } from "@/src/modules/my-preppy/runtime.server";
 

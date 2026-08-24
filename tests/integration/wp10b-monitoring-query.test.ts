@@ -9,6 +9,7 @@ import {
   getRuntimeDatabase,
 } from "@/src/infrastructure/db/runtime.server";
 import { getMonitoringQueue } from "@/src/modules/monitoring/queue-query.server";
+import { listLatestSourceObservations } from "@/src/modules/monitoring/repository.server";
 import { assertDedicatedTestDatabaseUrl } from "@/tests/support/test-database";
 
 const databaseUrl = process.env.TEST_DATABASE_URL;
@@ -295,5 +296,27 @@ describe("WP-10B query-driven Monitoring Queue", () => {
         candidate.source.id === sourceId,
     );
     expect(row).toMatchObject({ priority: "P1_UPCOMING", dueState: "DUE" });
+  });
+
+  it("returns the highest same-time observation ID with runtime schema types", async () => {
+    // Mutation caught: raw PostgreSQL int8 leaks as a string or latest-observation tie-breaking stops using descending ID.
+    const sourceId = await insertSource("LOW_CHANGE");
+    const observedAt = "2026-08-23T00:00:00.000Z";
+    await runtime.client`
+      insert into source_observations (source_id, observed_at, outcome)
+      values (${sourceId}, ${observedAt}, 'UNCHANGED'),
+        (${sourceId}, ${observedAt}, 'CHANGED')
+    `;
+
+    const rows = await listLatestSourceObservations(runtime.executor, [
+      sourceId,
+    ]);
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toMatchObject({
+      sourceId,
+      outcome: "CHANGED",
+    });
+    expect(typeof rows[0]!.id).toBe("bigint");
+    expect(rows[0]!.observedAt).toBeInstanceOf(Date);
   });
 });
