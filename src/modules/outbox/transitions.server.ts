@@ -9,6 +9,7 @@ import type {
 } from "@/src/infrastructure/db/runtime.server";
 import {
   isSupportedOutboxEventType,
+  supportedOutboxEventTypes,
   type SupportedOutboxEventType,
 } from "@/src/modules/outbox/events";
 
@@ -91,7 +92,7 @@ export function parseClaimOutboxBatchInput(
     !hasOnlyKeys(input, ["eventTypes", "limit", "workerId", "now"]) ||
     !Array.isArray(input.eventTypes) ||
     input.eventTypes.length === 0 ||
-    input.eventTypes.length > 2 ||
+    input.eventTypes.length > supportedOutboxEventTypes.length ||
     new Set(input.eventTypes).size !== input.eventTypes.length ||
     !input.eventTypes.every(isSupportedOutboxEventType) ||
     !Number.isSafeInteger(input.limit) ||
@@ -345,6 +346,10 @@ export async function recoverStaleOutboxLeases(
   if (!parsed) throw ValidationError.invalidRequest();
   const cutoffIso = parsed.cutoff.toISOString();
   const nowIso = parsed.now.toISOString();
+  const eventTypes = sql.join(
+    supportedOutboxEventTypes.map((eventType) => sql`${eventType}`),
+    sql`, `,
+  );
 
   return transactionManager.run(async (executor) => {
     const [counts] = (await executor.raw(sql`
@@ -360,9 +365,7 @@ export async function recoverStaleOutboxLeases(
         from outbox_events as event
         where event.status = 'PROCESSING'
           and event.locked_at < ${cutoffIso}::timestamptz
-          and event.event_type in (
-            'OPPORTUNITY_CHANGE_PUBLISHED', 'DELIVERY_EMAIL_SEND'
-          )
+          and event.event_type in (${eventTypes})
         order by event.locked_at asc, event.id asc
         for update of event skip locked
         limit ${parsed.limit}

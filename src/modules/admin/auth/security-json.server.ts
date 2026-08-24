@@ -37,6 +37,14 @@ const defaultLimits: SecurityJsonLimits = {
   maxStringBytes: 16_384,
 };
 
+const hardLimits: SecurityJsonLimits = {
+  maxBytes: 192 * 1024,
+  maxDepth: defaultLimits.maxDepth,
+  maxObjectMembers: defaultLimits.maxObjectMembers,
+  maxArrayItems: defaultLimits.maxArrayItems,
+  maxStringBytes: 128 * 1024,
+};
+
 type IntermediateJson =
   | null
   | boolean
@@ -58,10 +66,10 @@ function resolveLimits(
     if (
       !Number.isSafeInteger(override) ||
       override < 0 ||
-      override > defaultLimits[name]
+      override > hardLimits[name]
     ) {
       throw new RangeError(
-        "Security JSON limits must be stricter non-negative integers",
+        "Security JSON limits must be trusted bounded non-negative integers",
       );
     }
     resolved[name] = override;

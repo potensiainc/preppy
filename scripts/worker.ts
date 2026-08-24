@@ -2,6 +2,12 @@ import { pathToFileURL } from "node:url";
 
 import { NoopAnalyticsTracker } from "@/src/analytics/tracker";
 import { getSideEffectEnv } from "@/src/config/runtime-env";
+import { getCacheRevalidationConfig } from "@/src/modules/cache/config.server";
+import {
+  HttpCacheRevalidationClient,
+  type CacheRevalidationClient,
+} from "@/src/modules/cache/revalidation-client.server";
+import { getSeoAppBaseUrl } from "@/src/modules/public/seo";
 import {
   closeRuntimeDatabase,
   getRuntimeDatabase,
@@ -66,6 +72,12 @@ class DisabledResendEmailSender implements EmailSender {
   }
 }
 
+const disabledCacheRevalidator: CacheRevalidationClient = {
+  async revalidate() {
+    throw new Error("Disabled Worker must not process cache events.");
+  },
+};
+
 export async function runWorkerCommand(arguments_: readonly string[]) {
   const cli = parseWorkerCliArguments(arguments_);
   if (!cli) return { exitCode: 2, output: "Invalid worker arguments." };
@@ -85,6 +97,12 @@ export async function runWorkerCommand(arguments_: readonly string[]) {
           ? new ResendEmailSender(getResendSendConfig())
           : new DisabledResendEmailSender()
         : new RepeatingFakeEmailSender(cli.fakeOutcome);
+    const cacheRevalidator = sideEffects.WORKER_ENABLED
+      ? new HttpCacheRevalidationClient({
+          appBaseUrl: getSeoAppBaseUrl(),
+          secret: getCacheRevalidationConfig().secret,
+        })
+      : disabledCacheRevalidator;
     const result = await runWorkerOnce(
       {
         enabled: sideEffects.WORKER_ENABLED,
@@ -98,6 +116,7 @@ export async function runWorkerCommand(arguments_: readonly string[]) {
         transactionManager: runtime.transactionManager,
         sender,
         tracker: new NoopAnalyticsTracker(),
+        cacheRevalidator,
         ...(process.env.APP_BASE_URL === undefined
           ? {}
           : { appBaseUrl: process.env.APP_BASE_URL }),

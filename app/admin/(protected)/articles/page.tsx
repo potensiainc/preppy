@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import {
   AdminDataTable,
   AdminEmptyState,
@@ -32,6 +34,9 @@ export function AdminArticleListView({
         title="Article ledger"
         description="Publication identity and relation coverage. Body content and editorial controls stay outside this operational surface."
       />
+      <p>
+        <Link href="/admin/articles/new">New Article</Link>
+      </p>
       <section aria-labelledby="article-catalog-heading">
         <div className="admin-section-heading">
           <h2 id="article-catalog-heading">Publication records</h2>
@@ -55,7 +60,9 @@ export function AdminArticleListView({
               {data.items.map((item) => (
                 <tr key={item.id}>
                   <th scope="row">
-                    {item.title}
+                    <Link href={`/admin/articles/${item.id}`}>
+                      {item.title}
+                    </Link>
                     <span className="admin-record-id">{item.slug}</span>
                   </th>
                   <td>{formatAdminCode(item.type)}</td>

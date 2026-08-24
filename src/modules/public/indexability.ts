@@ -35,6 +35,8 @@ type ArticleIndexabilityInput = {
   status: ArticleStatus;
   slug: string | null | undefined;
   robotsIndex: boolean;
+  hasMeaningfulSanitizedBody: boolean;
+  hasDescription: boolean;
 };
 
 export type IndexabilityInput =
@@ -98,8 +100,11 @@ export function getIndexability(input: IndexabilityInput): Indexability {
     case "ARTICLE":
       if (input.status !== "PUBLISHED") return "NOT_PUBLIC";
 
-      // Articles have opaque stored HTML and no schema-level sanitization proof.
-      // Keep every public Article NOINDEX until that guarantee is added later.
-      return "NOINDEX";
+      return input.robotsIndex &&
+        hasCanonicalInstitutionSlug(input.slug) &&
+        input.hasMeaningfulSanitizedBody &&
+        input.hasDescription
+        ? "INDEX"
+        : "NOINDEX";
   }
 }

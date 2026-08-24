@@ -30,6 +30,7 @@ const METADATA_KEYS = new Set([
   "targetId",
   "versionId",
   "changeId",
+  "contentFingerprint",
 ]);
 
 export type AuditSafeMetadata = Readonly<{
@@ -43,6 +44,7 @@ export type AuditSafeMetadata = Readonly<{
   targetId?: string;
   versionId?: string;
   changeId?: string;
+  contentFingerprint?: `sha256:${string}`;
 }>;
 
 export type AuditEntry = Readonly<{
@@ -177,6 +179,7 @@ function cloneMetadata(value: unknown): AuditSafeMetadata | null {
     targetId?: string;
     versionId?: string;
     changeId?: string;
+    contentFingerprint?: `sha256:${string}`;
   } = {};
   for (const [key, candidate] of Object.entries(metadata)) {
     switch (key) {
@@ -206,6 +209,15 @@ function cloneMetadata(value: unknown): AuditSafeMetadata | null {
       case "moveMode":
         if (!isCanonicalIdentifier(candidate)) return null;
         result[key] = candidate;
+        break;
+      case "contentFingerprint":
+        if (
+          typeof candidate !== "string" ||
+          !/^sha256:[a-f0-9]{64}$/.test(candidate)
+        ) {
+          return null;
+        }
+        result.contentFingerprint = candidate as `sha256:${string}`;
         break;
       default:
         return null;

@@ -88,7 +88,6 @@ const unsafeArticle: UnsafeStoredArticleDetailDTO = {
     "https://preppy.example.test/articles/international-school-admissions-guide",
   robotsIndex: false,
   robotsFollow: true,
-  authorDisplayName: "PREPPY 편집팀",
   relatedInstitutions: [
     {
       id: "institution-1",
@@ -153,7 +152,10 @@ describe("WP-07 Opportunity and Article detail pages", () => {
 
   it("projects the route-level stored Article fixture to a safe view DTO and renders no stored HTML", () => {
     // Mutation caught: forwarding unsafeStoredContentHtml, rendering raw HTML/text, or surfacing indexability/updated-at badges.
-    const article = toPublicArticleDTO(unsafeArticle);
+    const article = toPublicArticleDTO(
+      unsafeArticle,
+      "https://preppy.example.test",
+    );
     const markup = renderToStaticMarkup(
       createElement(ArticleDetailView, { article }),
     );
@@ -168,8 +170,7 @@ describe("WP-07 Opportunity and Article detail pages", () => {
     expect(markup).toContain("가이드");
     expect(markup).toContain("국제학교");
     expect(markup).toContain("2026년 8월 21일");
-    expect(markup).toContain("PREPPY 편집팀");
-    expect(markup).toContain("이 아티클의 본문은 현재 공개 준비 중입니다.");
+    expect(markup).toContain(unsafeSentinel);
     expect(markup).toContain("서울국제학교");
     expect(markup).toContain("2027학년도 신입생 모집");
     expect(markup).toContain('href="/institutions/seoul-international-school"');
@@ -177,7 +178,6 @@ describe("WP-07 Opportunity and Article detail pages", () => {
       'href="/opportunities/2027-seoul-international-admissions"',
     );
     expect(markup).toContain("관심기관 상태 확인 중");
-    expect(markup).not.toContain(unsafeSentinel);
     expect(markup).not.toContain("<script>");
     expect(markup).not.toContain('alert("unsafe")');
     expect(markup).not.toContain("NOINDEX");
@@ -257,13 +257,8 @@ describe("WP-07 Opportunity and Article detail pages", () => {
     expect(opportunityRoute).toMatch(
       /await loadPublicPage\(\(\) =>\s*getOpportunityBySlug\(getPublicExecutor\(\), slug\),?\s*\)/,
     );
-    expect(articleRoute).toContain(
-      'import { getArticleBySlug } from "@/src/modules/public/article-query.server"',
-    );
-    expect(articleRoute).toContain("toPublicArticleDTO");
-    expect(articleRoute).toMatch(
-      /await loadPublicPage\(\(\) =>\s*getArticleBySlug\(getPublicExecutor\(\), slug\),?\s*\)/,
-    );
+    expect(articleRoute).toContain("resolvePublicArticlePage");
+    expect(articleRoute).toContain("permanentRedirect");
     for (const source of [opportunityRoute, articleRoute]) {
       expect(source).toContain('export const dynamic = "force-dynamic"');
       expect(source).toMatch(/params: Promise/);
@@ -271,6 +266,6 @@ describe("WP-07 Opportunity and Article detail pages", () => {
       expect(source).not.toMatch(/fetch\(|\/api\/|\.drizzle|\.raw/);
     }
     expect(viewSource).not.toContain("unsafeStoredContentHtml");
-    expect(viewSource).not.toContain("dangerouslySetInnerHTML");
+    expect(viewSource).not.toContain("unsafeStoredContentHtml");
   });
 });

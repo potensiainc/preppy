@@ -1,6 +1,12 @@
+import {
+  parseArticleCacheRevalidationPayload,
+  type ArticleCacheRevalidationPayloadV1,
+} from "@/src/modules/cache/revalidation-contract";
+
 export const supportedOutboxEventTypes = [
   "OPPORTUNITY_CHANGE_PUBLISHED",
   "DELIVERY_EMAIL_SEND",
+  "CACHE_REVALIDATION_REQUESTED",
 ] as const;
 
 export type SupportedOutboxEventType =
@@ -22,6 +28,7 @@ export type OutboxEventPayloadMap = {
       payloadHash: string;
     }>;
   };
+  CACHE_REVALIDATION_REQUESTED: ArticleCacheRevalidationPayloadV1;
 };
 
 const UUID_PATTERN =
@@ -132,6 +139,9 @@ export function parseOutboxPayload(
   }
   if (eventType === "DELIVERY_EMAIL_SEND") {
     return parseDeliveryPayload(value);
+  }
+  if (eventType === "CACHE_REVALIDATION_REQUESTED") {
+    return parseArticleCacheRevalidationPayload(value);
   }
   return null;
 }

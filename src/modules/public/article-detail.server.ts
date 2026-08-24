@@ -7,6 +7,9 @@ import type { PublicArticleDTO } from "./dto";
  * sanitized content and must not cross a client boundary or be rendered until
  * a future sanitizer/publish guarantee explicitly makes it safe.
  */
-export type UnsafeStoredArticleDetailDTO = PublicArticleDTO & {
+export type UnsafeStoredArticleDetailDTO = Omit<
+  PublicArticleDTO,
+  "sanitizedContentHtml"
+> & {
   unsafeStoredContentHtml: string;
 };

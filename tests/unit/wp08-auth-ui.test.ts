@@ -97,7 +97,7 @@ describe("WP-08 auth-aware public UI", () => {
       canonicalUrl: null,
       robotsIndex: true,
       robotsFollow: true,
-      authorDisplayName: null,
+      sanitizedContentHtml: "<p>Article body</p>",
       relatedInstitutions: [baseInstitution],
       relatedOpportunities: [],
     };

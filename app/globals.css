@@ -1229,6 +1229,74 @@ h3 {
   margin-top: 24px;
 }
 
+.article-prose {
+  color: var(--ink);
+  font-size: 1.02rem;
+  line-height: 1.82;
+}
+
+.article-prose > :first-child {
+  margin-top: 0;
+}
+
+.article-prose > :last-child {
+  margin-bottom: 0;
+}
+
+.article-prose h2,
+.article-prose h3,
+.article-prose h4 {
+  margin: 2.2em 0 0.65em;
+  color: var(--deep-green);
+}
+
+.article-prose h2 {
+  padding-top: 0.7em;
+  border-top: 1px solid var(--rule);
+  font-size: clamp(1.55rem, 3vw, 2.15rem);
+}
+
+.article-prose h3 {
+  font-size: 1.35rem;
+}
+.article-prose h4 {
+  font-size: 1.08rem;
+}
+.article-prose p,
+.article-prose ul,
+.article-prose ol,
+.article-prose blockquote,
+.article-prose pre {
+  margin-bottom: 1.25em;
+}
+.article-prose li + li {
+  margin-top: 0.35em;
+}
+.article-prose blockquote {
+  margin-inline: 0;
+  padding: 1em 1.25em;
+  border-left: 3px solid var(--bronze);
+  background: var(--surface);
+}
+.article-prose code,
+.article-prose pre {
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+}
+.article-prose pre {
+  max-width: 100%;
+  padding: 1em;
+  overflow-x: auto;
+  background: #e9e6de;
+}
+.article-prose a {
+  color: var(--deep-green);
+}
+.article-prose hr {
+  margin-block: 2.2em;
+  border: 0;
+  border-top: 1px solid var(--rule);
+}
+
 @media (max-width: 800px) {
   .detail-card-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));

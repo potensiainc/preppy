@@ -119,11 +119,6 @@ export type ArticleCardDTO = {
   indexability: Indexability;
 };
 
-/**
- * The stored article HTML is deliberately named `storedContentHtml`: the current
- * schema has no sanitization marker, so this field is not a claim of sanitization
- * and must not be rendered until a server-side sanitizer guarantee exists.
- */
 export type PublicArticleDTO = ArticleCardDTO & {
   updatedAt: string;
   seoTitle: string | null;
@@ -131,9 +126,9 @@ export type PublicArticleDTO = ArticleCardDTO & {
   canonicalUrl: string | null;
   robotsIndex: boolean;
   robotsFollow: boolean;
-  authorDisplayName: string | null;
   relatedInstitutions: InstitutionCardDTO[];
   relatedOpportunities: OpportunityCardDTO[];
+  sanitizedContentHtml: string;
 };
 
 /**

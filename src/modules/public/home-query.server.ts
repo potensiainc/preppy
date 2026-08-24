@@ -87,6 +87,8 @@ async function getLatestArticles(
       status: "PUBLISHED",
       slug: article.slug,
       robotsIndex: article.robotsIndex,
+      hasMeaningfulSanitizedBody: false,
+      hasDescription: (article.excerpt?.trim().length ?? 0) > 0,
     }),
   }));
 }

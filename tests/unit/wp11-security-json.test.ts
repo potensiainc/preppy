@@ -162,6 +162,43 @@ describe("security JSON bounds", () => {
     );
   });
 
+  it("keeps the default string ceiling while allowing only the trusted Article profile", () => {
+    const at127KiB = "a".repeat(127 * 1024);
+    const at128KiB = "a".repeat(128 * 1024);
+    const over128KiB = "a".repeat(128 * 1024 + 1);
+
+    expect(() => parseSecurityJson(JSON.stringify(at127KiB))).toThrow(
+      SecurityJsonError,
+    );
+    expect(
+      parseSecurityJson(JSON.stringify(at127KiB), {
+        maxBytes: 192 * 1024,
+        maxStringBytes: 128 * 1024,
+      }),
+    ).toBe(at127KiB);
+    expect(
+      parseSecurityJson(JSON.stringify(at128KiB), {
+        maxBytes: 192 * 1024,
+        maxStringBytes: 128 * 1024,
+      }),
+    ).toBe(at128KiB);
+    expect(() =>
+      parseSecurityJson(JSON.stringify(over128KiB), {
+        maxBytes: 192 * 1024,
+        maxStringBytes: 128 * 1024,
+      }),
+    ).toThrow(SecurityJsonError);
+  });
+
+  it("rejects parser profiles above the trusted hard ceilings", () => {
+    expect(() =>
+      parseSecurityJson("null", { maxBytes: 192 * 1024 + 1 }),
+    ).toThrow(RangeError);
+    expect(() =>
+      parseSecurityJson("null", { maxStringBytes: 128 * 1024 + 1 }),
+    ).toThrow(RangeError);
+  });
+
   it("honors stricter per-call container limits", () => {
     expect(() =>
       parseSecurityJson('{"one":1,"two":2}', { maxObjectMembers: 1 }),

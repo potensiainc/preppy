@@ -141,15 +141,17 @@ describe("WP-06A public indexability policy", () => {
     ).toBe("NOINDEX");
   });
 
-  it("keeps every published Article noindexed until a sanitizer guarantee exists", () => {
+  it("indexes only a published Article with a sanitizer-backed meaningful body and description", () => {
     expect(
       getIndexability({
         entity: "ARTICLE",
         status: "PUBLISHED",
         slug: "choosing-an-international-school",
         robotsIndex: true,
+        hasMeaningfulSanitizedBody: true,
+        hasDescription: true,
       }),
-    ).toBe("NOINDEX");
+    ).toBe("INDEX");
   });
 
   it("marks non-public Articles as not public", () => {
@@ -159,6 +161,8 @@ describe("WP-06A public indexability policy", () => {
         status: "ARCHIVED",
         slug: "old-guide",
         robotsIndex: true,
+        hasMeaningfulSanitizedBody: true,
+        hasDescription: true,
       }),
     ).toBe("NOT_PUBLIC");
   });
@@ -269,6 +273,8 @@ describe("WP-06A public DTO contract", () => {
 
   it("keeps opaque stored HTML outside the client-safe Article DTO", () => {
     expectTypeOf<PublicArticleDTO>().not.toHaveProperty("storedContentHtml");
+    expectTypeOf<PublicArticleDTO>().toHaveProperty("sanitizedContentHtml");
+    expectTypeOf<PublicArticleDTO>().not.toHaveProperty("authorDisplayName");
     expectTypeOf<UnsafeStoredArticleDetailDTO>().toHaveProperty(
       "unsafeStoredContentHtml",
     );

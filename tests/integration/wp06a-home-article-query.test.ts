@@ -212,7 +212,7 @@ describe("WP-06A Article and Home public queries", () => {
     expect(result.unsafeStoredContentHtml).toBe("<p>Unsafe stored body</p>");
     expect(Object.hasOwn(result, "contentHtml")).toBe(false);
     expect(Object.hasOwn(result, "storedContentHtml")).toBe(false);
-    expect(result.authorDisplayName).toBe("Editorial Author");
+    expect(Object.hasOwn(result, "authorDisplayName")).toBe(false);
     expect(result.indexability).toBe("NOINDEX");
     expect(result.relatedInstitutions.map((item) => item.id)).toEqual([
       publishedInstitution.id,

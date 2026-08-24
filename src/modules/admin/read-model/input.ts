@@ -115,6 +115,13 @@ const articleListSchema = z
   })
   .strict();
 
+const articleRelationOptionsSchema = z
+  .object({
+    query: normalizedQuery.optional(),
+    ...pageShape,
+  })
+  .strict();
+
 const notificationListSchema = z
   .object({
     status: z.enum(notificationStatusValues).optional(),
@@ -149,6 +156,9 @@ export type SourceAdminListInput = WithPagination<
 >;
 export type ArticleAdminListInput = WithPagination<
   z.output<typeof articleListSchema>
+>;
+export type ArticleRelationOptionsInput = WithPagination<
+  z.output<typeof articleRelationOptionsSchema>
 >;
 export type NotificationAdminListInput = WithPagination<
   z.output<typeof notificationListSchema>
@@ -196,6 +206,12 @@ export function parseArticleAdminListInput(
   value: unknown,
 ): ArticleAdminListInput {
   return withPagination(parse(articleListSchema, value));
+}
+
+export function parseArticleRelationOptionsInput(
+  value: unknown,
+): ArticleRelationOptionsInput {
+  return withPagination(parse(articleRelationOptionsSchema, value));
 }
 
 export function parseNotificationAdminListInput(

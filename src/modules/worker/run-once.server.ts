@@ -4,6 +4,7 @@ import type { AnalyticsTracker } from "@/src/analytics/tracker";
 import { ValidationError } from "@/src/application/errors";
 import type { TransactionManager } from "@/src/infrastructure/db/runtime.server";
 import type { EmailSender } from "@/src/modules/notification/email-sender";
+import type { CacheRevalidationClient } from "@/src/modules/cache/revalidation-client.server";
 import { supportedOutboxEventTypes } from "@/src/modules/outbox/events";
 import {
   claimOutboxBatch,
@@ -29,6 +30,7 @@ export type WorkerRunOnceDependencies = Readonly<{
   transactionManager: Pick<TransactionManager, "run">;
   sender: EmailSender;
   tracker: AnalyticsTracker;
+  cacheRevalidator: CacheRevalidationClient;
   appBaseUrl?: string;
   recoverStale?: typeof recoverStaleOutboxLeases;
   claimBatch?: typeof claimOutboxBatch;
@@ -119,6 +121,7 @@ export async function runWorkerOnce(
           sender: dependencies.sender,
           tracker: dependencies.tracker,
           emailSendEnabled: parsed.emailSendEnabled,
+          cacheRevalidator: dependencies.cacheRevalidator,
           ...(dependencies.appBaseUrl === undefined
             ? {}
             : { appBaseUrl: dependencies.appBaseUrl }),

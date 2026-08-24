@@ -6,6 +6,7 @@ import type {
 } from "@/src/modules/public/dto";
 
 import { FollowCta } from "@/app/_components/follow-cta";
+import { ArticleProse } from "@/app/_components/article-prose";
 import {
   ArticleCard,
   InstitutionCard,
@@ -252,18 +253,13 @@ export function ArticleDetailView({ article }: { article: PublicArticleDTO }) {
               </>
             ) : null}
           </p>
-          {article.authorDisplayName ? (
-            <p className="article-detail__author">
-              {article.authorDisplayName}
-            </p>
-          ) : null}
           {article.excerpt ? (
             <p className="article-detail__excerpt">{article.excerpt}</p>
           ) : null}
         </header>
 
-        <section className="article-detail__section" aria-label="본문 안내">
-          <p>이 아티클의 본문은 현재 공개 준비 중입니다.</p>
+        <section className="article-detail__section" aria-label="본문">
+          <ArticleProse sanitizedContentHtml={article.sanitizedContentHtml} />
         </section>
 
         {article.relatedInstitutions.length > 0 ? (

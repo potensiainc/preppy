@@ -23,6 +23,9 @@ const transactions = new TransactionManager(database);
 const sql = postgres(databaseUrl, { max: 4 });
 const lockClient = postgres(databaseUrl, { max: 1 });
 const fixtures = new Wp12aFixtures(sql);
+const cacheRevalidator = {
+  revalidate: async () => ({ kind: "SUCCEEDED" as const }),
+};
 
 function config(workerId: string, now: Date) {
   return {
@@ -64,6 +67,7 @@ describe("WP-12A worker concurrency", () => {
       transactionManager: transactions,
       sender,
       tracker: new TestAnalyticsTracker(),
+      cacheRevalidator,
     };
 
     const results = await Promise.all([
@@ -104,6 +108,7 @@ describe("WP-12A worker concurrency", () => {
         transactionManager: transactions,
         sender: resolverSender,
         tracker: new TestAnalyticsTracker(),
+        cacheRevalidator,
       },
     );
     await fixtures.discoverGeneratedIds(signal.changeId);
@@ -115,6 +120,7 @@ describe("WP-12A worker concurrency", () => {
       transactionManager: transactions,
       sender,
       tracker: new TestAnalyticsTracker(),
+      cacheRevalidator,
     };
     const results = await Promise.all([
       runWorkerOnce(config("worker-send-a", now), dependencies),

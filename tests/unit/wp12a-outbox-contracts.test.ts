@@ -15,11 +15,15 @@ describe("WP-12A typed Outbox contracts", () => {
     expect(supportedOutboxEventTypes).toEqual([
       "OPPORTUNITY_CHANGE_PUBLISHED",
       "DELIVERY_EMAIL_SEND",
+      "CACHE_REVALIDATION_REQUESTED",
     ]);
     expect(isSupportedOutboxEventType("OPPORTUNITY_CHANGE_PUBLISHED")).toBe(
       true,
     );
     expect(isSupportedOutboxEventType("DELIVERY_EMAIL_SEND")).toBe(true);
+    expect(isSupportedOutboxEventType("CACHE_REVALIDATION_REQUESTED")).toBe(
+      true,
+    );
     expect(isSupportedOutboxEventType("DYNAMIC_IMPORT_ME")).toBe(false);
   });
 
@@ -49,10 +53,45 @@ describe("WP-12A typed Outbox contracts", () => {
       }),
     ).toBeNull();
     expect(parseOutboxPayload("DYNAMIC_IMPORT_ME", {})).toBeNull();
+    expect(
+      parseOutboxPayload("CACHE_REVALIDATION_REQUESTED", {
+        version: 1,
+        articleId: id,
+        reason: "ARTICLE_PUBLISHED",
+        currentCanonicalPath: "/articles/first-guide",
+        relatedInstitutionIds: [],
+        relatedOpportunityIds: [],
+      }),
+    ).toEqual({
+      version: 1,
+      articleId: id,
+      reason: "ARTICLE_PUBLISHED",
+      currentCanonicalPath: "/articles/first-guide",
+      relatedInstitutionIds: [],
+      relatedOpportunityIds: [],
+    });
   });
 
   it("bounds claim inputs and rejects secret-shaped or invalid worker IDs", () => {
     const now = new Date("2026-08-24T00:00:00.000Z");
+    expect(
+      parseClaimOutboxBatchInput({
+        eventTypes: [
+          "OPPORTUNITY_CHANGE_PUBLISHED",
+          "DELIVERY_EMAIL_SEND",
+          "CACHE_REVALIDATION_REQUESTED",
+        ],
+        limit: 10,
+        workerId: "worker-all",
+        now,
+      }),
+    ).toMatchObject({
+      eventTypes: [
+        "OPPORTUNITY_CHANGE_PUBLISHED",
+        "DELIVERY_EMAIL_SEND",
+        "CACHE_REVALIDATION_REQUESTED",
+      ],
+    });
     expect(
       parseClaimOutboxBatchInput({
         eventTypes: ["OPPORTUNITY_CHANGE_PUBLISHED"],

@@ -75,6 +75,7 @@ describe("WP-12A bounded worker runner", () => {
           transactionManager: { run: vi.fn() },
           sender: { provider: "FAKE", send: vi.fn() },
           tracker: { track: vi.fn() },
+          cacheRevalidator: { revalidate: vi.fn() },
           recoverStale: recover,
           claimBatch: claim,
         },

@@ -368,6 +368,65 @@ describe("WP-11 strict Admin command HTTP pipeline", () => {
     expect(overDependencies.createContext).not.toHaveBeenCalled();
   });
 
+  it("keeps ordinary Admin commands at a 16 KiB decoded-string ceiling", async () => {
+    const execute = vi.fn();
+    const deps = dependencies();
+    const response = await runAdminCommandRequest({
+      request: request(JSON.stringify({ value: "x".repeat(16 * 1024 + 1) })),
+      rawPath: { sourceId },
+      pathSchema: z.object({ sourceId: z.uuid() }).strict(),
+      bodySchema: z.object({ value: z.string() }).strict(),
+      reason: "ADMIN_CONFIRM_NO_CHANGE",
+      execute,
+      dependencies: deps,
+    });
+
+    expect(response.status).toBe(400);
+    expect(execute).not.toHaveBeenCalled();
+    expect(deps.createContext).not.toHaveBeenCalled();
+  });
+
+  it("supports the trusted Article body/string profile without changing defaults", async () => {
+    const exactString = "x".repeat(128 * 1024);
+    const execute = vi.fn(async () => ({ accepted: true }));
+    const response = await runAdminCommandRequest({
+      request: request(JSON.stringify({ contentHtml: exactString })),
+      rawPath: { sourceId },
+      pathSchema: z.object({ sourceId: z.uuid() }).strict(),
+      bodySchema: z.object({ contentHtml: z.string() }).strict(),
+      reason: "ARTICLE_DRAFT_UPDATED",
+      execute,
+      dependencies: dependencies(),
+      maxBodyBytes: 192 * 1024,
+      maxStringBytes: 128 * 1024,
+    });
+
+    expect(response.status).toBe(200);
+    expect(execute).toHaveBeenCalledTimes(1);
+
+    for (const invalid of [
+      { contentHtml: "x".repeat(128 * 1024 + 1) },
+      { contentHtml: "x", padding: "y".repeat(192 * 1024) },
+    ]) {
+      const rejectedExecute = vi.fn();
+      const rejectedDependencies = dependencies();
+      const rejected = await runAdminCommandRequest({
+        request: request(JSON.stringify(invalid)),
+        rawPath: { sourceId },
+        pathSchema: z.object({ sourceId: z.uuid() }).strict(),
+        bodySchema: z.object({ contentHtml: z.string() }).passthrough(),
+        reason: "ARTICLE_DRAFT_UPDATED",
+        execute: rejectedExecute,
+        dependencies: rejectedDependencies,
+        maxBodyBytes: 192 * 1024,
+        maxStringBytes: 128 * 1024,
+      });
+      expect(rejected.status).toBe(400);
+      expect(rejectedExecute).not.toHaveBeenCalled();
+      expect(rejectedDependencies.createContext).not.toHaveBeenCalled();
+    }
+  });
+
   it.each([undefined, "1"])(
     "stops and cancels an oversized stream with declared length %s",
     async (declaredLength) => {

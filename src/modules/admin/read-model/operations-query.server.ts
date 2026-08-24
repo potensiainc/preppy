@@ -524,6 +524,7 @@ function auditMetadata(value: unknown): AdminAuditMetadataDTO {
     targetId?: string;
     versionId?: string;
     changeId?: string;
+    contentFingerprint?: `sha256:${string}`;
   } = {};
   for (const key of ["expectedVersion", "actualVersion"] as const) {
     const candidate = value[key];
@@ -555,6 +556,13 @@ function auditMetadata(value: unknown): AdminAuditMetadataDTO {
   for (const key of ["outcomeCode", "moveMode"] as const) {
     const candidate = safeString(value[key], IDENTIFIER);
     if (candidate !== null) result[key] = candidate;
+  }
+  const contentFingerprint = safeString(
+    value.contentFingerprint,
+    /^sha256:[a-f0-9]{64}$/,
+  );
+  if (contentFingerprint !== null) {
+    result.contentFingerprint = contentFingerprint as `sha256:${string}`;
   }
   if (
     Array.isArray(value.changedFields) &&

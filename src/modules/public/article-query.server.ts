@@ -4,7 +4,6 @@ import { and, asc, eq, or, sql } from "drizzle-orm";
 
 import { NotFoundError } from "@/src/application/errors";
 import {
-  adminUsers,
   articleInstitutions,
   articleOpportunities,
   articles,
@@ -18,7 +17,6 @@ import {
 import type { DatabaseExecutor } from "@/src/infrastructure/db/runtime.server";
 
 import type { InstitutionCardDTO, OpportunityCardDTO } from "./dto";
-import { getIndexability } from "./indexability";
 import {
   getPublicInstitutionCardsByIds,
   getPublicOpportunityCardsByIds,
@@ -159,10 +157,8 @@ export async function getArticleBySlug(
       robotsIndex: articles.robotsIndex,
       robotsFollow: articles.robotsFollow,
       unsafeStoredContentHtml: articles.contentHtml,
-      authorDisplayName: adminUsers.displayName,
     })
     .from(articles)
-    .leftJoin(adminUsers, eq(adminUsers.id, articles.authorAdminId))
     .where(and(eq(articles.slug, slug), eq(articles.status, "PUBLISHED")))
     .limit(1);
   if (article === undefined) throw new NotFoundError();
@@ -180,19 +176,13 @@ export async function getArticleBySlug(
     publishedAt: article.publishedAt?.toISOString() ?? null,
     featuredImageUrl: article.featuredImageUrl,
     featuredImageAlt: article.featuredImageAlt,
-    indexability: getIndexability({
-      entity: "ARTICLE",
-      status: "PUBLISHED",
-      slug: article.slug,
-      robotsIndex: article.robotsIndex,
-    }),
+    indexability: "NOINDEX",
     updatedAt: article.updatedAt.toISOString(),
     seoTitle: article.seoTitle,
     seoDescription: article.seoDescription,
     canonicalUrl: article.canonicalUrl,
     robotsIndex: article.robotsIndex,
     robotsFollow: article.robotsFollow,
-    authorDisplayName: article.authorDisplayName,
     relatedInstitutions,
     relatedOpportunities,
     unsafeStoredContentHtml: article.unsafeStoredContentHtml,

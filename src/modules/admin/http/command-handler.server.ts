@@ -22,6 +22,9 @@ import {
 } from "@/src/modules/admin/http/error-response.server";
 
 const ADMIN_COMMAND_MAX_BODY_BYTES = 64 * 1024;
+const ADMIN_COMMAND_MAX_STRING_BYTES = 16 * 1024;
+const ADMIN_COMMAND_HARD_MAX_BODY_BYTES = 192 * 1024;
+const ADMIN_COMMAND_HARD_MAX_STRING_BYTES = 128 * 1024;
 
 export type AdminCommandRequestDependencies = Readonly<{
   requireCurrentAdmin: () => Promise<AdminPrincipal>;
@@ -43,9 +46,32 @@ export type RunAdminCommandRequestOptions<TPath, TBody, TResult> = Readonly<{
     input: AdminCommandExecutionInput<TPath, TBody>,
   ) => Promise<TResult>;
   dependencies?: Partial<AdminCommandRequestDependencies>;
+  maxBodyBytes?: number;
+  maxStringBytes?: number;
 }>;
 
-async function readBoundedAdminJson(request: Request): Promise<unknown> {
+function resolveAdminJsonLimits(
+  maxBodyBytes = ADMIN_COMMAND_MAX_BODY_BYTES,
+  maxStringBytes = ADMIN_COMMAND_MAX_STRING_BYTES,
+): Readonly<{ maxBodyBytes: number; maxStringBytes: number }> {
+  if (
+    !Number.isSafeInteger(maxBodyBytes) ||
+    maxBodyBytes < 1 ||
+    maxBodyBytes > ADMIN_COMMAND_HARD_MAX_BODY_BYTES ||
+    !Number.isSafeInteger(maxStringBytes) ||
+    maxStringBytes < 1 ||
+    maxStringBytes > ADMIN_COMMAND_HARD_MAX_STRING_BYTES ||
+    maxStringBytes > maxBodyBytes
+  ) {
+    throw new RangeError("Invalid trusted Admin JSON limit profile");
+  }
+  return { maxBodyBytes, maxStringBytes };
+}
+
+async function readBoundedAdminJson(
+  request: Request,
+  limits: Readonly<{ maxBodyBytes: number; maxStringBytes: number }>,
+): Promise<unknown> {
   const mediaType = request.headers
     .get("content-type")
     ?.split(";", 1)[0]
@@ -60,7 +86,7 @@ async function readBoundedAdminJson(request: Request): Promise<unknown> {
     if (
       !Number.isSafeInteger(parsed) ||
       parsed < 0 ||
-      parsed > ADMIN_COMMAND_MAX_BODY_BYTES
+      parsed > limits.maxBodyBytes
     ) {
       try {
         await request.body?.cancel();
@@ -81,7 +107,7 @@ async function readBoundedAdminJson(request: Request): Promise<unknown> {
     throw ValidationError.invalidRequest();
   }
 
-  const bounded = new Uint8Array(ADMIN_COMMAND_MAX_BODY_BYTES);
+  const bounded = new Uint8Array(limits.maxBodyBytes);
   let byteLength = 0;
   try {
     while (true) {
@@ -90,7 +116,7 @@ async function readBoundedAdminJson(request: Request): Promise<unknown> {
       if (!(value instanceof Uint8Array)) {
         throw ValidationError.invalidRequest();
       }
-      const remaining = ADMIN_COMMAND_MAX_BODY_BYTES - byteLength;
+      const remaining = limits.maxBodyBytes - byteLength;
       if (value.byteLength > remaining) {
         throw ValidationError.invalidRequest();
       }
@@ -117,7 +143,10 @@ async function readBoundedAdminJson(request: Request): Promise<unknown> {
     throw ValidationError.invalidRequest();
   }
   try {
-    return parseSecurityJson(text, { maxBytes: ADMIN_COMMAND_MAX_BODY_BYTES });
+    return parseSecurityJson(text, {
+      maxBytes: limits.maxBodyBytes,
+      maxStringBytes: limits.maxStringBytes,
+    });
   } catch {
     throw ValidationError.invalidRequest();
   }
@@ -167,10 +196,14 @@ export async function runAdminCommandRequest<TPath, TBody, TResult>(
   let context: AdminCommandContext | undefined;
 
   try {
+    const jsonLimits = resolveAdminJsonLimits(
+      options.maxBodyBytes,
+      options.maxStringBytes,
+    );
     const principal = await dependencies.requireCurrentAdmin();
     assertSameOriginForMutation(options.request, dependencies.getAppBaseUrl());
     const path = parseWithSchema(options.pathSchema, options.rawPath);
-    const rawBody = await readBoundedAdminJson(options.request);
+    const rawBody = await readBoundedAdminJson(options.request, jsonLimits);
     assertSafeAdminJsonOwnKeys(rawBody);
     const body = parseWithSchema(options.bodySchema, rawBody);
     const reason =

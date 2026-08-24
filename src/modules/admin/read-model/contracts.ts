@@ -129,6 +129,28 @@ export type AdminArticleDTO = Readonly<{
   opportunityRelationCount: number;
 }>;
 
+export type ArticleRelationOptionDTO = Readonly<{
+  id: string;
+  slug: string;
+  label: string;
+}>;
+
+export type AdminArticleDetailDTO = AdminArticleDTO &
+  Readonly<{
+    excerpt: string | null;
+    sanitizedContentHtml: string;
+    seoTitle: string | null;
+    seoDescription: string | null;
+    canonicalUrl: string | null;
+    robotsIndex: boolean;
+    robotsFollow: boolean;
+    featuredImageUrl: string | null;
+    featuredImageAlt: string | null;
+    institutionIds: readonly string[];
+    opportunityIds: readonly string[];
+    updatedAt: string;
+  }>;
+
 export type AdminNotificationDTO = Readonly<{
   id: string;
   status: NotificationStatus;
@@ -239,6 +261,7 @@ export type AdminAuditMetadataDTO = Readonly<{
   targetId?: string;
   versionId?: string;
   changeId?: string;
+  contentFingerprint?: `sha256:${string}`;
 }>;
 
 export type AdminAuditDTO = Readonly<{
