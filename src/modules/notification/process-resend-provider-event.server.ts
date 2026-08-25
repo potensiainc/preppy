@@ -244,7 +244,7 @@ export async function processResendProviderEvent(
 
   if (result.kind === "PROCESSED" && result.analyticsEvent) {
     try {
-      dependencies.tracker.track(result.analyticsEvent, {
+      await dependencies.tracker.track(result.analyticsEvent, {
         deliveryId: result.deliveryId,
       });
     } catch {

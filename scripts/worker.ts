@@ -1,6 +1,6 @@
 import { pathToFileURL } from "node:url";
 
-import { NoopAnalyticsTracker } from "@/src/analytics/tracker";
+import { getServerAnalyticsTracker } from "@/src/analytics/runtime.server";
 import { getSideEffectEnv } from "@/src/config/runtime-env";
 import { getCacheRevalidationConfig } from "@/src/modules/cache/config.server";
 import {
@@ -115,7 +115,7 @@ export async function runWorkerCommand(arguments_: readonly string[]) {
       {
         transactionManager: runtime.transactionManager,
         sender,
-        tracker: new NoopAnalyticsTracker(),
+        tracker: getServerAnalyticsTracker(),
         cacheRevalidator,
         ...(process.env.APP_BASE_URL === undefined
           ? {}

@@ -272,7 +272,7 @@ describe("WP-09 My Preppy private query", () => {
     );
   });
 
-  it("tracks typed my_preppy_view after success, without PII, and ignores tracker failure", async () => {
+  it("returns safe analytics inputs without duplicating the client-owned my_preppy_view", async () => {
     const tracker = new TestAnalyticsTracker();
     const result = await loadMyPreppy(session(), {
       sessionSecret: secret,
@@ -282,15 +282,14 @@ describe("WP-09 My Preppy private query", () => {
       tracker,
     });
     expect(result.access).toBe("ACTIVE");
-    expect(tracker.snapshot()).toEqual([
-      {
-        name: "my_preppy_view",
-        properties: { followCount: 1, emailState: "ENABLED" },
+    expect(result).toMatchObject({
+      access: "ACTIVE",
+      data: {
+        activeFollowCount: 1,
+        readiness: { analyticsState: "ENABLED" },
       },
-    ]);
-    expect(JSON.stringify(tracker.snapshot())).not.toMatch(
-      /@|institutionId|followId|네이티브 영유/,
-    );
+    });
+    expect(tracker.snapshot()).toEqual([]);
 
     await expect(
       loadMyPreppy(session(), {
@@ -308,7 +307,7 @@ describe("WP-09 My Preppy private query", () => {
     ).resolves.toMatchObject({ access: "ACTIVE" });
   });
 
-  it("emits my_preppy_view only after the private read transaction resolves", async () => {
+  it("does not emit the client-owned my_preppy_view from the private read", async () => {
     const phases: string[] = [];
     const manager = {
       run: vi.fn(async (operation: (executor: never) => Promise<unknown>) => {
@@ -334,10 +333,10 @@ describe("WP-09 My Preppy private query", () => {
       },
     });
 
-    expect(phases).toEqual(["transaction-resolved", "tracked:my_preppy_view"]);
+    expect(phases).toEqual(["transaction-resolved"]);
   });
 
-  it("tracks the full active eligible Follow total rather than the bounded card count", async () => {
+  it("returns the full active eligible Follow total rather than the bounded card count", async () => {
     const store = persistence() as MyPreppyPersistence & {
       countActiveEligibleFollows: ReturnType<typeof vi.fn>;
     };
@@ -359,7 +358,7 @@ describe("WP-09 My Preppy private query", () => {
     store.countActiveEligibleFollows = vi.fn().mockResolvedValue(31);
     const tracker = new TestAnalyticsTracker();
 
-    await loadMyPreppy(session(), {
+    const result = await loadMyPreppy(session(), {
       sessionSecret: secret,
       now,
       transactionManager: transactionManager() as never,
@@ -367,11 +366,10 @@ describe("WP-09 My Preppy private query", () => {
       tracker,
     });
 
-    expect(tracker.snapshot()).toEqual([
-      {
-        name: "my_preppy_view",
-        properties: { followCount: 31, emailState: "ENABLED" },
-      },
-    ]);
+    expect(result).toMatchObject({
+      access: "ACTIVE",
+      data: { activeFollowCount: 31 },
+    });
+    expect(tracker.snapshot()).toEqual([]);
   });
 });

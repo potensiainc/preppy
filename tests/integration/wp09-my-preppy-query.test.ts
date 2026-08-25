@@ -427,7 +427,7 @@ describe("WP-09 My Preppy database projection", () => {
     },
   );
 
-  it("emits one private view event after the read and creates no product side effects", async () => {
+  it("returns client analytics inputs without a server duplicate or product side effects", async () => {
     const userId = await createUser();
     const institution = await createInstitution();
     await createFollow(userId, institution.id);
@@ -450,7 +450,7 @@ describe("WP-09 My Preppy database projection", () => {
         (select count(*)::int from subscribers) subscribers,
         (select count(*)::int from subscriptions) subscriptions
     `;
-    await load(userId, tracker);
+    const result = await load(userId, tracker);
     const [after] = await runtime.client<
       {
         notifications: number;
@@ -470,12 +470,14 @@ describe("WP-09 My Preppy database projection", () => {
         (select count(*)::int from subscriptions) subscriptions
     `;
     expect(after).toEqual(before);
-    expect(tracker.snapshot()).toEqual([
-      {
-        name: "my_preppy_view",
-        properties: { followCount: 1, emailState: "UNAVAILABLE" },
+    expect(result).toMatchObject({
+      access: "ACTIVE",
+      data: {
+        activeFollowCount: 1,
+        readiness: { analyticsState: "UNAVAILABLE" },
       },
-    ]);
+    });
+    expect(tracker.snapshot()).toEqual([]);
   });
 
   it("applies canonical current/upcoming and recent-change bounds fairly per followed Institution", async () => {
@@ -520,7 +522,7 @@ describe("WP-09 My Preppy database projection", () => {
     });
   });
 
-  it("tracks the full eligible Follow count beyond the 24-card snapshot bound", async () => {
+  it("returns the full eligible Follow count beyond the 24-card snapshot bound", async () => {
     const userId = await createUser();
     for (let index = 0; index < 26; index += 1) {
       const institution = await createInstitution({
@@ -533,11 +535,7 @@ describe("WP-09 My Preppy database projection", () => {
     expect(result.access).toBe("ACTIVE");
     if (result.access !== "ACTIVE") throw new Error("expected ACTIVE");
     expect(result.data.cards).toHaveLength(24);
-    expect(tracker.snapshot()).toEqual([
-      {
-        name: "my_preppy_view",
-        properties: { followCount: 26, emailState: "UNAVAILABLE" },
-      },
-    ]);
+    expect(result.data.activeFollowCount).toBe(26);
+    expect(tracker.snapshot()).toEqual([]);
   });
 });

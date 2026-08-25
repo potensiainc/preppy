@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { AnalyticsLink } from "@/app/_components/analytics-link";
+import type { CapturedAnalyticsEvent } from "@/src/analytics/events";
 import type {
   ArticleCardDTO,
   InstitutionCardDTO,
@@ -63,8 +65,10 @@ export function TrustSource({ source }: { source: OfficialSourceDTO }) {
 
 export function InstitutionCard({
   institution,
+  analyticsEvent,
 }: {
   institution: InstitutionCardDTO;
+  analyticsEvent?: CapturedAnalyticsEvent;
 }) {
   return (
     <article className="public-card institution-card">
@@ -75,9 +79,18 @@ export function InstitutionCard({
         ) : null}
       </div>
       <h3>
-        <Link href={`/institutions/${institution.slug}`}>
-          {institution.name}
-        </Link>
+        {analyticsEvent ? (
+          <AnalyticsLink
+            event={analyticsEvent}
+            href={`/institutions/${institution.slug}`}
+          >
+            {institution.name}
+          </AnalyticsLink>
+        ) : (
+          <Link href={`/institutions/${institution.slug}`}>
+            {institution.name}
+          </Link>
+        )}
       </h3>
       {institution.region ? (
         <p className="card-region">{institution.region}</p>

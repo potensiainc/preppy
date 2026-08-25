@@ -241,7 +241,7 @@ export async function reconcileUnknownResendAttempt(
       );
     });
     try {
-      dependencies.tracker.track("notification_sent", {
+      await dependencies.tracker.track("notification_sent", {
         notificationId: preflight.notificationId,
         opportunityId: preflight.opportunityId,
       });

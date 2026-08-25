@@ -1,6 +1,6 @@
 import "server-only";
 
-import { NoopAnalyticsTracker } from "@/src/analytics/tracker";
+import { getServerAnalyticsTracker } from "@/src/analytics/runtime.server";
 import { getRuntimeDatabase } from "@/src/infrastructure/db/runtime.server";
 import { processResendProviderEvent } from "@/src/modules/notification/process-resend-provider-event.server";
 import { getResendWebhookConfig } from "@/src/modules/notification/resend-config.server";
@@ -19,8 +19,6 @@ type ResendWebhookHttpDependencies = Readonly<{
   processEvent: (input: ProcessEventInput) => Promise<unknown>;
 }>;
 
-const tracker = new NoopAnalyticsTracker();
-
 class ResendWebhookBodyTooLargeError extends Error {}
 
 function json(status: number, body: Record<string, unknown>) {
@@ -33,6 +31,7 @@ function json(status: number, body: Record<string, unknown>) {
 function runtimeDependencies(): ResendWebhookHttpDependencies {
   const config = getResendWebhookConfig();
   const transactionManager = getRuntimeDatabase().transactionManager;
+  const tracker = getServerAnalyticsTracker();
   return {
     webhookSecret: config.webhookSecret,
     processEvent: (input) =>

@@ -2,7 +2,7 @@ import "server-only";
 
 import { z } from "zod";
 
-import { NoopAnalyticsTracker } from "@/src/analytics/tracker";
+import { getServerAnalyticsTracker } from "@/src/analytics/runtime.server";
 import type { AdminCommandContext } from "@/src/application/context";
 import { getRuntimeDatabase } from "@/src/infrastructure/db/runtime.server";
 import { getAdminLogoutConfig } from "@/src/modules/admin/auth/config.server";
@@ -81,7 +81,7 @@ function defaultReconcile(
   return reconcileUnknownResendAttempt(context, input, {
     transactionManager: getRuntimeDatabase().transactionManager,
     sender: new ResendEmailSender(getResendSendConfig()),
-    tracker: new NoopAnalyticsTracker(),
+    tracker: getServerAnalyticsTracker(),
     appBaseUrl: getAdminLogoutConfig().APP_BASE_URL,
   });
 }

@@ -426,7 +426,7 @@ export async function processEmailDelivery(
 
   if (settled.kind === "ACCEPTED") {
     try {
-      dependencies.tracker.track("notification_sent", {
+      await dependencies.tracker.track("notification_sent", {
         notificationId: prepared.notificationId,
         opportunityId: prepared.opportunityId,
       });

@@ -518,7 +518,7 @@ describe("CompleteSignup", () => {
   it("activates without optional data, records revocation, and swallows tracker failures", async () => {
     const userId = await createUserFixture();
     const tracker: AnalyticsTracker = {
-      track() {
+      async track() {
         throw new Error("analytics unavailable");
       },
     };

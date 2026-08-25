@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 
 import { InstitutionListView } from "@/app/_components/institution-pages";
+import { PageAnalytics } from "@/app/_components/page-analytics";
 import {
   toInstitutionListInput,
   type NextSearchParams,
 } from "@/app/_lib/institution-search";
 import { getPublicExecutor } from "@/app/_lib/public-page.server";
 import { listInstitutions } from "@/src/modules/public/institution-query.server";
+import { buildInstitutionListAnalytics } from "@/src/analytics/public-events";
 import {
   buildInstitutionListMetadata,
   getSeoAppBaseUrl,
@@ -33,6 +35,15 @@ export default async function InstitutionsPage({
 }) {
   const input = toInstitutionListInput(await searchParams);
   const data = await listInstitutions(getPublicExecutor(), input);
+  const analytics = buildInstitutionListAnalytics(input, data.pagination.total);
 
-  return <InstitutionListView data={data} filters={input} />;
+  return (
+    <>
+      <PageAnalytics
+        events={analytics.events}
+        navigationKey={analytics.navigationKey}
+      />
+      <InstitutionListView data={data} filters={input} />
+    </>
+  );
 }

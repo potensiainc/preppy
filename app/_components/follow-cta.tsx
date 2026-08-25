@@ -17,7 +17,7 @@ type Fetcher = (
   init?: RequestInit,
 ) => Promise<Response>;
 
-type FollowCtaTarget = {
+export type FollowCtaTarget = {
   institutionId: string;
   returnPath: string;
   context: FollowContext;
@@ -212,7 +212,8 @@ export function FollowCta({
   opportunityId,
   followable = true,
   label = "업데이트 받기",
-}: FollowCtaTarget & { label?: string }) {
+  onAnalyticsAction,
+}: FollowCtaTarget & { label?: string; onAnalyticsAction?: () => void }) {
   const targetKey = JSON.stringify([
     institutionId,
     returnPath,
@@ -258,6 +259,7 @@ export function FollowCta({
 
   async function performAction() {
     if (state !== "anonymous" && state !== "available") return;
+    onAnalyticsAction?.();
     const actionTargetKey = targetKey;
     const actionState = state;
     setTargetState(actionTargetKey, "submitting");

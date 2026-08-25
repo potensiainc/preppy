@@ -323,7 +323,9 @@ export async function completeSignup(
   }
 
   try {
-    dependencies.tracker.track("signup_complete", { context: "MY_PREPPY" });
+    await dependencies.tracker.track("signup_complete", {
+      context: "MY_PREPPY",
+    });
   } catch {
     // Analytics is deliberately best effort and runs only after commit.
   }
@@ -331,12 +333,12 @@ export async function completeSignup(
   if (follow?.created || follow?.reactivated) {
     try {
       if (follow.activeFollowCount === 1) {
-        dependencies.tracker.track("follow_created", {
+        await dependencies.tracker.track("follow_created", {
           institutionId: follow.institutionId,
           followCount: follow.activeFollowCount,
         });
       } else {
-        dependencies.tracker.track("additional_follow", {
+        await dependencies.tracker.track("additional_follow", {
           institutionId: follow.institutionId,
           followCount: follow.activeFollowCount,
         });

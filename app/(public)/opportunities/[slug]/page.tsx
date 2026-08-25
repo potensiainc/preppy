@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { cache } from "react";
 
 import { OpportunityDetailView } from "@/app/_components/opportunity-article-pages";
+import { PageAnalytics } from "@/app/_components/page-analytics";
 import {
   getPublicExecutor,
   loadPublicPage,
@@ -14,10 +15,9 @@ import {
 
 export const dynamic = "force-dynamic";
 
-const loadOpportunity = cache(async (slug: string) =>
-  await loadPublicPage(() =>
-    getOpportunityBySlug(getPublicExecutor(), slug),
-  ),
+const loadOpportunity = cache(
+  async (slug: string) =>
+    await loadPublicPage(() => getOpportunityBySlug(getPublicExecutor(), slug)),
 );
 
 export async function generateMetadata({
@@ -40,5 +40,22 @@ export default async function OpportunityDetailPage({
   const { slug } = await params;
   const opportunity = await loadOpportunity(slug);
 
-  return <OpportunityDetailView opportunity={opportunity} />;
+  return (
+    <>
+      <PageAnalytics
+        events={[
+          {
+            name: "opportunity_view",
+            properties: {
+              opportunityId: opportunity.id,
+              institutionId: opportunity.institution.id,
+              kind: opportunity.kind,
+            },
+          },
+        ]}
+        navigationKey={`OPPORTUNITY:${opportunity.id}`}
+      />
+      <OpportunityDetailView opportunity={opportunity} />
+    </>
+  );
 }

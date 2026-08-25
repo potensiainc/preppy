@@ -107,7 +107,7 @@ function allowingCallbackGuards() {
 }
 
 describe("WP-08 auth Route Handler factories", () => {
-  it("stores a protected intent for a canonical public open Institution and emits follow_click without creating a Follow", async () => {
+  it("stores a protected intent without duplicating the client-owned follow_click or creating a Follow", async () => {
     // Mutation caught: trusting the browser's Institution/path, accepting a closed target, or writing a Follow at click time.
     const tracker = new TestAnalyticsTracker();
     const findInstitution = vi.fn(async () => ({
@@ -161,12 +161,7 @@ describe("WP-08 auth Route Handler factories", () => {
       returnPath: "/institutions/seoul-international-school",
     });
     expect(findInstitution).toHaveBeenCalledWith(institutionId);
-    expect(tracker.snapshot()).toEqual([
-      {
-        name: "follow_click",
-        properties: { institutionId, context: "INSTITUTION" },
-      },
-    ]);
+    expect(tracker.snapshot()).toEqual([]);
     expect(Object.keys(responseBody)).not.toContain("follow");
   });
 

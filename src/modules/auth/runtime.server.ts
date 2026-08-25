@@ -1,6 +1,6 @@
 import "server-only";
 
-import { NoopAnalyticsTracker } from "@/src/analytics/tracker";
+import { getServerAnalyticsTracker } from "@/src/analytics/runtime.server";
 import { getCurrentUser } from "@/src/application/current-user.server";
 import { getRuntimeDatabase } from "@/src/infrastructure/db/runtime.server";
 import { completeSignup } from "@/src/modules/auth/complete-signup.server";
@@ -18,7 +18,6 @@ import { activateFollow } from "@/src/modules/follow/activate-follow.server";
 import { hasMonitorableSourceCoverage } from "@/src/modules/follow/followability-policy.server";
 import { findInstitutionById } from "@/src/modules/institution/repository.server";
 
-const tracker = new NoopAnalyticsTracker();
 // Emergency process ceiling only: it neither isolates callers nor coordinates hosts.
 // A trusted edge/shared limiter remains required for production-grade enforcement.
 const rateLimiter = new ProcessLocalRateLimiter();
@@ -62,6 +61,7 @@ export function getAuthRuntime() {
     redirectUri: config.KAKAO_REDIRECT_URI,
   });
   const production = process.env.NODE_ENV === "production";
+  const tracker = getServerAnalyticsTracker();
 
   return {
     appBaseUrl: config.APP_BASE_URL,

@@ -1,17 +1,16 @@
 import "server-only";
 
-import { NoopAnalyticsTracker } from "@/src/analytics/tracker";
+import { getServerAnalyticsTracker } from "@/src/analytics/runtime.server";
 import { getRuntimeDatabase } from "@/src/infrastructure/db/runtime.server";
 import { getAuthConfig } from "@/src/modules/auth/config.server";
 import { activateFollow } from "@/src/modules/follow/activate-follow.server";
 import { deactivateFollow } from "@/src/modules/follow/deactivate-follow.server";
 import { getFollowStatus } from "@/src/modules/follow/status-query.server";
 
-const tracker = new NoopAnalyticsTracker();
-
 export function getFollowRuntime() {
   const config = getAuthConfig();
   const database = getRuntimeDatabase();
+  const tracker = getServerAnalyticsTracker();
 
   return {
     appBaseUrl: config.APP_BASE_URL,

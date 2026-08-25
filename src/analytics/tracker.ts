@@ -3,21 +3,21 @@ import type {
   AnalyticsEventName,
   CapturedAnalyticsEvent,
 } from "@/src/analytics/events";
+import { parseAnalyticsEvent } from "@/src/analytics/events";
 
 export interface AnalyticsTracker {
   track<Name extends AnalyticsEventName>(
     name: Name,
     properties: Readonly<AnalyticsEventMap[Name]>,
-  ): void;
+  ): void | Promise<void>;
 }
 
 export class NoopAnalyticsTracker implements AnalyticsTracker {
   track<Name extends AnalyticsEventName>(
-    _name: Name,
-    _properties: Readonly<AnalyticsEventMap[Name]>,
+    name: Name,
+    properties: Readonly<AnalyticsEventMap[Name]>,
   ): void {
-    void _name;
-    void _properties;
+    parseAnalyticsEvent(name, properties);
   }
 }
 
@@ -28,10 +28,7 @@ export class TestAnalyticsTracker implements AnalyticsTracker {
     name: Name,
     properties: Readonly<AnalyticsEventMap[Name]>,
   ): void {
-    this.capturedEvents.push({
-      name,
-      properties: { ...properties },
-    } as CapturedAnalyticsEvent);
+    this.capturedEvents.push(parseAnalyticsEvent(name, properties));
   }
 
   snapshot(): readonly CapturedAnalyticsEvent[] {

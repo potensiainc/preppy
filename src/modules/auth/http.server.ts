@@ -320,12 +320,12 @@ function loginFailureResponse(options: {
   return new Response(body, { status: options.status, headers });
 }
 
-function bestEffortTrack(
+async function bestEffortTrack(
   tracker: AnalyticsTracker,
   ...event: Parameters<AnalyticsTracker["track"]>
-): void {
+): Promise<void> {
   try {
-    tracker.track(...event);
+    await tracker.track(...event);
   } catch {
     // Product analytics never changes auth behavior.
   }
@@ -385,12 +385,6 @@ export function createFollowIntentHandler(dependencies: {
       return safeMutationFailure(400);
     }
 
-    bestEffortTrack(dependencies.tracker, "follow_click", {
-      institutionId: input.institutionId,
-      context: input.context,
-      ...(input.articleId ? { articleId: input.articleId } : {}),
-      ...(input.opportunityId ? { opportunityId: input.opportunityId } : {}),
-    });
     const response = jsonResponse({ redirectTo: "/auth/kakao/start" });
     response.headers.append(
       "set-cookie",
@@ -601,7 +595,7 @@ export function createKakaoCallbackHandler(dependencies: {
         : null;
       const validPendingIntent = pendingTarget ? pendingIntent : null;
       if (user.status === "PENDING") {
-        bestEffortTrack(dependencies.tracker, "signup_start", {
+        await bestEffortTrack(dependencies.tracker, "signup_start", {
           context: validPendingIntent?.context ?? "HOME",
         });
       }

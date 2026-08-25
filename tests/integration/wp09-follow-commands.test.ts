@@ -867,7 +867,7 @@ describe("WP-09 Follow commands", () => {
         {
           transactionManager: runtime.transactionManager,
           tracker: {
-            track() {
+            async track() {
               throw new Error("analytics unavailable");
             },
           },

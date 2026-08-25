@@ -234,12 +234,12 @@ export async function activateFollow(
     if (result.created || result.reactivated) {
       try {
         if (result.activeFollowCount === 1) {
-          dependencies.tracker.track("follow_created", {
+          await dependencies.tracker.track("follow_created", {
             institutionId: result.institutionId,
             followCount: result.activeFollowCount,
           });
         } else {
-          dependencies.tracker.track("additional_follow", {
+          await dependencies.tracker.track("additional_follow", {
             institutionId: result.institutionId,
             followCount: result.activeFollowCount,
           });

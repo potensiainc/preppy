@@ -82,6 +82,7 @@ export type MyPreppyCard = MyPreppyInstitutionRoot & {
 };
 
 export type MyPreppyData = {
+  activeFollowCount: number;
   cards: MyPreppyCard[];
   readiness: MyPreppyEmailReadiness;
 };
@@ -466,6 +467,7 @@ async function queryActiveSnapshot(
   return {
     activeEligibleFollowCount,
     data: {
+      activeFollowCount: activeEligibleFollowCount,
       readiness,
       cards: roots.map((root) => {
         const institutionOpportunities = summaries
@@ -507,7 +509,8 @@ export async function loadMyPreppy(
   dependencies: {
     sessionSecret: string;
     transactionManager: Pick<TransactionManager, "run">;
-    tracker: AnalyticsTracker;
+    /** @deprecated my_preppy_view is client-owned in WP-14. */
+    tracker?: AnalyticsTracker;
     persistence?: MyPreppyPersistence;
     now?: Date;
   },
@@ -530,16 +533,6 @@ export async function loadMyPreppy(
     } as const;
   });
 
-  if (result.access === "ACTIVE") {
-    try {
-      dependencies.tracker.track("my_preppy_view", {
-        followCount: result.activeEligibleFollowCount,
-        emailState: result.data.readiness.analyticsState,
-      });
-    } catch {
-      // Private product analytics never changes page availability.
-    }
-  }
   return result.access === "ACTIVE"
     ? { access: "ACTIVE", data: result.data }
     : result;

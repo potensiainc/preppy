@@ -5,7 +5,7 @@ import type {
   PublicOpportunityDTO,
 } from "@/src/modules/public/dto";
 
-import { FollowCta } from "@/app/_components/follow-cta";
+import { TrackedFollowCta as FollowCta } from "@/app/_components/tracked-follow-cta";
 import { ArticleProse } from "@/app/_components/article-prose";
 import {
   ArticleCard,
@@ -268,6 +268,13 @@ export function ArticleDetailView({ article }: { article: PublicArticleDTO }) {
             <div className="detail-card-grid">
               {article.relatedInstitutions.map((institution) => (
                 <InstitutionCard
+                  analyticsEvent={{
+                    name: "article_to_institution",
+                    properties: {
+                      articleId: article.id,
+                      institutionId: institution.id,
+                    },
+                  }}
                   key={institution.id}
                   institution={institution}
                 />

@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { AnalyticsLink } from "@/app/_components/analytics-link";
 import type { HomePageDTO } from "@/src/modules/public/dto";
 
 import {
@@ -115,18 +116,26 @@ export function HomePageView({ data }: { data: HomePageDTO }) {
             모집·입학정보가 생기면 프레피가 알려드려요.
           </p>
           <div className="home-hero__actions">
-            <Link
+            <AnalyticsLink
               className="button-link button-link--primary"
+              event={{
+                name: "hero_primary_cta_click",
+                properties: { cta: "INSTITUTIONS" },
+              }}
               href="/institutions"
             >
               기관 둘러보기
-            </Link>
-            <Link
+            </AnalyticsLink>
+            <AnalyticsLink
               className="button-link button-link--secondary"
+              event={{
+                name: "hero_secondary_cta_click",
+                properties: { cta: "CURRENT_OPPORTUNITIES" },
+              }}
               href="/#current-opportunities"
             >
               현재 모집·입학정보 보기
-            </Link>
+            </AnalyticsLink>
           </div>
         </PageContainer>
       </section>

@@ -4,6 +4,7 @@ import { cache } from "react";
 
 import { ArticleDetailView } from "@/app/_components/opportunity-article-pages";
 import { JsonLd } from "@/app/_components/json-ld";
+import { PageAnalytics } from "@/app/_components/page-analytics";
 import { getPublicArticleAppBaseUrl } from "@/app/_lib/public-article";
 import { getPublicExecutor } from "@/app/_lib/public-page.server";
 import { resolvePublicArticlePage } from "@/src/modules/public/article-page.server";
@@ -56,6 +57,15 @@ export default async function ArticleDetailPage({
   );
   return (
     <>
+      <PageAnalytics
+        events={[
+          {
+            name: "article_view",
+            properties: { articleId: resolution.article.id },
+          },
+        ]}
+        navigationKey={`ARTICLE:${resolution.article.id}`}
+      />
       <ArticleDetailView article={resolution.article} />
       {articleJsonLd ? <JsonLd value={articleJsonLd} /> : null}
       {breadcrumbJsonLd ? <JsonLd value={breadcrumbJsonLd} /> : null}

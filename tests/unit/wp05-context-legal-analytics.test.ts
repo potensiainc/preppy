@@ -182,6 +182,8 @@ describe("WP-05 legal policies", () => {
 });
 
 describe("WP-05 analytics", () => {
+  const institutionId = "00000000-0000-4000-8000-000000000001";
+  const articleId = "00000000-0000-4000-8000-000000000002";
   it("publishes the exact ordered analytics event catalog", () => {
     // Mutation caught: renaming, removing, adding, or reordering canonical event names.
     expect(analyticsEventNames).toEqual([
@@ -219,9 +221,9 @@ describe("WP-05 analytics", () => {
         category: "INTERNATIONAL_SCHOOL",
       });
       tracker.track("follow_click", {
-        institutionId: "institution-1",
+        institutionId,
         context: "ARTICLE",
-        articleId: "article-1",
+        articleId,
       });
     }).not.toThrow();
   });
@@ -229,7 +231,7 @@ describe("WP-05 analytics", () => {
   it("captures heterogeneous events in order without exposing mutable tracker state", () => {
     // Mutation caught: tracker event ordering, reset behavior, or snapshot isolation breaking.
     const tracker = new TestAnalyticsTracker();
-    tracker.track("article_view", { articleId: "article-1" });
+    tracker.track("article_view", { articleId });
     tracker.track("my_preppy_view", {
       followCount: 2,
       emailState: "ENABLED",
@@ -237,7 +239,7 @@ describe("WP-05 analytics", () => {
 
     const snapshot = tracker.snapshot();
     expect(snapshot).toEqual([
-      { name: "article_view", properties: { articleId: "article-1" } },
+      { name: "article_view", properties: { articleId } },
       {
         name: "my_preppy_view",
         properties: { followCount: 2, emailState: "ENABLED" },
@@ -246,7 +248,7 @@ describe("WP-05 analytics", () => {
 
     (snapshot as Array<(typeof snapshot)[number]>).push({
       name: "notification_open",
-      properties: { deliveryId: "delivery-1" },
+      properties: { deliveryId: institutionId },
     });
     expect(tracker.snapshot()).toHaveLength(2);
 
@@ -257,41 +259,55 @@ describe("WP-05 analytics", () => {
   it("keeps raw queries and other prohibited PII keys out of typed analytics properties", () => {
     // Mutation caught: adding a prohibited PII-bearing property to any canonical event contract.
     const tracker: AnalyticsTracker = new NoopAnalyticsTracker();
-    tracker.track("search", {
-      queryLengthBucket: "1_3",
-      resultCount: 1,
-      // @ts-expect-error rawQuery must never be accepted by search analytics.
-      rawQuery: "abc",
-    });
-    tracker.track("home_view", {
-      landingPage: "HOME",
-      // @ts-expect-error email must never be accepted by analytics.
-      email: "person@example.com",
-    });
-    tracker.track("home_view", {
-      landingPage: "HOME",
-      // @ts-expect-error providerSubject must never be accepted by analytics.
-      providerSubject: "subject",
-    });
-    tracker.track("home_view", {
-      landingPage: "HOME",
-      // @ts-expect-error oauthToken must never be accepted by analytics.
-      oauthToken: "token",
-    });
-    tracker.track("home_view", {
-      landingPage: "HOME",
-      // @ts-expect-error childName must never be accepted by analytics.
-      childName: "Ari",
-    });
-    tracker.track("home_view", {
-      landingPage: "HOME",
-      // @ts-expect-error phone must never be accepted by analytics.
-      phone: "010-0000-0000",
-    });
-    tracker.track("home_view", {
-      landingPage: "HOME",
-      // @ts-expect-error childBirthYear must never be accepted by analytics.
-      childBirthYear: 2020,
-    });
+    expect(() =>
+      tracker.track("search", {
+        queryLengthBucket: "1_3",
+        resultCount: 1,
+        // @ts-expect-error rawQuery must never be accepted by search analytics.
+        rawQuery: "abc",
+      }),
+    ).toThrow();
+    expect(() =>
+      tracker.track("home_view", {
+        landingPage: "HOME",
+        // @ts-expect-error email must never be accepted by analytics.
+        email: "person@example.com",
+      }),
+    ).toThrow();
+    expect(() =>
+      tracker.track("home_view", {
+        landingPage: "HOME",
+        // @ts-expect-error providerSubject must never be accepted by analytics.
+        providerSubject: "subject",
+      }),
+    ).toThrow();
+    expect(() =>
+      tracker.track("home_view", {
+        landingPage: "HOME",
+        // @ts-expect-error oauthToken must never be accepted by analytics.
+        oauthToken: "token",
+      }),
+    ).toThrow();
+    expect(() =>
+      tracker.track("home_view", {
+        landingPage: "HOME",
+        // @ts-expect-error childName must never be accepted by analytics.
+        childName: "Ari",
+      }),
+    ).toThrow();
+    expect(() =>
+      tracker.track("home_view", {
+        landingPage: "HOME",
+        // @ts-expect-error phone must never be accepted by analytics.
+        phone: "010-0000-0000",
+      }),
+    ).toThrow();
+    expect(() =>
+      tracker.track("home_view", {
+        landingPage: "HOME",
+        // @ts-expect-error childBirthYear must never be accepted by analytics.
+        childBirthYear: 2020,
+      }),
+    ).toThrow();
   });
 });

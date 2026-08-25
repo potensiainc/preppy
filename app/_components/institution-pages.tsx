@@ -7,7 +7,7 @@ import type {
   OpportunityCardDTO,
 } from "@/src/modules/public/dto";
 
-import { FollowCta } from "@/app/_components/follow-cta";
+import { TrackedFollowCta as FollowCta } from "@/app/_components/tracked-follow-cta";
 import {
   ArticleCard,
   InstitutionCard,

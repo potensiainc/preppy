@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { cache } from "react";
 
 import { InstitutionDetailView } from "@/app/_components/institution-pages";
+import { PageAnalytics } from "@/app/_components/page-analytics";
 import {
   getPublicExecutor,
   loadPublicPage,
@@ -14,10 +15,9 @@ import {
 
 export const dynamic = "force-dynamic";
 
-const loadInstitution = cache(async (slug: string) =>
-  await loadPublicPage(() =>
-    getInstitutionBySlug(getPublicExecutor(), slug),
-  ),
+const loadInstitution = cache(
+  async (slug: string) =>
+    await loadPublicPage(() => getInstitutionBySlug(getPublicExecutor(), slug)),
 );
 
 export async function generateMetadata({
@@ -40,5 +40,27 @@ export default async function InstitutionDetailPage({
   const { slug } = await params;
   const data = await loadInstitution(slug);
 
-  return <InstitutionDetailView data={data} />;
+  const regionCode =
+    data.institution.region &&
+    /^[A-Z0-9][A-Z0-9_-]{0,63}$/.test(data.institution.region)
+      ? data.institution.region
+      : undefined;
+  return (
+    <>
+      <PageAnalytics
+        events={[
+          {
+            name: "institution_view",
+            properties: {
+              institutionId: data.institution.id,
+              category: data.institution.category,
+              ...(regionCode ? { regionCode } : {}),
+            },
+          },
+        ]}
+        navigationKey={`INSTITUTION:${data.institution.id}`}
+      />
+      <InstitutionDetailView data={data} />
+    </>
+  );
 }
