@@ -2,9 +2,9 @@
 
 Evidence date: 2026-08-26
 
-Code baseline: `4e9e36c1dd99de7d78250cc75adb653952b70e5b`
+Code baseline: `cfeb4677f76f35e88125d143e6c4563d2a7ac7a2`
 
-Allowed checklist statuses are `PASS`, `FAIL`, `NOT EXECUTED`, `OWNER APPROVAL REQUIRED`, and `NOT APPLICABLE`.
+Allowed checklist statuses are `PASS`, `FAIL`, `NOT EXECUTED`, `OWNER APPROVED`, `OWNER APPROVAL REQUIRED`, `BLOCKED`, and `NOT APPLICABLE`.
 
 This is the canonical technical companion to `docs/15B_FINAL_OWNER_DECISIONS.md`. It separates repository/Preview evidence from production facts. `PASS` never implies owner approval or production-write authorization.
 
@@ -13,10 +13,10 @@ This is the canonical technical companion to `docs/15B_FINAL_OWNER_DECISIONS.md`
 | Check                                                                  | Status                  | Evidence / next proof                             |
 | ---------------------------------------------------------------------- | ----------------------- | ------------------------------------------------- |
 | Railway Preview build, HTTPS runtime, and synthetic Preview PostgreSQL | PASS                    | existing `preppy-ui-preview` Preview only         |
-| Railway production platform selection                                  | OWNER APPROVAL REQUIRED | D1; Railway is recommended, not approved          |
-| Railway production project/environment provisioned                     | NOT EXECUTED            | requires later bounded provisioning authorization |
-| production source is `main` with autodeploy disabled/manual promotion  | NOT EXECUTED            | verify in the provisioned Railway environment     |
-| production deployment                                                  | NOT EXECUTED            | explicitly outside this phase                     |
+| Railway production platform selection                                  | OWNER APPROVED          | D1; explicit owner instruction dated 2026-08-26   |
+| Railway production project/environment provisioned                     | PASS                    | isolated `preppy-production` / `production`       |
+| production source is `main` with autodeploy disabled/manual promotion  | PASS                    | Web source verified; autodeploy disabled          |
+| bounded infrastructure deployment                                      | PASS                    | Web health and disabled scheduled Worker only     |
 
 ## Origin and domain
 
@@ -33,9 +33,9 @@ This is the canonical technical companion to `docs/15B_FINAL_OWNER_DECISIONS.md`
 | Check                                                                 | Status                  | Evidence / next proof                   |
 | --------------------------------------------------------------------- | ----------------------- | --------------------------------------- |
 | repository target defines one Web, one Worker, one PostgreSQL primary | PASS                    | `.railway/railway.ts`                   |
-| one Web / one Worker / autoscaling off topology approved              | OWNER APPROVAL REQUIRED | D2                                      |
-| actual Web replicas exactly one                                       | NOT EXECUTED            | prove after provisioning                |
-| actual Worker execution target exactly one                            | NOT EXECUTED            | prove after provisioning                |
+| one Web / one Worker / autoscaling off topology approved              | OWNER APPROVED          | D2; explicit owner instruction           |
+| actual Web replicas exactly one                                       | PASS                    | Railway deployment manifest              |
+| actual Worker execution target exactly one                            | PASS                    | one scheduled service; no extra scheduler |
 | second Web blocked until distributed replay/rate-limit controls exist | PASS                    | process-local hardening gate documented |
 
 ## Scheduler
@@ -43,20 +43,20 @@ This is the canonical technical companion to `docs/15B_FINAL_OWNER_DECISIONS.md`
 | Check                                                   | Status                  | Evidence / next proof                           |
 | ------------------------------------------------------- | ----------------------- | ----------------------------------------------- |
 | bounded run-once Worker command                         | PASS                    | `npm run worker:once`; 240-second hard timeout  |
-| five-minute Railway Cron cadence approved               | OWNER APPROVAL REQUIRED | D2; recommended `*/5 * * * *` UTC               |
-| Railway Cron configured as the only scheduler authority | NOT EXECUTED            | no always-on Worker or second trigger permitted |
-| scheduled service restart policy `NEVER` verified       | NOT EXECUTED            | provider-side configuration proof required      |
+| five-minute Railway Cron cadence approved               | OWNER APPROVED          | D2; `*/5 * * * *` UTC                            |
+| Railway Cron configured as the only scheduler authority | PASS                    | Worker service schedule; no scheduler service    |
+| scheduled service restart policy `NEVER` verified       | PASS                    | Railway deployment manifest                      |
 
 ## Database roles
 
 | Check                                                           | Status                  | Evidence / next proof                                    |
 | --------------------------------------------------------------- | ----------------------- | -------------------------------------------------------- |
 | capability-separated role model documented                      | PASS                    | preflight, migration, runtime, Worker boundaries         |
-| role model or bounded Web/Worker shared-role exception approved | OWNER APPROVAL REQUIRED | D7                                                       |
-| dedicated read-only preflight role provisioned                  | NOT EXECUTED            | must enforce transaction read-only without a write probe |
-| migration role provisioned and excluded from Web/Worker         | NOT EXECUTED            | operator-only capability                                 |
-| runtime role cannot migrate schema                              | NOT EXECUTED            | privilege proof required                                 |
-| Worker role has bounded DML and no schema DDL                   | NOT EXECUTED            | privilege proof required                                 |
+| role model or bounded Web/Worker shared-role exception approved | OWNER APPROVED          | D7; shared `preppy_runtime` bounded exception             |
+| dedicated read-only preflight role provisioned                  | PASS                    | DB role config has transaction read-only and no CREATE    |
+| migration role provisioned and excluded from Web/Worker         | PASS                    | operator URL retained only on Postgres service            |
+| runtime role cannot migrate schema                              | PASS                    | no public-schema CREATE privilege                         |
+| Worker role has bounded DML and no schema DDL                   | PASS                    | Worker uses shared `preppy_runtime`; future grants only   |
 
 ## Backups
 
@@ -64,9 +64,9 @@ This is the canonical technical companion to `docs/15B_FINAL_OWNER_DECISIONS.md`
 | --------------------------------------------------------- | ----------------------- | ------------------------------------------------------------ |
 | WP-16A non-production logical backup/restore drill        | PASS                    | ledger/count/invariant/read-smoke evidence through `0010`    |
 | Railway native PITR/backup capability documented          | PASS                    | capability only; not enabled or proven for production        |
-| RPO, RTO, and retention policy approved                   | OWNER APPROVAL REQUIRED | D4–D6                                                        |
-| Railway retention gap resolution selected                 | OWNER APPROVAL REQUIRED | D6 option A, B, or C                                         |
-| production PITR/base backup/restore-to-sibling proven     | NOT EXECUTED            | provisioning-time evidence required                          |
+| RPO, RTO, and retention policy approved                   | OWNER APPROVED          | D4–D6; explicit owner instruction                            |
+| Railway retention gap resolution selected                 | OWNER APPROVED          | native recovery plus supplemental portable logical retention |
+| production PITR/base backup/restore-to-sibling proven     | BLOCKED                 | Pro-plan billing action required; no auto-upgrade             |
 | fresh recovery point immediately before production writes | NOT EXECUTED            | execution-time WP-15B gate; WP-16A drill does not satisfy it |
 
 ## Production preflight
@@ -74,9 +74,10 @@ This is the canonical technical companion to `docs/15B_FINAL_OWNER_DECISIONS.md`
 | Check                                                                    | Status       | Evidence / next proof                                            |
 | ------------------------------------------------------------------------ | ------------ | ---------------------------------------------------------------- |
 | bounded read-only WP-15A tooling                                         | PASS         | fixed query surface, redacted report, no `DATABASE_URL` fallback |
-| dedicated `PRODUCTION_DATABASE_URL` available                            | NOT EXECUTED | production credential is not present in this phase               |
-| `transaction_read_only=on` and `default_transaction_read_only=on` proven | NOT EXECUTED | no write probe allowed                                           |
-| actual production preflight executed                                     | NOT EXECUTED | must run before any production write                             |
+| dedicated read-only credential available                                 | PASS         | role URL stored as a service-scoped Railway secret                |
+| read-only role default and privileges proven                              | PASS         | catalog introspection; no application-table write probe           |
+| fresh-empty environment preflight executed                                | PASS         | reachable DB, distinct roles, zero public/application tables      |
+| full WP-15A application-schema production preflight executed              | NOT EXECUTED | run only after a separately approved migration creates the schema |
 | actual production result has `BLOCKER=0`                                 | NOT EXECUTED | warning acknowledgment also required                             |
 
 ## Kakao
@@ -137,7 +138,7 @@ This is the canonical technical companion to `docs/15B_FINAL_OWNER_DECISIONS.md`
 | Email false means no provider call                        | PASS         | unit contract                                               |
 | Analytics false selects Noop/no GA request                | PASS         | unit contract                                               |
 | Cache false means no cache claim/request/false processing | PASS         | unit contract                                               |
-| production starts with all four values false              | NOT EXECUTED | verify in the provisioned environment before deploy/cutover |
+| production starts with all four values false              | PASS         | verified on Web and Worker; Worker run claimed/processed zero |
 
 Required starting state:
 
@@ -172,34 +173,30 @@ CACHE_REVALIDATION_ENABLED=false
 
 | Decision                                         | Status                  |
 | ------------------------------------------------ | ----------------------- |
-| D1 Railway production platform                   | OWNER APPROVAL REQUIRED |
-| D2 initial topology and five-minute scheduler    | OWNER APPROVAL REQUIRED |
+| D1 Railway production platform                   | OWNER APPROVED          |
+| D2 initial topology and five-minute scheduler    | OWNER APPROVED          |
 | D3 exact production HTTPS domain                 | OWNER APPROVAL REQUIRED |
-| D4 RPO `<=24h`                                   | OWNER APPROVAL REQUIRED |
-| D5 RTO `<=2h`                                    | OWNER APPROVAL REQUIRED |
-| D6 backup/retention and Railway gap resolution   | OWNER APPROVAL REQUIRED |
-| D7 DB role model or bounded exception            | OWNER APPROVAL REQUIRED |
-| D8 Railway production provisioning               | OWNER APPROVAL REQUIRED |
-| D9 Kakao/Admin OIDC/Resend/GA4/GSC configuration | OWNER APPROVAL REQUIRED |
+| D4 RPO `<=24h`                                   | OWNER APPROVED          |
+| D5 RTO `<=2h`                                    | OWNER APPROVED          |
+| D6 backup/retention and Railway gap resolution   | OWNER APPROVED          |
+| D7 DB role model or bounded exception            | OWNER APPROVED          |
+| D8 Railway production provisioning               | OWNER APPROVED          |
+| D9 Kakao/Admin OIDC/Resend/GA4/GSC configuration | OWNER APPROVED          |
 | D10 later production migration/backfill/cutover  | OWNER APPROVAL REQUIRED |
 
-Automatically approved decisions: `NONE`.
+Automatically approved decisions: `NONE`; approvals above cite the explicit 2026-08-26 owner instruction.
 
 ## Current result and next technical prerequisites
 
-Final gate: `READY_FOR_OWNER_APPROVAL`.
+Final gate: `PRODUCTION_INFRA_READY_FOR_MIGRATION_APPROVAL`.
 
-After D1–D9 are explicitly resolved, the separately authorized provisioning phase must:
+Before a separately authorized migration phase:
 
-1. create an isolated Railway production environment without autodeploy or side effects;
-2. configure exactly one Web, one scheduled run-once Worker, one five-minute Railway Cron authority, and one PostgreSQL primary;
-3. attach the final HTTPS domain and align Kakao, Admin OIDC, Resend, Cache, GA4, sitemap, and GSC origins;
-4. provision and prove the DB roles or the approved bounded Web/Worker exception;
-5. enable and verify PITR/backup/restore capability and implement the owner-selected retention-gap resolution;
-6. inject domain-separated capability secrets without exposing values;
-7. prove all four kill switches are false;
-8. run the real production read-only preflight and require `BLOCKER=0`;
-9. request a separate D10 production-write approval;
-10. create the fresh production recovery point immediately before the first authorized migration/backfill write.
+1. resolve the Railway Pro billing action required for Backups/PITR, or record a separately approved bounded logical fallback;
+2. keep the final-domain/provider work deferred until D3 is resolved;
+3. request a separate D10 production-write approval;
+4. create and record the fresh recovery point immediately before the first authorized migration/backfill write;
+5. run migrations/backfills with all four side-effect capabilities still false;
+6. run the full WP-15A application-schema production preflight and require `BLOCKER=0` before any enablement.
 
-No production provisioning, deployment, provider mutation, backup, migration, backfill, Worker enablement, email, analytics event, or DNS/GSC action occurred in this finalization phase.
+Bounded Railway infrastructure provisioning, Web liveness smoke, disabled Worker smoke, security-role DDL, and fresh-empty DB inspection occurred. No application migration, backfill, cutover, fresh backup, Worker enablement, email, analytics event, provider-console mutation, or DNS/GSC action occurred.

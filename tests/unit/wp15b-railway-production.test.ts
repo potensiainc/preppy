@@ -134,4 +134,52 @@ describe("WP-15B Railway production contract", () => {
     expect(approvals).toContain("Status: `UNAPPROVED");
     expect(approvals).toContain("Final gate: `READY_FOR_OWNER_APPROVAL`");
   });
+
+  it("records the bounded production provisioning evidence without granting cutover", () => {
+    const decisions = readFileSync(
+      resolve("docs/15B_FINAL_OWNER_DECISIONS.md"),
+      "utf8",
+    );
+    const checklist = readFileSync(
+      resolve("docs/15B_FINAL_PRODUCTION_READINESS_CHECKLIST.md"),
+      "utf8",
+    );
+    const result = readFileSync(
+      resolve("docs/15B_RAILWAY_PRODUCTION_PROVISIONING_RESULT.md"),
+      "utf8",
+    );
+
+    for (const decision of ["D1", "D2", "D4", "D5", "D6", "D7", "D8", "D9"]) {
+      expect(decisions).toMatch(
+        new RegExp("### " + decision + "\\.[\\s\\S]*?Status: `OWNER APPROVED`"),
+      );
+    }
+    expect(decisions).toMatch(/### D3\.[\s\S]*?Status: `UNRESOLVED`/);
+    expect(decisions).toMatch(
+      /### D10\.[\s\S]*?Status: `NOT EXECUTED` \/ `NOT APPROVED`/,
+    );
+
+    expect(result).toContain("Project | `preppy-production`");
+    expect(result).toContain("`preppy-web`");
+    expect(result).toContain("`preppy-worker`");
+    expect(result).toContain("`*/5 * * * *` UTC");
+    expect(result).toContain("`FRESH_EMPTY_PRODUCTION_BASELINE`");
+    expect(result).toContain("`OWNER_BILLING_ACTION_REQUIRED`");
+    expect(result).toContain("WORKER_ENABLED=false");
+    expect(result).toContain("claimed=0");
+    expect(result).toContain("Final canonical launch origin: `UNRESOLVED`");
+    expect(result).not.toMatch(/postgres(?:ql)?:\/\//i);
+    expect(result).not.toMatch(/(?:password|secret|token)\s*[:=]\s*[^`\s]+/i);
+
+    expect(checklist).toContain(
+      "Final gate: `PRODUCTION_INFRA_READY_FOR_MIGRATION_APPROVAL`",
+    );
+    expect(checklist).toContain(
+      "production PITR/base backup/restore-to-sibling proven",
+    );
+    expect(checklist).toContain("Pro-plan billing action required");
+    expect(checklist).toContain(
+      "D10 later production migration/backfill/cutover  | OWNER APPROVAL REQUIRED",
+    );
+  });
 });
