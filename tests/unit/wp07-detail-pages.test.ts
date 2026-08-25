@@ -131,11 +131,12 @@ describe("WP-07 Opportunity and Article detail pages", () => {
     expect(markup).toContain(
       "공식 모집 안내를 바탕으로 주요 일정을 정리했습니다.",
     );
-    expect(markup).toContain("Last Verified");
+    expect(markup).toContain("최근 확인");
+    expect(markup).not.toContain("Last Verified");
     expect(markup).toContain("2026년 8월 23일");
     expect(markup).toContain("지원 페이지 확인");
     expect(markup).toContain('href="https://apply.example.test/2027"');
-    expect(markup).toContain("공식 안내 확인");
+    expect(markup).toContain("서울국제학교 입학처");
     expect(markup).toContain('href="https://admissions.example.test/2027"');
     expect(markup).toContain('target="_blank"');
     expect(markup).toContain('rel="noopener noreferrer"');
@@ -200,7 +201,7 @@ describe("WP-07 Opportunity and Article detail pages", () => {
       }),
     );
 
-    expect(markup).not.toContain("Last Verified");
+    expect(markup).not.toContain("최근 확인");
     expect(markup).not.toContain("모집 안내");
     expect(markup).not.toContain("공식 안내");
     expect(markup).not.toContain("최근 변경 사항");

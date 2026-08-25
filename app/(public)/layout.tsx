@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 import { AnalyticsProvider } from "@/app/_components/analytics-provider";
+import { RouteScrollToTop } from "@/app/_components/route-scroll-to-top";
 import { SiteFooter } from "@/app/_components/site-footer";
 import { SiteHeader } from "@/app/_components/site-header";
 import { getClientAnalyticsConfig } from "@/src/analytics/config.server";
@@ -18,6 +19,7 @@ export default function PublicLayout({
   return (
     <AnalyticsProvider config={analyticsConfig}>
       <SiteHeader />
+      <RouteScrollToTop />
       <main>{children}</main>
       <SiteFooter />
     </AnalyticsProvider>

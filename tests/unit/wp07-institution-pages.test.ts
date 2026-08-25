@@ -206,6 +206,28 @@ describe("WP-07 Institution pages", () => {
     expect(markup).not.toContain("페이지 최종 확인");
   });
 
+  it("omits empty secondary opportunity groups and consolidates source provenance", () => {
+    const markup = renderToStaticMarkup(
+      createElement(InstitutionDetailView, {
+        data: {
+          ...detail,
+          upcomingOpportunities: [],
+          recentOpportunities: [],
+          officialSources: [
+            detail.verifiedFacts[0]!.officialSource!,
+            ...detail.officialSources,
+          ],
+        },
+      }),
+    );
+
+    expect(markup).toContain("현재 모집·입학정보");
+    expect(markup).not.toContain("예정된 모집·입학정보");
+    expect(markup).not.toContain("최근 모집·입학정보");
+    expect(markup.match(/학교 공식 입학처/g)).toHaveLength(1);
+    expect(markup).toContain("학교 공식 홈페이지");
+  });
+
   it("wires async Next route values directly to canonical server queries and uses Link for live internal routes", async () => {
     // Mutation caught: raw database/REST/client fetching, bypassing canonical not-found mapping, or retaining anchors for known internal routes.
     const [listRoute, detailRoute, cards, primitives] = await Promise.all([

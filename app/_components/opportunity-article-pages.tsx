@@ -13,6 +13,7 @@ import {
   OpportunityCard,
   StateBadge,
   TrustSource,
+  VerifiedAt,
 } from "@/app/_components/public-cards";
 import { PageContainer, SectionHeader } from "@/app/_components/ui-primitives";
 import {
@@ -94,15 +95,11 @@ export function OpportunityDetailView({
   const actionHref = opportunity.actionUrl
     ? safeExternalHref(opportunity.actionUrl)
     : null;
-  const officialSourceHref = opportunity.officialSource
-    ? safeExternalHref(opportunity.officialSource.url)
-    : null;
-
   return (
     <PageContainer>
       <article className="opportunity-detail">
         <header className="opportunity-detail__hero">
-          <p className="eyebrow">Opportunity</p>
+          <p className="eyebrow">모집·입학정보</p>
           <div className="opportunity-detail__hero-content">
             <div>
               <p className="opportunity-detail__institution">
@@ -169,31 +166,17 @@ export function OpportunityDetailView({
                 </a>
               ) : null}
               {opportunity.officialSource ? (
-                <div>
-                  {officialSourceHref ? (
-                    <a
-                      className="text-link"
-                      href={officialSourceHref}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      공식 안내 확인
-                    </a>
-                  ) : null}
-                  <TrustSource source={opportunity.officialSource} />
-                </div>
+                <TrustSource source={opportunity.officialSource} />
               ) : null}
             </div>
           </section>
         ) : null}
 
         {opportunity.lastVerifiedAt ? (
-          <p className="verified-at">
-            Last Verified{" "}
-            <time dateTime={opportunity.lastVerifiedAt}>
-              {formatPublicDate(opportunity.lastVerifiedAt)}
-            </time>
-          </p>
+          <VerifiedAt
+            label="최근 확인"
+            verifiedAt={opportunity.lastVerifiedAt}
+          />
         ) : null}
 
         {opportunity.recentMeaningfulChanges.length > 0 ? (
@@ -239,7 +222,7 @@ export function ArticleDetailView({ article }: { article: PublicArticleDTO }) {
     <PageContainer>
       <article className="article-detail">
         <header className="article-detail__hero">
-          <p className="eyebrow">Article</p>
+          <p className="eyebrow">입학 준비 아티클</p>
           <h1>{article.title}</h1>
           <p className="article-detail__meta">
             {articleTypeLabel(article.articleType)} ·{" "}

@@ -4,6 +4,7 @@ import type {
   InstitutionDetailDTO,
   InstitutionListDTO,
   InstitutionListQuery,
+  OfficialSourceDTO,
   OpportunityCardDTO,
 } from "@/src/modules/public/dto";
 
@@ -42,6 +43,22 @@ const states: OpportunityCardDTO["businessState"][] = [
   "CANCELLED",
   "UNKNOWN",
 ];
+
+function collectOfficialSources(data: InstitutionDetailDTO) {
+  const sources = new Map<string, OfficialSourceDTO>();
+
+  for (const fact of data.verifiedFacts) {
+    if (fact.officialSource) {
+      sources.set(fact.officialSource.url, fact.officialSource);
+    }
+  }
+
+  for (const source of data.officialSources) {
+    sources.set(source.url, source);
+  }
+
+  return [...sources.values()];
+}
 
 function institutionListHref(
   filters: InstitutionListQuery,
@@ -93,7 +110,7 @@ export function InstitutionListView({
     <PageContainer>
       <div className="institution-list">
         <header className="institution-list__intro">
-          <p className="eyebrow">Institutions</p>
+          <p className="eyebrow">기관 탐색</p>
           <h1>기관 찾기</h1>
           <p>공개된 기관 정보와 확인 가능한 모집·입학정보를 찾아보세요.</p>
         </header>
@@ -155,7 +172,7 @@ export function InstitutionListView({
 
         <section aria-label="공개 기관">
           <SectionHeader
-            eyebrow="Results"
+            eyebrow="검색 결과"
             title="공개 기관"
             description={`${data.pagination.total}개의 기관을 확인할 수 있습니다.`}
           />
@@ -187,11 +204,12 @@ export function InstitutionDetailView({
   data: InstitutionDetailDTO;
 }) {
   const { institution } = data;
+  const officialSources = collectOfficialSources(data);
   return (
     <PageContainer>
       <article className="institution-detail">
         <header className="institution-detail__hero">
-          <p className="eyebrow">Institution</p>
+          <p className="eyebrow">기관 정보</p>
           <div className="institution-detail__hero-content">
             <div>
               <h1>{institution.name}</h1>
@@ -217,16 +235,20 @@ export function InstitutionDetailView({
           opportunities={data.currentOpportunities}
           emptyMessage="현재 공개된 모집·입학정보가 없습니다."
         />
-        <OpportunityGroup
-          title="예정된 모집·입학정보"
-          opportunities={data.upcomingOpportunities}
-          emptyMessage="예정된 모집·입학정보가 없습니다."
-        />
-        <OpportunityGroup
-          title="최근 모집·입학정보"
-          opportunities={data.recentOpportunities}
-          emptyMessage="최근 모집·입학정보가 없습니다."
-        />
+        {data.upcomingOpportunities.length > 0 ? (
+          <OpportunityGroup
+            title="예정된 모집·입학정보"
+            opportunities={data.upcomingOpportunities}
+            emptyMessage="예정된 모집·입학정보가 없습니다."
+          />
+        ) : null}
+        {data.recentOpportunities.length > 0 ? (
+          <OpportunityGroup
+            title="최근 모집·입학정보"
+            opportunities={data.recentOpportunities}
+            emptyMessage="최근 모집·입학정보가 없습니다."
+          />
+        ) : null}
 
         <section
           className="institution-detail__section"
@@ -234,7 +256,7 @@ export function InstitutionDetailView({
         >
           <SectionHeader
             title="확인된 기관 정보"
-            description="각 정보의 확인일과 공식 출처를 함께 표시합니다."
+            description="검증된 항목과 확인일을 표시합니다. 근거가 된 공식 자료는 아래에서 한 번에 확인할 수 있습니다."
           />
           {data.verifiedFacts.length > 0 ? (
             <dl className="institution-facts">
@@ -244,9 +266,6 @@ export function InstitutionDetailView({
                   <dd>
                     {fact.displayValue ?? "표시 가능한 정보가 없습니다."}
                     <VerifiedAt verifiedAt={fact.verifiedAt} label="확인일" />
-                    {fact.officialSource ? (
-                      <TrustSource source={fact.officialSource} />
-                    ) : null}
                   </dd>
                 </div>
               ))}
@@ -256,37 +275,41 @@ export function InstitutionDetailView({
           )}
         </section>
 
-        <section className="institution-detail__section" aria-label="공식 출처">
-          <SectionHeader title="공식 출처" />
-          {data.officialSources.length > 0 ? (
+        {officialSources.length > 0 ? (
+          <section
+            className="institution-detail__section"
+            aria-label="공식 출처"
+          >
+            <SectionHeader
+              title="공식 출처"
+              description="기관 정보와 모집·입학정보 확인에 사용한 자료입니다."
+            />
             <div className="institution-sources">
-              {data.officialSources.map((source) => (
+              {officialSources.map((source) => (
                 <TrustSource key={source.url} source={source} />
               ))}
             </div>
-          ) : (
-            <p className="detail-empty">현재 연결된 공식 출처가 없습니다.</p>
-          )}
-        </section>
+          </section>
+        ) : null}
 
-        <section
-          className="institution-detail__section"
-          aria-label="관련 아티클"
-        >
-          <SectionHeader title="관련 아티클" />
-          {data.relatedArticles.length > 0 ? (
+        {data.relatedArticles.length > 0 ? (
+          <section
+            className="institution-detail__section"
+            aria-label="관련 아티클"
+          >
+            <SectionHeader title="관련 아티클" />
             <div className="institution-detail__cards">
               {data.relatedArticles.map((article) => (
                 <ArticleCard key={article.id} article={article} />
               ))}
             </div>
-          ) : (
-            <p className="detail-empty">현재 연결된 아티클이 없습니다.</p>
-          )}
+          </section>
+        ) : null}
+        <nav className="detail-return" aria-label="기관 탐색으로 돌아가기">
           <Link className="text-link" href="/institutions">
             다른 기관 찾아보기
           </Link>
-        </section>
+        </nav>
       </article>
     </PageContainer>
   );

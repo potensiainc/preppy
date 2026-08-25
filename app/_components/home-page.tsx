@@ -23,7 +23,7 @@ function OpportunitySection({
   return (
     <section id="current-opportunities" aria-label="현재 모집·입학정보">
       <SectionHeader
-        eyebrow="Admissions"
+        eyebrow="모집·입학"
         title="현재 모집·입학정보"
         description="공개된 공식 정보를 바탕으로 지금 확인할 수 있는 모집과 입학 일정을 모았습니다."
       />
@@ -51,7 +51,7 @@ function InstitutionSection({
   return (
     <section aria-label="살펴볼 기관">
       <SectionHeader
-        eyebrow="Institutions"
+        eyebrow="기관"
         title="살펴볼 기관"
         description="각 기관의 공개 프로필과 확인 가능한 입학정보를 살펴보세요."
         action={
@@ -84,7 +84,7 @@ function ArticleSection({
   return (
     <section id="articles" aria-label="입학 준비 아티클">
       <SectionHeader
-        eyebrow="Journal"
+        eyebrow="입학 준비"
         title="입학 준비 아티클"
         description="기관을 비교하고 입학을 준비할 때 참고할 수 있는 내용을 정리합니다."
       />
@@ -109,7 +109,7 @@ export function HomePageView({ data }: { data: HomePageDTO }) {
     <div className="home-page">
       <section className="home-hero" aria-labelledby="home-title">
         <PageContainer>
-          <p className="eyebrow">PREPPY ADMISSIONS GUIDE</p>
+          <p className="eyebrow">PREPPY 입학정보 가이드</p>
           <h1 id="home-title">입학정보, 아직도 일일이 찾아보고 계신가요?</h1>
           <p className="home-hero__copy">
             영유·사립초·국제학교 정보를 한곳에서 확인하고, 관심기관의 새로운
@@ -146,7 +146,7 @@ export function HomePageView({ data }: { data: HomePageDTO }) {
           aria-label="우리 아이에게 맞는 기관 찾기"
         >
           <SectionHeader
-            eyebrow="Discover"
+            eyebrow="탐색"
             title="우리 아이에게 맞는 기관 찾기"
             description="관심 있는 교육 단계부터 천천히 살펴보세요."
           />
@@ -154,7 +154,8 @@ export function HomePageView({ data }: { data: HomePageDTO }) {
             {data.categories.map((category) => (
               <li key={category.category}>
                 <Link href={category.href}>
-                  {homeCategoryLabel(category.category)}
+                  <span>{homeCategoryLabel(category.category)}</span>
+                  <span aria-hidden="true">→</span>
                 </Link>
               </li>
             ))}

@@ -11,6 +11,9 @@ export default defineConfig({
       "railway/iac": fileURLToPath(
         new URL("./tests/support/railway-iac.ts", import.meta.url),
       ),
+      "next/font/google": fileURLToPath(
+        new URL("./tests/support/next-font-google.ts", import.meta.url),
+      ),
     },
   },
   test: {
