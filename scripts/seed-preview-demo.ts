@@ -3,9 +3,7 @@ import { fileURLToPath } from "node:url";
 import postgres from "postgres";
 
 type PreviewInstitutionType =
-  | "ENGLISH_KINDERGARTEN"
-  | "PRIVATE_ELEMENTARY"
-  | "INTERNATIONAL_SCHOOL";
+  "ENGLISH_KINDERGARTEN" | "PRIVATE_ELEMENTARY" | "INTERNATIONAL_SCHOOL";
 
 type PreviewOpportunityType =
   | "INFORMATION_SESSION"
@@ -183,11 +181,10 @@ const PREVIEW_FACT_EVIDENCE_IDS = PREVIEW_DEMO_FIXTURE.institutions.map(
   (_, index) =>
     `58000000-0000-4000-8000-${String(index + 1).padStart(12, "0")}`,
 );
-const PREVIEW_OPPORTUNITY_EVIDENCE_IDS =
-  PREVIEW_DEMO_FIXTURE.opportunities.map(
-    (_, index) =>
-      `59000000-0000-4000-8000-${String(index + 1).padStart(12, "0")}`,
-  );
+const PREVIEW_OPPORTUNITY_EVIDENCE_IDS = PREVIEW_DEMO_FIXTURE.opportunities.map(
+  (_, index) =>
+    `59000000-0000-4000-8000-${String(index + 1).padStart(12, "0")}`,
+);
 
 const ALL_AGGREGATE_IDS = [
   ...PREVIEW_DEMO_FIXTURE.institutions.map(({ id }) => id),
@@ -225,12 +222,19 @@ async function assertNoIdentityConflicts(
   }
 }
 
-export async function inspectPreviewDemo(sql: PreviewSql): Promise<PreviewDemoReport> {
+export async function inspectPreviewDemo(
+  sql: PreviewSql,
+): Promise<PreviewDemoReport> {
   const institutionIds = PREVIEW_DEMO_FIXTURE.institutions.map(({ id }) => id);
   const opportunityIds = PREVIEW_DEMO_FIXTURE.opportunities.map(({ id }) => id);
   const articleIds = PREVIEW_DEMO_FIXTURE.articles.map(({ id }) => id);
   const [counts] = await sql<
-    Array<Omit<PreviewDemoReport, "institutionSlugs" | "opportunitySlugs" | "articleSlugs">>
+    Array<
+      Omit<
+        PreviewDemoReport,
+        "institutionSlugs" | "opportunitySlugs" | "articleSlugs"
+      >
+    >
   >`
     select
       (select count(*)::int from institutions where id in ${sql(institutionIds)}) as institutions,
@@ -250,9 +254,15 @@ export async function inspectPreviewDemo(sql: PreviewSql): Promise<PreviewDemoRe
   `;
   if (!counts) throw new Error("Preview seed inspection returned no row");
   const [institutionRows, opportunityRows, articleRows] = await Promise.all([
-    sql<{ slug: string }[]>`select slug from institutions where id in ${sql(institutionIds)} order by slug`,
-    sql<{ slug: string }[]>`select slug from opportunities where id in ${sql(opportunityIds)} order by slug`,
-    sql<{ slug: string }[]>`select slug from articles where id in ${sql(articleIds)} order by slug`,
+    sql<
+      { slug: string }[]
+    >`select slug from institutions where id in ${sql(institutionIds)} order by slug`,
+    sql<
+      { slug: string }[]
+    >`select slug from opportunities where id in ${sql(opportunityIds)} order by slug`,
+    sql<
+      { slug: string }[]
+    >`select slug from articles where id in ${sql(articleIds)} order by slug`,
   ]);
   return {
     ...counts,
@@ -285,7 +295,10 @@ export async function seedPreviewDemo(
       PREVIEW_DEMO_FIXTURE.articles,
     );
 
-    for (const [index, institution] of PREVIEW_DEMO_FIXTURE.institutions.entries()) {
+    for (const [
+      index,
+      institution,
+    ] of PREVIEW_DEMO_FIXTURE.institutions.entries()) {
       const sourceId = PREVIEW_SOURCE_IDS[index];
       const factId = PREVIEW_FACT_IDS[index];
       const factVersionId = PREVIEW_FACT_VERSION_IDS[index];
@@ -378,7 +391,10 @@ export async function seedPreviewDemo(
       `;
     }
 
-    for (const [index, opportunity] of PREVIEW_DEMO_FIXTURE.opportunities.entries()) {
+    for (const [
+      index,
+      opportunity,
+    ] of PREVIEW_DEMO_FIXTURE.opportunities.entries()) {
       const sourceId = PREVIEW_SOURCE_IDS[index];
       const versionId = PREVIEW_OPPORTUNITY_VERSION_IDS[index];
       await transaction`
@@ -446,8 +462,14 @@ export async function seedPreviewDemo(
         "PRIVATE_ELEMENTARY",
         "INTERNATIONAL_SCHOOL",
       ][index];
-      const relatedInstitutions = PREVIEW_DEMO_FIXTURE.institutions.slice(index * 2, index * 2 + 2);
-      const relatedOpportunities = PREVIEW_DEMO_FIXTURE.opportunities.slice(index * 2, index * 2 + 2);
+      const relatedInstitutions = PREVIEW_DEMO_FIXTURE.institutions.slice(
+        index * 2,
+        index * 2 + 2,
+      );
+      const relatedOpportunities = PREVIEW_DEMO_FIXTURE.opportunities.slice(
+        index * 2,
+        index * 2 + 2,
+      );
       await transaction`
         insert into articles (
           id, slug, type, category, status, title, excerpt, content_html,
@@ -499,12 +521,14 @@ export async function seedPreviewDemo(
   });
 }
 
-export function assertPreviewSeedTarget(input: Readonly<{
-  databaseUrl: string;
-  projectName?: string;
-  environmentName?: string;
-  serviceName?: string;
-}>) {
+export function assertPreviewSeedTarget(
+  input: Readonly<{
+    databaseUrl: string;
+    projectName?: string;
+    environmentName?: string;
+    serviceName?: string;
+  }>,
+) {
   let databaseUrl: URL;
   try {
     databaseUrl = new URL(input.databaseUrl);
@@ -543,7 +567,9 @@ async function main(): Promise<void> {
   const expectedBaseUrl = `https://${process.env.RAILWAY_PUBLIC_DOMAIN ?? ""}`;
   const appBaseUrl = normalizeAppBaseUrl(process.env.APP_BASE_URL ?? "");
   if (appBaseUrl !== normalizeAppBaseUrl(expectedBaseUrl)) {
-    throw new Error("Preview APP_BASE_URL does not match the Railway public domain");
+    throw new Error(
+      "Preview APP_BASE_URL does not match the Railway public domain",
+    );
   }
   const sql = postgres(databaseUrl, { max: 1 });
   try {

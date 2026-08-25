@@ -22,16 +22,17 @@ describe("WP-UI-01 Preview demo seed contract", () => {
       INTERNATIONAL_SCHOOL: 2,
     });
     expect(PREVIEW_DEMO_FIXTURE.opportunities).toHaveLength(6);
-    expect(new Set(PREVIEW_DEMO_FIXTURE.opportunities.map(({ type }) => type)))
-      .toEqual(
-        new Set([
-          "INFORMATION_SESSION",
-          "OPEN_HOUSE",
-          "APPLICATION",
-          "ASSESSMENT",
-          "DEADLINE",
-        ]),
-      );
+    expect(
+      new Set(PREVIEW_DEMO_FIXTURE.opportunities.map(({ type }) => type)),
+    ).toEqual(
+      new Set([
+        "INFORMATION_SESSION",
+        "OPEN_HOUSE",
+        "APPLICATION",
+        "ASSESSMENT",
+        "DEADLINE",
+      ]),
+    );
     expect(PREVIEW_DEMO_FIXTURE.articles).toHaveLength(3);
     expect(
       PREVIEW_DEMO_FIXTURE.institutions.every(({ name }) =>
