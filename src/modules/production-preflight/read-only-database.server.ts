@@ -276,10 +276,12 @@ export class ReadOnlyPreflightSession {
 
   async listPublicConstraints(): Promise<string[]> {
     const rows = await this.sql<{ constraintName: string }[]>`
-      select constraint_name as "constraintName"
-      from information_schema.table_constraints
-      where table_schema = 'public'
-      order by constraint_name
+      select constraint_row.conname as "constraintName"
+      from pg_catalog.pg_constraint constraint_row
+      join pg_catalog.pg_namespace namespace_row
+        on namespace_row.oid = constraint_row.connamespace
+      where namespace_row.nspname = 'public'
+      order by constraint_row.conname
     `;
     return rows.map((row) => row.constraintName);
   }

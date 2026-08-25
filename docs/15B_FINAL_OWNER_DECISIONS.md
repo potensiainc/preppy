@@ -37,10 +37,11 @@
 
 ### D6. Backup and retention policy
 
-- Decision: Railway PITR/provider-native recovery plus a fresh pre-cutover recovery point and a portable PostgreSQL logical dump. Retain the pre-cutover recovery point for 30 days and until two verified post-cutover backups exist; retain daily backups for 14 days and weekly backups for 8 weeks.
+- Decision: retain Railway Hobby for the pre-launch MVP and use a fresh portable PostgreSQL logical dump, SHA-256 manifest, and isolated PostgreSQL restore proof as the production-migration recovery gate. Retain the pre-write backup for at least 30 days. Retain the post-migration backup for at least 30 days and until two later production backups are restore-verified. After launch, target 14 days of daily logical backups and 8 weeks of weekly logical backups.
 - Status: `OWNER APPROVED`.
-- Evidence: owner instruction `WP-15B Railway Production Provisioning`, Sections 0 D6 and 34, 2026-08-26.
-- Boundary: Railway Backups/PITR currently requires a Pro-plan billing action. No upgrade was purchased. Native recovery and supplemental logical retention remain separate operational proofs, and the fresh cutover backup remains `NOT EXECUTED` until immediately before the first separately authorized production write.
+- Evidence: owner instruction `WP-15B Hobby Logical Backup + Production Migration/Backfill`, Sections 1, 15–21, and 41–45, 2026-08-26.
+- Boundary: Railway Pro and native PITR remain valuable future hardening but are deferred and were not enabled. The logical fallback is accepted because the database was fresh-empty and PREPPY remains pre-launch; it is not a general waiver for a live data-bearing system.
+- Upgrade trigger: evaluate Railway Pro/PITR when active Monitoring Parents reach 100, live monitoring/email becomes operationally material, one daily-backup interval becomes unacceptable, meaningful user/follow/notification history exists, usage approaches the Pro minimum, or a second Web instance/higher SLA is required.
 
 ### D7. Database role model
 
@@ -65,12 +66,21 @@
 
 ### D10. Production migration, backfill, and cutover
 
-- Decision required later: grant a separate, time-bounded production-write authorization only after provisioning, provider readiness, the real read-only production preflight, and the fresh-backup gate pass.
-- Status: `NOT EXECUTED` / `NOT APPROVED`.
-- Owner input: a later explicit, time-bounded production-write authorization remains mandatory.
-- Boundary: no current approval permits production migration, backfill, Worker enablement, Email enablement, Analytics enablement, Cache enablement, or deploy.
+#### D10A. Production migration and deterministic backfill
 
-Automatically approved decisions: `NONE`; D1, D2, D4–D9 are approved only by the explicit 2026-08-26 owner instruction cited above.
+- Decision: apply repository migrations through `0010_colorful_randall_flagg`, then run the approved Institution, Opportunity, and Source Binding backfills twice with every side-effect capability disabled.
+- Status: `OWNER APPROVED` and `EXECUTED` on 2026-08-26.
+- Evidence: owner instruction `WP-15B Hobby Logical Backup + Production Migration/Backfill`, production-write authorization and Sections 21–42, 2026-08-26; execution evidence is recorded in `docs/15B_PRODUCTION_MIGRATION_RESULT.md`.
+- Boundary: the approval was conditioned on a fresh logical backup, SHA-256, and isolated restore proof before the first application write. It did not authorize Product data, seed data, capability enablement, or provider actions.
+
+#### D10B. Product cutover and capability enablement
+
+- Decision required later: separately authorize Product cutover and the staged enablement of Cache, Worker, Email, and Analytics after the final origin/provider gates are resolved.
+- Status: `NOT APPROVED` / `NOT EXECUTED`.
+- Owner input: a later explicit cutover authorization remains mandatory.
+- Boundary: Worker, Email, Analytics, and Cache remain disabled. No live provider call, custom-domain/DNS mutation, deploy, demo/customer import, or public launch is permitted by D10A.
+
+Automatically approved decisions: `NONE`; D1, D2, D4–D9, and D10A are approved only by the explicit 2026-08-26 owner instructions cited above.
 
 ## 2. Decision status contract
 
@@ -92,11 +102,12 @@ No repository capability, Preview result, proposal, example, or non-production r
 - Railway Preview evidence confirms build, HTTPS Preview runtime, synthetic Preview PostgreSQL, public routes, dynamic sitemap, and the accepted UI baseline.
 - Railway Production now contains one PostgreSQL primary, one Web service, and one scheduled run-once Worker. It remains isolated from `preppy-ui-preview`.
 - The temporary Railway production URL is infrastructure-smoke-only; `/api/health` returned HTTP 200.
-- Security-role DDL only was applied to the fresh empty database. Application tables and migration ledger tables both remain absent.
-- The environment-level fresh-empty baseline was verified. The full application-schema WP-15A production preflight remains `NOT EXECUTED` until an application schema exists.
-- Railway Backups/PITR is blocked by a Pro-plan billing action; no purchase or automatic upgrade occurred.
-- Fresh production backup: `NOT EXECUTED`; it is an execution-time gate immediately before the first separately authorized production write.
-- Application migration, backfill, cutover, Worker enablement, Email, Analytics, Cache, provider-console mutation, DNS, and customer-data loading: none.
+- The fresh-empty baseline was reverified immediately before the first application write: zero public application tables, zero migration-ledger tables, zero customer rows, and no Preview/demo data.
+- A fresh pre-write logical backup and a post-migration logical backup were stored outside Git, hashed with SHA-256, and restored into an isolated local PostgreSQL 18 target. Both restore gates passed.
+- Repository migrations through `0010_colorful_randall_flagg` and the three approved deterministic backfills completed under `preppy_migration`. The second backfill pass produced no additional mutation.
+- The full application-schema WP-15A production preflight ran under `preppy_preflight_ro` in a repeatable-read, read-only transaction and returned `BLOCKER=0`.
+- Railway remains on Hobby. Railway Pro and native PITR were not enabled; the owner-approved logical recovery fallback replaced PITR as the bounded MVP migration gate.
+- Application cutover, Worker enablement, Email, Analytics, Cache, provider-console mutation, DNS, customer/demo data loading, and public launch did not occur.
 
 ## 4. Required owner record
 
@@ -113,6 +124,6 @@ Secrets, DSNs, tokens, provider payloads, PII, and raw production data are forbi
 
 ## 5. Current gate
 
-Final gate: `PRODUCTION_INFRA_READY_FOR_MIGRATION_APPROVAL`.
+Final gate: `PRODUCTION_MIGRATION_COMPLETE_CAPABILITIES_DISABLED`.
 
-The bounded Railway infrastructure and fresh-empty database baseline are ready for a later migration-approval decision. Before any production write, the owner must resolve Railway Pro billing for Backups/PITR (or explicitly approve the runbook's bounded logical fallback), create and record a fresh recovery point, and issue a separate D10 production-write authorization. The final custom domain and all final-domain provider work remain deferred.
+D10A is complete: schema migration, zero-row deterministic backfill, idempotency, least-privilege grants, full read-only preflight, public read smoke, and both logical restore gates passed. D10B remains unapproved. The final custom domain, provider configuration, launch authorization, and staged capability enablement remain deferred.

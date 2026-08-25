@@ -14,6 +14,7 @@ assertDedicatedTestDatabaseUrl(testDatabaseUrl);
 
 const baseUrl = new URL(testDatabaseUrl);
 const databaseName = "admissionradar_wp15a_inventory_rehearsal";
+const readOnlyRole = "preppy_wp15a_inventory_read_only";
 const databaseUrl = new URL(baseUrl);
 databaseUrl.pathname = `/${databaseName}`;
 const maintenanceUrl = new URL(baseUrl);
@@ -25,13 +26,23 @@ describe("WP-15A safe production inventory", () => {
   beforeAll(async () => {
     await maintenance`select pg_advisory_lock(hashtext('admissionradar-schema-tests'))`;
     await maintenance.unsafe(`drop database if exists ${databaseName}`);
+    await maintenance.unsafe(`drop role if exists ${readOnlyRole}`);
+    await maintenance.unsafe(`create role ${readOnlyRole} nologin`);
     await maintenance.unsafe(`create database ${databaseName}`);
     await migrateDatabase(databaseUrl.toString());
+    await maintenance.unsafe(
+      `grant connect on database ${databaseName} to ${readOnlyRole}`,
+    );
+    await sql.unsafe(`grant usage on schema public to ${readOnlyRole}`);
+    await sql.unsafe(
+      `grant select on all tables in schema public to ${readOnlyRole}`,
+    );
   });
 
   afterAll(async () => {
     await sql.end({ timeout: 5 });
     await maintenance.unsafe(`drop database if exists ${databaseName}`);
+    await maintenance.unsafe(`drop role if exists ${readOnlyRole}`);
     await maintenance`select pg_advisory_unlock(hashtext('admissionradar-schema-tests'))`;
     await maintenance.end({ timeout: 5 });
   });
@@ -82,5 +93,19 @@ describe("WP-15A safe production inventory", () => {
     expect(inventory.distributions.userStatus).toEqual({ ACTIVE: 1 });
     expect(JSON.stringify(inventory)).not.toContain(privateEmail);
     expect(JSON.stringify(inventory)).not.toContain("Inventory Fixture");
+  });
+
+  it("discovers critical constraints for a SELECT-only preflight role", async () => {
+    const inventory = await sql.begin(
+      "isolation level repeatable read read only",
+      async (transaction) => {
+        await transaction.unsafe(`set local role ${readOnlyRole}`);
+        return collectProductionInventory(
+          new ReadOnlyPreflightSession(transaction, sql.options),
+        );
+      },
+    );
+
+    expect(inventory.schema.missingConstraints).toEqual([]);
   });
 });

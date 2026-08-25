@@ -135,7 +135,7 @@ describe("WP-15B Railway production contract", () => {
     expect(approvals).toContain("Final gate: `READY_FOR_OWNER_APPROVAL`");
   });
 
-  it("records the bounded production provisioning evidence without granting cutover", () => {
+  it("records the bounded production migration evidence without granting cutover", () => {
     const decisions = readFileSync(
       resolve("docs/15B_FINAL_OWNER_DECISIONS.md"),
       "utf8",
@@ -148,6 +148,10 @@ describe("WP-15B Railway production contract", () => {
       resolve("docs/15B_RAILWAY_PRODUCTION_PROVISIONING_RESULT.md"),
       "utf8",
     );
+    const migrationResult = readFileSync(
+      resolve("docs/15B_PRODUCTION_MIGRATION_RESULT.md"),
+      "utf8",
+    );
 
     for (const decision of ["D1", "D2", "D4", "D5", "D6", "D7", "D8", "D9"]) {
       expect(decisions).toMatch(
@@ -156,7 +160,10 @@ describe("WP-15B Railway production contract", () => {
     }
     expect(decisions).toMatch(/### D3\.[\s\S]*?Status: `UNRESOLVED`/);
     expect(decisions).toMatch(
-      /### D10\.[\s\S]*?Status: `NOT EXECUTED` \/ `NOT APPROVED`/,
+      /#### D10A\.[\s\S]*?Status: `OWNER APPROVED` and `EXECUTED`/,
+    );
+    expect(decisions).toMatch(
+      /#### D10B\.[\s\S]*?Status: `NOT APPROVED` \/ `NOT EXECUTED`/,
     );
 
     expect(result).toContain("Project | `preppy-production`");
@@ -171,15 +178,27 @@ describe("WP-15B Railway production contract", () => {
     expect(result).not.toMatch(/postgres(?:ql)?:\/\//i);
     expect(result).not.toMatch(/(?:password|secret|token)\s*[:=]\s*[^`\s]+/i);
 
-    expect(checklist).toContain(
-      "Final gate: `PRODUCTION_INFRA_READY_FOR_MIGRATION_APPROVAL`",
+    expect(migrationResult).toContain(
+      "Final gate: `PRODUCTION_MIGRATION_COMPLETE_CAPABILITIES_DISABLED`",
     );
+    expect(migrationResult).toContain("`0010_colorful_randall_flagg`");
+    expect(migrationResult).toContain("BLOCKER | `0`");
+    expect(migrationResult).toContain("WORKER_ENABLED=false");
+    expect(migrationResult).toContain("Railway remains on Hobby");
+    expect(migrationResult).toContain("D10B Product cutover");
     expect(checklist).toContain(
-      "production PITR/base backup/restore-to-sibling proven",
+      "Final gate: `PRODUCTION_MIGRATION_COMPLETE_CAPABILITIES_DISABLED`",
     );
-    expect(checklist).toContain("Pro-plan billing action required");
-    expect(checklist).toContain(
-      "D10 later production migration/backfill/cutover  | OWNER APPROVAL REQUIRED",
-    );
+    expect(checklist).toContain("Railway Pro/native PITR");
+    expect(checklist).toContain("deliberately deferred");
+    expect(checklist).toContain("D10A production migration/backfill");
+    expect(checklist).toContain("D10B Product cutover/capability enablement");
+
+    for (const document of [decisions, checklist, migrationResult]) {
+      expect(document).not.toMatch(/postgres(?:ql)?:\/\//i);
+      expect(document).not.toMatch(
+        /(?:password|secret|token)\s*[:=]\s*[^`\s]+/i,
+      );
+    }
   });
 });

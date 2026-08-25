@@ -2,7 +2,9 @@
 
 Evidence date: 2026-08-26
 
-Code baseline: `cfeb4677f76f35e88125d143e6c4563d2a7ac7a2`
+Migration-branch baseline: `4084ca8d4f0b1218cb296a7d72dd48cdf7c72ffe`
+
+Deployed Web/Worker application baseline during the bounded migration: `cfeb4677f76f35e88125d143e6c4563d2a7ac7a2`
 
 Allowed checklist statuses are `PASS`, `FAIL`, `NOT EXECUTED`, `OWNER APPROVED`, `OWNER APPROVAL REQUIRED`, `BLOCKED`, and `NOT APPLICABLE`.
 
@@ -63,11 +65,12 @@ This is the canonical technical companion to `docs/15B_FINAL_OWNER_DECISIONS.md`
 | Check                                                     | Status                  | Evidence / next proof                                        |
 | --------------------------------------------------------- | ----------------------- | ------------------------------------------------------------ |
 | WP-16A non-production logical backup/restore drill        | PASS                    | ledger/count/invariant/read-smoke evidence through `0010`    |
-| Railway native PITR/backup capability documented          | PASS                    | capability only; not enabled or proven for production        |
-| RPO, RTO, and retention policy approved                   | OWNER APPROVED          | D4–D6; explicit owner instruction                            |
-| Railway retention gap resolution selected                 | OWNER APPROVED          | native recovery plus supplemental portable logical retention |
-| production PITR/base backup/restore-to-sibling proven     | BLOCKED                 | Pro-plan billing action required; no auto-upgrade             |
-| fresh recovery point immediately before production writes | NOT EXECUTED            | execution-time WP-15B gate; WP-16A drill does not satisfy it |
+| Railway native PITR/backup capability documented          | PASS                    | future hardening capability; not enabled on Hobby             |
+| RPO, RTO, and retention policy approved                   | OWNER APPROVED          | D4–D6; explicit owner instructions                           |
+| MVP recovery method selected                              | OWNER APPROVED          | fresh logical dump + SHA-256 + isolated restore               |
+| Railway Pro/native PITR                                   | NOT EXECUTED            | deliberately deferred for the pre-launch MVP                  |
+| fresh logical recovery point before first application write | PASS                  | custom/no-owner/no-acl dump; isolated PostgreSQL 18 restore   |
+| post-migration logical backup and restore                 | PASS                    | exact ledger, aggregates, and catalog object counts           |
 
 ## Production preflight
 
@@ -77,8 +80,8 @@ This is the canonical technical companion to `docs/15B_FINAL_OWNER_DECISIONS.md`
 | dedicated read-only credential available                                 | PASS         | role URL stored as a service-scoped Railway secret                |
 | read-only role default and privileges proven                              | PASS         | catalog introspection; no application-table write probe           |
 | fresh-empty environment preflight executed                                | PASS         | reachable DB, distinct roles, zero public/application tables      |
-| full WP-15A application-schema production preflight executed              | NOT EXECUTED | run only after a separately approved migration creates the schema |
-| actual production result has `BLOCKER=0`                                 | NOT EXECUTED | warning acknowledgment also required                             |
+| full WP-15A application-schema production preflight executed              | PASS         | `preppy_preflight_ro`; repeatable-read/read-only                 |
+| actual production result has `BLOCKER=0`                                 | PASS         | one optional GA4 configuration warning acknowledged              |
 
 ## Kakao
 
@@ -156,8 +159,10 @@ CACHE_REVALIDATION_ENABLED=false
 | repository migration ledger through `0010_colorful_randall_flagg` | PASS         | no UI-02 migration/schema change                  |
 | migration absent from build/start/deploy commands                 | PASS         | explicit operator-only boundary                   |
 | deterministic Institution, Opportunity, Source Binding backfills  | PASS         | existing rehearsal/idempotency contracts          |
-| production migration                                              | NOT EXECUTED | later explicit production-write approval required |
-| production backfill and second-pass idempotency                   | NOT EXECUTED | later explicit production-write approval required |
+| D10A production migration                                         | PASS         | migrations `0000` through `0010_colorful_randall_flagg` |
+| D10A production backfill                                          | PASS         | Institution, Opportunity, and Source Binding; zero conflicts |
+| second-pass idempotency                                           | PASS         | zero additional inserts, updates, duplicates, or conflicts |
+| D10B Product cutover and capability enablement                    | NOT EXECUTED | not owner-approved; all four capabilities remain false |
 
 ## Smoke tests
 
@@ -166,7 +171,8 @@ CACHE_REVALIDATION_ENABLED=false
 | accepted UI-02 Preview Home/List/Institution/Opportunity/Article     | PASS         | HTTP 200, no console/page errors, no overflow                 |
 | pathname scroll-to-top and query/hash preservation                   | PASS         | focused tests and real Preview browser evidence               |
 | DB-less production build                                             | PASS         | no runtime/test/production DB URL during build                |
-| production public/Admin/auth/Monitoring/Operations/KPI/sitemap smoke | NOT EXECUTED | after provisioning and pre-write gates, with side effects off |
+| production public read smoke                                      | PASS         | health, Home, Institutions, sitemap, and robots returned 200 |
+| production Admin/auth/provider live smoke                         | NOT EXECUTED | provider configuration and live auth remain deferred          |
 | Cache, bounded Worker, Resend, and GA staged smoke                   | NOT EXECUTED | follow the runbook enable order under later authorization     |
 
 ## Owner approvals
@@ -182,21 +188,21 @@ CACHE_REVALIDATION_ENABLED=false
 | D7 DB role model or bounded exception            | OWNER APPROVED          |
 | D8 Railway production provisioning               | OWNER APPROVED          |
 | D9 Kakao/Admin OIDC/Resend/GA4/GSC configuration | OWNER APPROVED          |
-| D10 later production migration/backfill/cutover  | OWNER APPROVAL REQUIRED |
+| D10A production migration/backfill                | OWNER APPROVED          |
+| D10B Product cutover/capability enablement        | OWNER APPROVAL REQUIRED |
 
-Automatically approved decisions: `NONE`; approvals above cite the explicit 2026-08-26 owner instruction.
+Automatically approved decisions: `NONE`; approvals above cite explicit 2026-08-26 owner instructions.
 
 ## Current result and next technical prerequisites
 
-Final gate: `PRODUCTION_INFRA_READY_FOR_MIGRATION_APPROVAL`.
+Final gate: `PRODUCTION_MIGRATION_COMPLETE_CAPABILITIES_DISABLED`.
 
-Before a separately authorized migration phase:
+D10A completed under the owner-approved logical recovery boundary. Remaining launch prerequisites are:
 
-1. resolve the Railway Pro billing action required for Backups/PITR, or record a separately approved bounded logical fallback;
-2. keep the final-domain/provider work deferred until D3 is resolved;
-3. request a separate D10 production-write approval;
-4. create and record the fresh recovery point immediately before the first authorized migration/backfill write;
-5. run migrations/backfills with all four side-effect capabilities still false;
-6. run the full WP-15A application-schema production preflight and require `BLOCKER=0` before any enablement.
+1. resolve D3 and configure the exact owner-controlled HTTPS origin;
+2. configure and verify Kakao, Admin OIDC, Resend, GA4, and GSC without enabling Product side effects prematurely;
+3. operationalize daily/weekly logical backup automation under a separately approved design;
+4. obtain explicit D10B Product cutover authorization;
+5. follow the staged Cache → Worker-with-Email-off → Email → Analytics enable sequence and hand off to WP-16B.
 
-Bounded Railway infrastructure provisioning, Web liveness smoke, disabled Worker smoke, security-role DDL, and fresh-empty DB inspection occurred. No application migration, backfill, cutover, fresh backup, Worker enablement, email, analytics event, provider-console mutation, or DNS/GSC action occurred.
+No Product cutover, Worker claim, email, analytics event, cache revalidation, provider-console mutation, DNS/GSC action, demo/customer import, billing upgrade, or public launch occurred.
