@@ -13,7 +13,7 @@ import {
   mapNativeOpportunityEvidenceRole,
 } from "@/src/infrastructure/db/source-binding-backfill-policy";
 import type {
-  DatabaseExecutor,
+  ReadOnlyDatabaseExecutor,
   TransactionManager,
 } from "@/src/infrastructure/db/runtime.server";
 
@@ -247,7 +247,7 @@ function exactOpportunityBinding(
 }
 
 async function loadLegacyBindings(
-  executor: DatabaseExecutor,
+  executor: ReadOnlyDatabaseExecutor,
 ): Promise<LegacyBindingRow[]> {
   return queryRows<LegacyBindingRow>(
     await executor.raw(sql`
@@ -282,7 +282,7 @@ async function loadLegacyBindings(
 }
 
 async function loadNativeEvidence(
-  executor: DatabaseExecutor,
+  executor: ReadOnlyDatabaseExecutor,
 ): Promise<NativeEvidenceRow[]> {
   return queryRows<NativeEvidenceRow>(
     await executor.raw(sql`
@@ -318,7 +318,7 @@ async function loadNativeEvidence(
 }
 
 async function loadLegacyEvidence(
-  executor: DatabaseExecutor,
+  executor: ReadOnlyDatabaseExecutor,
 ): Promise<LegacyEvidenceRow[]> {
   return queryRows<LegacyEvidenceRow>(
     await executor.raw(sql`
@@ -358,7 +358,7 @@ async function loadLegacyEvidence(
 }
 
 async function loadNativeOpportunityInventory(
-  executor: DatabaseExecutor,
+  executor: ReadOnlyDatabaseExecutor,
 ): Promise<NativeOpportunityInventoryRow[]> {
   return queryRows<NativeOpportunityInventoryRow>(
     await executor.raw(sql`
@@ -378,7 +378,7 @@ async function loadNativeOpportunityInventory(
 }
 
 async function loadLegacyOpportunityInventory(
-  executor: DatabaseExecutor,
+  executor: ReadOnlyDatabaseExecutor,
 ): Promise<LegacyOpportunityInventoryRow[]> {
   return queryRows<LegacyOpportunityInventoryRow>(
     await executor.raw(sql`
@@ -411,7 +411,7 @@ async function loadLegacyOpportunityInventory(
 }
 
 async function loadExistingInstitutionBindings(
-  executor: DatabaseExecutor,
+  executor: ReadOnlyDatabaseExecutor,
 ): Promise<ExistingInstitutionBinding[]> {
   const rows = queryRows<
     Omit<ExistingInstitutionBinding, "boundAt" | "unboundAt"> & {
@@ -440,7 +440,7 @@ async function loadExistingInstitutionBindings(
 }
 
 async function loadExistingOpportunityBindings(
-  executor: DatabaseExecutor,
+  executor: ReadOnlyDatabaseExecutor,
 ): Promise<ExistingOpportunityBinding[]> {
   const rows = queryRows<
     Omit<ExistingOpportunityBinding, "boundAt" | "unboundAt"> & {
@@ -584,7 +584,7 @@ function validatePrimaryCardinality(
 }
 
 export async function preflightSourceBindingBackfill(
-  executor: DatabaseExecutor,
+  executor: ReadOnlyDatabaseExecutor,
 ): Promise<SourceBindingBackfillPreflight> {
   const [
     legacyBindings,

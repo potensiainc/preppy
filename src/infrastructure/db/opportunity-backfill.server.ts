@@ -15,7 +15,7 @@ import {
   type OpportunityKind,
 } from "@/src/db/schema";
 import type {
-  DatabaseExecutor,
+  ReadOnlyDatabaseExecutor,
   TransactionManager,
 } from "@/src/infrastructure/db/runtime.server";
 
@@ -124,7 +124,7 @@ const normalizedTitle = (value: string) =>
   value.trim().replace(/\s+/g, " ").toLowerCase();
 
 export async function preflightOpportunityBackfill(
-  executor: DatabaseExecutor,
+  executor: ReadOnlyDatabaseExecutor,
 ): Promise<OpportunityBackfillPreflight> {
   const [
     eventRows,

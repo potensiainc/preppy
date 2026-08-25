@@ -22,7 +22,9 @@
     "db:check": "tsx scripts/db/check-connection.ts",
     "db:backfill:institutions": "tsx --tsconfig scripts/db/tsconfig.json scripts/db/backfill-institutions.ts",
     "db:backfill:opportunities": "tsx --tsconfig scripts/db/tsconfig.json scripts/db/backfill-opportunities.ts",
-    "db:backfill:source-bindings": "tsx --tsconfig scripts/db/tsconfig.json scripts/db/backfill-source-bindings.ts"
+    "db:backfill:source-bindings": "tsx --tsconfig scripts/db/tsconfig.json scripts/db/backfill-source-bindings.ts",
+    "db:preflight:production": "tsx --tsconfig scripts/db/tsconfig.json scripts/production-preflight.ts",
+    "db:rehearsal": "tsx --tsconfig scripts/db/tsconfig.json scripts/rehearsal.ts"
   },
   "dependencies": {
     "@tiptap/pm": "3.30.3",

@@ -11,7 +11,7 @@ import {
   type InternationalSubtype,
 } from "@/src/db/schema";
 import {
-  type DatabaseExecutor,
+  type ReadOnlyDatabaseExecutor,
   type TransactionManager,
 } from "@/src/infrastructure/db/runtime.server";
 
@@ -173,7 +173,7 @@ function matches(
 }
 
 export async function preflightInstitutionBackfill(
-  executor: DatabaseExecutor,
+  executor: ReadOnlyDatabaseExecutor,
 ): Promise<InstitutionBackfillPreflight> {
   const [sourceRows, institutionRows, linkRows] = await Promise.all([
     executor.drizzle

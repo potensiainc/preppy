@@ -25,6 +25,17 @@ type DrizzleOperations = Pick<
   "select" | "insert" | "update" | "delete" | "execute"
 >;
 
+export type ReadOnlyDrizzleOperations = Pick<
+  RuntimeDrizzleDatabase,
+  "select" | "execute"
+>;
+
+export type ReadOnlyDatabaseExecutor = {
+  readonly scope: "runtime" | "transaction";
+  readonly drizzle: ReadOnlyDrizzleOperations;
+  readonly raw: RuntimeDrizzleDatabase["execute"];
+};
+
 export type DatabaseExecutor = {
   readonly scope: "runtime" | "transaction";
   readonly drizzle: DrizzleOperations;
