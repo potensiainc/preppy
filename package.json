@@ -26,7 +26,8 @@
     "db:backfill:source-bindings": "tsx --tsconfig scripts/db/tsconfig.json scripts/db/backfill-source-bindings.ts",
     "db:preflight:production": "tsx --tsconfig scripts/db/tsconfig.json scripts/production-preflight.ts",
     "db:rehearsal": "tsx --tsconfig scripts/db/tsconfig.json scripts/rehearsal.ts",
-    "db:restore-drill": "tsx --tsconfig scripts/db/tsconfig.json scripts/backup-restore-rehearsal.ts"
+    "db:restore-drill": "tsx --tsconfig scripts/db/tsconfig.json scripts/backup-restore-rehearsal.ts",
+    "preview:seed": "tsx scripts/seed-preview-demo.ts --seed"
   },
   "dependencies": {
     "@tiptap/pm": "3.30.3",
