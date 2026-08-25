@@ -18,6 +18,7 @@ const WORKER_ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/;
 export type WorkerRunOnceConfig = Readonly<{
   enabled: boolean;
   emailSendEnabled: boolean;
+  cacheRevalidationEnabled: boolean;
   workerId: string;
   batchSize: number;
   leaseDurationMs: number;
@@ -47,9 +48,10 @@ export function parseWorkerRunOnceConfig(
   const keys = Object.keys(value).sort().join("|");
   if (
     keys !==
-      "batchSize|emailSendEnabled|enabled|leaseDurationMs|now|workerId" ||
+      "batchSize|cacheRevalidationEnabled|emailSendEnabled|enabled|leaseDurationMs|now|workerId" ||
     typeof value.enabled !== "boolean" ||
     typeof value.emailSendEnabled !== "boolean" ||
+    typeof value.cacheRevalidationEnabled !== "boolean" ||
     typeof value.workerId !== "string" ||
     !WORKER_ID_PATTERN.test(value.workerId) ||
     !Number.isSafeInteger(value.batchSize) ||
@@ -66,6 +68,7 @@ export function parseWorkerRunOnceConfig(
   return {
     enabled: value.enabled,
     emailSendEnabled: value.emailSendEnabled,
+    cacheRevalidationEnabled: value.cacheRevalidationEnabled,
     workerId: value.workerId,
     batchSize: value.batchSize as number,
     leaseDurationMs: value.leaseDurationMs as number,
@@ -97,13 +100,19 @@ export async function runWorkerOnce(
   const recover = dependencies.recoverStale ?? recoverStaleOutboxLeases;
   const claim = dependencies.claimBatch ?? claimOutboxBatch;
   const dispatch = dependencies.dispatch ?? dispatchClaimedOutboxEvent;
+  const enabledEventTypes = parsed.cacheRevalidationEnabled
+    ? supportedOutboxEventTypes
+    : supportedOutboxEventTypes.filter(
+        (eventType) => eventType !== "CACHE_REVALIDATION_REQUESTED",
+      );
   const recovered = await recover(dependencies.transactionManager, {
+    eventTypes: enabledEventTypes,
     cutoff: new Date(parsed.now.getTime() - parsed.leaseDurationMs),
     now: parsed.now,
     limit: parsed.batchSize,
   });
   const claimed = (await claim(dependencies.transactionManager, {
-    eventTypes: supportedOutboxEventTypes,
+    eventTypes: enabledEventTypes,
     limit: parsed.batchSize,
     workerId: parsed.workerId,
     now: parsed.now,

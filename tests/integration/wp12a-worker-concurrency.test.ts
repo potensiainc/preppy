@@ -31,6 +31,7 @@ function config(workerId: string, now: Date) {
   return {
     enabled: true,
     emailSendEnabled: true,
+    cacheRevalidationEnabled: true,
     workerId,
     batchSize: 1,
     leaseDurationMs: 300_000,

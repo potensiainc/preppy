@@ -12,13 +12,16 @@ import type {
 } from "@/src/modules/admin/read-model/contracts";
 import type { DatabaseExecutor } from "@/src/infrastructure/db/runtime.server";
 import { getAdminHealthBundle } from "@/src/modules/admin/read-model/health-query.server";
+import type { OperationalSnapshot } from "@/src/modules/production-safety/operational-snapshot.server";
 
 export function AdminOperationsHealthView({
   health,
   dataQuality,
+  operational,
 }: {
   health: AdminHealthDTO;
   dataQuality: AdminDataQualityDTO;
+  operational?: OperationalSnapshot | null;
 }) {
   return (
     <div className="admin-page admin-operations-page">
@@ -57,6 +60,70 @@ export function AdminOperationsHealthView({
         <p className="admin-cell-note">
           Checked {formatAdminDate(health.checkedAt)}
         </p>
+      </section>
+      <section aria-labelledby="operational-signals-heading">
+        <div className="admin-section-heading">
+          <h2 id="operational-signals-heading">Operational signals</h2>
+          <AdminStateChip>
+            {operational === null || operational === undefined
+              ? "UNAVAILABLE"
+              : operational.migration.status}
+          </AdminStateChip>
+        </div>
+        {operational === null || operational === undefined ? (
+          <p className="admin-cell-note">
+            The read-only operational snapshot could not be evaluated safely.
+          </p>
+        ) : (
+          <>
+            <div className="admin-metric-grid">
+              <article>
+                <p>Worker lag</p>
+                <strong>
+                  {operational.outbox.workerLagSeconds === null
+                    ? "No due work"
+                    : `${operational.outbox.workerLagSeconds}s`}
+                </strong>
+              </article>
+              <article>
+                <p>Stale processing</p>
+                <strong>{operational.outbox.staleProcessing}</strong>
+              </article>
+              <article>
+                <p>RESULT UNKNOWN</p>
+                <strong>{operational.notification.resultUnknown}</strong>
+              </article>
+              <article>
+                <p>Monitoring overdue</p>
+                <strong>{operational.monitoring.overdue}</strong>
+              </article>
+              <article>
+                <p>Provider event failures</p>
+                <strong>{operational.providerEvents.failed}</strong>
+              </article>
+              <article>
+                <p>Provider event orphans</p>
+                <strong>{operational.providerEvents.orphan}</strong>
+              </article>
+              <article>
+                <p>Cache failures</p>
+                <strong>{operational.cacheRevalidation.failed}</strong>
+              </article>
+              <article>
+                <p>Cache dead letter</p>
+                <strong>{operational.cacheRevalidation.deadLetter}</strong>
+              </article>
+              <article>
+                <p>Unavailable Sources</p>
+                <strong>{operational.monitoring.sourceUnavailable}</strong>
+              </article>
+            </div>
+            <p className="admin-cell-note">
+              Point-in-time per query · analytics failures are best-effort and
+              not persisted.
+            </p>
+          </>
+        )}
       </section>
       <section aria-labelledby="data-quality-heading">
         <div className="admin-section-heading">
@@ -127,6 +194,7 @@ export default async function AdminOperationsHealthPage() {
     <AdminOperationsHealthView
       health={bundle.health}
       dataQuality={bundle.dataQuality}
+      operational={bundle.operational}
     />
   );
 }

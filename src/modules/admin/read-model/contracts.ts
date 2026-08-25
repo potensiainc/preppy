@@ -16,6 +16,7 @@ import type {
   VersionVerificationState,
 } from "@/src/db/schema";
 import type { emailReadinessValues } from "./input";
+import type { OperationalSnapshot } from "@/src/modules/production-safety/operational-snapshot.server";
 
 export type AdminPaginationDTO = Readonly<{
   page: number;
@@ -331,4 +332,5 @@ export type AdminHealthDTO = Readonly<{
 export type AdminHealthBundleDTO = Readonly<{
   health: AdminHealthDTO;
   dataQuality: AdminDataQualityDTO;
+  operational: OperationalSnapshot | null;
 }>;

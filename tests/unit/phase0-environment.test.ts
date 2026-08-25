@@ -59,6 +59,7 @@ describe("parseSideEffectEnv", () => {
       EMAIL_SEND_ENABLED: false,
       WORKER_ENABLED: false,
       ANALYTICS_ENABLED: false,
+      CACHE_REVALIDATION_ENABLED: false,
     });
   });
 
@@ -69,11 +70,13 @@ describe("parseSideEffectEnv", () => {
         EMAIL_SEND_ENABLED: "true",
         WORKER_ENABLED: "false",
         ANALYTICS_ENABLED: "true",
+        CACHE_REVALIDATION_ENABLED: "true",
       }),
     ).toEqual({
       EMAIL_SEND_ENABLED: true,
       WORKER_ENABLED: false,
       ANALYTICS_ENABLED: true,
+      CACHE_REVALIDATION_ENABLED: true,
     });
   });
 });

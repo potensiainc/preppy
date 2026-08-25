@@ -51,6 +51,7 @@ export type RescheduleOutboxEventInput = OutboxTransitionInput &
   Readonly<{ availableAt: Date; errorCode: string }>;
 
 export type RecoverStaleOutboxLeasesInput = Readonly<{
+  eventTypes: readonly SupportedOutboxEventType[];
   cutoff: Date;
   now: Date;
   limit: number;
@@ -170,7 +171,12 @@ function parseRecoveryInput(
 ): RecoverStaleOutboxLeasesInput | null {
   if (
     !isPlainRecord(input) ||
-    !hasOnlyKeys(input, ["cutoff", "now", "limit"]) ||
+    !hasOnlyKeys(input, ["eventTypes", "cutoff", "now", "limit"]) ||
+    !Array.isArray(input.eventTypes) ||
+    input.eventTypes.length === 0 ||
+    input.eventTypes.length > supportedOutboxEventTypes.length ||
+    new Set(input.eventTypes).size !== input.eventTypes.length ||
+    !input.eventTypes.every(isSupportedOutboxEventType) ||
     !validDate(input.cutoff) ||
     !validDate(input.now) ||
     !Number.isSafeInteger(input.limit) ||
@@ -180,6 +186,7 @@ function parseRecoveryInput(
     return null;
   }
   return {
+    eventTypes: [...input.eventTypes],
     cutoff: new Date(input.cutoff),
     now: new Date(input.now),
     limit: input.limit as number,
@@ -347,7 +354,7 @@ export async function recoverStaleOutboxLeases(
   const cutoffIso = parsed.cutoff.toISOString();
   const nowIso = parsed.now.toISOString();
   const eventTypes = sql.join(
-    supportedOutboxEventTypes.map((eventType) => sql`${eventType}`),
+    parsed.eventTypes.map((eventType) => sql`${eventType}`),
     sql`, `,
   );
 

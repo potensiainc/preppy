@@ -348,6 +348,11 @@ describe("WP-12A safe Outbox transitions", () => {
     `;
 
     const recovered = await recoverStaleOutboxLeases(transactions, {
+      eventTypes: [
+        "OPPORTUNITY_CHANGE_PUBLISHED",
+        "DELIVERY_EMAIL_SEND",
+        "CACHE_REVALIDATION_REQUESTED",
+      ],
       cutoff,
       now,
       limit: 10,

@@ -74,7 +74,7 @@ class DisabledResendEmailSender implements EmailSender {
 
 const disabledCacheRevalidator: CacheRevalidationClient = {
   async revalidate() {
-    throw new Error("Disabled Worker must not process cache events.");
+    throw new Error("Disabled cache capability must not process cache events.");
   },
 };
 
@@ -89,6 +89,18 @@ export async function runWorkerCommand(arguments_: readonly string[]) {
   }
 
   const sideEffects = getSideEffectEnv();
+  if (!sideEffects.WORKER_ENABLED) {
+    return {
+      exitCode: 0,
+      output: JSON.stringify({
+        enabled: false,
+        recovered: { pending: 0, failed: 0, deadLettered: 0 },
+        claimed: 0,
+        processed: 0,
+        failed: 0,
+      }),
+    };
+  }
   const runtime = getRuntimeDatabase();
   try {
     const sender: EmailSender =
@@ -97,7 +109,7 @@ export async function runWorkerCommand(arguments_: readonly string[]) {
           ? new ResendEmailSender(getResendSendConfig())
           : new DisabledResendEmailSender()
         : new RepeatingFakeEmailSender(cli.fakeOutcome);
-    const cacheRevalidator = sideEffects.WORKER_ENABLED
+    const cacheRevalidator = sideEffects.CACHE_REVALIDATION_ENABLED
       ? new HttpCacheRevalidationClient({
           appBaseUrl: getSeoAppBaseUrl(),
           secret: getCacheRevalidationConfig().secret,
@@ -107,6 +119,7 @@ export async function runWorkerCommand(arguments_: readonly string[]) {
       {
         enabled: sideEffects.WORKER_ENABLED,
         emailSendEnabled: sideEffects.EMAIL_SEND_ENABLED,
+        cacheRevalidationEnabled: sideEffects.CACHE_REVALIDATION_ENABLED,
         workerId: cli.workerId,
         batchSize: cli.batchSize,
         leaseDurationMs: cli.leaseDurationMs,

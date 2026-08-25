@@ -2,7 +2,15 @@ import { randomUUID } from "node:crypto";
 
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  vi,
+} from "vitest";
 
 import type { AdminCommandContext } from "@/src/application/context";
 import { migrateDatabase } from "@/src/db/migrate";
@@ -183,11 +191,14 @@ describe("WP-12B Admin Outbox application commands", () => {
 
   it("projects only explicit reconciliation for an eligible ambiguous result", async () => {
     const fixture = await ambiguousEmailEvent();
+    const now = vi
+      .spyOn(Date, "now")
+      .mockReturnValue(new Date("2026-08-24T03:00:00.000Z").getTime());
     const projection = await listAdminOutbox(executor, {
       eventType: "DELIVERY_EMAIL_SEND",
       page: 1,
       pageSize: 50,
-    });
+    }).finally(() => now.mockRestore());
     const item = projection.items.find(
       (candidate) => candidate.id === fixture.eventId,
     );

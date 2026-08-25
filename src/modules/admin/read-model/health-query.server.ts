@@ -3,6 +3,7 @@ import "server-only";
 import { sql } from "drizzle-orm";
 
 import type { DatabaseExecutor } from "@/src/infrastructure/db/runtime.server";
+import { getOperationalSnapshot } from "@/src/modules/production-safety/operational-snapshot.server";
 
 import type {
   AdminDataQualityDTO,
@@ -87,22 +88,25 @@ export async function getAdminHealthBundle(
     return {
       health: unavailableHealth(dependencies.now, "UNAVAILABLE", dataQuality),
       dataQuality,
+      operational: null,
     };
   }
 
-  const [outboxResult, dataQualityResult] = await Promise.allSettled([
-    executor.raw(sql`
+  const [outboxResult, dataQualityResult, operationalResult] =
+    await Promise.allSettled([
+      executor.raw(sql`
       select status, count(*)::int as count
       from outbox_events
       where status in ('PENDING', 'PROCESSING', 'FAILED', 'DEAD_LETTER')
       group by status
       order by status
     `) as unknown as Promise<StatusCount[]>,
-    getAdminDataQuality(executor, {
-      now: dependencies.now,
-      detailLimit: 20,
-    }),
-  ]);
+      getAdminDataQuality(executor, {
+        now: dependencies.now,
+        detailLimit: 20,
+      }),
+      getOperationalSnapshot(executor, { now: dependencies.now }),
+    ]);
   const dataQuality =
     dataQualityResult.status === "fulfilled"
       ? dataQualityResult.value
@@ -111,6 +115,10 @@ export async function getAdminHealthBundle(
     return {
       health: unavailableHealth(dependencies.now, "AVAILABLE", dataQuality),
       dataQuality,
+      operational:
+        operationalResult.status === "fulfilled"
+          ? operationalResult.value
+          : null,
     };
   }
 
@@ -126,11 +134,14 @@ export async function getAdminHealthBundle(
   };
   const dataQualitySummary = healthDataQualitySummary(dataQuality);
   const unavailable = dataQuality.status === "UNAVAILABLE";
+  const operational =
+    operationalResult.status === "fulfilled" ? operationalResult.value : null;
   const attention =
     dataQuality.status === "PARTIAL" ||
     dataQualitySummary.warningCount > 0 ||
     outbox.failed > 0 ||
-    outbox.deadLetter > 0;
+    outbox.deadLetter > 0 ||
+    (operational?.alerts.length ?? 0) > 0;
   return {
     health: {
       status: unavailable ? "UNAVAILABLE" : attention ? "ATTENTION" : "HEALTHY",
@@ -140,6 +151,7 @@ export async function getAdminHealthBundle(
       dataQuality: dataQualitySummary,
     },
     dataQuality,
+    operational,
   };
 }
 

@@ -55,6 +55,7 @@ const sideEffectEnvSchema = z.object({
   EMAIL_SEND_ENABLED: disabledByDefaultBoolean,
   WORKER_ENABLED: disabledByDefaultBoolean,
   ANALYTICS_ENABLED: disabledByDefaultBoolean,
+  CACHE_REVALIDATION_ENABLED: disabledByDefaultBoolean,
 });
 
 export type RuntimeDatabaseEnv = z.infer<typeof runtimeDatabaseEnvSchema>;

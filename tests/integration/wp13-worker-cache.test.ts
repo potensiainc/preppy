@@ -89,6 +89,7 @@ describe("WP-13 Worker cache lifecycle", () => {
       {
         enabled: true,
         emailSendEnabled: false,
+        cacheRevalidationEnabled: true,
         workerId: "worker-cache",
         batchSize: 10,
         leaseDurationMs: 300_000,
@@ -111,5 +112,43 @@ describe("WP-13 Worker cache lifecycle", () => {
       { status: string }[]
     >`select status from outbox_events where id=${fixture.eventId}`;
     expect(row?.status).toBe("PROCESSED");
+  });
+
+  it("leaves cache events untouched when the cache capability is disabled", async () => {
+    const fixture = await seed();
+    let cacheCalls = 0;
+    const result = await runWorkerOnce(
+      {
+        enabled: true,
+        emailSendEnabled: false,
+        cacheRevalidationEnabled: false,
+        workerId: "worker-cache-disabled",
+        batchSize: 10,
+        leaseDurationMs: 300_000,
+        now: new Date("2026-08-25T12:00:00.000Z"),
+      },
+      {
+        transactionManager: runtime.transactionManager,
+        sender: {
+          provider: "FAKE",
+          send: async () => {
+            throw new Error("email forbidden");
+          },
+        },
+        tracker: new NoopAnalyticsTracker(),
+        cacheRevalidator: {
+          revalidate: async () => {
+            cacheCalls += 1;
+            return { kind: "SUCCEEDED" as const };
+          },
+        },
+      },
+    );
+    expect(result).toMatchObject({ claimed: 0, processed: 0, failed: 0 });
+    expect(cacheCalls).toBe(0);
+    const [row] = await runtime.client<
+      { status: string; attemptCount: number }[]
+    >`select status, attempt_count as "attemptCount" from outbox_events where id=${fixture.eventId}`;
+    expect(row).toEqual({ status: "PENDING", attemptCount: 0 });
   });
 });

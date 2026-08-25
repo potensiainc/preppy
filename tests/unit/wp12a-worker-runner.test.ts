@@ -13,6 +13,7 @@ describe("WP-12A bounded worker runner", () => {
       parseWorkerRunOnceConfig({
         enabled: true,
         emailSendEnabled: false,
+        cacheRevalidationEnabled: true,
         workerId: "worker-local.1",
         batchSize: 10,
         leaseDurationMs: 300_000,
@@ -21,6 +22,7 @@ describe("WP-12A bounded worker runner", () => {
     ).toEqual({
       enabled: true,
       emailSendEnabled: false,
+      cacheRevalidationEnabled: true,
       workerId: "worker-local.1",
       batchSize: 10,
       leaseDurationMs: 300_000,
@@ -30,6 +32,7 @@ describe("WP-12A bounded worker runner", () => {
       parseWorkerRunOnceConfig({
         enabled: true,
         emailSendEnabled: true,
+        cacheRevalidationEnabled: true,
         workerId: "Bearer a secret",
         batchSize: 10,
         leaseDurationMs: 300_000,
@@ -40,6 +43,7 @@ describe("WP-12A bounded worker runner", () => {
       parseWorkerRunOnceConfig({
         enabled: true,
         emailSendEnabled: true,
+        cacheRevalidationEnabled: true,
         workerId: "worker-a",
         batchSize: 101,
         leaseDurationMs: 300_000,
@@ -50,6 +54,7 @@ describe("WP-12A bounded worker runner", () => {
       parseWorkerRunOnceConfig({
         enabled: true,
         emailSendEnabled: true,
+        cacheRevalidationEnabled: true,
         workerId: "worker-a",
         batchSize: 1,
         leaseDurationMs: 999,
@@ -66,6 +71,7 @@ describe("WP-12A bounded worker runner", () => {
         {
           enabled: false,
           emailSendEnabled: false,
+          cacheRevalidationEnabled: false,
           workerId: "worker-a",
           batchSize: 10,
           leaseDurationMs: 300_000,
@@ -89,6 +95,46 @@ describe("WP-12A bounded worker runner", () => {
     });
     expect(recover).not.toHaveBeenCalled();
     expect(claim).not.toHaveBeenCalled();
+  });
+
+  it("excludes cache work from both recovery and claim when CACHE_REVALIDATION_ENABLED is false", async () => {
+    const recover = vi.fn(async () => ({
+      pending: 0,
+      failed: 0,
+      deadLettered: 0,
+    }));
+    const claim = vi.fn(async () => []);
+    await runWorkerOnce(
+      {
+        enabled: true,
+        emailSendEnabled: false,
+        cacheRevalidationEnabled: false,
+        workerId: "worker-capability",
+        batchSize: 10,
+        leaseDurationMs: 300_000,
+        now: new Date("2026-08-24T00:00:00.000Z"),
+      },
+      {
+        transactionManager: { run: vi.fn() },
+        sender: { provider: "FAKE", send: vi.fn() },
+        tracker: { track: vi.fn() },
+        cacheRevalidator: { revalidate: vi.fn() },
+        recoverStale: recover,
+        claimBatch: claim,
+      },
+    );
+    const enabledTypes = [
+      "OPPORTUNITY_CHANGE_PUBLISHED",
+      "DELIVERY_EMAIL_SEND",
+    ];
+    expect(recover).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ eventTypes: enabledTypes }),
+    );
+    expect(claim).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ eventTypes: enabledTypes }),
+    );
   });
 
   it("parses only explicit one-shot fake CLI arguments", () => {

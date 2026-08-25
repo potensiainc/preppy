@@ -5,6 +5,8 @@ export const fakeWorkerOutcomeValues = [
   "RESULT_UNKNOWN",
 ] as const;
 
+export const DEFAULT_WORKER_LEASE_DURATION_MS = 300_000;
+
 export type FakeWorkerOutcome = (typeof fakeWorkerOutcomeValues)[number];
 
 type WorkerCliBase = Readonly<{
@@ -59,7 +61,9 @@ export function parseWorkerCliArguments(
     return null;
   }
   const batchSize = integer(values.get("--batch") ?? "10");
-  const leaseDurationMs = integer(values.get("--lease-ms") ?? "300000");
+  const leaseDurationMs = integer(
+    values.get("--lease-ms") ?? String(DEFAULT_WORKER_LEASE_DURATION_MS),
+  );
   if (!batchSize || !leaseDurationMs) return null;
   const base = {
     once: true,
