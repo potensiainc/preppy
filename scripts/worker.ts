@@ -22,6 +22,7 @@ import { getResendSendConfig } from "@/src/modules/notification/resend-config.se
 import { ResendEmailSender } from "@/src/modules/notification/resend-email-sender.server";
 import {
   parseWorkerCliArguments,
+  scheduleWorkerHardTimeout,
   type FakeWorkerOutcome,
 } from "@/src/modules/worker/cli";
 import { runWorkerOnce } from "@/src/modules/worker/run-once.server";
@@ -145,8 +146,25 @@ const invokedPath = process.argv[1]
   ? pathToFileURL(process.argv[1]).href
   : undefined;
 if (invokedPath === import.meta.url) {
-  const result = await runWorkerCommand(process.argv.slice(2));
-  const stream = result.exitCode === 0 ? process.stdout : process.stderr;
-  stream.write(`${result.output}\n`);
-  process.exitCode = result.exitCode;
+  const arguments_ = process.argv.slice(2);
+  const parsed = parseWorkerCliArguments(arguments_);
+  const cancelHardTimeout =
+    parsed?.timeoutMs === undefined
+      ? undefined
+      : scheduleWorkerHardTimeout(parsed.timeoutMs, {
+          schedule: (callback, delayMs) => setTimeout(callback, delayMs),
+          cancel: (handle) => clearTimeout(handle as NodeJS.Timeout),
+          hardExit: (exitCode) => {
+            process.stderr.write("Worker hard timeout reached.\n");
+            process.exit(exitCode);
+          },
+        });
+  try {
+    const result = await runWorkerCommand(arguments_);
+    const stream = result.exitCode === 0 ? process.stdout : process.stderr;
+    stream.write(`${result.output}\n`);
+    process.exitCode = result.exitCode;
+  } finally {
+    cancelHardTimeout?.();
+  }
 }

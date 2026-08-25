@@ -1,8 +1,8 @@
 # PREPPY WP-15B Production Environment Bootstrap
 
-Status: `BLOCKED`
+Status: `READY_FOR_OWNER_APPROVAL — RAILWAY CANDIDATE NOT PROVISIONED`
 Evidence date: 2026-08-25
-Repository baseline: `76c552c5e1704daf0662bcb09909c8de01310de1`
+Repository baseline: `a54aa7983ac1b2d01899c6b03fb2eaf37e017484`
 
 This is the production-environment bootstrap contract for PREPPY. It records what the repository proves, what remains a proposal, and what must be configured or verified before the real production read-only preflight. It does not authorize or execute deployment, backup, migration, backfill, cutover, Worker activity, provider activity, DNS changes, role DDL, or secret rotation.
 
@@ -18,15 +18,15 @@ Status vocabulary:
 
 | Field | Status | Evidence |
 | --- | --- | --- |
-| Production platform | UNRESOLVED | no production deployment configuration is present |
-| Production secret injection mechanism | UNRESOLVED | no provider configuration or secret-store evidence |
+| Production platform | PROPOSED — OWNER APPROVAL REQUIRED | Railway configuration prepared in `docs/15B_RAILWAY_PRODUCTION_CONFIGURATION.md` |
+| Production secret injection mechanism | PROPOSED | Railway shared/reference-variable matrix prepared; no values configured |
 | Production domain attachment | UNRESOLVED | no provider/domain evidence |
-| Production web process definition | UNRESOLVED | no production process configuration |
-| Production Worker process definition | UNRESOLVED | no production process configuration |
+| Production web process definition | CONFIRMED in repository | one IaC service, `npm run build` / `npm run start`, one replica |
+| Production Worker process definition | CONFIRMED in repository | one scheduled run-once IaC service, `npm run worker:once` |
 
 `docker-compose.yml` defines only a local PostgreSQL development environment. It is not evidence of a production platform, web topology, scheduler, database service, backup capability, or secret store.
 
-The platform must be selected and recorded by the owner. This document does not choose Railway, Vercel, Supabase, Render, Fly.io, a hyperscaler, or self-hosted Docker without evidence.
+Railway is now the documented candidate, not an approved or provisioned platform. The owner must explicitly approve it before any Railway project or service mutation.
 
 ## Canonical origin
 
@@ -91,10 +91,10 @@ The initial Worker must remain disabled until the separately approved WP-15B ena
 
 | Field | Status | Evidence |
 | --- | --- | --- |
-| Scheduling authority | UNRESOLVED | no platform cron, persistent process, external scheduler, or GitHub Actions scheduler is configured |
-| Number of authorities | UNRESOLVED | cannot prove exactly one |
+| Scheduling authority | PROPOSED — OWNER APPROVAL REQUIRED | Railway cron attached to the bounded `worker` service |
+| Number of authorities | CONFIRMED in repository target | one Railway cron target; no persistent Worker or separate scheduler service |
 | Worker invocation contract | CONFIRMED | repository exposes a bounded one-shot Worker command path |
-| Duplicate scheduling prevention | UNRESOLVED | depends on the selected deployment topology |
+| Duplicate scheduling prevention | CONFIRMED in configuration target | scheduled Worker is the sole Outbox authority; provisioning still NOT EXECUTED |
 
 Initial requirement: exactly one scheduler or trigger authority. Multiple concurrently active scheduling authorities are a production blocker even if database claims use `SKIP LOCKED`.
 
@@ -104,7 +104,7 @@ Initial requirement: exactly one scheduler or trigger authority. Multiple concur
 
 | Field | Status |
 | --- | --- |
-| Production PostgreSQL provider | UNRESOLVED |
+| Production PostgreSQL provider | Railway — PROPOSED — OWNER APPROVAL REQUIRED |
 | One-primary topology | PROPOSED — OWNER APPROVAL REQUIRED |
 | Connection budget | UNRESOLVED |
 | `DATABASE_MAX_CONNECTIONS` | NOT_CONFIGURED in the current execution environment |
@@ -136,10 +136,10 @@ No `CREATE ROLE`, `GRANT`, `REVOKE`, or other production role DDL is executed by
 
 | Capability | Status | Required evidence |
 | --- | --- | --- |
-| Provider-managed snapshot | UNRESOLVED | selected provider documents and exposes a restorable snapshot |
-| Point-in-time recovery | UNRESOLVED | selected provider documents retention and restore workflow |
-| Provider backup retention | UNRESOLVED | approved RPO/retention reflected in provider configuration |
-| Restore to separate target | UNRESOLVED | non-production or isolated restore target can be created |
+| Provider-managed snapshot | Railway capability documented / NOT EXECUTED | enable and verify in later provisioning |
+| Point-in-time recovery | Railway capability documented / NOT EXECUTED | enable, wait for base backup, and verify sibling restore |
+| Provider backup retention | GAP / OWNER DECISION | native periods do not exactly satisfy proposed daily/weekly policy |
+| Restore to separate target | Railway sibling PITR restore documented / NOT EXECUTED | prove in later provisioning |
 | Logical PostgreSQL fallback tooling | CONFIRMED in non-production | WP-16A custom-format backup/restore drill passed |
 | Selected production method | UNRESOLVED | owner approves provider method or bounded logical fallback |
 | Fresh pre-cutover recovery point | NOT EXECUTED | must be created immediately before a separately authorized production write |
@@ -284,8 +284,8 @@ All owner-only decisions remain unchecked in `docs/15B_OWNER_APPROVALS.md`. The 
 
 ## Final gate
 
-Final gate: `BLOCKED`
+Final gate: `READY_FOR_OWNER_APPROVAL`
 
-Technical infrastructure remains unresolved: deployment platform, canonical HTTPS origin, scheduler authority, production PostgreSQL provider/topology, backup/PITR method, production DB roles, and the production secret/configuration surface. Provider dashboard readiness and the actual read-only preflight are also not executed.
+The Railway configuration target, run-once scheduler pattern, command boundary, service-level secret matrix, and recovery-gap analysis are now explicit. Railway, the topology/cadence, canonical HTTPS origin, RPO/RTO/retention, backup-gap resolution, and DB-role exception remain unapproved. Provisioning, provider readiness, role proof, and the actual read-only preflight are NOT EXECUTED.
 
-`READY_FOR_OWNER_APPROVAL` is not appropriate while these production facts remain unknown. `READY_FOR_PRODUCTION_PREFLIGHT` becomes appropriate only after the platform, origin, single-instance topology, scheduler, backup method, DB roles, and required owner policies are explicitly locked and the dedicated read-only credential is available.
+`READY_FOR_PRODUCTION_PREFLIGHT` becomes appropriate only after those owner decisions are locked, Railway is provisioned without autodeploy or side effects, PITR/backup and DB roles are proven, and the dedicated read-only credential is available.

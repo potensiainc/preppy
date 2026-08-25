@@ -14,6 +14,7 @@ type WorkerCliBase = Readonly<{
   workerId: string;
   batchSize: number;
   leaseDurationMs: number;
+  timeoutMs?: number;
 }>;
 
 export type WorkerCliArguments =
@@ -29,7 +30,7 @@ function integer(value: string | undefined) {
 export function parseWorkerCliArguments(
   arguments_: readonly string[],
 ): WorkerCliArguments | null {
-  if (!arguments_.includes("--once") || arguments_.length > 5) return null;
+  if (!arguments_.includes("--once") || arguments_.length > 6) return null;
   const values = new Map<string, string>();
   for (const argument of arguments_) {
     if (argument === "--once") continue;
@@ -44,6 +45,7 @@ export function parseWorkerCliArguments(
         "--worker-id",
         "--batch",
         "--lease-ms",
+        "--timeout-ms",
       ].includes(key) ||
       values.has(key)
     ) {
@@ -64,14 +66,43 @@ export function parseWorkerCliArguments(
   const leaseDurationMs = integer(
     values.get("--lease-ms") ?? String(DEFAULT_WORKER_LEASE_DURATION_MS),
   );
+  const timeoutValue = values.get("--timeout-ms");
+  let timeoutMs: number | undefined;
+  if (timeoutValue !== undefined) {
+    const parsedTimeoutMs = integer(timeoutValue);
+    if (
+      parsedTimeoutMs === null ||
+      parsedTimeoutMs < 1_000 ||
+      parsedTimeoutMs > 240_000
+    ) {
+      return null;
+    }
+    timeoutMs = parsedTimeoutMs;
+  }
   if (!batchSize || !leaseDurationMs) return null;
   const base = {
     once: true,
     workerId: values.get("--worker-id") ?? `worker-${process.pid}`,
     batchSize,
     leaseDurationMs,
+    ...(timeoutMs === undefined ? {} : { timeoutMs }),
   } as const;
   return resendMode
     ? { ...base, provider: "RESEND" }
     : { ...base, fakeOutcome: fakeOutcome as FakeWorkerOutcome };
+}
+
+export function scheduleWorkerHardTimeout(
+  timeoutMs: number,
+  dependencies: Readonly<{
+    schedule: (callback: () => void, delayMs: number) => unknown;
+    cancel: (handle: unknown) => void;
+    hardExit: (exitCode: number) => never;
+  }>,
+): () => void {
+  const handle = dependencies.schedule(
+    () => dependencies.hardExit(124),
+    timeoutMs,
+  );
+  return () => dependencies.cancel(handle);
 }

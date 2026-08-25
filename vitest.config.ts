@@ -8,6 +8,9 @@ export default defineConfig({
       "server-only": fileURLToPath(
         new URL("./tests/support/server-only.ts", import.meta.url),
       ),
+      "railway/iac": fileURLToPath(
+        new URL("./tests/support/railway-iac.ts", import.meta.url),
+      ),
     },
   },
   test: {

@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
+import * as workerCli from "@/src/modules/worker/cli";
 import { parseWorkerCliArguments } from "@/src/modules/worker/cli";
 import {
   parseWorkerRunOnceConfig,
@@ -186,5 +187,60 @@ describe("WP-12A bounded worker runner", () => {
     expect(
       parseWorkerCliArguments(["--once", "--provider=automatic"]),
     ).toBeNull();
+  });
+
+  it("bounds a scheduled Railway worker with an explicit hard timeout", () => {
+    expect(
+      parseWorkerCliArguments([
+        "--once",
+        "--provider=resend",
+        "--worker-id=railway-worker",
+        "--batch=10",
+        "--lease-ms=300000",
+        "--timeout-ms=240000",
+      ]),
+    ).toEqual({
+      once: true,
+      provider: "RESEND",
+      workerId: "railway-worker",
+      batchSize: 10,
+      leaseDurationMs: 300_000,
+      timeoutMs: 240_000,
+    });
+
+    const scheduleWorkerHardTimeout = (
+      workerCli as typeof workerCli & {
+        scheduleWorkerHardTimeout?: (
+          timeoutMs: number,
+          dependencies: {
+            schedule: (callback: () => void, delayMs: number) => unknown;
+            cancel: (handle: unknown) => void;
+            hardExit: (exitCode: number) => never;
+          },
+        ) => () => void;
+      }
+    ).scheduleWorkerHardTimeout;
+    expect(scheduleWorkerHardTimeout).toBeTypeOf("function");
+
+    let scheduled: (() => void) | undefined;
+    const handle = { timer: "worker-hard-timeout" };
+    const cancel = vi.fn();
+    const hardExit = vi.fn((exitCode: number): never => {
+      throw new Error(`HARD_EXIT:${exitCode}`);
+    });
+    const clear = scheduleWorkerHardTimeout!(240_000, {
+      schedule(callback, delayMs) {
+        expect(delayMs).toBe(240_000);
+        scheduled = callback;
+        return handle;
+      },
+      cancel,
+      hardExit,
+    });
+
+    expect(() => scheduled?.()).toThrow("HARD_EXIT:124");
+    expect(hardExit).toHaveBeenCalledWith(124);
+    clear();
+    expect(cancel).toHaveBeenCalledWith(handle);
   });
 });

@@ -1,8 +1,8 @@
 # PREPPY WP-15B Owner Approvals
 
-Status: `UNAPPROVED — BLOCKED`
+Status: `UNAPPROVED — READY_FOR_OWNER_APPROVAL`
 Evidence date: 2026-08-25
-Repository baseline: `76c552c5e1704daf0662bcb09909c8de01310de1`
+Repository baseline: `a54aa7983ac1b2d01899c6b03fb2eaf37e017484`
 
 This sheet records owner decisions and production prerequisites for PREPPY. Every checkbox is intentionally unchecked. Repository capability, example values, proposals, and non-production rehearsal evidence do not constitute approval.
 
@@ -46,10 +46,12 @@ Checking this sheet in a future change still does not by itself authorize produc
   - Approval date: NOT EXECUTED
 
 - [ ] Production deployment platform approved.
-  - Status: UNRESOLVED
+  - Candidate: Railway
+  - Status: PROPOSED — OWNER APPROVAL REQUIRED
   - Owner: UNASSIGNED
   - Approval date: NOT EXECUTED
-  - Evidence required: provider/project reference without credentials, process topology, secret injection mechanism, domain capability, and database/backup capability.
+  - Evidence: `docs/15B_RAILWAY_PRODUCTION_CONFIGURATION.md`
+  - Provisioning/deployment: NOT EXECUTED
 
 - [ ] Production `APP_BASE_URL`, canonical host, and HTTPS approved.
   - Status: UNRESOLVED
@@ -58,10 +60,12 @@ Checking this sheet in a future change still does not by itself authorize produc
   - Evidence required: exact credential-free HTTPS origin and callback/canonical/provider alignment.
 
 - [ ] Exactly one production scheduler authority approved.
-  - Status: UNRESOLVED
+  - Candidate: Railway scheduled `worker` service using bounded `npm run worker:once`; no always-on Worker and no separate scheduler service.
+  - Proposed cadence: `*/5 * * * *` UTC
+  - Status: PROPOSED — OWNER APPROVAL REQUIRED
   - Owner: UNASSIGNED
   - Approval date: NOT EXECUTED
-  - Evidence required: named scheduling source, Worker command, cadence/trigger, concurrency policy, and disabled-state procedure.
+  - Evidence: `docs/15B_RAILWAY_PRODUCTION_CONFIGURATION.md`
 
 - [ ] Production backup method approved.
   - Status: UNRESOLVED
@@ -110,10 +114,11 @@ Checking this sheet in a future change still does not by itself authorize produc
 
 | Gate | Status |
 | --- | --- |
-| Technical production environment | BLOCKED |
+| Static Railway production configuration | READY FOR OWNER REVIEW |
+| Railway provisioning | NOT EXECUTED |
 | Owner policy decisions | UNAPPROVED |
 | Production read-only preflight | NOT EXECUTED |
 | Fresh pre-cutover backup | NOT EXECUTED — later cutover phase only |
 | Production-write authorization | NOT GRANTED |
 
-Final gate: `BLOCKED`
+Final gate: `READY_FOR_OWNER_APPROVAL`

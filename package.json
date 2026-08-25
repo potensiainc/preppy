@@ -17,6 +17,7 @@
     "test": "vitest run",
     "test:unit": "vitest run tests/unit",
     "test:db": "vitest run tests/integration",
+    "worker:once": "tsx --tsconfig scripts/worker-tsconfig.json scripts/worker.ts --once --provider=resend --worker-id=railway-worker --batch=10 --lease-ms=300000 --timeout-ms=240000",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx scripts/db/migrate.ts",
     "db:check": "tsx scripts/db/check-connection.ts",
