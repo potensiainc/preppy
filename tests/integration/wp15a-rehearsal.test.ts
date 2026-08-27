@@ -35,7 +35,7 @@ describe("WP-15A full non-production rehearsal", () => {
     await maintenance.end({ timeout: 5 });
   });
 
-  it("migrates an empty rehearsal database through 0010", async () => {
+  it("migrates an empty rehearsal database through 0011", async () => {
     const result = await runRehearsal({
       rehearsalDatabaseUrl: databaseUrl.toString(),
       appBaseUrl: "https://preppy.example",
@@ -44,7 +44,7 @@ describe("WP-15A full non-production rehearsal", () => {
 
     expect(result.stages?.baseline.appliedMigrations).toBe(0);
     expect(result.report.migrations.latestApplied).toBe(
-      "0010_colorful_randall_flagg",
+      "0011_preppy_seed_registry",
     );
     expect(result.stages?.productSignalsUnchanged).toBe(true);
     expect(result.stages?.secondPass).toMatchObject({
@@ -210,7 +210,7 @@ describe("WP-15A full non-production rehearsal", () => {
       now,
     });
 
-    expect(result.stages?.baseline.appliedMigrations).toBe(11);
+    expect(result.stages?.baseline.appliedMigrations).toBe(12);
     expect(result.stages?.firstPass).toMatchObject({
       institution: { created: 1, linked: 1 },
       opportunity: { created: 1, linked: 1 },

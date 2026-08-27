@@ -478,6 +478,20 @@ export const expectedWindows = pgTable(
   ],
 );
 
+export const sourceTypeValues = [
+  "OFFICIAL_ADMISSION_PAGE",
+  "OFFICIAL_NOTICE_BOARD",
+  "OFFICIAL_DOCUMENT",
+  "OFFICIAL_APPLICATION_PORTAL",
+  "OFFICIAL_SCHOOL_PAGE",
+  "OFFICIAL_REGISTRY",
+  "OFFICIAL_SOCIAL",
+  "THIRD_PARTY_DISCOVERY",
+  "OTHER",
+] as const;
+
+export type SourceType = (typeof sourceTypeValues)[number];
+
 export const sources = pgTable(
   "sources",
   {
@@ -496,7 +510,7 @@ export const sources = pgTable(
     uniqueIndex("sources_canonical_url_unique").on(table.canonicalUrl),
     check(
       "sources_source_type_check",
-      sql`${table.sourceType} in ('OFFICIAL_ADMISSION_PAGE', 'OFFICIAL_NOTICE_BOARD', 'OFFICIAL_DOCUMENT', 'OFFICIAL_APPLICATION_PORTAL', 'OFFICIAL_SCHOOL_PAGE', 'OFFICIAL_SOCIAL', 'THIRD_PARTY_DISCOVERY', 'OTHER')`,
+      sql`${table.sourceType} in ('OFFICIAL_ADMISSION_PAGE', 'OFFICIAL_NOTICE_BOARD', 'OFFICIAL_DOCUMENT', 'OFFICIAL_APPLICATION_PORTAL', 'OFFICIAL_SCHOOL_PAGE', 'OFFICIAL_REGISTRY', 'OFFICIAL_SOCIAL', 'THIRD_PARTY_DISCOVERY', 'OTHER')`,
     ),
     check(
       "sources_authority_level_check",
@@ -1338,6 +1352,38 @@ export const institutions = pgTable(
   ],
 );
 
+export const institutionRegistryIdentities = pgTable(
+  "institution_registry_identities",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    institutionId: uuid("institution_id")
+      .notNull()
+      .references(() => institutions.id, { onDelete: "restrict" }),
+    registryName: text("registry_name").notNull(),
+    registryExternalId: text("registry_external_id").notNull(),
+    registryRecordUrl: text("registry_record_url").notNull(),
+    registryLocator: text("registry_locator").notNull(),
+    metadataJson: jsonb("metadata_json")
+      .$type<Record<string, unknown>>()
+      .notNull(),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (table) => [
+    unique("institution_registry_identities_registry_unique").on(
+      table.registryName,
+      table.registryExternalId,
+    ),
+    index("institution_registry_identities_institution_idx").on(
+      table.institutionId,
+    ),
+    check(
+      "institution_registry_identities_registry_name_check",
+      sql`${table.registryName} in ('SCHOOLINFO', 'ISI')`,
+    ),
+  ],
+);
+
 export const institutionSchoolLinks = pgTable(
   "institution_school_links",
   {
@@ -1367,6 +1413,7 @@ export const institutionSchoolLinks = pgTable(
 
 export const institutionSourceBindingRoleValues = [
   "OFFICIAL_MAIN",
+  "REGISTRY_IDENTITY",
   "ADMISSIONS",
   "TUITION",
   "CURRICULUM",
@@ -1419,7 +1466,7 @@ export const institutionSourceBindings = pgTable(
       ),
     check(
       "institution_source_bindings_role_check",
-      sql`${table.role} in ('OFFICIAL_MAIN', 'ADMISSIONS', 'TUITION', 'CURRICULUM', 'APPLICATION', 'OTHER')`,
+      sql`${table.role} in ('OFFICIAL_MAIN', 'REGISTRY_IDENTITY', 'ADMISSIONS', 'TUITION', 'CURRICULUM', 'APPLICATION', 'OTHER')`,
     ),
     check(
       "institution_source_bindings_lifecycle_check",

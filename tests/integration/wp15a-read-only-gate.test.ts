@@ -92,7 +92,7 @@ describe("WP-15A production connection gate", () => {
       "REPEATABLE_READ_READ_ONLY",
     );
     expect(result.report.migrations.latestApplied).toBe(
-      "0010_colorful_randall_flagg",
+      "0011_preppy_seed_registry",
     );
     expect(JSON.stringify(result.report)).not.toContain(readOnlyPassword);
     expect(JSON.stringify(result.report)).not.toContain("postgres://");

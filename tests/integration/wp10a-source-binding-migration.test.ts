@@ -117,16 +117,16 @@ describe("WP-10A Source binding migration", () => {
   afterEach(resetMigrationDatabase);
   afterAll(resetMigrationDatabase);
 
-  it("migrates a fresh database through 0009 and re-runs as a ledger no-op", async () => {
+  it("migrates a fresh database through the current repository migration and re-runs as a ledger no-op", async () => {
     await migrateDatabase(migrationDatabaseUrl.toString());
     expect(await migrationState()).toEqual({
-      migrationCount: 11,
+      migrationCount: 12,
       institutionBindings: "institution_source_bindings",
       opportunityBindings: "opportunity_source_bindings",
     });
 
     await migrateDatabase(migrationDatabaseUrl.toString());
-    expect((await migrationState()).migrationCount).toBe(11);
+    expect((await migrationState()).migrationCount).toBe(12);
   });
 
   it("upgrades 0008 data additively without automatic backfill", async () => {
@@ -181,13 +181,13 @@ describe("WP-10A Source binding migration", () => {
       `;
       expect(preserved).toEqual({ legacyBindings: 1, canonicalBindings: 0 });
       expect(await migrationState()).toEqual({
-        migrationCount: 11,
+        migrationCount: 12,
         institutionBindings: "institution_source_bindings",
         opportunityBindings: "opportunity_source_bindings",
       });
 
       await migrateDatabase(migrationDatabaseUrl.toString());
-      expect((await migrationState()).migrationCount).toBe(11);
+      expect((await migrationState()).migrationCount).toBe(12);
     } finally {
       await sql.end({ timeout: 5 });
       await rm(preWp10aFolder, { recursive: true, force: true });

@@ -27,6 +27,7 @@
     "db:preflight:production": "tsx --tsconfig scripts/db/tsconfig.json scripts/production-preflight.ts",
     "db:rehearsal": "tsx --tsconfig scripts/db/tsconfig.json scripts/rehearsal.ts",
     "db:restore-drill": "tsx --tsconfig scripts/db/tsconfig.json scripts/backup-restore-rehearsal.ts",
+    "data:import-institution-seed": "tsx --tsconfig scripts/db/tsconfig.json scripts/data/import-institution-seed.ts",
     "preview:seed": "tsx scripts/seed-preview-demo.ts --seed"
   },
   "dependencies": {

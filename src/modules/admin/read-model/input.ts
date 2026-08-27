@@ -13,6 +13,7 @@ import {
   opportunityKindValues,
   opportunityPublicationStateValues,
   opportunityTruthModeValues,
+  sourceTypeValues,
 } from "@/src/db/schema";
 
 export const DEFAULT_ADMIN_PAGE_SIZE = 20;
@@ -21,17 +22,6 @@ export const MAX_ADMIN_PAGE = 10_000;
 
 const MAX_QUERY_LENGTH = 120;
 const integerString = /^[1-9][0-9]*$/;
-
-const sourceTypeValues = [
-  "OFFICIAL_ADMISSION_PAGE",
-  "OFFICIAL_NOTICE_BOARD",
-  "OFFICIAL_DOCUMENT",
-  "OFFICIAL_APPLICATION_PORTAL",
-  "OFFICIAL_SCHOOL_PAGE",
-  "OFFICIAL_SOCIAL",
-  "THIRD_PARTY_DISCOVERY",
-  "OTHER",
-] as const;
 
 const sourceAuthorityValues = [
   "PRIMARY",
