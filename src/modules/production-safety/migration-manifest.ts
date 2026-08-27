@@ -48,4 +48,8 @@ export const EXPECTED_REPOSITORY_MIGRATIONS = [
     identifier: "0010_colorful_randall_flagg",
     hash: "13e8eba61bda25617411b760bb270d9ed1d800be06c91423412de2debd7c9248",
   },
+  {
+    identifier: "0011_preppy_seed_registry",
+    hash: "f1dbfa4648f903c9ae651a9e3ca6e7416f7c3f827f6cd2597295c67bd4361fe0",
+  },
 ] as const satisfies readonly RepositoryMigration[];
