@@ -152,6 +152,10 @@ describe("WP-15B Railway production contract", () => {
       resolve("docs/15B_PRODUCTION_MIGRATION_RESULT.md"),
       "utf8",
     );
+    const launchReadiness = readFileSync(
+      resolve("docs/15B_POST_MIGRATION_LAUNCH_READINESS.md"),
+      "utf8",
+    );
 
     for (const decision of ["D1", "D2", "D4", "D5", "D6", "D7", "D8", "D9"]) {
       expect(decisions).toMatch(
@@ -187,14 +191,36 @@ describe("WP-15B Railway production contract", () => {
     expect(migrationResult).toContain("Railway remains on Hobby");
     expect(migrationResult).toContain("D10B Product cutover");
     expect(checklist).toContain(
-      "Final gate: `PRODUCTION_MIGRATION_COMPLETE_CAPABILITIES_DISABLED`",
+      "Final gate: `READY_FOR_FINAL_DOMAIN_AND_BACKUP_DECISION`",
     );
     expect(checklist).toContain("Railway Pro/native PITR");
     expect(checklist).toContain("deliberately deferred");
     expect(checklist).toContain("D10A production migration/backfill");
     expect(checklist).toContain("D10B Product cutover/capability enablement");
+    expect(checklist).toContain(
+      "recurring daily/weekly logical backup automation",
+    );
+    expect(checklist).toContain("WP-16B post-cutover validation");
 
-    for (const document of [decisions, checklist, migrationResult]) {
+    expect(launchReadiness).toContain("SCHEMA_READY");
+    expect(launchReadiness).toContain("CAPABILITIES_DISABLED");
+    expect(launchReadiness).toContain("FINAL_DOMAIN = UNRESOLVED");
+    expect(launchReadiness).toContain("Option A — dedicated Railway");
+    expect(launchReadiness).toContain("Option B — external scheduled");
+    for (let gate = 1; gate <= 10; gate += 1) {
+      expect(launchReadiness).toContain(`L${gate}`);
+    }
+    expect(launchReadiness).toContain(
+      "Final gate: `READY_FOR_FINAL_DOMAIN_AND_BACKUP_DECISION`",
+    );
+    expect(launchReadiness).toContain("No stage was executed in this task");
+
+    for (const document of [
+      decisions,
+      checklist,
+      migrationResult,
+      launchReadiness,
+    ]) {
       expect(document).not.toMatch(/postgres(?:ql)?:\/\//i);
       expect(document).not.toMatch(
         /(?:password|secret|token)\s*[:=]\s*[^`\s]+/i,

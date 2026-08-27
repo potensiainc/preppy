@@ -42,6 +42,7 @@
 - Evidence: owner instruction `WP-15B Hobby Logical Backup + Production Migration/Backfill`, Sections 1, 15–21, and 41–45, 2026-08-26.
 - Boundary: Railway Pro and native PITR remain valuable future hardening but are deferred and were not enabled. The logical fallback is accepted because the database was fresh-empty and PREPPY remains pre-launch; it is not a general waiver for a live data-bearing system.
 - Upgrade trigger: evaluate Railway Pro/PITR when active Monitoring Parents reach 100, live monitoring/email becomes operationally material, one daily-backup interval becomes unacceptable, meaningful user/follow/notification history exists, usage approaches the Pro minimum, or a second Web instance/higher SLA is required.
+- Recurring operations status: `UNRESOLVED` / `OWNER DECISION REQUIRED`. The verified migration dumps do not constitute automated daily/weekly backup compliance. The owner must choose a dedicated Railway scheduled backup capability or an external scheduled operator, plus encrypted off-platform storage, accountable operations ownership, failure alerting, and restore-verification cadence. The application Worker must not absorb this responsibility without separate design approval.
 
 ### D7. Database role model
 
@@ -98,6 +99,7 @@ No repository capability, Preview result, proposal, example, or non-production r
 ## 3. Evidence baseline and phase boundary
 
 - Provisioning code baseline: `cfeb4677f76f35e88125d143e6c4563d2a7ac7a2`.
+- Production-migration checkpoint merged to `main`: `bea26170bfa2e8a8ea635e32cc2069b6e36b9cd0`.
 - Remote `main` and `wp-15b-railway-production-provision` were clean at that baseline before provisioning work.
 - Railway Preview evidence confirms build, HTTPS Preview runtime, synthetic Preview PostgreSQL, public routes, dynamic sitemap, and the accepted UI baseline.
 - Railway Production now contains one PostgreSQL primary, one Web service, and one scheduled run-once Worker. It remains isolated from `preppy-ui-preview`.
@@ -124,6 +126,6 @@ Secrets, DSNs, tokens, provider payloads, PII, and raw production data are forbi
 
 ## 5. Current gate
 
-Final gate: `PRODUCTION_MIGRATION_COMPLETE_CAPABILITIES_DISABLED`.
+Final gate: `READY_FOR_FINAL_DOMAIN_AND_BACKUP_DECISION`.
 
-D10A is complete: schema migration, zero-row deterministic backfill, idempotency, least-privilege grants, full read-only preflight, public read smoke, and both logical restore gates passed. D10B remains unapproved. The final custom domain, provider configuration, launch authorization, and staged capability enablement remain deferred.
+D10A is complete: schema migration, zero-row deterministic backfill, idempotency, least-privilege grants, full read-only preflight, public read smoke, and both logical restore gates passed. D10B remains unapproved. The next owner decisions are the exact final HTTPS domain and recurring logical-backup execution/storage design. Provider configuration, launch authorization, staged capability enablement, and WP-16B remain deferred.
