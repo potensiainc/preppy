@@ -168,6 +168,14 @@ beforeAll(async () => {
         .end("redirect evidence");
       return;
     }
+    if (path === "/redirect-external-evidence") {
+      response
+        .writeHead(302, {
+          location: `http://external.fixture.test:${fixture.port}/never`,
+        })
+        .end("persisted redirect evidence");
+      return;
+    }
     if (path === "/candidate") {
       response
         .writeHead(200, { "content-type": "text/html" })
@@ -525,6 +533,43 @@ describe("root-only collector persistence", () => {
         redirectChain: [expect.objectContaining({ status: 302 })],
       },
     });
+  });
+
+  it("persists the decoded redirect failure body length in Observation evidence", async () => {
+    const source = await insertEligibleSource({
+      path: "/redirect-external-evidence",
+    });
+    const before = fixture.requests.length;
+    const run = await collectExplicitSources(
+      {
+        sourceIds: [source.sourceId],
+        mode: "apply",
+        policy: parseHttpCollectorPolicy({ minimumHostDelayMs: 0 }),
+      },
+      collectionDependencies(),
+    );
+    expect(run.persistence).toEqual([
+      expect.objectContaining({
+        sourceId: source.sourceId,
+        outcome: "ACCESS_ERROR",
+        errorCode: "REDIRECT_EXTERNAL_HOST",
+      }),
+    ]);
+    const [observation] = await runtime.client<
+      { outcome: string; error_code: string; response_bytes: number }[]
+    >`
+      select outcome, error_code, response_bytes::int
+      from source_observations
+      where source_id=${source.sourceId}
+    `;
+    expect(observation).toEqual({
+      outcome: "ACCESS_ERROR",
+      error_code: "REDIRECT_EXTERNAL_HOST",
+      response_bytes: Buffer.byteLength("persisted redirect evidence"),
+    });
+    expect(
+      fixture.requests.slice(before).map((request) => request.url),
+    ).not.toContain("/never");
   });
 
   it("persists bounded ordered robots decisions for each effective redirect origin", async () => {

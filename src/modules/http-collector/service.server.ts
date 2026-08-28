@@ -7,6 +7,7 @@ import type {
 
 import {
   DEFAULT_HTTP_COLLECTOR_POLICY,
+  parseHttpCollectorPolicy,
   type HttpCollectorPolicy,
 } from "./contracts";
 import {
@@ -54,7 +55,10 @@ export async function collectExplicitSources(
     clockMs?: () => number;
   }>,
 ): Promise<HttpCollectorRunReport> {
-  const policy = input.policy ?? DEFAULT_HTTP_COLLECTOR_POLICY;
+  const policy =
+    input.policy === undefined
+      ? DEFAULT_HTTP_COLLECTOR_POLICY
+      : parseHttpCollectorPolicy(input.policy);
   const eligible = await loadEligibleOfficialMainSources(
     dependencies.executor,
     input.sourceIds,

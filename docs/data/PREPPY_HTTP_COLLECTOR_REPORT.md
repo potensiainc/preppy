@@ -16,8 +16,8 @@
 | Static HTTP fetch adapter | `http-transport.server.ts` | IMPLEMENTED_AND_TESTED | GET-only pinned-address HTTP(S), original Host/SNI/certificate hostname, compression decode, safe evidence |
 | Redirect evidence | transport + Snapshot/Observation metadata | IMPLEMENTED_AND_TESTED | Bounded chain, same-domain follow, external stop, no canonical URL mutation |
 | Status/content-type capture | transport response contract | IMPLEMENTED_AND_TESTED | Root evidence and bounded operator report |
-| Response byte limit | transport decoded-entity reader | IMPLEMENTED_AND_TESTED | Content-Length precheck and streaming decoded limit |
-| Timeout | transport | IMPLEMENTED_AND_TESTED | DNS/request/connect/read all finite |
+| Response byte limit | transport decoded-entity reader | IMPLEMENTED_AND_TESTED | Content-Length precheck immediately aborts declared oversize responses; streaming decoded limit remains charged |
+| Timeout | transport | IMPLEMENTED_AND_TESTED | One monotonic deadline per hop includes DNS, connect, and read; request/connect timers use only the remaining time |
 | Same-domain normalization | `url-policy.ts` | IMPLEMENTED_AND_TESTED | Lowercase + one leading www only; fragments removed |
 | Link extraction/dedupe | `html.ts`, `crawler.server.ts` | IMPLEMENTED_AND_TESTED | DOM-order anchor extraction; final-URL relative resolution; bounded dedupe |
 | Crawl budget | `contracts.ts`, `run-budget.ts`, crawler/service | IMPLEMENTED_AND_TESTED | One decoded-byte ledger across all Sources, robots, redirect bodies, roots, candidates, and partial/failure bodies; separate page cap |
@@ -40,11 +40,11 @@ Migration `0012_loving_trauma` adds only:
 
 No table or enum was added. Existing `source_snapshots.metadata`, `raw_storage_key`, `UNIQUE(source_id, content_hash)`, Snapshot/Observation foreign keys, and Observation checks remain unchanged.
 
-Disposable PostgreSQL evidence on 2026-08-28:
+Disposable PostgreSQL evidence revalidated on 2026-08-29:
 
 - image/service: repository `postgres:16-alpine` Docker Compose test service;
 - server version: PostgreSQL 16.14;
-- test services: isolated `preppy-http-redteam` Compose project plus the repository-default Compose service required by the backup/restore drill;
+- test service: isolated `preppy-http-pr2-review` Compose project, also selected explicitly for the backup/restore drill;
 - test databases: names ending `_test`, recreated per integration file and used only through `TEST_DATABASE_URL`;
 - canonical migration runner applied 13 ledger entries, 0000 through 0012;
 - information schema reported nullable `bytea raw_body` and nullable `jsonb metadata`;
@@ -56,7 +56,7 @@ Disposable PostgreSQL evidence on 2026-08-28:
 
 Added collector modules: `classification.ts`, `cli.server.ts`, `contracts.ts`, `crawler.server.ts`, `hash.ts`, `html.ts`, `http-transport.server.ts`, `network-safety.server.ts`, `politeness.server.ts`, `repository.server.ts`, `robots.server.ts`, `run-budget.ts`, `service.server.ts`, and `url-policy.ts` under `src/modules/http-collector/`.
 
-Also added the operator script, migration 0012 SQL/metadata, local HTTP/HTTPS fixtures with a runtime-generated ephemeral test CA and server certificate, eight unit test files, two PostgreSQL integration files, the design/plan documents, and the three data contract/report/handoff documents. `.gitattributes` pins checksum-bound seed text artifacts and migrations 0011/0012 to canonical LF bytes on every OS; XLSX remains binary. Modified files are limited to package manifests, schema/journal/runtime migration manifest, checksum manifest/CSV normalization, and existing tests whose repository migration count/latest identifier became 13/0012.
+Also added the operator script, migration 0012 SQL/metadata, local HTTP/HTTPS fixtures with a runtime-generated ephemeral test CA and server certificate, nine unit test files, two PostgreSQL integration files, the design/plan documents, and the three data contract/report/handoff documents. `.gitattributes` pins checksum-bound seed text artifacts and migrations 0011/0012 to canonical LF bytes on every OS; XLSX remains binary. Modified files are limited to package manifests, schema/journal/runtime migration manifest, checksum manifest/CSV normalization, and existing tests whose repository migration count/latest identifier became 13/0012.
 
 ## Dependency decision
 
@@ -116,13 +116,17 @@ The red-team additions also prove:
 8. Effective-origin robots decisions are ordered consistently with redirects and persisted without bodies, headers, or credentials.
 9. IPv4/IPv6 documentation, reserved, link-local, ULA, multicast, IPv4-mapped, `fec0::/10`, `3fff::/20`, protocol-assignment, and mixed safe/unsafe DNS cases fail closed; a known global-unicast address remains allowed.
 10. Canonical LF seed bytes and all five `SHA256SUMS` entries match both the Windows worktree and a fresh Git tree; the CSV hash is `fb839339800e55d9543b196f8209079719ac116fffe419f36914c9b6755acafe`.
+11. The service entrypoint reparses every supplied policy and rejects all approved upper-bound bypass cases before database, transaction, or network work begins.
+12. Each HTTP hop uses one monotonic deadline across DNS, connect, and response read; remaining time clips both the request and connect timers, and each redirect starts a new bounded hop.
+13. External, private-address, too-many, and robots-rejected redirects preserve the decoded current response byte length without fetching the rejected destination; PostgreSQL Observation evidence matches the transport length.
+14. Declared oversized uncompressed responses are destroyed immediately with zero decoded-byte charge, while streaming and decompression accounting remains unchanged.
 
 ## Acceptance results
 
-- Collector-focused unit tests: 8 files, 122 tests, PASS.
-- Full unit regression: 115 files, 1,065 tests, PASS.
-- Integration regression: 74 files, PASS. Files were run against a freshly recreated disposable database per file because legacy fixed/shared fixtures can contaminate a shared database. Five environment-oriented files received the canonical migration first; the restore drill used the repository-default Compose service it invokes internally.
-- Collector PostgreSQL integration: 2 files, 14 tests covering schema, root success, exact raw entity bytes/hashes, compression-level equivalence, state reversion, invalid/404 isolation, shared budget, robots evidence, candidate delta zero, and Product deltas zero: PASS.
+- Collector-focused unit tests: 9 files, 136 tests, PASS.
+- Full unit regression: 116 files, 1,079 tests, PASS.
+- Integration regression: 74 files, 543 tests, PASS. Files were run against a freshly recreated disposable database per file because legacy fixed/shared fixtures can contaminate a shared database. Three environment-oriented files received the canonical migration first; the restore drill used the explicitly selected disposable Compose project.
+- Collector PostgreSQL integration: 2 files, 15 tests covering schema, root success, exact raw entity bytes/hashes, compression-level equivalence, state reversion, invalid/404 isolation, shared budget, robots evidence, redirect failure response-byte persistence, candidate delta zero, and Product deltas zero: PASS.
 - Migration 0000→0012, seed importer (9 tests), source/monitoring regression (13 tests), rehearsal, operational snapshot, and actual backup/restore tests: PASS.
 - Production dependency audit: PASS, 0 vulnerabilities.
 - TypeScript and production build: PASS. Formatting and `git diff --check` are recorded after the last documentation update below.
@@ -147,4 +151,4 @@ This section is finalized after the last typecheck/build/diff run:
 - Formatting: PASS for every collector source/support/unit/integration file changed by this fix pass. Repository-wide `prettier --check .` still reports the pre-existing 500-file formatting baseline, which was not rewritten because this pass prohibits unrelated changes.
 - `git diff --check`: PASS
 - Checksum verification: PASS — Windows bytes and fresh-tree bytes both match all five manifest entries; explicit LF attributes cover checksum-bound text and do not cover XLSX
-- Disposable database/container cleanup: PASS — the isolated `preppy-http-redteam` container/network/volume were removed; the pre-existing repository Compose service was returned to its original stopped state
+- Disposable database/container cleanup: PASS — the isolated `preppy-http-pr2-review` container, network, and volume were removed; no PostgreSQL container remains running

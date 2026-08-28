@@ -1,9 +1,10 @@
 import { brotliCompressSync, deflateSync, gzipSync } from "node:zlib";
 import { existsSync } from "node:fs";
+import { IncomingMessage } from "node:http";
 import { tmpdir } from "node:os";
 import { dirname, relative } from "node:path";
 
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
 import { createNodeHttpTransport } from "@/src/modules/http-collector/http-transport.server";
 import {
@@ -73,7 +74,7 @@ describe("pinned static HTTP transport", () => {
             .writeHead(302, {
               location: `http://external.fixture.test:${fixture.port}/never`,
             })
-            .end();
+            .end("external redirect body");
           return;
         }
         if (path === "/redirect-private") {
@@ -81,15 +82,40 @@ describe("pinned static HTTP transport", () => {
             .writeHead(302, {
               location: `http://private.fixture.test:${fixture.port}/never`,
             })
-            .end();
+            .end("private redirect body");
+          return;
+        }
+        if (path === "/redirect-robots") {
+          response
+            .writeHead(302, { location: `${base}/robots-blocked` })
+            .end("robots redirect body");
           return;
         }
         if (path === "/loop-a") {
-          response.writeHead(302, { location: `${base}/loop-b` }).end();
+          response
+            .writeHead(302, { location: `${base}/loop-b` })
+            .end("loop-a body");
           return;
         }
         if (path === "/loop-b") {
-          response.writeHead(302, { location: `${base}/loop-a` }).end();
+          response
+            .writeHead(302, { location: `${base}/loop-a` })
+            .end("loop-b body");
+          return;
+        }
+        if (path === "/delayed-redirect") {
+          setTimeout(
+            () => response.writeHead(302, { location: `${base}/ok` }).end(),
+            90,
+          );
+          return;
+        }
+        if (path === "/redirect-deadline") {
+          response.writeHead(302, { location: `${base}/deadline-body` }).end();
+          return;
+        }
+        if (path === "/deadline-body") {
+          setTimeout(() => response.writeHead(200).end("deadline body"), 90);
           return;
         }
         if (path === "/slow") {
@@ -362,6 +388,7 @@ describe("pinned static HTTP transport", () => {
       failure: {
         code: "REDIRECT_EXTERNAL_HOST",
         redirectChain: [expect.any(Object)],
+        actualResponseBytes: Buffer.byteLength("external redirect body"),
       },
     });
     expect(
@@ -391,11 +418,39 @@ describe("pinned static HTTP transport", () => {
     });
     expect(result).toMatchObject({
       ok: false,
-      failure: { code: "SSRF_BLOCKED" },
+      failure: {
+        code: "SSRF_BLOCKED",
+        actualResponseBytes: Buffer.byteLength("private redirect body"),
+      },
     });
     expect(
       fixture.requests.slice(before).map((request) => request.url),
     ).toEqual(["/redirect-private"]);
+  });
+
+  it("preserves redirect body evidence when robots blocks the destination without fetching it", async () => {
+    const before = fixture.requests.length;
+    const result = await transport().fetch({
+      url: `http://school.fixture.test:${fixture.port}/redirect-robots`,
+      maxResponseBytes: 1024,
+      requestTimeoutMs: 1_000,
+      connectTimeoutMs: 500,
+      maxRedirects: 5,
+      beforeRedirect: async () => ({
+        allowed: false,
+        code: "ROBOTS_BLOCKED",
+      }),
+    });
+    expect(result).toMatchObject({
+      ok: false,
+      failure: {
+        code: "ROBOTS_BLOCKED",
+        actualResponseBytes: Buffer.byteLength("robots redirect body"),
+      },
+    });
+    expect(
+      fixture.requests.slice(before).map((request) => request.url),
+    ).toEqual(["/redirect-robots"]);
   });
 
   it("bounds DNS resolution inside the request timeout", async () => {
@@ -419,6 +474,120 @@ describe("pinned static HTTP transport", () => {
     });
   });
 
+  it("gives HTTP only the request deadline remaining after DNS", async () => {
+    let clock = 0;
+    const delayedDns = createNodeHttpTransport({
+      resolver: async () => {
+        clock = 90;
+        return [{ address: "127.0.0.1", family: 4 }];
+      },
+      assertAddressSafe: () => undefined,
+      clockMs: () => clock,
+    });
+    const startedAt = Date.now();
+    const result = await delayedDns.fetch({
+      url: `http://school.fixture.test:${fixture.port}/deadline-body`,
+      maxResponseBytes: 1024,
+      requestTimeoutMs: 150,
+      connectTimeoutMs: 120,
+      maxRedirects: 1,
+    });
+    expect(result).toMatchObject({
+      ok: false,
+      failure: { code: "READ_TIMEOUT" },
+    });
+    expect(Date.now() - startedAt).toBeLessThan(120);
+  });
+
+  it("does not open a socket when DNS exhausts the hop deadline", async () => {
+    let clock = 0;
+    const before = fixture.requests.length;
+    const expired = createNodeHttpTransport({
+      resolver: async () => {
+        clock = 151;
+        return [{ address: "127.0.0.1", family: 4 }];
+      },
+      assertAddressSafe: () => undefined,
+      clockMs: () => clock,
+    });
+    const result = await expired.fetch({
+      url: `http://school.fixture.test:${fixture.port}/ok`,
+      maxResponseBytes: 1024,
+      requestTimeoutMs: 150,
+      connectTimeoutMs: 120,
+      maxRedirects: 1,
+    });
+    expect(result).toMatchObject({
+      ok: false,
+      failure: { code: "DNS_ERROR", message: "DNS resolution timed out" },
+    });
+    expect(fixture.requests).toHaveLength(before);
+  });
+
+  it("clips a configured connect timeout to the remaining hop deadline", async () => {
+    let clock = 0;
+    const deadlineBound = createNodeHttpTransport({
+      resolver: async () => {
+        clock = 100;
+        return [{ address: "127.0.0.1", family: 4 }];
+      },
+      assertAddressSafe: () => undefined,
+      clockMs: () => clock,
+    });
+    const result = await deadlineBound.fetch({
+      url: `http://school.fixture.test:${fixture.port}/deadline-body`,
+      maxResponseBytes: 1024,
+      requestTimeoutMs: 150,
+      connectTimeoutMs: 140,
+      maxRedirects: 1,
+    });
+    expect(result).toMatchObject({
+      ok: false,
+      failure: { code: "READ_TIMEOUT" },
+    });
+  });
+
+  it("starts a new request deadline for each redirect hop", async () => {
+    const result = await transport().fetch({
+      url: `http://school.fixture.test:${fixture.port}/delayed-redirect`,
+      maxResponseBytes: 1024,
+      requestTimeoutMs: 150,
+      connectTimeoutMs: 120,
+      maxRedirects: 1,
+    });
+    expect(result).toMatchObject({
+      ok: true,
+      response: { finalUrl: `http://school.fixture.test:${fixture.port}/ok` },
+    });
+  });
+
+  it("applies the combined DNS and HTTP deadline to a redirect hop", async () => {
+    let resolutions = 0;
+    let clock = 0;
+    const redirectDeadline = createNodeHttpTransport({
+      resolver: async () => {
+        resolutions += 1;
+        if (resolutions === 2) {
+          clock += 90;
+        }
+        return [{ address: "127.0.0.1", family: 4 }];
+      },
+      assertAddressSafe: () => undefined,
+      clockMs: () => clock,
+    });
+    const result = await redirectDeadline.fetch({
+      url: `http://school.fixture.test:${fixture.port}/redirect-deadline`,
+      maxResponseBytes: 1024,
+      requestTimeoutMs: 150,
+      connectTimeoutMs: 120,
+      maxRedirects: 1,
+    });
+    expect(result).toMatchObject({
+      ok: false,
+      failure: { code: "READ_TIMEOUT" },
+    });
+  });
+
   it("bounds redirect loops", async () => {
     const result = await transport().fetch({
       url: `http://school.fixture.test:${fixture.port}/loop-a`,
@@ -429,7 +598,10 @@ describe("pinned static HTTP transport", () => {
     });
     expect(result).toMatchObject({
       ok: false,
-      failure: { code: "TOO_MANY_REDIRECTS" },
+      failure: {
+        code: "TOO_MANY_REDIRECTS",
+        actualResponseBytes: Buffer.byteLength("loop-a body"),
+      },
     });
     expect(!result.ok && result.failure.redirectChain).toHaveLength(3);
   });
@@ -459,19 +631,33 @@ describe("pinned static HTTP transport", () => {
     },
   );
 
-  it("rejects a response declared larger than the entity budget", async () => {
-    await expect(
-      transport().fetch({
-        url: `http://school.fixture.test:${fixture.port}/too-large`,
-        maxResponseBytes: 10,
-        requestTimeoutMs: 1_000,
-        connectTimeoutMs: 500,
-        maxRedirects: 5,
-      }),
-    ).resolves.toMatchObject({
-      ok: false,
-      failure: { code: "RESPONSE_TOO_LARGE" },
-    });
+  it("aborts rather than drains a response declared larger than the entity budget", async () => {
+    const ledger = runBudget(1_024);
+    const destroy = vi.spyOn(IncomingMessage.prototype, "destroy");
+    try {
+      await expect(
+        transport().fetch({
+          url: `http://school.fixture.test:${fixture.port}/too-large`,
+          maxResponseBytes: 10,
+          requestTimeoutMs: 1_000,
+          connectTimeoutMs: 500,
+          maxRedirects: 5,
+          runBudget: ledger,
+        }),
+      ).resolves.toMatchObject({
+        ok: false,
+        failure: { code: "RESPONSE_TOO_LARGE", actualResponseBytes: 0 },
+      });
+      expect(destroy).toHaveBeenCalled();
+      const destroyCounts = new Map<unknown, number>();
+      for (const response of destroy.mock.instances) {
+        destroyCounts.set(response, (destroyCounts.get(response) ?? 0) + 1);
+      }
+      expect(Math.max(...destroyCounts.values())).toBeGreaterThanOrEqual(2);
+      expect(ledger.consumedBytes).toBe(0);
+    } finally {
+      destroy.mockRestore();
+    }
   });
 
   it("charges partial decoded bytes when a chunked response exceeds the page limit", async () => {

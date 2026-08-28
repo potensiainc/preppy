@@ -8,6 +8,7 @@ import {
   type RequestOptions as HttpsRequestOptions,
 } from "node:https";
 import type { LookupFunction } from "node:net";
+import { performance } from "node:perf_hooks";
 import type { Readable } from "node:stream";
 import { createBrotliDecompress, createGunzip, createInflate } from "node:zlib";
 
@@ -162,7 +163,7 @@ async function readEntityBytes(
   ) {
     const declaredBytes = Number(declared);
     if (!Number.isSafeInteger(declaredBytes) || declaredBytes > maximumBytes) {
-      response.resume();
+      response.destroy();
       throw new BodyReadFailure("RESPONSE_TOO_LARGE", 0);
     }
   }
@@ -256,6 +257,10 @@ async function requestPinned(
   url: URL,
   address: VettedAddress,
   input: StaticHttpFetchInput,
+  timeouts: Readonly<{
+    requestTimeoutMs: number;
+    connectTimeoutMs: number;
+  }>,
   tlsCa: string | Buffer | undefined,
 ): Promise<OneRequestResult> {
   return new Promise((resolve) => {
@@ -333,7 +338,7 @@ async function requestPinned(
           response: null,
           actualResponseBytes: 0,
         });
-      }, input.connectTimeoutMs);
+      }, timeouts.connectTimeoutMs);
       socket.once(
         url.protocol === "https:" ? "secureConnect" : "connect",
         () => {
@@ -354,7 +359,7 @@ async function requestPinned(
         response: null,
         actualResponseBytes: 0,
       });
-    }, input.requestTimeoutMs);
+    }, timeouts.requestTimeoutMs);
     request.end();
   });
 }
@@ -396,7 +401,7 @@ export function createNodeHttpTransport(
   dependencies: TransportDependencies = {},
 ): StaticHttpTransport {
   const now = dependencies.now ?? (() => new Date());
-  const clockMs = dependencies.clockMs ?? Date.now;
+  const clockMs = dependencies.clockMs ?? (() => performance.now());
   const resolver = dependencies.resolver;
   const addressAssertion = dependencies.assertAddressSafe ?? assertSafeAddress;
 
@@ -435,28 +440,57 @@ export function createNodeHttpTransport(
       }
       const redirectChain: RedirectEvidence[] = [];
       let vetted: readonly VettedAddress[] | undefined;
+      let hopDeadlineMs = clockMs() + input.requestTimeoutMs;
       while (true) {
-        try {
-          vetted ??= await resolveWithinTimeout(
-            current.hostname,
-            input.requestTimeoutMs,
-            resolver,
-            addressAssertion,
-          );
-        } catch (error) {
-          const network =
-            error instanceof CollectorNetworkError
-              ? error
-              : new CollectorNetworkError("DNS_ERROR", "DNS resolution failed");
-          return failureEvidence({
-            code: network.code,
-            message: network.message,
-            requestedUrl,
-            finalUrl: current.href,
-            redirectChain,
-            now,
-            elapsedMs: elapsedMs(),
-          });
+        if (vetted === undefined) {
+          const dnsTimeoutMs = hopDeadlineMs - clockMs();
+          if (dnsTimeoutMs <= 0) {
+            return failureEvidence({
+              code: "DNS_ERROR",
+              message: "DNS resolution timed out",
+              requestedUrl,
+              finalUrl: current.href,
+              redirectChain,
+              now,
+              elapsedMs: elapsedMs(),
+            });
+          }
+          try {
+            vetted = await resolveWithinTimeout(
+              current.hostname,
+              dnsTimeoutMs,
+              resolver,
+              addressAssertion,
+            );
+          } catch (error) {
+            const network =
+              error instanceof CollectorNetworkError
+                ? error
+                : new CollectorNetworkError(
+                    "DNS_ERROR",
+                    "DNS resolution failed",
+                  );
+            return failureEvidence({
+              code: network.code,
+              message: network.message,
+              requestedUrl,
+              finalUrl: current.href,
+              redirectChain,
+              now,
+              elapsedMs: elapsedMs(),
+            });
+          }
+          if (hopDeadlineMs - clockMs() <= 0) {
+            return failureEvidence({
+              code: "DNS_ERROR",
+              message: "DNS resolution timed out",
+              requestedUrl,
+              finalUrl: current.href,
+              redirectChain,
+              now,
+              elapsedMs: elapsedMs(),
+            });
+          }
         }
         try {
           await input.beforeRequest?.(current.href);
@@ -471,10 +505,29 @@ export function createNodeHttpTransport(
             elapsedMs: elapsedMs(),
           });
         }
+        const requestTimeoutMs = hopDeadlineMs - clockMs();
+        if (requestTimeoutMs <= 0) {
+          return failureEvidence({
+            code: "READ_TIMEOUT",
+            message: "HTTP response timed out",
+            requestedUrl,
+            finalUrl: current.href,
+            redirectChain,
+            now,
+            elapsedMs: elapsedMs(),
+          });
+        }
         const requestResult = await requestPinned(
           current,
           vetted[0]!,
           input,
+          {
+            requestTimeoutMs,
+            connectTimeoutMs: Math.min(
+              input.connectTimeoutMs,
+              requestTimeoutMs,
+            ),
+          },
           dependencies.tlsCa,
         );
         if (!requestResult.ok) {
@@ -504,6 +557,7 @@ export function createNodeHttpTransport(
               finalUrl: current.href,
               redirectChain,
               response: requestResult.response,
+              actualResponseBytes: requestResult.entityBytes.length,
               now,
               elapsedMs: elapsedMs(),
             });
@@ -515,11 +569,12 @@ export function createNodeHttpTransport(
             nextUrl: next.href,
           });
           redirectChain.push(redirect);
+          const nextHopDeadlineMs = clockMs() + input.requestTimeoutMs;
           let nextVetted: readonly VettedAddress[];
           try {
             nextVetted = await resolveWithinTimeout(
               next.hostname,
-              input.requestTimeoutMs,
+              nextHopDeadlineMs - clockMs(),
               resolver,
               addressAssertion,
             );
@@ -537,6 +592,21 @@ export function createNodeHttpTransport(
               requestedUrl,
               finalUrl: next.href,
               redirectChain,
+              response: requestResult.response,
+              actualResponseBytes: requestResult.entityBytes.length,
+              now,
+              elapsedMs: elapsedMs(),
+            });
+          }
+          if (nextHopDeadlineMs - clockMs() <= 0) {
+            return failureEvidence({
+              code: "DNS_ERROR",
+              message: "DNS resolution timed out",
+              requestedUrl,
+              finalUrl: next.href,
+              redirectChain,
+              response: requestResult.response,
+              actualResponseBytes: requestResult.entityBytes.length,
               now,
               elapsedMs: elapsedMs(),
             });
@@ -552,6 +622,7 @@ export function createNodeHttpTransport(
               finalUrl: next.href,
               redirectChain,
               response: requestResult.response,
+              actualResponseBytes: requestResult.entityBytes.length,
               now,
               elapsedMs: elapsedMs(),
             });
@@ -564,6 +635,7 @@ export function createNodeHttpTransport(
               finalUrl: next.href,
               redirectChain,
               response: requestResult.response,
+              actualResponseBytes: requestResult.entityBytes.length,
               now,
               elapsedMs: elapsedMs(),
             });
@@ -588,6 +660,7 @@ export function createNodeHttpTransport(
                 finalUrl: next.href,
                 redirectChain,
                 response: requestResult.response,
+                actualResponseBytes: requestResult.entityBytes.length,
                 now,
                 elapsedMs: elapsedMs(),
               });
@@ -595,6 +668,7 @@ export function createNodeHttpTransport(
           }
           current = next;
           vetted = nextVetted;
+          hopDeadlineMs = nextHopDeadlineMs;
           continue;
         }
         const entityBytes = requestResult.entityBytes;

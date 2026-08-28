@@ -35,6 +35,12 @@ Every Source is revalidated from the database before collection and again inside
 | Minimum delay between same-host request starts | 500 ms | 5 s |
 | robots.txt bytes | 512 KiB | 512 KiB |
 
+Each HTTP hop starts its own monotonic request deadline. DNS resolution,
+connection establishment, and response reading share that single deadline;
+the connection timer is the lesser of the configured connect timeout and the
+time remaining after DNS. A redirect starts a new hop deadline, but never a
+second full request timeout after that hop's DNS work.
+
 All settings pass a strict, immutable, upper-bounded validation contract. One run-level ledger is shared by every robots, root, redirect, and candidate request across the explicit batch. It charges every decoded chunk, including failure and partial chunks, before enforcing the run limit; the separate per-page decoded limit remains in force. Page, depth, link, and total-byte exhaustion are bounded outcomes rather than permission to continue crawling.
 
 ## HTTP and network safety
