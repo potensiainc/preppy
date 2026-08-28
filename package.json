@@ -28,17 +28,20 @@
     "db:rehearsal": "tsx --tsconfig scripts/db/tsconfig.json scripts/rehearsal.ts",
     "db:restore-drill": "tsx --tsconfig scripts/db/tsconfig.json scripts/backup-restore-rehearsal.ts",
     "data:import-institution-seed": "tsx --tsconfig scripts/db/tsconfig.json scripts/data/import-institution-seed.ts",
+    "collector:http": "tsx --tsconfig scripts/db/tsconfig.json scripts/data/collect-official-main-http.ts",
     "preview:seed": "tsx scripts/seed-preview-demo.ts --seed"
   },
   "dependencies": {
     "@tiptap/pm": "3.30.3",
     "@tiptap/react": "3.30.3",
     "@tiptap/starter-kit": "3.30.3",
+    "cheerio": "1.2.0",
     "drizzle-orm": "0.45.2",
     "next": "16.3.0",
     "postgres": "3.4.9",
     "react": "19.2.8",
     "react-dom": "19.2.8",
+    "robots-parser": "3.0.1",
     "sanitize-html": "2.17.7",
     "zod": "4.4.3"
   },
@@ -51,6 +54,7 @@
     "eslint": "^9.0.0",
     "eslint-config-next": "16.3.0",
     "prettier": "^3.0.0",
+    "selfsigned": "5.5.0",
     "tsx": "^4.0.0",
     "typescript": "^5.9.0",
     "vitest": "4.1.10"

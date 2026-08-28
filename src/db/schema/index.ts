@@ -4,6 +4,7 @@ import {
   boolean,
   char,
   check,
+  customType,
   date,
   foreignKey,
   index,
@@ -20,6 +21,12 @@ import {
   uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
+
+const bytea = customType<{ data: Buffer }>({
+  dataType() {
+    return "bytea";
+  },
+});
 
 const createdAt = () =>
   timestamp("created_at", { withTimezone: true }).notNull().defaultNow();
@@ -616,6 +623,7 @@ export const sourceSnapshots = pgTable(
     textHash: text("text_hash"),
     normalizedText: text("normalized_text"),
     rawStorageKey: text("raw_storage_key"),
+    rawBody: bytea("raw_body"),
     mimeType: text("mime_type"),
     metadata: jsonb("metadata").$type<Record<string, unknown>>(),
     createdAt: createdAt(),
@@ -657,6 +665,7 @@ export const sourceObservations = pgTable(
     }),
     etag: text("etag"),
     lastModified: text("last_modified"),
+    metadata: jsonb("metadata").$type<Record<string, unknown>>(),
     createdAt: createdAt(),
   },
   (table) => [

@@ -1,0 +1,8 @@
+# These checksum-bound artifacts are canonical LF byte streams on every OS.
+data/seeds/preppy/PREPPY_CODEX_SEED_DATASET_PROMPT.md text eol=lf
+data/seeds/preppy/PREPPY_SEED_DATASET_README.md text eol=lf
+data/seeds/preppy/preppy_seed_institutions_seoul_gyeonggi_v1.json text eol=lf
+data/seeds/preppy/preppy_seed_institutions_seoul_gyeonggi_v1.csv text eol=lf
+data/seeds/preppy/SHA256SUMS text eol=lf
+src/db/migrations/0011_preppy_seed_registry.sql text eol=lf
+src/db/migrations/0012_loving_trauma.sql text eol=lf
