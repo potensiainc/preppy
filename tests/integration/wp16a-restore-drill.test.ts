@@ -339,7 +339,7 @@ describe("WP-16A real non-production backup/restore drill", () => {
       externalSideEffectsEnabled: false,
       sourceDatabaseLabel: sourceName,
       artifactPathClass: "OS_TEMP/WP16A",
-      migrationLatest: "0011_preppy_seed_registry",
+      migrationLatest: "0012_loving_trauma",
       criticalTableCountsMatch: true,
       invariants: "PASS",
       readSmoke: "PASS",

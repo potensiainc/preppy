@@ -52,4 +52,8 @@ export const EXPECTED_REPOSITORY_MIGRATIONS = [
     identifier: "0011_preppy_seed_registry",
     hash: "f1dbfa4648f903c9ae651a9e3ca6e7416f7c3f827f6cd2597295c67bd4361fe0",
   },
+  {
+    identifier: "0012_loving_trauma",
+    hash: "86763907ea81b534fb3fbfd9e7af09a1f8f65e1b7314fbf1f105215f0cf674cd",
+  },
 ] as const satisfies readonly RepositoryMigration[];
