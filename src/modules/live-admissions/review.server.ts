@@ -40,6 +40,8 @@ export type ReviewedLiveAdmission = Readonly<{
     notifications: number;
     notificationDeliveries: number;
     notificationDeliveryAttempts: number;
+    meaningfulChanges: number;
+    opportunityChanges: number;
   }>;
 }>;
 
@@ -62,6 +64,8 @@ type SideEffectCounts = Readonly<{
   notifications: number;
   notificationDeliveries: number;
   notificationDeliveryAttempts: number;
+  meaningfulChanges: number;
+  opportunityChanges: number;
 }>;
 
 async function sideEffectCounts(
@@ -72,7 +76,9 @@ async function sideEffectCounts(
       (select count(*)::int from outbox_events) as "outboxEvents",
       (select count(*)::int from notifications) as notifications,
       (select count(*)::int from notification_deliveries) as "notificationDeliveries",
-      (select count(*)::int from notification_delivery_attempts) as "notificationDeliveryAttempts"
+      (select count(*)::int from notification_delivery_attempts) as "notificationDeliveryAttempts",
+      (select count(*)::int from meaningful_changes) as "meaningfulChanges",
+      (select count(*)::int from opportunity_changes) as "opportunityChanges"
   `)) as unknown as SideEffectCounts[];
   return rows[0]!;
 }
@@ -85,6 +91,8 @@ function delta(before: SideEffectCounts, after: SideEffectCounts) {
       after.notificationDeliveries - before.notificationDeliveries,
     notificationDeliveryAttempts:
       after.notificationDeliveryAttempts - before.notificationDeliveryAttempts,
+    meaningfulChanges: after.meaningfulChanges - before.meaningfulChanges,
+    opportunityChanges: after.opportunityChanges - before.opportunityChanges,
   });
 }
 
@@ -302,7 +310,7 @@ export async function reviewAndPublishLiveAdmissionDraft(
     if (Object.values(sideEffectDelta).some((value) => value !== 0)) {
       throw new LiveAdmissionReviewError(
         "SIDE_EFFECT_DETECTED",
-        "Local review unexpectedly created notification side effects",
+        "Operator review unexpectedly created product side effects",
       );
     }
     return Object.freeze({

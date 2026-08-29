@@ -30,6 +30,7 @@
     "data:import-institution-seed": "tsx --tsconfig scripts/db/tsconfig.json scripts/data/import-institution-seed.ts",
     "collector:http": "tsx --tsconfig scripts/db/tsconfig.json scripts/data/collect-official-main-http.ts",
     "data:live-admissions:5": "tsx --tsconfig scripts/db/tsconfig.json scripts/data/run-five-school-live-admissions.ts",
+    "data:production-live-admissions:5": "tsx --tsconfig scripts/db/tsconfig.json scripts/data/run-five-school-production-rollout.ts",
     "preview:seed": "tsx scripts/seed-preview-demo.ts --seed"
   },
   "dependencies": {
