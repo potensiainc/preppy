@@ -260,7 +260,7 @@ function charsetFromObservationMetadata(
   );
 }
 
-async function loadCollectedHtml(
+export async function loadCollectedHtml(
   executor: DatabaseExecutor,
   input: Readonly<{
     sourceId: string;
@@ -297,7 +297,7 @@ async function loadCollectedHtml(
   }).decode(row.rawBody);
 }
 
-function proposalReport(proposal: LiveAdmissionProposal) {
+export function proposalReport(proposal: LiveAdmissionProposal) {
   return {
     ...proposal,
     eventStartAt: proposal.eventStartAt?.toISOString() ?? null,

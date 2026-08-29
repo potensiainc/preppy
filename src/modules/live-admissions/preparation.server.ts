@@ -150,7 +150,12 @@ export async function prepareLiveAdmissionDraft(
         kind: opportunities.kind,
       })
       .from(opportunities)
-      .where(eq(opportunities.slug, slug))
+      .where(
+        and(
+          eq(opportunities.institutionId, input.institutionId),
+          eq(opportunities.slug, slug),
+        ),
+      )
       .limit(1);
     if (existingOpportunity !== undefined) {
       const [existingVersion] = await executor.drizzle

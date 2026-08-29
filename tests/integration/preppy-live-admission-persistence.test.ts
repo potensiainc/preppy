@@ -454,6 +454,8 @@ describe("five-school explicit local operator review", () => {
         notifications: 0,
         notificationDeliveries: 0,
         notificationDeliveryAttempts: 0,
+        meaningfulChanges: 0,
+        opportunityChanges: 0,
       },
     });
     expect(reviewed.verifiedVersionId).not.toBe(prepared.versionId);
