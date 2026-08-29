@@ -106,6 +106,27 @@ export type OpportunityKeyDatesDTO = {
   applicationClosesAt: string | null;
 };
 
+/**
+ * Evidence-backed Native admission truth for an Institution detail page.
+ * Collection freshness and operator verification freshness stay distinct.
+ */
+export type ReviewedAdmissionDTO = {
+  id: string;
+  slug: string;
+  title: string;
+  academicYearLabel: string | null;
+  knowledgeState: "SCHEDULE_FOUND" | "NOT_ANNOUNCED" | "NOT_FOUND";
+  kind: OpportunityKind;
+  businessState: OpportunityBusinessState;
+  summary: string | null;
+  targetAudience: string | null;
+  keyDates: OpportunityKeyDatesDTO;
+  actionUrl: string | null;
+  officialSource: OfficialSourceDTO;
+  lastCollectedAt: string;
+  lastVerifiedAt: string;
+};
+
 export type ArticleCardDTO = {
   id: string;
   slug: string;
@@ -149,6 +170,7 @@ export type InstitutionFactDTO = {
  */
 export type InstitutionDetailDTO = {
   institution: InstitutionCardDTO;
+  reviewedAdmissions: ReviewedAdmissionDTO[];
   currentOpportunities: OpportunityCardDTO[];
   upcomingOpportunities: OpportunityCardDTO[];
   recentOpportunities: OpportunityCardDTO[];

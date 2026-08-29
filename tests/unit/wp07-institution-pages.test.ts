@@ -60,6 +60,33 @@ const list: InstitutionListDTO = {
 
 const detail: InstitutionDetailDTO = {
   institution,
+  reviewedAdmissions: [
+    {
+      id: "opportunity-1",
+      slug: "2027-admissions",
+      title: "2027학년도 입학 전형",
+      academicYearLabel: "2027학년도",
+      knowledgeState: "SCHEDULE_FOUND",
+      kind: "RECRUITMENT",
+      businessState: "OPEN",
+      summary: "공식 모집요강에서 확인한 입학 정보입니다.",
+      targetAudience: "2020년 출생 아동",
+      keyDates: {
+        eventStartsAt: "2026-09-12T01:00:00.000Z",
+        eventEndsAt: null,
+        applicationOpensAt: "2026-09-01T00:00:00.000Z",
+        applicationClosesAt: "2026-09-05T07:00:00.000Z",
+      },
+      actionUrl: "https://admissions.example.test/2027",
+      officialSource: {
+        name: "학교 공식 입학처",
+        url: "https://admissions.example.test/2027",
+        authorityLevel: "PRIMARY",
+      },
+      lastCollectedAt: "2026-08-21T03:30:00.000Z",
+      lastVerifiedAt: "2026-08-23T03:30:00.000Z",
+    },
+  ],
   currentOpportunities: [opportunity],
   upcomingOpportunities: [
     { ...opportunity, id: "opportunity-2", businessState: "UPCOMING" },
@@ -191,6 +218,14 @@ describe("WP-07 Institution pages", () => {
     expect(markup).toContain("현재 모집·입학정보");
     expect(markup).toContain("예정된 모집·입학정보");
     expect(markup).toContain("최근 모집·입학정보");
+    expect(markup).toContain("입학정보");
+    expect(markup).toContain("2027학년도");
+    expect(markup).toContain("공식 일정 확인됨");
+    expect(markup).toContain("2020년 출생 아동");
+    expect(markup).toContain("Last Collected");
+    expect(markup).toContain("2026년 8월 21일");
+    expect(markup).toContain("Last Verified");
+    expect(markup).toContain("2026년 8월 23일");
     expect(markup).toContain("교육비");
     expect(markup).toContain("연간 1,000만 원");
     expect(markup).toContain("2026년 8월 22일");
@@ -202,7 +237,6 @@ describe("WP-07 Institution pages", () => {
     expect(markup).toContain(
       "현재 관심기관 상태를 안전하게 확인하고 있습니다.",
     );
-    expect(markup).not.toContain("Last Verified");
     expect(markup).not.toContain("페이지 최종 확인");
   });
 
@@ -224,7 +258,7 @@ describe("WP-07 Institution pages", () => {
     expect(markup).toContain("현재 모집·입학정보");
     expect(markup).not.toContain("예정된 모집·입학정보");
     expect(markup).not.toContain("최근 모집·입학정보");
-    expect(markup.match(/학교 공식 입학처/g)).toHaveLength(1);
+    expect(markup.match(/학교 공식 입학처/g)).toHaveLength(2);
     expect(markup).toContain("학교 공식 홈페이지");
   });
 
