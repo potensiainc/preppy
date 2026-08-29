@@ -24,6 +24,7 @@ const detail: InstitutionDetailDTO = {
     currentOpportunity: null,
     lastVerifiedAt: null,
   },
+  reviewedAdmissions: [],
   currentOpportunities: [],
   upcomingOpportunities: [],
   recentOpportunities: [],

@@ -107,6 +107,13 @@ async function createNativeOpportunity(
     | "COMPLETED"
     | "CANCELLED"
     | "UNKNOWN" = "OPEN",
+  overrides: {
+    title?: string;
+    summary?: string | null;
+    targetAudience?: string | null;
+    applicationCloseAt?: string | null;
+    actionUrl?: string | null;
+  } = {},
 ) {
   const id = randomUUID();
   const versionId = randomUUID();
@@ -118,9 +125,14 @@ async function createNativeOpportunity(
       values (${id}, ${institutionId}, ${slug}, 'APPLICATION', 'NATIVE', 'PUBLISHED', '2026-08-01T00:00:00.000Z')
     `;
     await transaction`
-      insert into opportunity_versions (id, opportunity_id, truth_mode, version_number, verification_state, business_state, is_current, title, summary, application_close_at, action_url, verified_at)
-      values (${versionId}, ${id}, 'NATIVE', 1, 'VERIFIED', ${state}, true, ${`Opportunity ${state}`},
-        'Verified opportunity summary.', '2026-09-01T00:00:00.000Z', 'https://apply.example.test', '2026-08-11T02:03:04.000Z')
+      insert into opportunity_versions (id, opportunity_id, truth_mode, version_number, verification_state, business_state, is_current, title, summary, target_audience, application_close_at, action_url, verified_at)
+      values (${versionId}, ${id}, 'NATIVE', 1, 'VERIFIED', ${state}, true,
+        ${overrides.title ?? `Opportunity ${state}`},
+        ${overrides.summary === undefined ? "Verified opportunity summary." : overrides.summary},
+        ${overrides.targetAudience ?? null},
+        ${overrides.applicationCloseAt === undefined ? "2026-09-01T00:00:00.000Z" : overrides.applicationCloseAt},
+        ${overrides.actionUrl === undefined ? "https://apply.example.test" : overrides.actionUrl},
+        '2026-08-11T02:03:04.000Z')
     `;
     await transaction`
       insert into opportunity_version_evidence (opportunity_version_id, source_id, evidence_role)
@@ -261,6 +273,7 @@ async function cleanup(): Promise<void> {
     await transaction`delete from opportunity_versions where opportunity_id in (select id from opportunities where slug like ${`${prefix}%`})`;
     await transaction`delete from event_version_evidence where event_version_id in (select v.id from admission_event_versions v join admission_events e on e.id=v.admission_event_id where e.event_key like ${`${prefix}%`})`;
     await transaction`delete from source_observations where source_id in (select id from sources where canonical_url like ${`https://institution-source.example.test/${prefix}/%`})`;
+    await transaction`delete from source_snapshots where source_id in (select id from sources where canonical_url like ${`https://institution-source.example.test/${prefix}/%`})`;
     await transaction`delete from opportunity_admission_event_links where opportunity_id in (select id from opportunities where slug like ${`${prefix}%`})`;
     await transaction`delete from opportunities where slug like ${`${prefix}%`}`;
     await transaction`delete from admission_event_versions where admission_event_id in (select id from admission_events where event_key like ${`${prefix}%`})`;
@@ -401,6 +414,67 @@ describe("WP-06A Institution public query", () => {
     expect(Object.hasOwn(result, "lastVerifiedAt")).toBe(false);
     expect(result.relatedArticles).toHaveLength(1);
     assertNoForbiddenKeys(result);
+  });
+
+  it("projects reviewed Native admission evidence with distinct collection and verification timestamps, including UNKNOWN knowledge", async () => {
+    // Catches UNKNOWN being hidden from detail or collector time replacing operator verification time.
+    const institution = await createInstitution({
+      name: `${prefix} Reviewed admission`,
+      category: "PRIVATE_ELEMENTARY",
+    });
+    const native = await createNativeOpportunity(institution.id, "UNKNOWN", {
+      title: "2026학년도 신입생 모집요강 링크 확인",
+      summary:
+        "공식 홈페이지에서 모집요강 링크를 확인했으나 일정 값은 확인되지 않았습니다.",
+      applicationCloseAt: null,
+    });
+    const snapshotId = randomUUID();
+    await runtime.client.begin(async (transaction) => {
+      await transaction`
+        insert into source_snapshots (
+          id, source_id, captured_at, content_hash, normalized_text, mime_type
+        ) values (
+          ${snapshotId}, ${native.source.id}, '2026-08-10T01:02:03.000Z',
+          ${`hash-${snapshotId}`}, '2026학년도 신입생 모집요강', 'text/html'
+        )
+      `;
+      const [observation] = await transaction<{ id: string }[]>`
+        insert into source_observations (
+          source_id, observed_at, outcome, http_status, final_url, snapshot_id
+        ) values (
+          ${native.source.id}, '2026-08-10T01:02:03.000Z', 'SUCCESS', 200,
+          ${native.source.url}, ${snapshotId}
+        ) returning id::text
+      `;
+      await transaction`
+        update opportunity_version_evidence set
+          source_observation_id=${observation!.id}::bigint,
+          source_snapshot_id=${snapshotId}
+        where opportunity_version_id=${native.versionId}
+      `;
+    });
+
+    const detail = await getInstitutionBySlug(
+      runtime.executor,
+      institution.slug,
+    );
+
+    expect(detail.reviewedAdmissions).toEqual([
+      expect.objectContaining({
+        id: native.id,
+        academicYearLabel: "2026학년도",
+        knowledgeState: "NOT_FOUND",
+        businessState: "UNKNOWN",
+        summary:
+          "공식 홈페이지에서 모집요강 링크를 확인했으나 일정 값은 확인되지 않았습니다.",
+        officialSource: expect.objectContaining({ url: native.source.url }),
+        lastCollectedAt: "2026-08-10T01:02:03.000Z",
+        lastVerifiedAt: "2026-08-11T02:03:04.000Z",
+      }),
+    ]);
+    expect(detail.currentOpportunities).toEqual([]);
+    expect(detail.upcomingOpportunities).toEqual([]);
+    expect(detail.recentOpportunities).toEqual([]);
   });
 
   it("adds only active authoritative linked legacy School sources separately from a School-less Native detail", async () => {

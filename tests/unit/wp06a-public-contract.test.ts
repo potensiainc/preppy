@@ -244,6 +244,7 @@ describe("WP-06A public DTO contract", () => {
     expectTypeOf<InstitutionFactDTO>().toHaveProperty("verifiedAt");
     expectTypeOf<InstitutionFactDTO>().toHaveProperty("officialSource");
     expectTypeOf<InstitutionDetailDTO>().toHaveProperty("officialSources");
+    expectTypeOf<InstitutionDetailDTO>().toHaveProperty("reviewedAdmissions");
     expectTypeOf<InstitutionDetailDTO>().toHaveProperty("currentOpportunities");
     expectTypeOf<InstitutionDetailDTO>().toHaveProperty(
       "upcomingOpportunities",

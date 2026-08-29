@@ -31,6 +31,7 @@ import type {
   OfficialSourceDTO,
   OpportunityCardDTO,
   OpportunityKeyDatesDTO,
+  ReviewedAdmissionDTO,
 } from "./dto";
 import { parseInstitutionListQuery } from "./input";
 import { getIndexability } from "./indexability";
@@ -752,6 +753,112 @@ async function getLegacyInstitutionSources(
   return rows.map(sourceDto);
 }
 
+function academicYearLabel(title: string, summary: string | null) {
+  return `${title} ${summary ?? ""}`.match(/(20\d{2})\s*학년도/u)?.[0] ?? null;
+}
+
+function admissionKnowledgeState(
+  title: string,
+  summary: string | null,
+  keyDates: OpportunityKeyDatesDTO,
+): ReviewedAdmissionDTO["knowledgeState"] {
+  if (Object.values(keyDates).some((value) => value !== null)) {
+    return "SCHEDULE_FOUND";
+  }
+  return /(?:미발표|추후\s*(?:공지|안내|발표)|일정\s*미정)/u.test(
+    `${title} ${summary ?? ""}`,
+  )
+    ? "NOT_ANNOUNCED"
+    : "NOT_FOUND";
+}
+
+async function getReviewedAdmissions(
+  executor: DatabaseExecutor,
+  institutionId: string,
+): Promise<ReviewedAdmissionDTO[]> {
+  const rows = (await executor.raw(sql`
+    select distinct on (o.id)
+      o.id, o.slug, o.kind, v.title, v.business_state as "businessState",
+      v.summary, v.target_audience as "targetAudience",
+      v.event_start_at as "eventStartsAt", v.event_end_at as "eventEndsAt",
+      v.application_open_at as "applicationOpensAt",
+      v.application_close_at as "applicationClosesAt",
+      v.action_url as "actionUrl", v.verified_at as "verifiedAt",
+      s.source_name as "sourceName", s.canonical_url as "canonicalUrl",
+      s.authority_level as "authorityLevel", so.observed_at as "observedAt"
+    from opportunities o
+    join institutions i on i.id=o.institution_id
+      and i.publication_state='PUBLISHED'
+    join opportunity_versions v on v.opportunity_id=o.id
+      and v.is_current=true and v.verification_state='VERIFIED'
+      and v.verified_at is not null
+    join opportunity_version_evidence e on e.opportunity_version_id=v.id
+      and e.source_observation_id is not null
+      and e.source_snapshot_id is not null
+    join sources s on s.id=e.source_id
+    join source_observations so on so.id=e.source_observation_id
+      and so.source_id=e.source_id and so.snapshot_id=e.source_snapshot_id
+    join source_snapshots ss on ss.id=e.source_snapshot_id
+      and ss.source_id=e.source_id
+    where o.institution_id=${institutionId}
+      and o.publication_state='PUBLISHED' and o.truth_mode='NATIVE'
+      and s.source_type in ('OFFICIAL_ADMISSION_PAGE','OFFICIAL_NOTICE_BOARD','OFFICIAL_DOCUMENT','OFFICIAL_APPLICATION_PORTAL','OFFICIAL_SCHOOL_PAGE','OFFICIAL_SOCIAL')
+      and s.authority_level in ('PRIMARY','SECONDARY_OFFICIAL')
+    order by o.id,
+      case when lower(e.evidence_role)='primary' then 0 else 1 end,
+      case when s.authority_level='PRIMARY' then 0 else 1 end,
+      s.canonical_url, s.id
+    limit ${DETAIL_OPPORTUNITY_LIMIT}
+  `)) as unknown as Array<{
+    id: string;
+    slug: string;
+    kind: OpportunityCardDTO["kind"];
+    title: string;
+    businessState: OpportunityCardDTO["businessState"];
+    summary: string | null;
+    targetAudience: string | null;
+    eventStartsAt: Date | string | null;
+    eventEndsAt: Date | string | null;
+    applicationOpensAt: Date | string | null;
+    applicationClosesAt: Date | string | null;
+    actionUrl: string | null;
+    verifiedAt: Date | string;
+    sourceName: string;
+    canonicalUrl: string;
+    authorityLevel: string;
+    observedAt: Date | string;
+  }>;
+  return rows.map((row) => {
+    const keyDates: OpportunityKeyDatesDTO = {
+      eventStartsAt:
+        row.eventStartsAt === null ? null : rawIso(row.eventStartsAt),
+      eventEndsAt: row.eventEndsAt === null ? null : rawIso(row.eventEndsAt),
+      applicationOpensAt:
+        row.applicationOpensAt === null ? null : rawIso(row.applicationOpensAt),
+      applicationClosesAt:
+        row.applicationClosesAt === null
+          ? null
+          : rawIso(row.applicationClosesAt),
+    };
+    return {
+      id: row.id,
+      slug: row.slug,
+      title: row.title,
+      academicYearLabel: academicYearLabel(row.title, row.summary),
+      knowledgeState: admissionKnowledgeState(row.title, row.summary, keyDates),
+      kind: row.kind,
+      businessState: row.businessState,
+      summary: row.summary,
+      targetAudience: row.targetAudience,
+      keyDates,
+      actionUrl: row.actionUrl,
+      officialSource: sourceDto(row),
+      lastCollectedAt: rawIso(row.observedAt),
+      lastVerifiedAt: rawIso(row.verifiedAt),
+    };
+  });
+}
+
 export async function getInstitutionBySlug(
   executor: DatabaseExecutor,
   slug: string,
@@ -775,14 +882,21 @@ export async function getInstitutionBySlug(
     )
     .limit(1);
   if (row === undefined) throw new NotFoundError();
-  const [truths, factsResult, legacySources, relatedArticles, covered] =
-    await Promise.all([
-      getOpportunityTruths(executor, { institutionIds: [row.id] }, "DETAIL"),
-      getFactProjection(executor, row.id),
-      getLegacyInstitutionSources(executor, row.id),
-      getRelatedArticles(executor, { institutionId: row.id }),
-      getMonitorableInstitutionIds(executor, [row.id]),
-    ]);
+  const [
+    truths,
+    reviewedAdmissions,
+    factsResult,
+    legacySources,
+    relatedArticles,
+    covered,
+  ] = await Promise.all([
+    getOpportunityTruths(executor, { institutionIds: [row.id] }, "DETAIL"),
+    getReviewedAdmissions(executor, row.id),
+    getFactProjection(executor, row.id),
+    getLegacyInstitutionSources(executor, row.id),
+    getRelatedArticles(executor, { institutionId: row.id }),
+    getMonitorableInstitutionIds(executor, [row.id]),
+  ]);
   const institution: InstitutionRow = {
     ...row,
     hasMonitorableSourceCoverage: covered.has(row.id),
@@ -795,7 +909,11 @@ export async function getInstitutionBySlug(
   const currentOpportunities = cardsFor(["OPEN"]);
   const upcomingOpportunities = cardsFor(["UPCOMING"]);
   const recentOpportunities = cardsFor(["CLOSED", "COMPLETED", "CANCELLED"]);
-  const officialSources = [...factsResult.sources, ...legacySources].filter(
+  const officialSources = [
+    ...reviewedAdmissions.map((admission) => admission.officialSource),
+    ...factsResult.sources,
+    ...legacySources,
+  ].filter(
     (source, index, values) =>
       values.findIndex((candidate) => candidate.url === source.url) === index,
   );
@@ -803,9 +921,11 @@ export async function getInstitutionBySlug(
   const meaningful =
     Boolean(institution.shortDescription?.trim()) ||
     factsResult.facts.length > 0 ||
-    truths.length > 0;
+    truths.length > 0 ||
+    reviewedAdmissions.length > 0;
   return {
     institution: selected,
+    reviewedAdmissions,
     currentOpportunities,
     upcomingOpportunities,
     recentOpportunities,

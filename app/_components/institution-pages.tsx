@@ -6,6 +6,7 @@ import type {
   InstitutionListQuery,
   OfficialSourceDTO,
   OpportunityCardDTO,
+  ReviewedAdmissionDTO,
 } from "@/src/modules/public/dto";
 
 import { TrackedFollowCta as FollowCta } from "@/app/_components/tracked-follow-cta";
@@ -26,8 +27,103 @@ import {
 import {
   categoryLabel,
   factLabel,
+  formatPublicDate,
   opportunityStateLabel,
 } from "@/app/_lib/presentation";
+
+function admissionKnowledgeLabel(
+  state: ReviewedAdmissionDTO["knowledgeState"],
+): string {
+  if (state === "SCHEDULE_FOUND") return "공식 일정 확인됨";
+  if (state === "NOT_ANNOUNCED") return "일정 미발표";
+  return "관련 일정·지원 정보 미발견";
+}
+
+function AdmissionDate({
+  label,
+  start,
+  end,
+}: {
+  label: string;
+  start: string | null;
+  end?: string | null;
+}) {
+  return (
+    <div>
+      <dt>{label}</dt>
+      <dd>
+        {start ? (
+          <>
+            <time dateTime={start}>{formatPublicDate(start)}</time>
+            {end ? (
+              <>
+                {" ~ "}
+                <time dateTime={end}>{formatPublicDate(end)}</time>
+              </>
+            ) : null}
+          </>
+        ) : (
+          "확인된 일정 없음"
+        )}
+      </dd>
+    </div>
+  );
+}
+
+function ReviewedAdmissions({
+  admissions,
+}: {
+  admissions: ReviewedAdmissionDTO[];
+}) {
+  if (admissions.length === 0) return null;
+  return (
+    <section className="institution-detail__section" aria-label="입학정보">
+      <SectionHeader
+        title="입학정보"
+        description="공식 Source evidence와 운영자 검수까지 완료된 정보입니다."
+      />
+      <div className="institution-detail__cards">
+        {admissions.map((admission) => (
+          <article className="public-card opportunity-card" key={admission.id}>
+            <div className="card-kicker">
+              <span>{admission.academicYearLabel ?? "학년도 미확인"}</span>
+              <span>{admissionKnowledgeLabel(admission.knowledgeState)}</span>
+            </div>
+            <h3>{admission.title}</h3>
+            {admission.summary ? <p>{admission.summary}</p> : null}
+            <dl className="institution-facts">
+              <AdmissionDate
+                label="원서접수"
+                start={admission.keyDates.applicationOpensAt}
+                end={admission.keyDates.applicationClosesAt}
+              />
+              <AdmissionDate
+                label="설명회 / Open House"
+                start={admission.keyDates.eventStartsAt}
+                end={admission.keyDates.eventEndsAt}
+              />
+              <div>
+                <dt>지원 대상 / 자격</dt>
+                <dd>
+                  {admission.targetAudience ?? "공식 Source에서 확인된 값 없음"}
+                </dd>
+              </div>
+            </dl>
+            <TrustSource source={admission.officialSource} />
+            <VerifiedAt
+              verifiedAt={admission.lastCollectedAt}
+              label="Last Collected"
+            />
+            <VerifiedAt
+              verifiedAt={admission.lastVerifiedAt}
+              label="Last Verified"
+            />
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
 
 const categories = [
   { value: "ENGLISH_KINDERGARTEN", label: "영어유치원" },
@@ -229,6 +325,8 @@ export function InstitutionDetailView({
             />
           </div>
         </header>
+
+        <ReviewedAdmissions admissions={data.reviewedAdmissions} />
 
         <OpportunityGroup
           title="현재 모집·입학정보"

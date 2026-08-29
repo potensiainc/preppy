@@ -73,6 +73,7 @@ const institution = {
     currentOpportunity: null,
     lastVerifiedAt: null,
   },
+  reviewedAdmissions: [],
   currentOpportunities: [],
   upcomingOpportunities: [],
   recentOpportunities: [],
