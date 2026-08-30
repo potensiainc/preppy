@@ -26,6 +26,7 @@ import {
   artifactTestTime,
 } from "@/tests/support/private-elementary-artifact";
 import { assertDedicatedTestDatabaseUrl } from "@/tests/support/test-database";
+import { getInstitutionBySlug } from "@/src/modules/public/institution-query.server";
 
 const testUrl = process.env.TEST_DATABASE_URL!;
 if (!testUrl) throw new Error("TEST_DATABASE_URL required");
@@ -85,6 +86,44 @@ function run(values: readonly unknown[], mode: "dry-run" | "apply") {
 }
 
 describe("offline artifact canonical persistence", () => {
+  it("recovers the academic year from the exact canonical admission identity when page text omits it", async () => {
+    const target = loaded.targets.find((t) => t.slug === "kbes")!;
+    const collection = artifactTestCollection(target);
+    const input = createBootstrapArtifact(
+      {
+        ...collection,
+        admission: {
+          ...collection.admission!,
+          proposal: {
+            ...collection.admission!.proposal,
+            title: "전 / 입학안내",
+            summary: "원서접수 2026년 11월 9일 ~ 11월 13일",
+          },
+        },
+      },
+      loaded.seedSha256,
+      artifactTestTime,
+    );
+    const report = await run([input], "apply");
+    expect(report.schoolsPersisted).toBe(1);
+    const detail = () => getInstitutionBySlug(runtime.executor, target.slug);
+    expect((await detail()).reviewedAdmissions[0]?.academicYearLabel).toBe(
+      "2027학년도",
+    );
+    const opportunityId = report.records[0]!.preview!.opportunityId as string;
+    for (const slug of [
+      "unrelated-admission-2027",
+      `live-admissions-${randomUUID()}-2027`,
+      `live-admissions-${target.institutionId}-2027-extra`,
+      `live-admissions-${target.institutionId}-current`,
+    ]) {
+      await runtime.client`update opportunities set slug=${slug} where id=${opportunityId}`;
+      expect(
+        (await detail()).reviewedAdmissions[0]?.academicYearLabel,
+      ).toBeNull();
+    }
+  });
+
   it("rejects replacement of an approved artifact before any database write", async () => {
     const approved = artifact("lila");
     const replaced = artifact("kyonggi");

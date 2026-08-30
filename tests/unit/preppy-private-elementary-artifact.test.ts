@@ -74,6 +74,74 @@ function mutate(change: (value: any) => void, resign = true) {
 }
 
 describe("offline school artifact validation", () => {
+  it("keeps one provenance page when aliases converge, preserving the admission collection timestamp", () => {
+    const collection = artifactTestCollection(
+      loaded.targets.find((t) => t.slug === "lila")!,
+    );
+    const page = collection.pages[1]!;
+    const input = createBootstrapArtifact(
+      {
+        ...collection,
+        pages: [
+          collection.pages[0]!,
+          { ...page, collectedAt: new Date("2026-08-30T07:58:00.000Z") },
+          page,
+        ],
+      },
+      loaded.seedSha256,
+      artifactTestTime,
+    );
+    expect(() => validate(input)).not.toThrow();
+    expect(input.collection.pages).toHaveLength(2);
+    expect(input.sources).toHaveLength(3);
+    expect(input.collection.pages[1]!.collectedAt).toBe(
+      "2026-08-30T07:59:00.000Z",
+    );
+  });
+
+  it("rejects an HTTP action URL when the official website requires HTTPS", () => {
+    const original = loaded.targets.find((t) => t.slug === "lila")!;
+    const target = {
+      ...original,
+      websiteUrl: original.websiteUrl.replace(/^http:/u, "https:"),
+    };
+    const collection = artifactTestCollection(target);
+    const proposal = {
+      ...collection.admission!.proposal,
+      actionUrl: collection.admission!.proposal.actionUrl.replace(
+        /^https:/u,
+        "http:",
+      ),
+    };
+    const input = createBootstrapArtifact(
+      { ...collection, admission: { ...collection.admission!, proposal } },
+      loaded.seedSha256,
+      artifactTestTime,
+    );
+    expect(() =>
+      validateBootstrapArtifact(
+        input,
+        loaded.targets.map((t) => (t.slug === target.slug ? target : t)),
+        loaded.seedSha256,
+        artifactTestTime,
+      ),
+    ).toThrow();
+  });
+
+  it.each(["2026-11-09T00:00:00.000Z", "2026-11-14T00:00:00.000Z"])(
+    "rejects an outdated UPCOMING artifact at %s",
+    (now) => {
+      expect(() =>
+        validateBootstrapArtifact(
+          sample(),
+          loaded.targets,
+          loaded.seedSha256,
+          new Date(now),
+        ),
+      ).toThrow();
+    },
+  );
+
   it.each([
     {
       html: "<h1>학교 소개</h1><p>공식 교육과정 안내</p>",

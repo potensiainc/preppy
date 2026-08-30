@@ -1,5 +1,13 @@
 import "server-only";
-import { mkdir, open, readFile, readdir, lstat, chmod } from "node:fs/promises";
+import {
+  mkdir,
+  open,
+  readFile,
+  readdir,
+  lstat,
+  chmod,
+  rm,
+} from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { z } from "zod";
 import { parseRuntimeDatabaseEnv } from "@/src/config/runtime-env";
@@ -227,6 +235,7 @@ export async function runBootstrapArtifactCli(
       // Reserve the destination before any network work. Never overwrite an approved artifact.
       await mkdir(dirname(path), { recursive: true });
       const file = await open(path, "wx", 0o600);
+      let completed = false;
       try {
         const collected = await collect(
           { target, work: "both" },
@@ -258,6 +267,7 @@ export async function runBootstrapArtifactCli(
         );
         await file.writeFile(`${JSON.stringify(artifact, null, 2)}\n`, "utf8");
         await file.sync();
+        completed = true;
         records.push({
           slug: target.slug,
           path,
@@ -269,6 +279,7 @@ export async function runBootstrapArtifactCli(
         });
       } finally {
         await file.close();
+        if (!completed) await rm(path, { force: true });
       }
       await chmod(path, 0o444);
     }

@@ -753,8 +753,19 @@ async function getLegacyInstitutionSources(
   return rows.map(sourceDto);
 }
 
-function academicYearLabel(title: string, summary: string | null) {
-  return `${title} ${summary ?? ""}`.match(/(20\d{2})\s*학년도/u)?.[0] ?? null;
+function academicYearLabel(
+  title: string,
+  summary: string | null,
+  slug: string,
+  institutionId: string,
+) {
+  const explicit = `${title} ${summary ?? ""}`.match(
+    /(20\d{2})\s*학년도/u,
+  )?.[0];
+  if (explicit) return explicit;
+  const prefix = `live-admissions-${institutionId}-`;
+  const year = slug.startsWith(prefix) ? slug.slice(prefix.length) : "";
+  return /^20\d{2}$/u.test(year) ? `${year}학년도` : null;
 }
 
 function admissionKnowledgeState(
@@ -844,7 +855,12 @@ async function getReviewedAdmissions(
       id: row.id,
       slug: row.slug,
       title: row.title,
-      academicYearLabel: academicYearLabel(row.title, row.summary),
+      academicYearLabel: academicYearLabel(
+        row.title,
+        row.summary,
+        row.slug,
+        institutionId,
+      ),
       knowledgeState: admissionKnowledgeState(row.title, row.summary, keyDates),
       kind: row.kind,
       businessState: row.businessState,

@@ -186,7 +186,7 @@ function bounded(value: string): string {
   return value.slice(0, MAX_EVIDENCE_EXCERPT);
 }
 
-function businessState(
+export function deriveLiveAdmissionBusinessState(
   referenceTime: Date,
   applicationOpenAt: Date | null,
   applicationCloseAt: Date | null,
@@ -343,7 +343,7 @@ export function extractLiveAdmissionProposal(
     knowledgeState,
     kind,
     businessState: hasSchedule
-      ? businessState(
+      ? deriveLiveAdmissionBusinessState(
           input.referenceTime,
           applicationOpenAt,
           applicationCloseAt,

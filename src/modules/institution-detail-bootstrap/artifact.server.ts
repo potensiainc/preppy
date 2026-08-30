@@ -20,6 +20,7 @@ import {
   type ExtractedInstitutionFact,
 } from "./fact-extractor";
 import { isStaleAdmissionCycle } from "./admission-extractor";
+import { deriveLiveAdmissionBusinessState } from "@/src/modules/live-admissions/extractor";
 import type { LiveAdmissionProposal } from "@/src/modules/live-admissions/contracts";
 import { liveAdmissionContentFingerprint } from "@/src/modules/live-admissions/preparation.server";
 import {
@@ -149,6 +150,12 @@ function officialUrl(
       : !isSameDiscoveryDomain(value, target.websiteUrl)
   )
     reject();
+  if (
+    !registry &&
+    new URL(target.websiteUrl).protocol === "https:" &&
+    parsed.protocol !== "https:"
+  )
+    reject();
   return value;
 }
 
@@ -187,14 +194,28 @@ export function createBootstrapArtifact(
     (p) => p.url === collection.target.websiteUrl,
   );
   if (root) used.add(normalizeDiscoveryUrl(root.url));
-  const selected = collection.pages.filter((p) =>
-    used.has(normalizeDiscoveryUrl(p.url)),
-  );
+  const selectedByUrl = new Map<string, (typeof collection.pages)[number]>();
+  for (const page of collection.pages) {
+    const url = normalizeDiscoveryUrl(page.url);
+    if (!used.has(url)) continue;
+    if (
+      !selectedByUrl.has(url) ||
+      (admission &&
+        url === normalizeDiscoveryUrl(admission.sourceUrl) &&
+        page.collectedAt.getTime() === admission.collectedAt.getTime())
+    )
+      selectedByUrl.set(url, page);
+  }
+  const selected = [...selectedByUrl.values()];
   const pages = selected.map((page) => {
     const excerpts = facts
       .filter((f) => f.sourceUrl === normalizeDiscoveryUrl(page.url))
       .map((f) => f.evidenceExcerpt);
-    if (admission?.sourceUrl === page.url)
+    if (
+      admission &&
+      normalizeDiscoveryUrl(admission.sourceUrl) ===
+        normalizeDiscoveryUrl(page.url)
+    )
       excerpts.push(admission.proposal.evidenceExcerpt);
     const evidenceText = [
       ...new Set([page.normalizedText.slice(0, 500), ...excerpts]),
@@ -444,6 +465,17 @@ export function validateBootstrapArtifact(
       proposal.knowledgeState === "SCHEDULE_FOUND"
         ? !proposal.academicYearLabel || !dates.some(Boolean)
         : dates.some(Boolean) || proposal.businessState !== "UNKNOWN"
+    )
+      reject();
+    if (
+      proposal.knowledgeState === "SCHEDULE_FOUND" &&
+      proposal.businessState !==
+        deriveLiveAdmissionBusinessState(
+          now,
+          proposal.applicationOpenAt,
+          proposal.applicationCloseAt,
+          proposal.eventStartAt,
+        )
     )
       reject();
     admission = {

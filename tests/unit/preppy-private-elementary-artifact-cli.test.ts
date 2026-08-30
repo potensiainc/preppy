@@ -27,6 +27,29 @@ const railway = {
   DATABASE_URL: "postgresql://test:test@postgres.railway.internal/preppy",
 };
 describe("offline bootstrap CLI boundary", () => {
+  it("removes a failed reservation so collection can retry the same output path", async () => {
+    const dir = await mkdtemp(join(tmpdir(), "preppy-artifact-cli-"));
+    directories.push(dir);
+    const output = join(dir, "school.json");
+    const args = ["--collect-only", "--slug=kyonggi", `--output=${output}`];
+    await expect(
+      runBootstrapArtifactCli(args, {
+        environment: {},
+        now: () => artifactTestTime,
+        collect: async () => {
+          throw new Error("test collection failure");
+        },
+      }),
+    ).rejects.toThrow("test collection failure");
+    await expect(stat(output)).rejects.toMatchObject({ code: "ENOENT" });
+    const retry = await runBootstrapArtifactCli(args, {
+      environment: {},
+      now: () => artifactTestTime,
+      collect: async (input) => artifactTestCollection(input.target),
+    });
+    expect(retry).toMatchObject({ artifactsCreated: 1 });
+  });
+
   it("refuses apply without the separately approved artifact checksum", () => {
     expect(() =>
       assertArtifactEnvironment(
