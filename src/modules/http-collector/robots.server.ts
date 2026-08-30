@@ -113,13 +113,33 @@ export function createRobotsPolicy(
         transportErrorCode: null,
       };
     }
+    const body = fetched.response.entityBytes.toString("utf8");
+    const mime = fetched.response.contentType
+      ?.split(";", 1)[0]
+      ?.trim()
+      .toLowerCase();
+    // A challenge/login HTML response is not a robots document. The parser
+    // otherwise accepts its lack of directives as allow-all.
+    const nonCommentBody = body
+      .split(/\r?\n/u)
+      .map((line) => line.split("#", 1)[0])
+      .join("\n");
+    if (
+      mime === "text/html" ||
+      mime === "application/xhtml+xml" ||
+      /<(?:!doctype\b|\/?[a-z][a-z0-9:-]*[\s/>])/iu.test(nonCommentBody)
+    ) {
+      return {
+        kind: "REVIEW",
+        status,
+        reason: "ROBOTS_PARSE_REVIEW_REQUIRED",
+        transportErrorCode: null,
+      };
+    }
     try {
       return {
         kind: "RULES",
-        parser: robotsParser(
-          robotsUrl,
-          fetched.response.entityBytes.toString("utf8"),
-        ),
+        parser: robotsParser(robotsUrl, body),
         status,
       };
     } catch {
