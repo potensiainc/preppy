@@ -32,6 +32,7 @@
     "data:live-admissions:5": "tsx --tsconfig scripts/db/tsconfig.json scripts/data/run-five-school-live-admissions.ts",
     "data:production-live-admissions:5": "tsx --tsconfig scripts/db/tsconfig.json scripts/data/run-five-school-production-rollout.ts",
     "data:bootstrap-private-elementary:2026": "tsx --tsconfig scripts/db/tsconfig.json scripts/data/bootstrap-private-elementary-2026.ts",
+    "data:correct-private-elementary:2026": "tsx --tsconfig scripts/db/tsconfig.json scripts/data/correct-private-elementary-truth.ts",
     "preview:seed": "tsx scripts/seed-preview-demo.ts --seed"
   },
   "dependencies": {

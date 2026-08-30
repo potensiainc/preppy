@@ -38,6 +38,7 @@ import { getIndexability } from "./indexability";
 import { getRelatedArticles } from "./opportunity-query.server";
 
 const DETAIL_OPPORTUNITY_LIMIT = 12;
+const REVIEWED_ADMISSION_LIMIT = 20;
 const HOME_OPPORTUNITY_LIMIT = 12;
 const MAX_OPPORTUNITY_CARD_BATCH = 50;
 const LEGACY_SOURCE_LIMIT = 24;
@@ -682,7 +683,7 @@ async function getFactProjection(
     versionIds.length === 0
       ? []
       : ((await executor.raw(sql`
-    select distinct on (e.institution_fact_version_id) e.institution_fact_version_id as "versionId",
+    select e.institution_fact_version_id as "versionId",
       s.source_name as "sourceName", s.canonical_url as "canonicalUrl", s.authority_level as "authorityLevel"
     from institution_fact_version_evidence e join sources s on s.id=e.source_id
     where e.institution_fact_version_id in (${sql.join(
@@ -711,8 +712,15 @@ async function getFactProjection(
       displayValue: row.displayValue,
       verifiedAt: toIso(row.verifiedAt as Date),
       officialSource: sourceByVersion.get(row.versionId) ?? null,
+      officialSources: evidence
+        .filter((item) => item.versionId === row.versionId)
+        .map(sourceDto)
+        .filter(
+          (source, index, all) =>
+            all.findIndex((s) => s.url === source.url) === index,
+        ),
     }));
-  return { facts, sources: [...sourceByVersion.values()] };
+  return { facts, sources: evidence.map(sourceDto) };
 }
 
 async function getLegacyInstitutionSources(
@@ -759,13 +767,19 @@ function academicYearLabel(
   slug: string,
   institutionId: string,
 ) {
-  const explicit = `${title} ${summary ?? ""}`.match(
-    /(20\d{2})\s*학년도/u,
-  )?.[0];
-  if (explicit) return explicit;
   const prefix = `live-admissions-${institutionId}-`;
-  const year = slug.startsWith(prefix) ? slug.slice(prefix.length) : "";
-  return /^20\d{2}$/u.test(year) ? `${year}학년도` : null;
+  const identity = slug.startsWith(prefix) ? slug.slice(prefix.length) : "";
+  if (/^current(?:-event-[a-z0-9]+(?:-[a-z0-9]+)*)?$/u.test(identity))
+    return null;
+  const identityYear = identity.match(
+    /^(20\d{2})(?:-event-[a-z0-9]+(?:-[a-z0-9]+)*)?$/u,
+  )?.[1];
+  if (identityYear) return `${identityYear}학년도`;
+  const explicit = `${title} ${summary ?? ""}`.match(
+    /(20\d{2})\s*(?:학년도|년도)/u,
+  )?.[1];
+  if (explicit) return `${explicit}학년도`;
+  return null;
 }
 
 function admissionKnowledgeState(
@@ -788,7 +802,7 @@ async function getReviewedAdmissions(
   institutionId: string,
 ): Promise<ReviewedAdmissionDTO[]> {
   const rows = (await executor.raw(sql`
-    select distinct on (o.id)
+    select
       o.id, o.slug, o.kind, v.title, v.business_state as "businessState",
       v.summary, v.target_audience as "targetAudience",
       v.event_start_at as "eventStartsAt", v.event_end_at as "eventEndsAt",
@@ -819,7 +833,7 @@ async function getReviewedAdmissions(
       case when lower(e.evidence_role)='primary' then 0 else 1 end,
       case when s.authority_level='PRIMARY' then 0 else 1 end,
       s.canonical_url, s.id
-    limit ${DETAIL_OPPORTUNITY_LIMIT}
+    limit ${REVIEWED_ADMISSION_LIMIT * 20}
   `)) as unknown as Array<{
     id: string;
     slug: string;
@@ -839,40 +853,61 @@ async function getReviewedAdmissions(
     authorityLevel: string;
     observedAt: Date | string;
   }>;
-  return rows.map((row) => {
-    const keyDates: OpportunityKeyDatesDTO = {
-      eventStartsAt:
-        row.eventStartsAt === null ? null : rawIso(row.eventStartsAt),
-      eventEndsAt: row.eventEndsAt === null ? null : rawIso(row.eventEndsAt),
-      applicationOpensAt:
-        row.applicationOpensAt === null ? null : rawIso(row.applicationOpensAt),
-      applicationClosesAt:
-        row.applicationClosesAt === null
-          ? null
-          : rawIso(row.applicationClosesAt),
-    };
-    return {
-      id: row.id,
-      slug: row.slug,
-      title: row.title,
-      academicYearLabel: academicYearLabel(
-        row.title,
-        row.summary,
-        row.slug,
-        institutionId,
-      ),
-      knowledgeState: admissionKnowledgeState(row.title, row.summary, keyDates),
-      kind: row.kind,
-      businessState: row.businessState,
-      summary: row.summary,
-      targetAudience: row.targetAudience,
-      keyDates,
-      actionUrl: row.actionUrl,
-      officialSource: sourceDto(row),
-      lastCollectedAt: rawIso(row.observedAt),
-      lastVerifiedAt: rawIso(row.verifiedAt),
-    };
-  });
+  const grouped = new Map<string, typeof rows>();
+  for (const row of rows)
+    grouped.set(row.id, [...(grouped.get(row.id) ?? []), row]);
+  return [...grouped.values()]
+    .slice(0, REVIEWED_ADMISSION_LIMIT)
+    .map((evidenceRows) => {
+      const row = evidenceRows[0]!;
+      const keyDates: OpportunityKeyDatesDTO = {
+        eventStartsAt:
+          row.eventStartsAt === null ? null : rawIso(row.eventStartsAt),
+        eventEndsAt: row.eventEndsAt === null ? null : rawIso(row.eventEndsAt),
+        applicationOpensAt:
+          row.applicationOpensAt === null
+            ? null
+            : rawIso(row.applicationOpensAt),
+        applicationClosesAt:
+          row.applicationClosesAt === null
+            ? null
+            : rawIso(row.applicationClosesAt),
+      };
+      return {
+        id: row.id,
+        slug: row.slug,
+        title: row.title,
+        academicYearLabel: academicYearLabel(
+          row.title,
+          row.summary,
+          row.slug,
+          institutionId,
+        ),
+        knowledgeState: admissionKnowledgeState(
+          row.title,
+          row.summary,
+          keyDates,
+        ),
+        kind: row.kind,
+        businessState: row.businessState,
+        summary: row.summary,
+        targetAudience: row.targetAudience,
+        keyDates,
+        actionUrl: row.actionUrl,
+        officialSource: sourceDto(row),
+        officialSources: evidenceRows
+          .map(sourceDto)
+          .filter(
+            (source, index, all) =>
+              all.findIndex((s) => s.url === source.url) === index,
+          ),
+        lastCollectedAt: evidenceRows
+          .map((r) => rawIso(r.observedAt))
+          .sort()
+          .at(-1)!,
+        lastVerifiedAt: rawIso(row.verifiedAt),
+      };
+    });
 }
 
 export async function getInstitutionBySlug(
@@ -926,7 +961,9 @@ export async function getInstitutionBySlug(
   const upcomingOpportunities = cardsFor(["UPCOMING"]);
   const recentOpportunities = cardsFor(["CLOSED", "COMPLETED", "CANCELLED"]);
   const officialSources = [
-    ...reviewedAdmissions.map((admission) => admission.officialSource),
+    ...reviewedAdmissions.flatMap(
+      (admission) => admission.officialSources ?? [admission.officialSource],
+    ),
     ...factsResult.sources,
     ...legacySources,
   ].filter(

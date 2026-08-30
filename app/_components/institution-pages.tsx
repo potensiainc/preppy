@@ -54,11 +54,27 @@ function AdmissionDate({
       <dd>
         {start ? (
           <>
-            <time dateTime={start}>{formatPublicDate(start)}</time>
+            <time dateTime={start}>
+              {formatPublicDate(start)}{" "}
+              {new Intl.DateTimeFormat("ko-KR", {
+                timeZone: "Asia/Seoul",
+                hour: "2-digit",
+                minute: "2-digit",
+                hourCycle: "h23",
+              }).format(new Date(start))}
+            </time>
             {end ? (
               <>
                 {" ~ "}
-                <time dateTime={end}>{formatPublicDate(end)}</time>
+                <time dateTime={end}>
+                  {formatPublicDate(end)}{" "}
+                  {new Intl.DateTimeFormat("ko-KR", {
+                    timeZone: "Asia/Seoul",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hourCycle: "h23",
+                  }).format(new Date(end))}
+                </time>
               </>
             ) : null}
           </>
@@ -92,16 +108,27 @@ function ReviewedAdmissions({
             <h3>{admission.title}</h3>
             {admission.summary ? <p>{admission.summary}</p> : null}
             <dl className="institution-facts">
-              <AdmissionDate
-                label="원서접수"
-                start={admission.keyDates.applicationOpensAt}
-                end={admission.keyDates.applicationClosesAt}
-              />
-              <AdmissionDate
-                label="설명회 / Open House"
-                start={admission.keyDates.eventStartsAt}
-                end={admission.keyDates.eventEndsAt}
-              />
+              {admission.kind === "RECRUITMENT" ? (
+                <AdmissionDate
+                  label="원서접수"
+                  start={admission.keyDates.applicationOpensAt}
+                  end={admission.keyDates.applicationClosesAt}
+                />
+              ) : null}
+              {admission.keyDates.eventStartsAt ||
+              admission.keyDates.eventEndsAt ? (
+                <AdmissionDate
+                  label={
+                    admission.kind === "LOTTERY"
+                      ? "추첨"
+                      : admission.kind === "RESULT_ANNOUNCEMENT"
+                        ? "결과 발표"
+                        : "설명회 / Open House"
+                  }
+                  start={admission.keyDates.eventStartsAt}
+                  end={admission.keyDates.eventEndsAt}
+                />
+              ) : null}
               <div>
                 <dt>지원 대상 / 자격</dt>
                 <dd>
@@ -109,7 +136,11 @@ function ReviewedAdmissions({
                 </dd>
               </div>
             </dl>
-            <TrustSource source={admission.officialSource} />
+            {(admission.officialSources ?? [admission.officialSource]).map(
+              (source) => (
+                <TrustSource key={source.url} source={source} />
+              ),
+            )}
             <VerifiedAt
               verifiedAt={admission.lastCollectedAt}
               label="Last Collected"

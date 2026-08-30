@@ -16,6 +16,17 @@ import type {
 } from "./discovery.server";
 import type { ExtractedInstitutionFact } from "./fact-extractor";
 import { isStaleAdmissionCycle } from "./admission-extractor";
+import type { CorrectionSchool } from "./correction.server";
+
+export type SchoolTruthCorrection = Readonly<{
+  admissions: readonly Readonly<{
+    key: string;
+    admission: NonNullable<CollectedPrivateElementarySchool["admission"]>;
+    sourceUrls: readonly string[];
+  }>[];
+  factSourceUrls: Readonly<Record<string, readonly string[]>>;
+  retireFacts: CorrectionSchool["retireFacts"];
+}>;
 
 type SourceType = BootstrapEvidencePage["sourceType"] | "OFFICIAL_REGISTRY";
 type InstitutionBindingRole =
@@ -281,6 +292,7 @@ async function ensurePageProvenance(
     select id::text as id from source_observations
     where source_id=${sourceId} and snapshot_id=${snapshotId}
       and outcome in ('SUCCESS','UNCHANGED','CHANGED')
+      ${page.captureMethod ? sql`and observed_at=${databaseTime(page.collectedAt)}` : sql``}
     order by observed_at, id limit 1
   `)) as unknown as Array<{ id: string }>;
   let observationId = existingObservations[0]?.id;
@@ -289,11 +301,12 @@ async function ensurePageProvenance(
       insert into source_observations (
         source_id, observed_at, outcome, http_status, final_url,
         content_hash, text_hash, response_bytes, duration_ms, snapshot_id,
-        created_at
+        metadata, created_at
       ) values (
         ${sourceId}, ${databaseTime(page.collectedAt)}, 'SUCCESS', ${page.httpStatus},
         ${page.finalUrl}, ${page.contentHash}, ${page.textHash},
-        ${BigInt(page.responseBytes)}, ${page.durationMs}, ${snapshotId},
+        ${page.responseBytes === null ? null : BigInt(page.responseBytes)}, ${page.durationMs}, ${snapshotId},
+        ${page.captureMethod ? JSON.stringify({ captureMethod: page.captureMethod, requestedUrl: page.url, evidenceTextKind: "OPERATOR_REVIEWED_TRANSCRIPTION", originalContentHash: page.contentHash }) : null}::jsonb,
         ${databaseTime(page.collectedAt)}
       ) returning id::text as id
     `)) as unknown as Array<{ id: string }>;
@@ -338,6 +351,7 @@ async function persistFact(
     primary: Provenance;
     supporting?: Provenance;
     now: Date;
+    correction?: boolean;
   }>,
   counts: MutableCreatedCounts,
 ): Promise<string> {
@@ -357,7 +371,7 @@ async function persistFact(
   const factId = facts[0]!.id;
   const currentRows = (await executor.raw(sql`
     select id, version_number as "versionNumber", value_json as "valueJson",
-      display_text as "displayText"
+      display_text as "displayText", verified_at as "verifiedAt"
     from institution_fact_versions
     where institution_fact_id=${factId} and is_current=true
     for update
@@ -366,13 +380,17 @@ async function persistFact(
     versionNumber: number;
     valueJson: unknown;
     displayText: string | null;
+    verifiedAt: Date | string | null;
   }>;
   const current = currentRows[0];
   let versionId: string;
   if (
     current !== undefined &&
     sameJson(current.valueJson, input.fact.valueJson) &&
-    current.displayText === input.fact.displayText
+    current.displayText === input.fact.displayText &&
+    (!input.correction ||
+      (current.verifiedAt !== null &&
+        new Date(current.verifiedAt).getTime() === input.now.getTime()))
   ) {
     versionId = current.id;
   } else {
@@ -427,6 +445,7 @@ async function ensureOpportunityBinding(
     opportunityId: string;
     sourceId: string;
     now: Date;
+    supporting?: boolean;
   }>,
   counts: MutableCreatedCounts,
 ): Promise<void> {
@@ -434,11 +453,11 @@ async function ensureOpportunityBinding(
     insert into opportunity_source_bindings (
       opportunity_id, source_id, role, is_primary, is_active, bound_at, unbound_at
     ) values (
-      ${input.opportunityId}, ${input.sourceId}, 'PRIMARY_NOTICE', true, true,
+      ${input.opportunityId}, ${input.sourceId}, ${input.supporting ? "SUPPORTING" : "PRIMARY_NOTICE"}, ${!input.supporting}, true,
       ${databaseTime(input.now)}, null
     )
     on conflict (opportunity_id, source_id, role) do update set
-      is_primary=true, is_active=true, unbound_at=null
+      is_primary=excluded.is_primary, is_active=true, unbound_at=null
     returning (xmax = 0) as inserted
   `)) as unknown as Array<{ inserted: boolean }>;
   if (rows[0]?.inserted) counts.opportunityBindings += 1;
@@ -477,12 +496,15 @@ async function persistAdmission(
     admission: NonNullable<CollectedPrivateElementarySchool["admission"]>;
     provenance: Provenance;
     now: Date;
+    key?: string;
+    supporting?: readonly Provenance[];
+    correction?: boolean;
   }>,
   counts: MutableCreatedCounts,
 ): Promise<Readonly<{ opportunityId: string; versionId: string }>> {
   const proposal = input.admission.proposal;
   const year = proposal.academicYearLabel?.match(/20\d{2}/u)?.[0] ?? "current";
-  const slug = `live-admissions-${input.institutionId}-${year}`;
+  const slug = `live-admissions-${input.institutionId}-${year}${input.key && input.key !== "main" ? `-event-${input.key}` : ""}`;
   let opportunities = (await executor.raw(sql`
     select id, institution_id as "institutionId", truth_mode as "truthMode",
       publication_state as "publicationState"
@@ -511,7 +533,8 @@ async function persistAdmission(
     opportunities.length !== 1 ||
     opportunity.institutionId !== input.institutionId ||
     opportunity.truthMode !== "NATIVE" ||
-    opportunity.publicationState !== "PUBLISHED"
+    (opportunity.publicationState !== "PUBLISHED" &&
+      !(input.correction && opportunity.publicationState === "HIDDEN"))
   ) {
     throw new PrivateElementaryBootstrapError(
       "INSTITUTION_CONFLICT",
@@ -519,8 +542,13 @@ async function persistAdmission(
     );
   }
   await executor.raw(sql`
-    update opportunities set kind=${proposal.kind}, updated_at=${databaseTime(input.now)}
+    update opportunities set kind=${proposal.kind}, publication_state='PUBLISHED', updated_at=${databaseTime(input.now)}
     where id=${opportunity.id}
+  `);
+  if (input.correction)
+    await executor.raw(sql`
+    update opportunity_source_bindings set is_primary=false,is_active=false,unbound_at=${databaseTime(input.now)}
+    where opportunity_id=${opportunity.id} and role='PRIMARY_NOTICE' and source_id<>${input.provenance.sourceId} and is_active=true
   `);
   await ensureOpportunityBinding(
     executor,
@@ -534,7 +562,7 @@ async function persistAdmission(
   const fingerprint = liveAdmissionContentFingerprint(proposal);
   const currentRows = (await executor.raw(sql`
     select id, version_number as "versionNumber",
-      content_fingerprint as "contentFingerprint"
+      content_fingerprint as "contentFingerprint", verified_at as "verifiedAt"
     from opportunity_versions
     where opportunity_id=${opportunity.id} and is_current=true
     for update
@@ -542,10 +570,16 @@ async function persistAdmission(
     id: string;
     versionNumber: number;
     contentFingerprint: string | null;
+    verifiedAt: Date | string | null;
   }>;
   const current = currentRows[0];
   let versionId: string;
-  if (current?.contentFingerprint === fingerprint) {
+  if (
+    current?.contentFingerprint === fingerprint &&
+    (!input.correction ||
+      (current.verifiedAt !== null &&
+        new Date(current.verifiedAt).getTime() === input.now.getTime()))
+  ) {
     versionId = current.id;
   } else {
     const maximumRows = (await executor.raw(sql`
@@ -583,6 +617,23 @@ async function persistAdmission(
     { versionId, provenance: input.provenance, now: input.now },
     counts,
   );
+  for (const provenance of input.supporting ?? []) {
+    await ensureOpportunityBinding(
+      executor,
+      {
+        opportunityId: opportunity.id,
+        sourceId: provenance.sourceId,
+        now: input.now,
+        supporting: true,
+      },
+      counts,
+    );
+    await ensureOpportunityEvidence(
+      executor,
+      { versionId, provenance, now: input.now },
+      counts,
+    );
+  }
   return Object.freeze({ opportunityId: opportunity.id, versionId });
 }
 
@@ -599,6 +650,7 @@ export async function persistPrivateElementarySchool(
     supportsOfficialRegistrySourceType: boolean;
     supportsRegistryIdentityBindingRole: boolean;
     now?: () => Date;
+    correction?: SchoolTruthCorrection;
   }>,
 ): Promise<PersistedPrivateElementarySchool> {
   if (collection.facts.length === 0 && collection.admission === null) {
@@ -650,6 +702,44 @@ export async function persistPrivateElementarySchool(
       );
     }
     const before = await sideEffectCounts(executor);
+    if (dependencies.correction) {
+      const newer = (await executor.raw(sql`
+        select v.id from opportunity_versions v join opportunities o on o.id=v.opportunity_id
+        where o.institution_id=${institutionId} and o.truth_mode='NATIVE'
+          and o.slug like ${`live-admissions-${institutionId}-%`} and v.is_current=true
+          and v.verified_at>${databaseTime(now)}
+        union all
+        select v.id from institution_fact_versions v join institution_facts f on f.id=v.institution_fact_id
+        where f.institution_id=${institutionId} and v.is_current=true and v.verified_at>${databaseTime(now)}
+      `)) as unknown as Array<{ id: string }>;
+      if (newer.length)
+        throw new PrivateElementaryBootstrapError(
+          "INSTITUTION_CONFLICT",
+          "Newer reviewed truth exists; correction is stale",
+        );
+      // Validate retirement preconditions before changing any fact, including replacements.
+      for (const retirement of dependencies.correction.retireFacts) {
+        const rows = (await executor.raw(sql`
+          select v.display_text as "displayText",v.is_current as "isCurrent",v.verification_state as state
+          from institution_fact_versions v join institution_facts f on f.id=v.institution_fact_id
+          where v.id=${retirement.versionId} and f.institution_id=${institutionId} and f.fact_type=${retirement.factType}
+          for update of v
+        `)) as unknown as Array<{
+          displayText: string;
+          isCurrent: boolean;
+          state: string;
+        }>;
+        if (
+          rows.length !== 1 ||
+          rows[0]!.displayText !== retirement.expectedDisplayText ||
+          (!rows[0]!.isCurrent && rows[0]!.state !== "SUPERSEDED")
+        )
+          throw new PrivateElementaryBootstrapError(
+            "INSTITUTION_CONFLICT",
+            "Fact retirement no longer matches reviewed version",
+          );
+      }
+    }
     const counts = emptyCounts();
     const rootPage = collection.pages.find(
       (page) => page.sourceType === "OFFICIAL_SCHOOL_PAGE",
@@ -771,6 +861,7 @@ export async function persistPrivateElementarySchool(
             institutionId,
             fact,
             primary,
+            correction: dependencies.correction !== undefined,
             ...(fact.factType === "OPERATING_INFO" &&
             rootProvenance !== undefined
               ? { supporting: rootProvenance }
@@ -780,18 +871,49 @@ export async function persistPrivateElementarySchool(
           counts,
         ),
       );
+      for (const sourceUrl of dependencies.correction?.factSourceUrls[
+        fact.factType
+      ] ?? []) {
+        const supporting = provenanceByUrl.get(
+          normalizeDiscoveryUrl(sourceUrl),
+        );
+        if (!supporting)
+          throw new PrivateElementaryBootstrapError(
+            "PERSISTENCE_FAILED",
+            "Fact supporting evidence missing",
+          );
+        await ensureFactEvidence(
+          executor,
+          {
+            versionId: factVersionIds[factVersionIds.length - 1]!,
+            provenance: supporting,
+            role: sourceUrl === fact.sourceUrl ? "PRIMARY" : "SUPPORTING",
+            now,
+          },
+          counts,
+        );
+      }
     }
     let admissionResult: Readonly<{
       opportunityId: string;
       versionId: string;
     }> | null = null;
-    if (
-      collection.admission !== null &&
-      !isStaleAdmissionCycle(collection.admission.proposal.academicYearLabel)
-    ) {
-      const admissionUrl = normalizeDiscoveryUrl(
-        collection.admission.sourceUrl,
-      );
+    const admissions =
+      dependencies.correction?.admissions ??
+      (collection.admission
+        ? [
+            {
+              key: "main",
+              admission: collection.admission,
+              sourceUrls: [collection.admission.sourceUrl],
+            },
+          ]
+        : []);
+    const retainedOpportunityIds: string[] = [];
+    for (const item of admissions) {
+      if (isStaleAdmissionCycle(item.admission.proposal.academicYearLabel))
+        continue;
+      const admissionUrl = normalizeDiscoveryUrl(item.admission.sourceUrl);
       const admissionProvenance = provenanceByUrl.get(admissionUrl);
       if (admissionProvenance === undefined) {
         throw new PrivateElementaryBootstrapError(
@@ -810,16 +932,64 @@ export async function persistPrivateElementarySchool(
         },
         counts,
       );
-      admissionResult = await persistAdmission(
+      const result = await persistAdmission(
         executor,
         {
           institutionId,
-          admission: collection.admission,
+          admission: item.admission,
           provenance: admissionProvenance,
+          key: item.key,
+          correction: dependencies.correction !== undefined,
+          supporting: item.sourceUrls
+            .filter((url) => normalizeDiscoveryUrl(url) !== admissionUrl)
+            .map((url) => {
+              const provenance = provenanceByUrl.get(
+                normalizeDiscoveryUrl(url),
+              );
+              if (!provenance)
+                throw new PrivateElementaryBootstrapError(
+                  "PERSISTENCE_FAILED",
+                  "Admission supporting evidence missing",
+                );
+              return provenance;
+            }),
           now,
         },
         counts,
       );
+      if (item.key === "main") admissionResult = result;
+      retainedOpportunityIds.push(result.opportunityId);
+    }
+    if (dependencies.correction) {
+      if (!admissionResult)
+        throw new PrivateElementaryBootstrapError(
+          "PERSISTENCE_FAILED",
+          "Correction requires reviewed main admission",
+        );
+      // Only our exact canonical identities are retired. Unrelated/legacy opportunities remain untouched.
+      const old = (await executor.raw(sql`
+        select id,slug from opportunities where institution_id=${institutionId} and truth_mode='NATIVE'
+        and publication_state='PUBLISHED' and slug like ${`live-admissions-${institutionId}-%`} for update
+      `)) as unknown as Array<{ id: string; slug: string }>;
+      const identity = new RegExp(
+        `^live-admissions-${institutionId}-(?:20\\d{2}|current)(?:-event-[a-z0-9]+(?:-[a-z0-9]+)*)?$`,
+        "u",
+      );
+      for (const row of old) {
+        if (retainedOpportunityIds.includes(row.id) || !identity.test(row.slug))
+          continue;
+        await executor.raw(
+          sql`update opportunity_versions set is_current=false,verification_state='SUPERSEDED' where opportunity_id=${row.id} and is_current=true`,
+        );
+        await executor.raw(
+          sql`update opportunities set publication_state='HIDDEN',updated_at=${databaseTime(now)} where id=${row.id}`,
+        );
+      }
+      for (const retirement of dependencies.correction.retireFacts) {
+        await executor.raw(
+          sql`update institution_fact_versions set is_current=false,verification_state='SUPERSEDED' where id=${retirement.versionId} and is_current=true`,
+        );
+      }
     }
     const after = await sideEffectCounts(executor);
     const delta = sideEffectDelta(before, after);

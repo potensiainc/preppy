@@ -131,6 +131,104 @@ const detail: InstitutionDetailDTO = {
   indexability: "INDEX",
 };
 
+it("labels a verified lottery as 추첨, never as an information session, and renders every source", () => {
+  const admission = detail.reviewedAdmissions[0]!;
+  const markup = renderToStaticMarkup(
+    createElement(InstitutionDetailView, {
+      data: {
+        ...detail,
+        reviewedAdmissions: [
+          {
+            ...admission,
+            title: "2026학년도 추첨",
+            kind: "LOTTERY",
+            keyDates: {
+              ...admission.keyDates,
+              applicationOpensAt: null,
+              applicationClosesAt: null,
+            },
+            officialSources: [
+              admission.officialSource,
+              {
+                name: "원본 이미지",
+                url: "https://admissions.example.test/original.png",
+                authorityLevel: "PRIMARY",
+              },
+            ],
+          },
+        ],
+      },
+    }),
+  );
+  expect(markup).toContain("<dt>추첨</dt>");
+  expect(markup).not.toContain("설명회 / Open House");
+  expect(markup).toContain(
+    'href="https://admissions.example.test/original.png"',
+  );
+});
+
+it("does not imply missing applications or sessions when the fields are represented by separate records", () => {
+  const admission = detail.reviewedAdmissions[0]!;
+  const markup = renderToStaticMarkup(
+    createElement(InstitutionDetailView, {
+      data: {
+        ...detail,
+        reviewedAdmissions: [
+          {
+            ...admission,
+            keyDates: {
+              ...admission.keyDates,
+              eventStartsAt: null,
+              eventEndsAt: null,
+            },
+          },
+          ...["2026-10-31T01:00:00.000Z", "2026-10-31T05:00:00.000Z"].map(
+            (date, index) => ({
+              ...admission,
+              id: `session-${index}`,
+              kind: "INFORMATION_SESSION" as const,
+              keyDates: {
+                eventStartsAt: date,
+                eventEndsAt: null,
+                applicationOpensAt: null,
+                applicationClosesAt: null,
+              },
+            }),
+          ),
+        ],
+      },
+    }),
+  );
+  expect(markup).not.toContain("확인된 일정 없음");
+  expect(markup.match(/<dt>원서접수<\/dt>/gu)).toHaveLength(1);
+  expect(markup.match(/<dt>설명회 \/ Open House<\/dt>/gu)).toHaveLength(2);
+});
+
+it("shows the separate 10:00 and 14:00 session clocks and the result announcement label", () => {
+  const admission = detail.reviewedAdmissions[0]!;
+  const markup = renderToStaticMarkup(
+    createElement(InstitutionDetailView, {
+      data: {
+        ...detail,
+        reviewedAdmissions: [
+          ...["2026-10-31T01:00:00.000Z", "2026-10-31T05:00:00.000Z"].map(
+            (date, index) => ({
+              ...admission,
+              id: `session-${index}`,
+              kind: "INFORMATION_SESSION" as const,
+              keyDates: { ...admission.keyDates, eventStartsAt: date },
+            }),
+          ),
+          { ...admission, id: "result", kind: "RESULT_ANNOUNCEMENT" },
+        ],
+      },
+    }),
+  );
+  expect(markup).toContain("10:00");
+  expect(markup).toContain("14:00");
+  expect(markup).toContain("<dt>결과 발표</dt>");
+});
+
 describe("WP-07 Institution pages", () => {
   it("normalizes only scalar allowlisted GET filters and fixes public page size", () => {
     // Mutation caught: forwarding Next's array/unknown values, accepting invalid filters, or exposing a caller-controlled page size.
