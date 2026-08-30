@@ -47,6 +47,10 @@ beforeAll(async () => {
     DATABASE_MAX_CONNECTIONS: 2,
     NODE_ENV: "test",
   });
+  // Match the existing Production catalog: these local migration-0012 columns
+  // are absent there. This isolated disposable DB is never Production.
+  await runtime.client`alter table source_observations drop column metadata`;
+  await runtime.client`alter table source_snapshots drop column raw_body`;
   const seed = await loadPrivateElementaryBootstrapTargets(
     resolve(PRIVATE_ELEMENTARY_SEED_PATH),
   );
@@ -262,14 +266,19 @@ describe("school-atomic truth correction", () => {
       schoolsFailed: 0,
     });
     const [row] =
-      await runtime.client`select s.mime_type,s.content_hash,o.http_status,o.metadata,v.verified_at from source_snapshots s join source_observations o on o.snapshot_id=s.id join opportunity_version_evidence e on e.source_snapshot_id=s.id join opportunity_versions v on v.id=e.opportunity_version_id where s.mime_type='image/png' limit 1`;
+      await runtime.client`select s.mime_type,s.content_hash,o.http_status,s.metadata,v.verified_at from source_snapshots s join source_observations o on o.snapshot_id=s.id join opportunity_version_evidence e on e.source_snapshot_id=s.id join opportunity_versions v on v.id=e.opportunity_version_id where s.mime_type='image/png' limit 1`;
     expect(row).toMatchObject({
       mime_type: "image/png",
       content_hash: f.bundle.schools[0]!.sources[0]!.responseContentHash,
       http_status: 200,
       metadata: {
-        captureMethod: "HTTP_ORIGINAL_MEDIA",
-        evidenceTextKind: "OPERATOR_REVIEWED_TRANSCRIPTION",
+        preppyCorrectionCaptures: [
+          {
+            captureMethod: "HTTP_ORIGINAL_MEDIA",
+            evidenceTextKind: "OPERATOR_REVIEWED_TRANSCRIPTION",
+            observedAt: "2026-08-30T08:00:00.000Z",
+          },
+        ],
       },
     });
     expect(new Date(row!.verified_at).toISOString()).toBe(
@@ -423,12 +432,19 @@ describe("school-atomic truth correction", () => {
       ),
     ).toBe(true);
     const [capture] =
-      await runtime.client`select http_status,response_bytes,duration_ms,metadata from source_observations where content_hash=${hashText("browser screenshot bytes")}`;
+      await runtime.client`select o.http_status,o.response_bytes,o.duration_ms,s.metadata from source_observations o join source_snapshots s on s.id=o.snapshot_id where o.content_hash=${hashText("browser screenshot bytes")}`;
     expect(capture).toMatchObject({
       http_status: null,
       response_bytes: null,
       duration_ms: null,
-      metadata: { captureMethod: "BROWSER_CAPTURE" },
+      metadata: {
+        preppyCorrectionCaptures: [
+          {
+            captureMethod: "BROWSER_CAPTURE",
+            observedAt: "2026-08-30T08:00:00.000Z",
+          },
+        ],
+      },
     });
   });
   it("continues the remaining schools after one school transaction fails", async () => {
@@ -526,6 +542,13 @@ describe("school-atomic truth correction", () => {
         (f) => f.verifiedAt === "2026-08-30T09:15:00.000Z",
       ),
     ).toBe(true);
+    const [snapshot] =
+      await runtime.client`select ss.metadata from source_snapshots ss join sources s on s.id=ss.source_id where s.canonical_url=${new URL(c.pages[0]!.url).href} and ss.content_hash=${c.pages[0]!.contentHash}`;
+    expect(
+      snapshot!.metadata.preppyCorrectionCaptures.map(
+        (capture: { observedAt: string }) => capture.observedAt,
+      ),
+    ).toEqual(["2026-08-30T07:59:00.000Z", "2026-08-30T09:00:00.000Z"]);
   });
   it("publishes every fact evidence source, not only the primary source", async () => {
     const c = collection("kyonggi");
@@ -546,6 +569,68 @@ describe("school-atomic truth correction", () => {
     expect(
       (tuition as { officialSources?: unknown[] }).officialSources,
     ).toHaveLength(2);
+  });
+  it("adds capture provenance to reused snapshots without losing legacy metadata and deduplicates replay", async () => {
+    const c = collection("yooseok");
+    const rootUrl = new URL(c.pages[0]!.url).href;
+    await persist({ ...c, admission: null });
+    const [original] =
+      await runtime.client`select ss.id,ss.content_hash,ss.normalized_text,ss.mime_type from source_snapshots ss join sources s on s.id=ss.source_id where s.canonical_url=${rootUrl} and ss.content_hash=${c.pages[0]!.contentHash}`;
+    await runtime.client`update source_snapshots set metadata='{"legacyCapture":{"owner":"preserve"}}'::jsonb where id=${original!.id}`;
+    const correction: SchoolTruthCorrection = {
+      admissions: [
+        {
+          key: "main",
+          admission: c.admission!,
+          sourceUrls: c.pages.map((p) => p.url),
+        },
+      ],
+      factSourceUrls: {},
+      retireFacts: [],
+    };
+    const corrected = {
+      ...c,
+      pages: c.pages.map((p) => ({
+        ...p,
+        captureMethod: "HTTP_ORIGINAL_MEDIA" as const,
+      })),
+    };
+    const apply = () =>
+      persistPrivateElementarySchool(corrected, {
+        transactionManager: runtime.transactionManager,
+        supportsOfficialRegistrySourceType: false,
+        supportsRegistryIdentityBindingRole: false,
+        correction,
+        now: () => new Date("2026-08-30T10:00:00.000Z"),
+      });
+    await apply();
+    const read = () =>
+      runtime.client`select ss.id,ss.content_hash,ss.normalized_text,ss.mime_type,ss.metadata from source_snapshots ss join sources s on s.id=ss.source_id where s.canonical_url=${rootUrl} and ss.content_hash=${c.pages[0]!.contentHash}`;
+    const [snapshot] = await read();
+    expect(snapshot).toMatchObject({
+      ...original,
+      metadata: {
+        legacyCapture: { owner: "preserve" },
+        preppyCorrectionCaptures: [
+          {
+            captureMethod: "HTTP_ORIGINAL_MEDIA",
+            requestedUrl: c.pages[0]!.url,
+            evidenceTextKind: "OPERATOR_REVIEWED_TRANSCRIPTION",
+            originalContentHash: c.pages[0]!.contentHash,
+            observedAt: "2026-08-30T07:59:00.000Z",
+          },
+        ],
+      },
+    });
+    const [previouslyUnlabelled] =
+      await runtime.client`select ss.metadata from source_snapshots ss join sources s on s.id=ss.source_id where s.canonical_url=${c.pages[1]!.url} and ss.content_hash=${c.pages[1]!.contentHash}`;
+    expect(
+      previouslyUnlabelled!.metadata.preppyCorrectionCaptures,
+    ).toHaveLength(1);
+    const before = await readBootstrapArtifactCounts(runtime.executor);
+    await apply();
+    expect((await read())[0]).toEqual(snapshot);
+    expect(await readBootstrapArtifactCounts(runtime.executor)).toEqual(before);
   });
   it("does not truncate the bounded set of reviewed information sessions at the legacy card limit", async () => {
     const c = collection("kumsung");

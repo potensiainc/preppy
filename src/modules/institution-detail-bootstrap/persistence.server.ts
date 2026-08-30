@@ -282,12 +282,45 @@ async function ensurePageProvenance(
   `)) as unknown as Array<{ id: string }>;
   if (insertedSnapshots.length > 0) counts.snapshots += 1;
   const snapshots = (await executor.raw(sql`
-    select id from source_snapshots
+    select id, metadata from source_snapshots
     where source_id=${sourceId} and content_hash=${page.contentHash}
-    order by created_at, id limit 1
-  `)) as unknown as Array<{ id: string }>;
+    order by created_at, id limit 1 for update
+  `)) as unknown as Array<{ id: string; metadata: unknown }>;
   const snapshotId = snapshots[0]?.id;
   if (snapshotId === undefined) throw new Error("Snapshot persistence failed");
+  if (page.captureMethod) {
+    // This column predates optional observation metadata. Keep each acquisition
+    // on its immutable original snapshot without replacing unrelated provenance.
+    const existing = snapshots[0]!.metadata;
+    if (
+      existing !== null &&
+      (typeof existing !== "object" || Array.isArray(existing))
+    )
+      throw new PrivateElementaryBootstrapError(
+        "INSTITUTION_CONFLICT",
+        "Existing snapshot metadata is not an object",
+      );
+    const metadata = (existing ?? {}) as Record<string, unknown>;
+    const captures = metadata.preppyCorrectionCaptures ?? [];
+    if (!Array.isArray(captures))
+      throw new PrivateElementaryBootstrapError(
+        "INSTITUTION_CONFLICT",
+        "Existing snapshot capture provenance is not an array",
+      );
+    const capture = {
+      captureMethod: page.captureMethod,
+      requestedUrl: page.url,
+      evidenceTextKind: "OPERATOR_REVIEWED_TRANSCRIPTION",
+      originalContentHash: page.contentHash,
+      observedAt: databaseTime(page.collectedAt),
+    };
+    if (!captures.some((previous) => sameJson(previous, capture))) {
+      await executor.raw(sql`
+        update source_snapshots set metadata=${JSON.stringify({ ...metadata, preppyCorrectionCaptures: [...captures, capture] })}::jsonb
+        where id=${snapshotId}
+      `);
+    }
+  }
   const existingObservations = (await executor.raw(sql`
     select id::text as id from source_observations
     where source_id=${sourceId} and snapshot_id=${snapshotId}
@@ -301,12 +334,11 @@ async function ensurePageProvenance(
       insert into source_observations (
         source_id, observed_at, outcome, http_status, final_url,
         content_hash, text_hash, response_bytes, duration_ms, snapshot_id,
-        metadata, created_at
+        created_at
       ) values (
         ${sourceId}, ${databaseTime(page.collectedAt)}, 'SUCCESS', ${page.httpStatus},
         ${page.finalUrl}, ${page.contentHash}, ${page.textHash},
         ${page.responseBytes === null ? null : BigInt(page.responseBytes)}, ${page.durationMs}, ${snapshotId},
-        ${page.captureMethod ? JSON.stringify({ captureMethod: page.captureMethod, requestedUrl: page.url, evidenceTextKind: "OPERATOR_REVIEWED_TRANSCRIPTION", originalContentHash: page.contentHash }) : null}::jsonb,
         ${databaseTime(page.collectedAt)}
       ) returning id::text as id
     `)) as unknown as Array<{ id: string }>;
