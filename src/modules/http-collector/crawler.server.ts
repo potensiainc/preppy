@@ -101,6 +101,14 @@ export type CollectorCrawlResult = Readonly<{
   )[];
 }>;
 
+export type CollectorFetchedPage = Readonly<{
+  requestedUrl: string;
+  depth: number;
+  response: StaticHttpResponse;
+  normalizedText: string | null;
+  textHash: string | null;
+}>;
+
 type MutableCandidate = Omit<
   DiscoveryCandidate,
   "reasonSelectedOrRejected" | "fetchOutcome"
@@ -122,6 +130,8 @@ export type CollectorCrawlerDependencies = Readonly<{
   now?: () => Date;
   sleep?: (milliseconds: number) => Promise<void>;
   beforeRequest?: (url: string) => Promise<void>;
+  onFetchedPage?: (page: CollectorFetchedPage) => void | Promise<void>;
+  candidatePriority?: (candidate: DiscoveryCandidate) => number;
   runBudget?: RunByteBudgetLedger;
 }>;
 
@@ -384,6 +394,16 @@ export async function crawlOfficialMainRoot(
   let pagesFetched = 1;
   let totalResponseBytes = rootResponse.actualResponseBytes;
 
+  await dependencies.onFetchedPage?.(
+    Object.freeze({
+      requestedUrl: rootUrl,
+      depth: 0,
+      response: rootResponse,
+      normalizedText: rootAnalysis.normalizedText,
+      textHash: rootAnalysis.textHash,
+    }),
+  );
+
   const discover = (
     links: ReturnType<typeof analyzeHtml>["links"],
     sourcePageUrl: string,
@@ -391,6 +411,10 @@ export async function crawlOfficialMainRoot(
     linkLimitReached: boolean,
   ) => {
     if (linkLimitReached) budgetOutcomes.add("LINK_LIMIT_REACHED");
+    const eligible: Array<
+      Readonly<{ candidate: MutableCandidate; order: number }>
+    > = [];
+    const discoveredThisPage = new Set<string>();
     for (const link of links) {
       const discoveryDepth = sourceDepth + 1;
       let url = link.href;
@@ -417,15 +441,14 @@ export async function crawlOfficialMainRoot(
             const excluded = excludedPathReason(resolved);
             if (!sameDomain) reason = "EXTERNAL_DOMAIN";
             else if (excluded) reason = excluded;
-            else if (visited.has(normalizedUrl)) reason = "DUPLICATE_URL";
+            else if (
+              visited.has(normalizedUrl) ||
+              discoveredThisPage.has(normalizedUrl)
+            )
+              reason = "DUPLICATE_URL";
             else if (discoveryDepth > dependencies.policy.maxDepth) {
               reason = "DEPTH_LIMIT_REACHED";
               budgetOutcomes.add("DEPTH_LIMIT_REACHED");
-            } else if (
-              pagesScheduled >= dependencies.policy.maxPagesPerInstitution
-            ) {
-              reason = "PAGE_BUDGET_EXCEEDED";
-              budgetOutcomes.add("PAGE_BUDGET_EXCEEDED");
             }
           }
         } catch {
@@ -449,10 +472,30 @@ export async function crawlOfficialMainRoot(
       };
       candidates.push(candidate);
       if (reason === "SELECTED_FOR_FETCH") {
-        visited.add(normalizedUrl);
-        pagesScheduled += 1;
-        queue.push({ url: normalizedUrl, depth: discoveryDepth, candidate });
+        discoveredThisPage.add(normalizedUrl);
+        eligible.push({ candidate, order: candidates.length - 1 });
       }
+    }
+    eligible.sort((left, right) => {
+      const priority = dependencies.candidatePriority;
+      return priority === undefined
+        ? left.order - right.order
+        : priority(right.candidate) - priority(left.candidate) ||
+            left.order - right.order;
+    });
+    for (const entry of eligible) {
+      if (pagesScheduled >= dependencies.policy.maxPagesPerInstitution) {
+        entry.candidate.reasonSelectedOrRejected = "PAGE_BUDGET_EXCEEDED";
+        budgetOutcomes.add("PAGE_BUDGET_EXCEEDED");
+        continue;
+      }
+      visited.add(entry.candidate.normalizedUrl);
+      pagesScheduled += 1;
+      queue.push({
+        url: entry.candidate.normalizedUrl,
+        depth: entry.candidate.discoveryDepth,
+        candidate: entry.candidate,
+      });
     }
   };
 
@@ -542,6 +585,15 @@ export async function crawlOfficialMainRoot(
           charset: charset(fetched.response.contentType),
           maxLinks: dependencies.policy.maxLinksPerPage,
         });
+        await dependencies.onFetchedPage?.(
+          Object.freeze({
+            requestedUrl: entry.url,
+            depth: entry.depth,
+            response: fetched.response,
+            normalizedText: analysis.normalizedText,
+            textHash: analysis.textHash,
+          }),
+        );
         discover(
           analysis.links,
           fetched.response.finalUrl,
@@ -555,6 +607,16 @@ export async function crawlOfficialMainRoot(
           errorCode: "PARSE_ERROR",
         };
       }
+    } else {
+      await dependencies.onFetchedPage?.(
+        Object.freeze({
+          requestedUrl: entry.url,
+          depth: entry.depth,
+          response: fetched.response,
+          normalizedText: null,
+          textHash: null,
+        }),
+      );
     }
   }
 

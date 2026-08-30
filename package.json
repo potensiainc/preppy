@@ -31,6 +31,7 @@
     "collector:http": "tsx --tsconfig scripts/db/tsconfig.json scripts/data/collect-official-main-http.ts",
     "data:live-admissions:5": "tsx --tsconfig scripts/db/tsconfig.json scripts/data/run-five-school-live-admissions.ts",
     "data:production-live-admissions:5": "tsx --tsconfig scripts/db/tsconfig.json scripts/data/run-five-school-production-rollout.ts",
+    "data:bootstrap-private-elementary:2026": "tsx --tsconfig scripts/db/tsconfig.json scripts/data/bootstrap-private-elementary-2026.ts",
     "preview:seed": "tsx scripts/seed-preview-demo.ts --seed"
   },
   "dependencies": {
@@ -40,6 +41,7 @@
     "cheerio": "1.2.0",
     "drizzle-orm": "0.45.2",
     "next": "16.3.0",
+    "pdfjs-dist": "^6.3.289",
     "postgres": "3.4.9",
     "react": "19.2.8",
     "react-dom": "19.2.8",

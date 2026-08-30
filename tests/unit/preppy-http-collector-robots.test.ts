@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
 import { parseHttpCollectorPolicy } from "@/src/modules/http-collector/contracts";
 import { createNodeHttpTransport } from "@/src/modules/http-collector/http-transport.server";
@@ -98,6 +98,54 @@ describe("collector robots policy", () => {
       },
     };
   }
+
+  it("allows only a same-domain HTTP to HTTPS robots redirect upgrade", async () => {
+    const fetch = vi.fn(async (input) => {
+      expect(
+        input.redirectAllowed?.(
+          "http://school.example/robots.txt",
+          "https://school.example/robots.txt",
+        ),
+      ).toBe(true);
+      expect(
+        input.redirectAllowed?.(
+          "https://school.example/robots.txt",
+          "http://school.example/robots.txt",
+        ),
+      ).toBe(false);
+      expect(
+        input.redirectAllowed?.(
+          "http://school.example/robots.txt",
+          "https://external.example/robots.txt",
+        ),
+      ).toBe(false);
+      return {
+        ok: true as const,
+        response: {
+          requestedUrl: input.url,
+          finalUrl: input.url,
+          redirectChain: [],
+          httpStatus: 404,
+          contentType: "text/plain",
+          contentLengthHeader: "0",
+          actualResponseBytes: 0,
+          fetchedAt: new Date("2026-08-30T00:00:00.000Z"),
+          elapsedMs: 1,
+          etag: null,
+          lastModified: null,
+          entityBytes: Buffer.alloc(0),
+        },
+      };
+    });
+    const robots = createRobotsPolicy({
+      transport: { fetch },
+      policy: parseHttpCollectorPolicy({ minimumHostDelayMs: 0 }),
+    });
+
+    await expect(
+      robots.evaluate("http://school.example/target"),
+    ).resolves.toMatchObject({ decision: "ALLOW" });
+  });
 
   it("charges decoded robots bytes to the shared run budget", async () => {
     const ledger = runBudget(1_024);

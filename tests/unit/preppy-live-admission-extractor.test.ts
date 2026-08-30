@@ -16,6 +16,41 @@ function extract(html: string) {
 }
 
 describe("five-school live admission extraction", () => {
+  it.each([
+    "<p>2025학년도 원서접수 기간: 2024년 11월 1일 ~ 2024년 11월 5일</p><p>2025학년도 입학설명회: 2024년 10월 1일</p><p>2025학년도 지원 대상: 2018년 출생 아동</p>",
+    "<h2>2025학년도 신입생 모집</h2><p>원서접수 기간: 2024년 11월 1일 ~ 2024년 11월 5일</p><p>입학설명회: 2024년 10월 1일</p><p>지원 대상: 2018년 출생 아동</p>",
+  ])(
+    "does not attach an older cycle's dates or audience to a current not-announced notice (%#)",
+    (historical) => {
+      const result = extract(
+        "<h1>2027학년도 신입생 모집</h1><p>2027학년도 원서접수 일정은 추후 공지합니다.</p>" +
+          historical,
+      );
+      expect(result).toMatchObject({
+        academicYearLabel: "2027학년도",
+        knowledgeState: "NOT_ANNOUNCED",
+        businessState: "UNKNOWN",
+        applicationOpenAt: null,
+        applicationCloseAt: null,
+        eventStartAt: null,
+        targetAudience: null,
+      });
+      expect(result.summary).not.toContain("2024년");
+      expect(result.evidenceExcerpt).not.toContain("2018년");
+    },
+  );
+
+  it("does not describe the current cycle as not-announced using a previous cycle's notice", () => {
+    const result = extract(
+      "<h1>2027학년도 신입생 모집</h1><p>입학자료는 공식 홈페이지에서 확인하세요.</p><p>2025학년도 원서접수 일정은 추후 공지합니다.</p>",
+    );
+    expect(result).toMatchObject({
+      academicYearLabel: "2027학년도",
+      knowledgeState: "NOT_FOUND",
+      applicationOpenAt: null,
+    });
+  });
+
   it("preserves the stated academic year and parses contextual application and briefing dates", () => {
     // Catches a parser that collects date tokens without their admission context.
     const result = extract(`
