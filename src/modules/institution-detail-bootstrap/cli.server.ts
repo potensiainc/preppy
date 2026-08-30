@@ -1,6 +1,7 @@
 import "server-only";
 
 import { resolve } from "node:path";
+import { runBootstrapArtifactCli } from "./artifact-cli.server";
 
 import { parseRuntimeDatabaseEnv } from "@/src/config/runtime-env";
 import {
@@ -29,7 +30,20 @@ export async function runPrivateElementaryBootstrapCli(
     openRuntime?: () => RuntimeDatabaseResources;
     closeRuntime?: typeof closeRuntimeDatabase;
   }> = {},
-): Promise<PrivateElementaryBootstrapReport> {
+): Promise<
+  | PrivateElementaryBootstrapReport
+  | Awaited<ReturnType<typeof runBootstrapArtifactCli>>
+> {
+  if (
+    arguments_.some(
+      (argument) =>
+        argument === "--collect-only" ||
+        argument === "--apply-artifact" ||
+        argument.startsWith("--apply-artifact="),
+    )
+  ) {
+    return runBootstrapArtifactCli(arguments_, dependencies);
+  }
   const options = parsePrivateElementaryBootstrapCliArgs(arguments_);
   const environment = dependencies.environment ?? process.env;
   assertPrivateElementaryBootstrapEnvironment(options, environment);
