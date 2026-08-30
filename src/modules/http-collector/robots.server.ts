@@ -5,7 +5,7 @@ import type {
   CollectorFailureCode,
   StaticHttpTransport,
 } from "./http-transport.server";
-import { parseCollectorUrl } from "./url-policy";
+import { isSameDiscoveryDomain, parseCollectorUrl } from "./url-policy";
 import type { RunByteBudgetLedger } from "./run-budget";
 
 export const ROBOTS_USER_AGENT = "PREPPY-Static-Collector";
@@ -71,8 +71,17 @@ export function createRobotsPolicy(
       requestTimeoutMs: input.policy.requestTimeoutMs,
       connectTimeoutMs: input.policy.connectTimeoutMs,
       maxRedirects: input.policy.maxRedirects,
-      redirectAllowed: (_requested, destination) =>
-        parseCollectorUrl(destination).origin === origin,
+      redirectAllowed: (requested, destination) => {
+        const requestedUrl = parseCollectorUrl(requested);
+        const destinationUrl = parseCollectorUrl(destination);
+        return (
+          isSameDiscoveryDomain(requestedUrl.href, destinationUrl.href) &&
+          !(
+            requestedUrl.protocol === "https:" &&
+            destinationUrl.protocol === "http:"
+          )
+        );
+      },
       ...(input.beforeRequest ? { beforeRequest: input.beforeRequest } : {}),
       ...(input.runBudget ? { runBudget: input.runBudget } : {}),
     });

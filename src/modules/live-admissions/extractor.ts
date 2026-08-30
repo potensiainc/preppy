@@ -110,20 +110,76 @@ function parseKoreanDates(value: string): ParsedDate[] {
   return results;
 }
 
-function firstBlock(blocks: readonly string[], pattern: RegExp): string | null {
-  return blocks.find((block) => pattern.test(block)) ?? null;
+function firstBlockForAcademicYear(
+  blocks: readonly string[],
+  pattern: RegExp,
+  academicYearLabel: string | null,
+): string | null {
+  const matching = blocks.filter((block) => pattern.test(block));
+  return (
+    matching.find(
+      (block) =>
+        academicYearLabel !== null && block.includes(academicYearLabel),
+    ) ??
+    matching[0] ??
+    null
+  );
 }
 
 function firstDatedBlock(
   blocks: readonly string[],
   pattern: RegExp,
+  academicYearLabel?: string | null,
 ): string | null {
   const matching = blocks.filter((block) => pattern.test(block));
   return (
+    matching.find(
+      (block) =>
+        academicYearLabel !== null &&
+        academicYearLabel !== undefined &&
+        block.includes(academicYearLabel) &&
+        parseKoreanDates(block).length > 0,
+    ) ??
     matching.find((block) => parseKoreanDates(block).length > 0) ??
     matching[0] ??
     null
   );
+}
+
+function latestAcademicYear(values: readonly string[]): string | null {
+  return (
+    [...new Set(values)].sort(
+      (left, right) => Number(right.slice(0, 4)) - Number(left.slice(0, 4)),
+    )[0] ?? null
+  );
+}
+
+function blocksForSelectedAdmissionYear(
+  document: ReturnType<typeof sourceBlocks>,
+  academicYearLabel: string | null,
+): readonly string[] {
+  if (academicYearLabel === null) return document.blocks;
+  const headings = new Set([document.title, ...document.headings]);
+  let sectionYear: string | null = null;
+  return document.blocks.filter((block) => {
+    // A different school's level cannot establish this elementary cycle's context.
+    if (/중학교/iu.test(block)) return false;
+    const years = [
+      ...new Set(
+        [...block.matchAll(ACADEMIC_YEAR)].map((match) => `${match[1]}학년도`),
+      ),
+    ];
+    if (
+      years.length === 1 &&
+      (headings.has(block) || ADMISSION_WORD.test(block))
+    ) {
+      sectionYear = years[0]!;
+    }
+    return (
+      (sectionYear === null || sectionYear === academicYearLabel) &&
+      years.every((year) => year === academicYearLabel)
+    );
+  });
 }
 
 function bounded(value: string): string {
@@ -163,9 +219,16 @@ function scheduleTitle(
   academicYearLabel: string | null,
 ): string {
   const candidate = [pageTitle, ...headings].find(
-    (value) => value && ADMISSION_WORD.test(value),
+    (value) =>
+      value &&
+      ADMISSION_WORD.test(value) &&
+      (academicYearLabel === null || value.includes(academicYearLabel)),
   );
   if (candidate) return candidate.slice(0, 500);
+  const fallback = [pageTitle, ...headings].find(
+    (value) => value && ADMISSION_WORD.test(value),
+  );
+  if (fallback) return fallback.slice(0, 500);
   return `${academicYearLabel ? `${academicYearLabel} ` : ""}입학 안내`;
 }
 
@@ -185,12 +248,21 @@ export function extractLiveAdmissionProposal(
     .flatMap((block) =>
       [...block.matchAll(ACADEMIC_YEAR)].map((match) => `${match[1]}학년도`),
     );
-  const academicYearLabel = admissionYears[0] ?? years[0] ?? null;
+  // A curriculum/news year alone is not an admission cycle.
+  const academicYearLabel = latestAcademicYear(admissionYears);
   if (!years.includes(input.targetAcademicYearLabel)) {
     warnings.push("TARGET_ACADEMIC_YEAR_NOT_FOUND");
   }
 
-  const applicationBlock = firstDatedBlock(document.blocks, APPLICATION_WORD);
+  const cycleBlocks = blocksForSelectedAdmissionYear(
+    document,
+    academicYearLabel,
+  );
+  const applicationBlock = firstDatedBlock(
+    cycleBlocks,
+    APPLICATION_WORD,
+    academicYearLabel,
+  );
   const applicationDates = applicationBlock
     ? parseKoreanDates(applicationBlock)
     : [];
@@ -206,12 +278,20 @@ export function extractLiveAdmissionProposal(
     warnings.push("INVALID_APPLICATION_DATE_RANGE");
   }
 
-  const eventBlock = firstDatedBlock(document.blocks, EVENT_WORD);
+  const eventBlock = firstDatedBlock(
+    cycleBlocks,
+    EVENT_WORD,
+    academicYearLabel,
+  );
   const eventStartAt = eventBlock
     ? (parseKoreanDates(eventBlock)[0]?.value ?? null)
     : null;
-  const targetAudience = firstBlock(document.blocks, AUDIENCE_WORD);
-  const explicitNotAnnounced = document.blocks.find(
+  const targetAudience = firstBlockForAcademicYear(
+    cycleBlocks,
+    AUDIENCE_WORD,
+    academicYearLabel,
+  );
+  const explicitNotAnnounced = cycleBlocks.find(
     (block) => ADMISSION_WORD.test(block) && EXPLICIT_NOT_ANNOUNCED.test(block),
   );
   const hasSchedule =
@@ -223,7 +303,7 @@ export function extractLiveAdmissionProposal(
     : explicitNotAnnounced
       ? "NOT_ANNOUNCED"
       : "NOT_FOUND";
-  const relevantBlocks = document.blocks.filter(
+  const relevantBlocks = cycleBlocks.filter(
     (block) =>
       ADMISSION_WORD.test(block) ||
       APPLICATION_WORD.test(block) ||

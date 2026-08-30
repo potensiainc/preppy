@@ -131,6 +131,47 @@ describe("bounded same-domain collector crawl", () => {
     expect(result).not.toHaveProperty("candidateObservations");
   });
 
+  it("optionally exposes fetched pages in memory without changing the crawl result contract", async () => {
+    const pages: Array<{
+      depth: number;
+      finalUrl: string;
+      normalizedText: string | null;
+    }> = [];
+    const result = await crawlOfficialMainRoot(
+      {
+        sourceId: "00000000-0000-4000-8000-000000000001",
+        institutionId: "00000000-0000-4000-8000-000000000002",
+        requestedUrl: `http://school.fixture.test:${fixture.port}/root`,
+      },
+      {
+        ...dependencies(),
+        onFetchedPage: (page) => {
+          pages.push({
+            depth: page.depth,
+            finalUrl: page.response.finalUrl,
+            normalizedText: page.normalizedText,
+          });
+        },
+      },
+    );
+
+    expect(pages).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          depth: 0,
+          finalUrl: expect.stringMatching(/\/root$/),
+          normalizedText: expect.stringContaining("학교 안내"),
+        }),
+        expect.objectContaining({
+          depth: 1,
+          finalUrl: expect.stringMatching(/\/admissions$/),
+          normalizedText: expect.stringContaining("Admissions page"),
+        }),
+      ]),
+    );
+    expect(result).not.toHaveProperty("pages");
+  });
+
   it("deduplicates fragments and rejects external, login, fragment-only, unsupported, and robots-blocked links", async () => {
     const before = fixture.requests.length;
     const result = await crawlOfficialMainRoot(
@@ -186,6 +227,32 @@ describe("bounded same-domain collector crawl", () => {
           candidate.reasonSelectedOrRejected === "PAGE_BUDGET_EXCEEDED",
       ),
     ).toBe(true);
+  });
+
+  it("optionally prioritizes high-value candidates within the page budget", async () => {
+    const result = await crawlOfficialMainRoot(
+      {
+        sourceId: "00000000-0000-4000-8000-000000000001",
+        institutionId: "00000000-0000-4000-8000-000000000002",
+        requestedUrl: `http://school.fixture.test:${fixture.port}/root`,
+      },
+      {
+        ...dependencies({ maxPagesPerInstitution: 2 }),
+        candidatePriority: (candidate) =>
+          candidate.classificationHint === "ADMISSIONS" ? 100 : 0,
+      },
+    );
+
+    expect(
+      result.candidates.find((candidate) =>
+        candidate.normalizedUrl.endsWith("/admissions"),
+      )?.reasonSelectedOrRejected,
+    ).toBe("FETCHED");
+    expect(
+      result.candidates.find((candidate) =>
+        candidate.normalizedUrl.endsWith("/a"),
+      )?.reasonSelectedOrRejected,
+    ).toBe("PAGE_BUDGET_EXCEEDED");
   });
 
   it("does not fetch beyond max depth and records depth-limit candidates", async () => {
