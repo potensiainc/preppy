@@ -1,6 +1,6 @@
 {
   "correctionVersion": 1,
-  "generatedAt": "2026-08-30T14:37:10.110Z",
+  "generatedAt": "2026-08-30T14:52:36.822Z",
   "seedSha256": "38211856afc0066f2400f3c2a28969ec770cab2f24e90c77ffb0a37642d2206a",
   "schools": [
     {
@@ -3222,7 +3222,7 @@
         "institutionName": "성동초등학교",
         "category": "PRIVATE_ELEMENTARY"
       },
-      "reviewedAt": "2026-08-30T14:37:10.110Z",
+      "reviewedAt": "2026-08-30T14:52:36.822Z",
       "sources": [
         {
           "requestedUrl": "https://sungdong.sen.es.kr/crosseditor/binary/images/006042/%EC%9E%85%ED%95%99%EC%84%A4%EB%AA%85%ED%9A%8C%EC%95%88%EB%82%B4_%EA%B2%8C%EC%8B%9C%EA%B8%80%ED%8E%98%EC%9D%B4%EC%A7%80_2025.jpg",
@@ -3236,8 +3236,8 @@
           "responseBytes": 125269,
           "durationMs": 90,
           "responseContentHash": "463c6dea65d92be7f1b11b5f6509c0dd1aba465a388991546f0b76d8f9bb193c",
-          "evidenceText": "[OPERATOR_REVIEWED_TRANSCRIPTION: 원문 자료와 직접 대조한 발췌·정규화 값; 원문 전체 아님]\n원서접수: 2025-11-07 09:00–2025-11-12 16:30 KST · 2019년 출생;112명\n공식 모집 이미지와 별도 설명회 이미지의 일정은 확인됐으나 모집학년도 제목은 확인되지 않았습니다. 날짜에서 학년도를 추정하지 않습니다.\n학년도 미확인 입학설명회 1: 2025-10-29 10:00~11:00 KST\n학년도 미확인 입학설명회 2: 2025-11-01 10:00~11:30 KST\n학년도 미확인 모집대상: 2019년 출생;112명",
-          "evidenceTextHash": "aa4d264875a2cffc0119ad38b8886b1d261e37c52291f870ff2837fbffe054fe"
+          "evidenceText": "[OPERATOR_REVIEWED_TRANSCRIPTION: 원문 자료와 직접 대조한 발췌·정규화 값; 원문 전체 아님]\n학년도 미확인 입학설명회 1: 2025-10-29 10:00~11:00 KST\n학년도 미확인 입학설명회 2: 2025-11-01 10:00~11:30 KST",
+          "evidenceTextHash": "11f018526ae9bcfaf6378ae42ac75f5922d9476a809cecd4fe95663c25d7cf3b"
         },
         {
           "requestedUrl": "https://sungdong.sen.es.kr/crosseditor/binary/images/006136/1.jpg",
@@ -3251,8 +3251,8 @@
           "responseBytes": 533015,
           "durationMs": 223,
           "responseContentHash": "dc713c2ac0740b5baebe1d6a631d117929f0b6699e4cd907501404db41a8d641",
-          "evidenceText": "[OPERATOR_REVIEWED_TRANSCRIPTION: 원문 자료와 직접 대조한 발췌·정규화 값; 원문 전체 아님]\n공식 입학 자료의 관련 원본. 직접 확인한 공식 URL: https://sungdong.sen.es.kr/crosseditor/binary/images/006136/1.jpg",
-          "evidenceTextHash": "1686d4d2a45a96947f9c9711301c37cd1c6d312b8775804e6de8d2604d7b2101"
+          "evidenceText": "[OPERATOR_REVIEWED_TRANSCRIPTION: 원문 자료와 직접 대조한 발췌·정규화 값; 원문 전체 아님]\n원서접수: 2025-11-07 09:00–2025-11-12 16:30 KST · 2019년 출생;112명\n학년도 미확인 모집대상: 2019년 출생;112명\n학년도 미확인 추첨: 2025-11-17 11:00 KST · 추첨 장소: 서울시 교육청\n수업료 월 700,000원(2025학년도 현재 기준 금액이며, 2026학년도에는 기타 요인에 의거 변동될 수 있음)",
+          "evidenceTextHash": "a0d24e66004a99b57a673a68fc147539980df406696e7f8af7e8362d3af9faf1"
         }
       ],
       "admissions": [
@@ -3272,8 +3272,8 @@
           "eventEndAt": null,
           "actionUrl": "https://sungdong.sen.es.kr/162373/subMenu.do",
           "sourceUrls": [
-            "https://sungdong.sen.es.kr/crosseditor/binary/images/006042/%EC%9E%85%ED%95%99%EC%84%A4%EB%AA%85%ED%9A%8C%EC%95%88%EB%82%B4_%EA%B2%8C%EC%8B%9C%EA%B8%80%ED%8E%98%EC%9D%B4%EC%A7%80_2025.jpg",
-            "https://sungdong.sen.es.kr/crosseditor/binary/images/006136/1.jpg"
+            "https://sungdong.sen.es.kr/crosseditor/binary/images/006136/1.jpg",
+            "https://sungdong.sen.es.kr/crosseditor/binary/images/006042/%EC%9E%85%ED%95%99%EC%84%A4%EB%AA%85%ED%9A%8C%EC%95%88%EB%82%B4_%EA%B2%8C%EC%8B%9C%EA%B8%80%ED%8E%98%EC%9D%B4%EC%A7%80_2025.jpg"
           ],
           "evidenceExcerpt": "원서접수: 2025-11-07 09:00–2025-11-12 16:30 KST · 2019년 출생;112명"
         },
@@ -3318,6 +3318,27 @@
             "https://sungdong.sen.es.kr/crosseditor/binary/images/006136/1.jpg"
           ],
           "evidenceExcerpt": "학년도 미확인 입학설명회 2: 2025-11-01 10:00~11:30 KST"
+        },
+        {
+          "key": "lottery",
+          "academicYearLabel": null,
+          "rawAcademicYear": null,
+          "knowledgeState": "SCHEDULE_FOUND",
+          "kind": "LOTTERY",
+          "businessState": "COMPLETED",
+          "title": "성동초등학교 신입생 추첨",
+          "summary": "학년도 미확인 추첨: 2025-11-17 11:00 KST · 추첨 장소: 서울시 교육청",
+          "targetAudience": "2019년 출생;112명",
+          "applicationOpenAt": null,
+          "applicationCloseAt": null,
+          "eventStartAt": "2025-11-17T02:00:00.000Z",
+          "eventEndAt": null,
+          "actionUrl": "https://sungdong.sen.es.kr/162373/subMenu.do",
+          "sourceUrls": [
+            "https://sungdong.sen.es.kr/crosseditor/binary/images/006136/1.jpg",
+            "https://sungdong.sen.es.kr/crosseditor/binary/images/006042/%EC%9E%85%ED%95%99%EC%84%A4%EB%AA%85%ED%9A%8C%EC%95%88%EB%82%B4_%EA%B2%8C%EC%8B%9C%EA%B8%80%ED%8E%98%EC%9D%B4%EC%A7%80_2025.jpg"
+          ],
+          "evidenceExcerpt": "학년도 미확인 추첨: 2025-11-17 11:00 KST · 추첨 장소: 서울시 교육청"
         }
       ],
       "facts": [
@@ -3326,13 +3347,27 @@
           "displayText": "학년도 미확인 모집대상: 2019년 출생;112명",
           "evidenceExcerpt": "학년도 미확인 모집대상: 2019년 출생;112명",
           "sourceUrls": [
-            "https://sungdong.sen.es.kr/crosseditor/binary/images/006042/%EC%9E%85%ED%95%99%EC%84%A4%EB%AA%85%ED%9A%8C%EC%95%88%EB%82%B4_%EA%B2%8C%EC%8B%9C%EA%B8%80%ED%8E%98%EC%9D%B4%EC%A7%80_2025.jpg",
-            "https://sungdong.sen.es.kr/crosseditor/binary/images/006136/1.jpg"
+            "https://sungdong.sen.es.kr/crosseditor/binary/images/006136/1.jpg",
+            "https://sungdong.sen.es.kr/crosseditor/binary/images/006042/%EC%9E%85%ED%95%99%EC%84%A4%EB%AA%85%ED%9A%8C%EC%95%88%EB%82%B4_%EA%B2%8C%EC%8B%9C%EA%B8%80%ED%8E%98%EC%9D%B4%EC%A7%80_2025.jpg"
           ],
           "valueJson": {
             "text": "학년도 미확인 모집대상: 2019년 출생;112명",
             "evidenceExcerpt": "학년도 미확인 모집대상: 2019년 출생;112명",
-            "sourceUrl": "https://sungdong.sen.es.kr/crosseditor/binary/images/006042/%EC%9E%85%ED%95%99%EC%84%A4%EB%AA%85%ED%9A%8C%EC%95%88%EB%82%B4_%EA%B2%8C%EC%8B%9C%EA%B8%80%ED%8E%98%EC%9D%B4%EC%A7%80_2025.jpg",
+            "sourceUrl": "https://sungdong.sen.es.kr/crosseditor/binary/images/006136/1.jpg",
+            "reviewMethod": "OPERATOR_REVIEWED_OFFICIAL_SOURCE"
+          }
+        },
+        {
+          "factType": "TUITION",
+          "displayText": "2025학년도 기준 수업료 월 700,000원 · 2026학년도에는 기타 요인에 의거 변동될 수 있음",
+          "evidenceExcerpt": "수업료 월 700,000원(2025학년도 현재 기준 금액이며, 2026학년도에는 기타 요인에 의거 변동될 수 있음)",
+          "sourceUrls": [
+            "https://sungdong.sen.es.kr/crosseditor/binary/images/006136/1.jpg"
+          ],
+          "valueJson": {
+            "text": "2025학년도 기준 수업료 월 700,000원 · 2026학년도에는 기타 요인에 의거 변동될 수 있음",
+            "evidenceExcerpt": "수업료 월 700,000원(2025학년도 현재 기준 금액이며, 2026학년도에는 기타 요인에 의거 변동될 수 있음)",
+            "sourceUrl": "https://sungdong.sen.es.kr/crosseditor/binary/images/006136/1.jpg",
             "reviewMethod": "OPERATOR_REVIEWED_OFFICIAL_SOURCE"
           }
         }
@@ -4242,5 +4277,5 @@
       ]
     }
   ],
-  "artifactChecksum": "e9f8e1bb1e7a1ed64e7c28030ecdb17dbd667e7b538cb551d851d356ce72c0ac"
+  "artifactChecksum": "bf1d77c476f17a27a18b67a2dc19244217e16e7ea68a6df567b39cef1ca4f034"
 }
