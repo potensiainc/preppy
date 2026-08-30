@@ -36,6 +36,7 @@ export type PrivateElementaryBootstrapCliOptions = Readonly<{
 }>;
 
 export type PrivateElementaryBootstrapErrorCode =
+  | "ARTIFACT_REJECTED"
   | "INVOCATION_REJECTED"
   | "ENVIRONMENT_REJECTED"
   | "ALLOWLIST_REJECTED"

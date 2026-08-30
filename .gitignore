@@ -6,3 +6,4 @@ coverage/
 *.tsbuildinfo
 __pycache__/
 *.pyc
+.preppy-bootstrap/

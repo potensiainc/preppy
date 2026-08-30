@@ -244,13 +244,37 @@ function charset(value: string | null): string {
   );
 }
 
+class BootstrapPageRejection extends Error {
+  constructor(
+    readonly code:
+      | "SAME_DOMAIN_FAILURE"
+      | "UNSUPPORTED_MIME"
+      | "EMPTY_NORMALIZED_TEXT"
+      | "HTTP_FAILURE",
+  ) {
+    super(code);
+  }
+}
+
+function failureDiagnostics(code: string): readonly string[] {
+  if (code === "UNSUPPORTED_CONTENT_TYPE") return ["UNSUPPORTED_MIME", code];
+  if (code === "HTTP_4XX" || code === "HTTP_5XX") return ["HTTP_FAILURE", code];
+  if (code === "REDIRECT_EXTERNAL_HOST" || code === "TOO_MANY_REDIRECTS") {
+    return ["REDIRECT_POLICY_FAILURE", code];
+  }
+  return [code];
+}
+
 async function toEvidencePage(
   target: PrivateElementaryBootstrapTarget,
   page: CollectorFetchedPage,
   classificationHint: CandidateClassification,
-): Promise<BootstrapEvidencePage | null> {
+): Promise<BootstrapEvidencePage> {
+  if (page.response.httpStatus < 200 || page.response.httpStatus >= 300) {
+    throw new BootstrapPageRejection("HTTP_FAILURE");
+  }
   if (!isOfficialBootstrapUrl(target.websiteUrl, page.response.finalUrl)) {
-    return null;
+    throw new BootstrapPageRejection("SAME_DOMAIN_FAILURE");
   }
   const mime = mimeType(page.response.contentType);
   const pdfDocument =
@@ -267,9 +291,10 @@ async function toEvidencePage(
     normalizedText = await extractBoundedPdfText(page.response.entityBytes);
     extractionHtml = textAsExtractionHtml(normalizedText);
   } else {
-    return null;
+    throw new BootstrapPageRejection("UNSUPPORTED_MIME");
   }
-  if (!normalizedText) return null;
+  if (!normalizedText)
+    throw new BootstrapPageRejection("EMPTY_NORMALIZED_TEXT");
   const bootstrapScore = scoreBootstrapCandidate({
     url: page.response.finalUrl,
     anchorText: normalizedText.slice(0, 2_000),
@@ -379,6 +404,7 @@ export async function collectPrivateElementarySchool(
     ]),
   );
   const pages: BootstrapEvidencePage[] = [];
+  const failedPageUrls = new Set<string>();
   for (const page of fetchedPages) {
     const classificationHint =
       classificationByUrl.get(page.requestedUrl) ?? "OTHER";
@@ -388,22 +414,28 @@ export async function collectPrivateElementarySchool(
         page,
         classificationHint,
       );
-      if (evidence !== null) pages.push(evidence);
-      else
-        warnings.push(`UNSUPPORTED_OR_EXTERNAL_PAGE:${page.response.finalUrl}`);
-    } catch {
-      warnings.push(`DOCUMENT_EXTRACTION_FAILED:${page.response.finalUrl}`);
+      pages.push(evidence);
+    } catch (error) {
+      failedPageUrls.add(page.requestedUrl);
+      const code =
+        error instanceof BootstrapPageRejection
+          ? error.code
+          : "DOCUMENT_EXTRACTION_FAILED";
+      warnings.push(`${code}:${page.response.finalUrl}`);
     }
   }
-  const candidateFetchFailures = crawl.candidates.filter((candidate) =>
-    ["FETCH_FAILED", "BYTE_BUDGET_EXCEEDED"].includes(
-      candidate.reasonSelectedOrRejected,
-    ),
-  ).length;
+  for (const candidate of crawl.candidates) {
+    const code = candidate.fetchOutcome?.errorCode;
+    if (!code) continue;
+    failedPageUrls.add(candidate.normalizedUrl);
+    for (const diagnostic of failureDiagnostics(code)) {
+      warnings.push(`${diagnostic}:${candidate.normalizedUrl}`);
+    }
+  }
   const classification = classifySchoolCollection({
     rootSucceeded: crawl.root.kind === "SUCCESS",
     usableOfficialPages: pages.length,
-    candidateFetchFailures,
+    candidateFetchFailures: failedPageUrls.size,
   });
   if (classification.warning) warnings.push("PARTIAL_FETCH_WARNING");
   if (classification.status === "SCHOOL_FETCH_FAILED") {
@@ -421,9 +453,9 @@ export async function collectPrivateElementarySchool(
       admission: null,
       warnings: Object.freeze(warnings),
       errors: Object.freeze([
-        crawl.root.kind === "FAILURE"
-          ? crawl.root.code
-          : "NO_USABLE_OFFICIAL_PAGE",
+        ...(crawl.root.kind === "FAILURE"
+          ? failureDiagnostics(crawl.root.code)
+          : ["NO_USABLE_OFFICIAL_PAGE"]),
       ]),
     });
   }

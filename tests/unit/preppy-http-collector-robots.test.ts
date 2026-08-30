@@ -34,6 +34,36 @@ describe("collector robots policy", () => {
           .end("User-agent: *\nAllow: /\n");
         return;
       }
+      if (host.startsWith("challenge.")) {
+        response
+          .writeHead(200, { "content-type": "text/html" })
+          .end(
+            '<script>document.cookie="test=1";location.href="/?ckattempt=1";</script>',
+          );
+        return;
+      }
+      if (host.startsWith("disguised-challenge.")) {
+        response
+          .writeHead(200, { "content-type": "text/plain" })
+          .end('<html><script>location.href="/?ckattempt=1";</script></html>');
+        return;
+      }
+      if (host.startsWith("empty.")) {
+        response.writeHead(200, { "content-type": "text/plain" }).end();
+        return;
+      }
+      const markupBodies: Record<string, string> = {
+        "div-challenge": "<div>Access denied. Please enable JavaScript.</div>",
+        "script-slash-challenge": '<script/src="challenge.js"></script>',
+        "inline-comment": "User-agent: *\nAllow: / # <html> public document\n",
+      };
+      const markupBody = markupBodies[host.split(".", 1)[0] ?? ""];
+      if (markupBody !== undefined) {
+        response
+          .writeHead(200, { "content-type": "text/plain" })
+          .end(markupBody);
+        return;
+      }
       const scenario = host.split(".", 1)[0]?.replace("status", "");
       if (scenario === "404" || scenario === "410") {
         response.writeHead(Number(scenario)).end();
@@ -241,6 +271,38 @@ describe("collector robots policy", () => {
       errorCode: "ROBOTS_UNAVAILABLE_REVIEW_REQUIRED",
       transportErrorCode: "READ_TIMEOUT",
     });
+  });
+
+  it.each([
+    "challenge",
+    "disguised-challenge",
+    "div-challenge",
+    "script-slash-challenge",
+  ])(
+    "does not interpret %s HTML as an allow-all robots document",
+    async (host) => {
+      await expect(
+        policy().evaluate(`http://${host}.fixture.test:${fixture.port}/target`),
+      ).resolves.toMatchObject({
+        decision: "ROBOTS_UNAVAILABLE_REVIEW_REQUIRED",
+        reason: "ROBOTS_PARSE_REVIEW_REQUIRED",
+        robotsHttpStatus: 200,
+      });
+    },
+  );
+
+  it("still accepts a valid empty text robots document", async () => {
+    await expect(
+      policy().evaluate(`http://empty.fixture.test:${fixture.port}/target`),
+    ).resolves.toMatchObject({ decision: "ALLOW" });
+  });
+
+  it("ignores HTML references inside valid robots inline comments", async () => {
+    await expect(
+      policy().evaluate(
+        `http://inline-comment.fixture.test:${fixture.port}/target`,
+      ),
+    ).resolves.toMatchObject({ decision: "ALLOW" });
   });
 
   it("applies SSRF validation to a robots redirect destination", async () => {
