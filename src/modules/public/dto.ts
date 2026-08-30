@@ -123,6 +123,7 @@ export type ReviewedAdmissionDTO = {
   keyDates: OpportunityKeyDatesDTO;
   actionUrl: string | null;
   officialSource: OfficialSourceDTO;
+  officialSources?: OfficialSourceDTO[];
   lastCollectedAt: string;
   lastVerifiedAt: string;
 };
@@ -162,6 +163,7 @@ export type InstitutionFactDTO = {
   displayValue: string | null;
   verifiedAt: string;
   officialSource: OfficialSourceDTO | null;
+  officialSources?: OfficialSourceDTO[];
 };
 
 /**

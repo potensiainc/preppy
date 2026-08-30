@@ -171,6 +171,7 @@ export type BootstrapEvidencePage = Readonly<{
     | "OFFICIAL_SCHOOL_PAGE"
     | "OFFICIAL_ADMISSION_PAGE"
     | "OFFICIAL_NOTICE_BOARD"
+    | "OFFICIAL_APPLICATION_PORTAL"
     | "OFFICIAL_DOCUMENT";
   classificationHint: CandidateClassification;
   collectedAt: Date;
@@ -178,9 +179,10 @@ export type BootstrapEvidencePage = Readonly<{
   textHash: string;
   normalizedText: string;
   mimeType: string;
-  httpStatus: number;
-  responseBytes: number;
-  durationMs: number;
+  httpStatus: number | null;
+  responseBytes: number | null;
+  durationMs: number | null;
+  captureMethod?: "HTTP_ORIGINAL_MEDIA" | "BROWSER_CAPTURE";
   extractionHtml: string;
   score: number;
 }>;
