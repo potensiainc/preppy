@@ -1,15 +1,15 @@
 import Link from "next/link";
 
 const adminSections = [
-  { href: "/admin", label: "Dashboard" },
-  { href: "/admin/monitoring", label: "Monitoring" },
-  { href: "/admin/institutions", label: "Institutions" },
-  { href: "/admin/opportunities", label: "Opportunities" },
-  { href: "/admin/sources", label: "Sources" },
-  { href: "/admin/articles", label: "Articles" },
-  { href: "/admin/notifications", label: "Notifications" },
-  { href: "/admin/users", label: "Users" },
-  { href: "/admin/operations", label: "Operations" },
+  { href: "/admin", label: "대시보드" },
+  { href: "/admin/monitoring", label: "모니터링" },
+  { href: "/admin/institutions", label: "기관" },
+  { href: "/admin/opportunities", label: "입학정보" },
+  { href: "/admin/sources", label: "출처" },
+  { href: "/admin/articles", label: "아티클" },
+  { href: "/admin/notifications", label: "알림" },
+  { href: "/admin/users", label: "회원" },
+  { href: "/admin/operations", label: "운영" },
 ] as const;
 
 export function AdminNav({ label }: { label: string }) {

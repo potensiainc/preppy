@@ -29,29 +29,27 @@ export function AdminInstitutionListView({
   return (
     <div className="admin-page admin-catalog-page">
       <AdminPageHeader
-        kicker="Catalog / Institutions"
-        title="Institution registry"
-        description="Canonical identity, lifecycle, publication, Source coverage, and bounded Opportunity context."
+        kicker="목록 / 기관"
+        title="기관 목록"
+        description="기관의 기준 정보와 운영·공개 상태를 확인해요. 연결된 출처와 입학정보도 함께 보여줘요."
       />
       <section aria-labelledby="institution-catalog-heading">
         <div className="admin-section-heading">
-          <h2 id="institution-catalog-heading">Registry</h2>
-          <AdminStateChip>{data.pagination.total} records</AdminStateChip>
+          <h2 id="institution-catalog-heading">등록 목록</h2>
+          <AdminStateChip>{data.pagination.total} 건</AdminStateChip>
         </div>
         {data.items.length === 0 ? (
-          <AdminEmptyState>
-            No Institutions match these filters.
-          </AdminEmptyState>
+          <AdminEmptyState>조건에 맞는 기관이 없어요.</AdminEmptyState>
         ) : (
-          <AdminDataTable caption="Canonical Institution registry">
+          <AdminDataTable caption="기준 기관 목록">
             <thead>
               <tr>
-                <th scope="col">Institution</th>
-                <th scope="col">Category</th>
-                <th scope="col">Operational</th>
-                <th scope="col">Publication</th>
-                <th scope="col">Active Sources</th>
-                <th scope="col">Opportunities</th>
+                <th scope="col">기관</th>
+                <th scope="col">분류</th>
+                <th scope="col">운영</th>
+                <th scope="col">공개</th>
+                <th scope="col">활성 출처</th>
+                <th scope="col">입학정보</th>
               </tr>
             </thead>
             <tbody>

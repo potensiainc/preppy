@@ -15,8 +15,8 @@ const categoryLabels: Record<InstitutionCategory | ArticleCategory, string> = {
 };
 
 const homeCategoryLabels: Record<InstitutionCategory, string> = {
-  ENGLISH_KINDERGARTEN: "영유",
-  PRIVATE_ELEMENTARY: "사립초",
+  ENGLISH_KINDERGARTEN: "영어유치원",
+  PRIVATE_ELEMENTARY: "사립초등학교",
   INTERNATIONAL_SCHOOL: "국제학교",
 };
 
@@ -44,13 +44,13 @@ const opportunityStateLabels: Record<OpportunityBusinessState, string> = {
   CLOSED: "마감",
   COMPLETED: "종료",
   CANCELLED: "취소",
-  UNKNOWN: "확인 중",
+  UNKNOWN: "미확인",
 };
 
 const factLabels: Record<InstitutionFactType, string> = {
   TUITION: "교육비",
-  TARGET_AGE_GRADE: "대상 연령/학년",
-  CURRICULUM: "커리큘럼",
+  TARGET_AGE_GRADE: "대상 연령과 학년",
+  CURRICULUM: "교육과정",
   ELIGIBILITY: "지원 자격",
   TRANSPORT: "통학",
   ADMISSION_PROCESS: "입학 절차",
@@ -59,7 +59,7 @@ const factLabels: Record<InstitutionFactType, string> = {
 
 const articleTypeLabels: Record<ArticleType, string> = {
   GUIDE: "가이드",
-  UPDATE: "업데이트",
+  UPDATE: "변경 안내",
   ROUNDUP: "모아보기",
 };
 

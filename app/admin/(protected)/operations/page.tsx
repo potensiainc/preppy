@@ -11,23 +11,23 @@ import { getAdminHealth } from "@/src/modules/admin/read-model/health-query.serv
 const operationsLinks = [
   {
     href: "/admin/operations/outbox",
-    label: "Outbox ledger",
-    description: "Event state, attempts, and safe failure codes.",
+    label: "Outbox 기록",
+    description: "이벤트 상태, 시도 횟수, 공개가 허용된 오류 코드를 확인해요.",
   },
   {
     href: "/admin/operations/deliveries",
-    label: "Delivery aggregates",
-    description: "Channel state and bounded attempt summaries.",
+    label: "발송 집계",
+    description: "채널 상태와 허용 범위의 시도 요약을 확인해요.",
   },
   {
     href: "/admin/operations/audit",
-    label: "Audit trail",
-    description: "Operator actions with a closed metadata summary.",
+    label: "감사 기록",
+    description: "운영자 작업과 허용된 메타데이터 요약을 확인해요.",
   },
   {
     href: "/admin/operations/health",
-    label: "Health & data quality",
-    description: "Database, queue pressure, and integrity warnings.",
+    label: "시스템 상태와 데이터 품질",
+    description: "데이터베이스, 대기열 처리 현황, 무결성 경고를 확인해요.",
   },
 ] as const;
 
@@ -35,33 +35,33 @@ export function AdminOperationsView({ health }: { health: AdminHealthDTO }) {
   return (
     <div className="admin-page admin-operations-page">
       <AdminPageHeader
-        kicker="Inspection / Operations"
-        title="Operations control room"
-        description="Inspect canonical operational state and use only server-approved, event-aware commands. Ambiguous provider results require explicit reconciliation."
+        kicker="조회 / 운영"
+        title="운영 관리"
+        description="현재 운영 상태를 확인하고 서버가 해당 이벤트에 허용한 작업만 실행해 주세요. 발송 업체의 처리 결과가 불명확하면 별도로 결과를 대조해야 해요."
       />
       <section aria-labelledby="operations-status-heading">
         <div className="admin-section-heading">
-          <h2 id="operations-status-heading">Current posture</h2>
+          <h2 id="operations-status-heading">현재 상태</h2>
           <AdminStateChip>{health.status}</AdminStateChip>
         </div>
         <div className="admin-metric-grid">
           <article>
-            <p>Database</p>
+            <p>데이터베이스</p>
             <strong>{health.database.status}</strong>
           </article>
           <article>
-            <p>Pending events</p>
-            <strong>{health.outbox.pending ?? "Unavailable"}</strong>
+            <p>대기 이벤트</p>
+            <strong>{health.outbox.pending ?? "확인 불가"}</strong>
           </article>
           <article>
-            <p>Dead-letter events</p>
-            <strong>{health.outbox.deadLetter ?? "Unavailable"}</strong>
+            <p>최종 실패 이벤트</p>
+            <strong>{health.outbox.deadLetter ?? "확인 불가"}</strong>
           </article>
           <article>
-            <p>Integrity warnings</p>
+            <p>무결성 경고</p>
             <strong>
               {health.dataQuality.unavailableCheckCount > 0
-                ? "Unavailable"
+                ? "확인 불가"
                 : health.dataQuality.warningCount}
             </strong>
           </article>
@@ -69,15 +69,15 @@ export function AdminOperationsView({ health }: { health: AdminHealthDTO }) {
       </section>
       <section aria-labelledby="operations-ledgers-heading">
         <div className="admin-section-heading">
-          <h2 id="operations-ledgers-heading">Inspection ledgers</h2>
-          <AdminStateChip>Command guarded</AdminStateChip>
+          <h2 id="operations-ledgers-heading">운영 기록 조회</h2>
+          <AdminStateChip>서버 승인 작업만 허용</AdminStateChip>
         </div>
         <div className="admin-action-grid">
           {operationsLinks.map((item) => (
             <article className="admin-action-card" key={item.href}>
               <h3>{item.label}</h3>
               <p>{item.description}</p>
-              <Link href={item.href}>Inspect ledger</Link>
+              <Link href={item.href}>기록 열기</Link>
             </article>
           ))}
         </div>

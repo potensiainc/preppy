@@ -275,13 +275,15 @@ describe("WP-09 authoritative Follow CTA island", () => {
 
     expect(render("anonymous")).toContain("카카오 로그인");
     const followed = render("following");
-    expect(followed).toContain("업데이트 받는 중");
+    expect(followed).toContain("관심기관 등록됨");
+    expect(followed).not.toContain("업데이트 받는 중");
     expect(followed).toContain('href="/my-preppy"');
     const error = render("error");
     expect(error).toContain('role="alert"');
-    expect(error).toContain("다시 시도");
+    expect(error).toContain("관심기관 상태 다시 확인");
     const unavailable = render("unavailable");
-    expect(unavailable).toBe("");
+    expect(unavailable).toContain('role="alert"');
+    expect(unavailable).toContain('href="/institutions"');
     expect(unavailable).not.toContain("다시 시도");
   });
 

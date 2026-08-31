@@ -78,24 +78,24 @@ export function AdminPagination({
 }) {
   if (pagination.total === 0) return null;
   return (
-    <nav className="admin-pagination" aria-label="Catalog pages">
+    <nav className="admin-pagination" aria-label="목록 페이지">
       <p>
-        Page {pagination.page} · {pagination.total} records
+        {pagination.page}페이지 · 전체 {pagination.total}건
       </p>
       <div>
         {pagination.page > 1 ? (
           <Link href={pageHref(basePath, pagination.page - 1, query)}>
-            Previous
+            이전
           </Link>
         ) : (
-          <span aria-disabled="true">Previous</span>
+          <span aria-disabled="true">이전</span>
         )}
         {pagination.hasNext ? (
           <Link href={pageHref(basePath, pagination.page + 1, query)}>
-            Next
+            다음
           </Link>
         ) : (
-          <span aria-disabled="true">Next</span>
+          <span aria-disabled="true">다음</span>
         )}
       </div>
     </nav>
@@ -124,12 +124,12 @@ export function AdminSourceUrl({
 }
 
 export function formatAdminDate(value: string | null): string {
-  if (value === null) return "Not available";
-  return new Intl.DateTimeFormat("en-CA", {
+  if (value === null) return "확인할 수 없음";
+  return `${new Intl.DateTimeFormat("ko-KR", {
     dateStyle: "medium",
     timeStyle: "short",
     timeZone: "UTC",
-  }).format(new Date(value));
+  }).format(new Date(value))} UTC`;
 }
 
 export function formatAdminCode(value: string): string {

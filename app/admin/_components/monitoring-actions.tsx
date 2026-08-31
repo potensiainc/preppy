@@ -26,7 +26,7 @@ function nullableString(form: FormData, name: string): string | null {
 
 function requiredString(form: FormData, name: string): string {
   const value = nullableString(form, name);
-  if (value === null) throw new Error("필수 후보 값을 입력해주세요.");
+  if (value === null) throw new Error("필수 입력값을 채워 주세요.");
   return value;
 }
 
@@ -34,7 +34,8 @@ function optionalNumber(form: FormData, name: string): number | undefined {
   const value = nullableString(form, name);
   if (value === null) return undefined;
   const parsed = Number(value);
-  if (!Number.isFinite(parsed)) throw new Error("숫자 값을 다시 확인해주세요.");
+  if (!Number.isFinite(parsed))
+    throw new Error("숫자 값을 다시 확인해 주세요.");
   return parsed;
 }
 
@@ -46,14 +47,14 @@ export function buildSourceUnavailableBody(form: FormData) {
     outcome !== "PARSE_ERROR" &&
     outcome !== "TIMEOUT"
   ) {
-    throw new Error("Source unavailable 유형을 다시 확인해주세요.");
+    throw new Error("출처를 확인하지 못한 유형을 다시 선택해 주세요.");
   }
   const finalUrl = nullableString(form, "finalUrl");
   if (
     finalUrl !== null &&
     (!isCanonicalAdminActionUrl(finalUrl) || new URL(finalUrl).hash !== "")
   ) {
-    throw new Error("최종 Source URL을 정확한 HTTP(S) 주소로 입력해주세요.");
+    throw new Error("최종 출처 URL을 정확한 HTTP(S) 주소로 입력해 주세요.");
   }
   const httpStatus = optionalNumber(form, "httpStatus");
   const durationMs = optionalNumber(form, "durationMs");
@@ -72,7 +73,7 @@ export function buildSourceUnavailableBody(form: FormData) {
 
 export function buildSourceBindingBody(form: FormData) {
   if (form.get("bindConfirmed") !== "true") {
-    throw new Error("canonical binding 변경을 명시적으로 확인해주세요.");
+    throw new Error("출처 연결 변경 내용을 확인하고 확인란을 선택해 주세요.");
   }
   return {
     sourceId: requiredString(form, "sourceId"),
@@ -86,7 +87,7 @@ export function parseExactActionUrlCandidate(
 ): string | null {
   if (value === null || value === "") return null;
   if (typeof value !== "string" || !isCanonicalAdminActionUrl(value)) {
-    throw new Error("Action URL은 정확한 HTTP(S) 주소여야 합니다.");
+    throw new Error("이동 URL은 정확한 HTTP(S) 주소로 입력해 주세요.");
   }
   return value;
 }
@@ -103,11 +104,15 @@ export function parseExplicitOffsetDateTimeCandidate(
 ): string | null {
   if (value === null || value === "") return null;
   if (typeof value !== "string" || value.trim() !== value) {
-    throw new Error("날짜와 시간에는 명시적 시간대가 필요합니다.");
+    throw new Error(
+      "날짜와 시간을 확인하고 시간대(Z 또는 +09:00 등)를 함께 입력해 주세요.",
+    );
   }
   const match = EXPLICIT_OFFSET_DATE_TIME.exec(value);
   if (!match) {
-    throw new Error("날짜와 시간에는 명시적 시간대가 필요합니다.");
+    throw new Error(
+      "날짜와 시간을 확인하고 시간대(Z 또는 +09:00 등)를 함께 입력해 주세요.",
+    );
   }
   const year = Number(match[1]);
   const month = Number(match[2]);
@@ -130,7 +135,9 @@ export function parseExplicitOffsetDateTimeCandidate(
     offsetMinute > 59 ||
     !Number.isFinite(Date.parse(value))
   ) {
-    throw new Error("날짜와 시간에는 명시적 시간대가 필요합니다.");
+    throw new Error(
+      "날짜와 시간을 확인하고 시간대(Z 또는 +09:00 등)를 함께 입력해 주세요.",
+    );
   }
   return value;
 }
@@ -175,10 +182,10 @@ export function buildOpportunityCandidateBody(
     materialityPair !== "USER_IMPACT" &&
     materialityPair !== "NON_USER_FACING"
   ) {
-    throw new Error("중요도 재정의 값을 다시 확인해주세요.");
+    throw new Error("중요도 재정의 값을 다시 확인해 주세요.");
   }
   if (expectedCurrentVersionId === null && materialityPair !== null) {
-    throw new Error("최초 후보에는 중요도 재정의를 사용할 수 없습니다.");
+    throw new Error("최초 등록 시에는 중요도를 재정의할 수 없어요.");
   }
   const materiality =
     materialityPair === null
@@ -261,10 +268,10 @@ function OpportunityCandidateForm({
   }
   return (
     <form className="admin-action-card" onSubmit={submit}>
-      <h3>Change found</h3>
+      <h3>변경 내용 등록</h3>
       <p id="change-found-description">
-        Enter observed candidate facts. The server determines truth handling,
-        final change type, materiality, and customer signaling.
+        공식 자료에서 확인한 변경 내용을 입력해 주세요. 기준 정보 반영 방식과
+        최종 변경 유형, 중요도, 사용자 알림 여부는 서버가 결정해요.
       </p>
       <input
         type="hidden"
@@ -282,7 +289,7 @@ function OpportunityCandidateForm({
       {detail.kind === "OPPORTUNITY_NATIVE" ? (
         <>
           <label htmlFor="change-title">
-            Candidate title
+            변경할 제목
             <input
               id="change-title"
               name="title"
@@ -294,7 +301,7 @@ function OpportunityCandidateForm({
             />
           </label>
           <label htmlFor="change-state">
-            Observed business state
+            확인한 진행 상태
             <select
               id="change-state"
               name="businessState"
@@ -316,7 +323,7 @@ function OpportunityCandidateForm({
             </select>
           </label>
           <label htmlFor="change-summary">
-            Candidate summary
+            변경할 요약
             <textarea
               id="change-summary"
               name="summary"
@@ -326,7 +333,7 @@ function OpportunityCandidateForm({
             />
           </label>
           <label htmlFor="change-target-audience">
-            Target audience
+            지원 대상
             <input
               id="change-target-audience"
               name="targetAudience"
@@ -336,7 +343,7 @@ function OpportunityCandidateForm({
             />
           </label>
           <label htmlFor="change-event-start">
-            Event starts (ISO with offset)
+            행사 시작(시간대 포함 ISO)
             <input
               id="change-event-start"
               name="eventStartAt"
@@ -345,7 +352,7 @@ function OpportunityCandidateForm({
             />
           </label>
           <label htmlFor="change-event-end">
-            Event ends (ISO with offset)
+            행사 종료(시간대 포함 ISO)
             <input
               id="change-event-end"
               name="eventEndAt"
@@ -354,7 +361,7 @@ function OpportunityCandidateForm({
             />
           </label>
           <label htmlFor="change-application-open">
-            Application opens (ISO with offset)
+            신청 시작(시간대 포함 ISO)
             <input
               id="change-application-open"
               name="applicationOpenAt"
@@ -365,7 +372,7 @@ function OpportunityCandidateForm({
             />
           </label>
           <label htmlFor="change-application-close">
-            Application closes (ISO with offset)
+            신청 마감(시간대 포함 ISO)
             <input
               id="change-application-close"
               name="applicationCloseAt"
@@ -376,7 +383,7 @@ function OpportunityCandidateForm({
             />
           </label>
           <label htmlFor="change-action-url">
-            Action URL
+            이동 URL
             <input
               id="change-action-url"
               name="actionUrl"
@@ -386,7 +393,7 @@ function OpportunityCandidateForm({
             />
           </label>
           <label htmlFor="change-location">
-            Location
+            장소
             <input
               id="change-location"
               name="locationText"
@@ -396,7 +403,7 @@ function OpportunityCandidateForm({
             />
           </label>
           <label htmlFor="change-valid-from">
-            Valid from (ISO with offset)
+            유효 시작(시간대 포함 ISO)
             <input
               id="change-valid-from"
               name="validFrom"
@@ -405,7 +412,7 @@ function OpportunityCandidateForm({
             />
           </label>
           <label htmlFor="change-valid-until">
-            Valid until (ISO with offset)
+            유효 종료(시간대 포함 ISO)
             <input
               id="change-valid-until"
               name="validUntil"
@@ -417,7 +424,7 @@ function OpportunityCandidateForm({
       ) : (
         <>
           <label htmlFor="legacy-display-title">
-            Candidate display title
+            변경할 표시 제목
             <input
               id="legacy-display-title"
               name="displayTitle"
@@ -429,7 +436,7 @@ function OpportunityCandidateForm({
             />
           </label>
           <label htmlFor="legacy-knowledge-state">
-            Knowledge state
+            정보 확인 상태
             <select
               id="legacy-knowledge-state"
               name="knowledgeState"
@@ -450,7 +457,7 @@ function OpportunityCandidateForm({
             </select>
           </label>
           <label htmlFor="legacy-event-status">
-            Event status
+            행사 상태
             <select
               id="legacy-event-status"
               name="eventStatus"
@@ -467,7 +474,7 @@ function OpportunityCandidateForm({
             </select>
           </label>
           <label htmlFor="legacy-event-start-date">
-            Event starts (date)
+            행사 시작일
             <input
               id="legacy-event-start-date"
               name="eventStartDate"
@@ -476,7 +483,7 @@ function OpportunityCandidateForm({
             />
           </label>
           <label htmlFor="legacy-event-start-time">
-            Event starts (time)
+            행사 시작 시각
             <input
               id="legacy-event-start-time"
               name="eventStartTime"
@@ -486,7 +493,7 @@ function OpportunityCandidateForm({
             />
           </label>
           <label htmlFor="legacy-event-end-date">
-            Event ends (date)
+            행사 종료일
             <input
               id="legacy-event-end-date"
               name="eventEndDate"
@@ -495,7 +502,7 @@ function OpportunityCandidateForm({
             />
           </label>
           <label htmlFor="legacy-event-end-time">
-            Event ends (time)
+            행사 종료 시각
             <input
               id="legacy-event-end-time"
               name="eventEndTime"
@@ -505,7 +512,7 @@ function OpportunityCandidateForm({
             />
           </label>
           <label htmlFor="legacy-registration-open">
-            Registration opens
+            접수 시작일
             <input
               id="legacy-registration-open"
               name="registrationOpenDate"
@@ -514,7 +521,7 @@ function OpportunityCandidateForm({
             />
           </label>
           <label htmlFor="legacy-registration-open-time">
-            Registration opens (time)
+            접수 시작 시각
             <input
               id="legacy-registration-open-time"
               name="registrationOpenTime"
@@ -524,7 +531,7 @@ function OpportunityCandidateForm({
             />
           </label>
           <label htmlFor="legacy-registration-close">
-            Registration closes
+            접수 마감일
             <input
               id="legacy-registration-close"
               name="registrationCloseDate"
@@ -533,7 +540,7 @@ function OpportunityCandidateForm({
             />
           </label>
           <label htmlFor="legacy-registration-close-time">
-            Registration closes (time)
+            접수 마감 시각
             <input
               id="legacy-registration-close-time"
               name="registrationCloseTime"
@@ -543,7 +550,7 @@ function OpportunityCandidateForm({
             />
           </label>
           <label htmlFor="legacy-timezone">
-            Timezone
+            시간대
             <input
               id="legacy-timezone"
               name="timezone"
@@ -553,7 +560,7 @@ function OpportunityCandidateForm({
             />
           </label>
           <label htmlFor="legacy-venue">
-            Venue
+            장소
             <input
               id="legacy-venue"
               name="venue"
@@ -563,7 +570,7 @@ function OpportunityCandidateForm({
             />
           </label>
           <label htmlFor="legacy-action-url">
-            Action URL
+            이동 URL
             <input
               id="legacy-action-url"
               name="actionUrl"
@@ -573,7 +580,7 @@ function OpportunityCandidateForm({
             />
           </label>
           <label htmlFor="legacy-official-notes">
-            Official notes
+            공식 유의사항
             <textarea
               id="legacy-official-notes"
               name="officialNotes"
@@ -585,16 +592,18 @@ function OpportunityCandidateForm({
       )}
       {detail.expectedCurrentVersionId === null ? null : (
         <label htmlFor="materiality-pair">
-          Materiality override (optional)
+          중요도 재정의(선택)
           <select id="materiality-pair" name="materialityPair" defaultValue="">
-            <option value="">Use canonical policy</option>
-            <option value="USER_IMPACT">User impact confirmed</option>
-            <option value="NON_USER_FACING">Non-user-facing confirmed</option>
+            <option value="">기본 정책 적용</option>
+            <option value="USER_IMPACT">사용자 영향 확인</option>
+            <option value="NON_USER_FACING">
+              사용자에게 노출되지 않음 확인
+            </option>
           </select>
         </label>
       )}
       <button type="submit" disabled={pending}>
-        {pending ? "Verifying…" : "Verify Opportunity"}
+        {pending ? "검수 반영 중…" : "입학정보 검수 반영"}
       </button>
     </form>
   );
@@ -623,7 +632,7 @@ function FactCandidateForm({
           try {
             valueJson = JSON.parse(rawValue);
           } catch {
-            throw new Error("후보 값 JSON을 다시 확인해주세요.");
+            throw new Error("입력한 JSON 형식을 다시 확인해 주세요.");
           }
           return {
             expectedCurrentVersionId: nullableString(
@@ -648,13 +657,13 @@ function FactCandidateForm({
   }
   return (
     <form className="admin-action-card" onSubmit={submit}>
-      <h3>Fact verify</h3>
+      <h3>기본 정보 검수</h3>
       <p id="fact-candidate-description">
-        Select a canonical Fact type and provide only the candidate display and
-        bounded JSON value.
+        기본 정보(Fact) 유형을 선택하고 표시 문구와 허용 범위의 JSON 값만 입력해
+        주세요.
       </p>
       <label htmlFor="fact-type">
-        Fact type
+        기본 정보 유형
         <select
           id="fact-type"
           name="factTypeCandidate"
@@ -685,7 +694,7 @@ function FactCandidateForm({
         />
       )}
       <label htmlFor="fact-display-text">
-        Candidate display text
+        변경할 표시 문구
         <textarea
           key={`fact-display-${factType}`}
           id="fact-display-text"
@@ -696,7 +705,7 @@ function FactCandidateForm({
         />
       </label>
       <label htmlFor="fact-value-json">
-        Candidate value JSON
+        변경할 JSON 값
         <textarea
           key={`fact-value-${factType}`}
           id="fact-value-json"
@@ -707,7 +716,7 @@ function FactCandidateForm({
         />
       </label>
       <label htmlFor="fact-valid-from">
-        Valid from (ISO with offset)
+        유효 시작(시간대 포함 ISO)
         <input
           key={`fact-valid-from-${factType}`}
           id="fact-valid-from"
@@ -717,7 +726,7 @@ function FactCandidateForm({
         />
       </label>
       <label htmlFor="fact-valid-until">
-        Valid until (ISO with offset)
+        유효 종료(시간대 포함 ISO)
         <input
           key={`fact-valid-until-${factType}`}
           id="fact-valid-until"
@@ -727,7 +736,7 @@ function FactCandidateForm({
         />
       </label>
       <button type="submit" disabled={pending}>
-        {pending ? "Verifying…" : "Verify Fact"}
+        {pending ? "검수 반영 중…" : "기본 정보 검수 반영"}
       </button>
     </form>
   );
@@ -768,7 +777,7 @@ export function MonitoringActions({
     body,
   ) => {
     clearError();
-    setStatus("Submitting Admin command…");
+    setStatus("요청 처리 중…");
     setSourcePending(true);
     try {
       const candidate = typeof body === "function" ? body() : body;
@@ -789,9 +798,9 @@ export function MonitoringActions({
       if (!response.ok) {
         const message =
           response.status === 409
-            ? "다른 운영자가 먼저 변경했을 수 있습니다. 최신 데이터를 다시 확인한 뒤 변경 여부를 판단해주세요."
+            ? "다른 운영자가 먼저 변경했을 수 있어요. 최신 데이터를 다시 불러와 확인한 뒤 수정해 주세요."
             : (payload.error?.message ??
-              "Admin command could not be completed.");
+              "요청을 완료하지 못했어요. 최신 상태를 확인한 뒤 다시 시도해 주세요.");
         if (response.status === 409) reloadDetailAfterAnnouncement();
         throw new Error(message);
       }
@@ -801,15 +810,18 @@ export function MonitoringActions({
         payload.data?.lifecycleStatus ??
         payload.data?.moveMode;
       const committedLabel = endpoint.endsWith("/verify")
-        ? "Verification committed:"
-        : "Admin command committed:";
+        ? "검수 결과를 반영했어요."
+        : "요청을 반영했어요.";
       setStatus(
-        outcome ? `${committedLabel} ${outcome}.` : `${committedLabel} OK.`,
+        outcome ? `${committedLabel} 처리 결과: ${outcome}` : committedLabel,
       );
       reloadDetailAfterAnnouncement();
     } catch (cause) {
       setStatus("");
-      reportError(cause, "Admin command could not be completed.");
+      reportError(
+        cause,
+        "요청을 완료하지 못했어요. 최신 상태를 확인한 뒤 다시 시도해 주세요.",
+      );
     } finally {
       setSourcePending(false);
     }
@@ -867,7 +879,9 @@ export function MonitoringActions({
       "DELETE",
       () => {
         if (new FormData(form).get("unbindConfirmed") !== "true") {
-          throw new Error("정확한 canonical binding 해제를 확인해주세요.");
+          throw new Error(
+            "해제할 출처 연결을 확인하고 확인란을 선택해 주세요.",
+          );
         }
         return {};
       },
@@ -878,7 +892,7 @@ export function MonitoringActions({
     event.preventDefault();
     const formElement = event.currentTarget;
     clearError();
-    setStatus("Submitting Source check…");
+    setStatus("출처 확인 기록 중…");
     setNoChangePending(true);
     const form = new FormData(formElement);
     const rawNote = form.get("note");
@@ -899,18 +913,22 @@ export function MonitoringActions({
       };
       if (!response.ok) {
         throw new Error(
-          payload.error?.message ?? "Source check could not be recorded.",
+          payload.error?.message ??
+            "출처 확인 결과를 기록하지 못했어요. 최신 상태를 확인한 뒤 다시 시도해 주세요.",
         );
       }
       setStatus(
         payload.data?.checkedAt
-          ? `Source check recorded at ${payload.data.checkedAt}.`
-          : "Source check recorded.",
+          ? `출처 확인 결과를 기록했어요. 확인 시각: ${payload.data.checkedAt}`
+          : "출처 확인 결과를 기록했어요.",
       );
       formElement.reset();
     } catch (cause) {
       setStatus("");
-      reportError(cause, "Source check could not be recorded.");
+      reportError(
+        cause,
+        "출처 확인 결과를 기록하지 못했어요. 최신 상태를 확인한 뒤 다시 시도해 주세요.",
+      );
     } finally {
       setNoChangePending(false);
     }
@@ -925,22 +943,22 @@ export function MonitoringActions({
         hidden={error.message === ""}
         ref={errorSummary}
       >
-        <h2 id="monitoring-error-heading">Action needs attention</h2>
+        <h2 id="monitoring-error-heading">요청 내용 확인</h2>
         <p>{error.message}</p>
       </div>
 
       <section aria-labelledby="monitoring-decisions-heading">
         <div className="admin-section-heading">
-          <h2 id="monitoring-decisions-heading">Decision</h2>
+          <h2 id="monitoring-decisions-heading">검수 작업</h2>
         </div>
         <div className="admin-action-grid">
           <form className="admin-action-card" onSubmit={submitNoChange}>
-            <h3>No change</h3>
+            <h3>변경 없음</h3>
             <p id="no-change-description">
-              Confirm the Source was checked without changing canonical truth.
+              출처를 확인했다는 사실만 기록해요. 기준 정보는 바뀌지 않아요.
             </p>
             <label htmlFor="no-change-note">
-              Optional operator note
+              운영자 메모(선택)
               <textarea
                 id="no-change-note"
                 name="note"
@@ -950,7 +968,7 @@ export function MonitoringActions({
               />
             </label>
             <button type="submit" disabled={noChangePending}>
-              {noChangePending ? "Recording…" : "Confirm no change"}
+              {noChangePending ? "기록 중…" : "변경 없음 기록"}
             </button>
           </form>
           {detail.kind === "INSTITUTION" ? (
@@ -969,20 +987,19 @@ export function MonitoringActions({
 
       <section aria-labelledby="source-lifecycle-heading">
         <div className="admin-section-heading">
-          <h2 id="source-lifecycle-heading">Source lifecycle</h2>
+          <h2 id="source-lifecycle-heading">출처 상태 관리</h2>
         </div>
         <div className="admin-action-grid">
           <form
             className="admin-action-card"
             onSubmit={submitSourceUnavailable}
           >
-            <h3>Source unavailable</h3>
+            <h3>출처 확인 실패</h3>
             <p id="source-unavailable-description">
-              Report a confirmed operational failure without changing admission
-              truth.
+              확인된 수집·접근 실패를 기록해요. 입학정보는 바뀌지 않아요.
             </p>
             <label htmlFor="source-unavailable-outcome">
-              Confirmed outcome
+              확인한 결과
               <select
                 id="source-unavailable-outcome"
                 name="outcome"
@@ -999,7 +1016,7 @@ export function MonitoringActions({
               </select>
             </label>
             <label htmlFor="source-unavailable-http-status">
-              HTTP status (optional)
+              HTTP 상태(선택)
               <input
                 id="source-unavailable-http-status"
                 name="httpStatus"
@@ -1009,7 +1026,7 @@ export function MonitoringActions({
               />
             </label>
             <label htmlFor="source-unavailable-final-url">
-              Final URL (optional)
+              최종 URL(선택)
               <input
                 id="source-unavailable-final-url"
                 name="finalUrl"
@@ -1019,7 +1036,7 @@ export function MonitoringActions({
               />
             </label>
             <label htmlFor="source-unavailable-duration">
-              Duration in milliseconds (optional)
+              소요 시간(밀리초, 선택)
               <input
                 id="source-unavailable-duration"
                 name="durationMs"
@@ -1029,7 +1046,7 @@ export function MonitoringActions({
               />
             </label>
             <label htmlFor="source-unavailable-error-code">
-              Canonical error code (optional)
+              오류 코드(선택)
               <input
                 id="source-unavailable-error-code"
                 name="errorCode"
@@ -1039,7 +1056,7 @@ export function MonitoringActions({
               />
             </label>
             <label htmlFor="source-unavailable-note">
-              Bounded diagnostic (optional)
+              진단 메모(최대 500자, 선택)
               <textarea
                 id="source-unavailable-note"
                 name="errorMessage"
@@ -1055,19 +1072,19 @@ export function MonitoringActions({
                 type="checkbox"
                 value="true"
               />
-              Pause this Source after recording the unavailable observation.
+              확인 실패를 기록한 뒤 이 출처의 수집을 일시 중지해요.
             </label>
             <button type="submit" disabled={sourcePending}>
-              Mark Source unavailable
+              출처 확인 실패 기록
             </button>
           </form>
 
           <div className="admin-action-card admin-binding-actions">
-            <h3>Canonical binding</h3>
+            <h3>출처 연결</h3>
             <form onSubmit={submitBind}>
-              <h4>Bind source</h4>
+              <h4>출처 연결</h4>
               <label htmlFor="bind-source-id">
-                Candidate Source ID
+                연결할 출처 ID
                 <input
                   id="bind-source-id"
                   name="sourceId"
@@ -1077,10 +1094,10 @@ export function MonitoringActions({
                 />
               </label>
               <p id="bind-source-description">
-                The server validates role eligibility and primary conflicts.
+                서버가 연결 역할의 허용 여부와 대표 출처 중복 여부를 확인해요.
               </p>
               <label htmlFor="bind-role">
-                Binding role
+                연결 역할
                 <select id="bind-role" name="role" required>
                   {bindingRoles.map((role) => (
                     <option key={role} value={role}>
@@ -1096,7 +1113,7 @@ export function MonitoringActions({
                   type="checkbox"
                   value="true"
                 />
-                Make this the primary Source for the selected role.
+                선택한 역할의 대표 출처로 설정해요.
               </label>
               <label className="admin-confirmation" htmlFor="bind-confirmed">
                 <input
@@ -1106,14 +1123,14 @@ export function MonitoringActions({
                   value="true"
                   required
                 />
-                I confirmed this target, Source, role, and primary state.
+                연결 대상, 출처, 역할, 대표 출처 여부를 확인했어요.
               </label>
               <button type="submit" disabled={sourcePending}>
-                Bind source
+                출처 연결
               </button>
             </form>
             <form onSubmit={submitUnbind}>
-              <h4>Unbind source</h4>
+              <h4>출처 연결 해제</h4>
               <label className="admin-confirmation" htmlFor="unbind-confirmed">
                 <input
                   id="unbind-confirmed"
@@ -1122,11 +1139,10 @@ export function MonitoringActions({
                   value="true"
                   required
                 />
-                I confirmed this exact active canonical binding should be
-                removed.
+                이 활성 출처 연결을 해제할 것인지 확인했어요.
               </label>
               <button type="submit" disabled={sourcePending}>
-                Unbind source
+                출처 연결 해제
               </button>
             </form>
           </div>

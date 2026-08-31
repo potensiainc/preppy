@@ -72,17 +72,17 @@ export function OnboardingForm({
           setSubmission({
             pending: false,
             error:
-              "약관이 변경되었습니다. 페이지를 새로고침한 뒤 다시 동의해 주세요.",
+              "약관이 변경됐어요. 페이지를 새로고침한 뒤 내용을 확인하고 다시 동의해 주세요.",
             stalePolicy: true,
           });
           return;
         }
         const error =
           response.status === 401
-            ? "로그인 세션이 만료되었습니다. 페이지를 새로고침해 다시 로그인해 주세요."
+            ? "로그인 상태를 확인할 수 없어요. 페이지를 새로고침해 다시 로그인해 주세요."
             : response.status === 400
-              ? "입력 내용을 확인해 주세요. 필수 동의와 입력 형식이 올바른지 살펴보세요."
-              : "설정을 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.";
+              ? "입력 내용을 확인해 주세요. 필수 동의와 입력 형식이 올바른지 확인해 주세요."
+              : "설정 저장 결과를 확인하지 못했어요. 잠시 후 다시 시도해 주세요.";
         setSubmission({ pending: false, error, stalePolicy: false });
         return;
       }
@@ -93,7 +93,8 @@ export function OnboardingForm({
     } catch {
       setSubmission({
         pending: false,
-        error: "설정을 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.",
+        error:
+          "설정 저장 결과를 확인하지 못했어요. 잠시 후 다시 시도해 주세요.",
         stalePolicy: false,
       });
     }
@@ -119,9 +120,9 @@ export function OnboardingForm({
 
       {pendingInstitution ? (
         <aside className="onboarding-intent" aria-label="이어갈 관심기관">
-          <p className="eyebrow">Your interest</p>
+          <p className="eyebrow">등록할 관심기관</p>
           <h2>{pendingInstitution.displayName}</h2>
-          <p>기본 설정이 정상적으로 완료되면 이 기관도 함께 관심 등록됩니다.</p>
+          <p>기본 설정을 완료하면 이 기관도 관심기관으로 등록돼요.</p>
           <Link href={`/institutions/${pendingInstitution.slug}`}>
             기관 정보 다시 보기
           </Link>
@@ -159,14 +160,18 @@ export function OnboardingForm({
           name="childBirthYear"
           type="number"
         />
-        <label htmlFor="onboarding-region">관심 지역 코드 (선택)</label>
+        <label htmlFor="onboarding-region">관심 지역 (선택)</label>
         <input
           defaultValue={defaults.interestRegions[0] ?? ""}
           id="onboarding-region"
           name="interestRegions"
-          placeholder="예: KR-11"
+          aria-describedby="onboarding-region-hint"
+          placeholder="서울: KR-11"
           type="text"
         />
+        <p id="onboarding-region-hint">
+          서울은 KR-11을 입력해 주세요. 지역 코드를 모르면 비워 둬도 돼요.
+        </p>
       </fieldset>
 
       <fieldset>
@@ -196,7 +201,9 @@ export function OnboardingForm({
       </label>
 
       <p className="onboarding-form__notice">
-        제출이 완료되기 전에는 관심기관 등록과 알림 설정이 확정되지 않습니다.
+        {pendingInstitution
+          ? "저장을 완료해야 관심기관 등록과 이메일 수신 설정이 반영돼요."
+          : "저장을 완료해야 기본 설정과 이메일 수신 설정이 반영돼요."}
       </p>
       <div aria-live="polite" className="onboarding-form__status" role="status">
         {submission.error ? <p>{submission.error}</p> : null}
@@ -207,7 +214,7 @@ export function OnboardingForm({
         ) : null}
       </div>
       <button disabled={submission.pending} type="submit">
-        {submission.pending ? "저장 중…" : "동의하고 완료"}
+        {submission.pending ? "저장 중…" : "동의하고 설정 저장"}
       </button>
     </form>
   );

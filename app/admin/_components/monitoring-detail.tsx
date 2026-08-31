@@ -14,33 +14,35 @@ function CurrentTruth({ detail }: { detail: AdminMonitoringDetailDTO }) {
   if (detail.kind === "INSTITUTION") {
     return (
       <>
-        <AdminDataTable caption="Current Institution truth">
+        <AdminDataTable caption="기관 기준 정보">
           <tbody>
             <tr>
-              <th scope="row">Operational state</th>
+              <th scope="row">운영 상태</th>
               <td>{formatAdminCode(detail.currentTruth.operationalState)}</td>
             </tr>
             <tr>
-              <th scope="row">Publication state</th>
+              <th scope="row">공개 상태</th>
               <td>{formatAdminCode(detail.currentTruth.publicationState)}</td>
             </tr>
           </tbody>
         </AdminDataTable>
-        <AdminDataTable caption="Current canonical Institution Facts">
+        <AdminDataTable caption="현재 기관 기본 정보">
           <thead>
             <tr>
-              <th scope="col">Fact</th>
-              <th scope="col">Current display</th>
-              <th scope="col">Expected-current token</th>
+              <th scope="col">기본 정보</th>
+              <th scope="col">현재 표시 문구</th>
+              <th scope="col">현재 버전 확인 토큰</th>
             </tr>
           </thead>
           <tbody>
             {detail.facts.map((fact) => (
               <tr key={fact.factType}>
                 <th scope="row">{formatAdminCode(fact.factType)}</th>
-                <td>{fact.current?.displayText ?? "No current Fact"}</td>
+                <td>
+                  {fact.current?.displayText ?? "등록된 현재 기본 정보 없음"}
+                </td>
                 <td className="admin-record-id">
-                  {fact.expectedCurrentVersionId ?? "Creation allowed (null)"}
+                  {fact.expectedCurrentVersionId ?? "신규 등록 가능(null)"}
                 </td>
               </tr>
             ))}
@@ -51,19 +53,19 @@ function CurrentTruth({ detail }: { detail: AdminMonitoringDetailDTO }) {
   }
 
   if (detail.currentTruth === null) {
-    return <p className="admin-empty-state">No current truth version.</p>;
+    return <p className="admin-empty-state">등록된 현재 기준 정보가 없어요.</p>;
   }
   return (
-    <AdminDataTable caption="Current Opportunity truth">
+    <AdminDataTable caption="현재 입학정보">
       <tbody>
         <tr>
-          <th scope="row">Truth mode</th>
+          <th scope="row">기준 정보 방식</th>
           <td>
             {detail.kind === "OPPORTUNITY_NATIVE" ? "Native" : "Legacy backed"}
           </td>
         </tr>
         <tr>
-          <th scope="row">Title</th>
+          <th scope="row">제목</th>
           <td>
             {detail.kind === "OPPORTUNITY_NATIVE"
               ? detail.currentTruth.title
@@ -71,7 +73,7 @@ function CurrentTruth({ detail }: { detail: AdminMonitoringDetailDTO }) {
           </td>
         </tr>
         <tr>
-          <th scope="row">State</th>
+          <th scope="row">상태</th>
           <td>
             {formatAdminCode(
               detail.kind === "OPPORTUNITY_NATIVE"
@@ -81,9 +83,9 @@ function CurrentTruth({ detail }: { detail: AdminMonitoringDetailDTO }) {
           </td>
         </tr>
         <tr>
-          <th scope="row">Expected-current token</th>
+          <th scope="row">현재 버전 확인 토큰</th>
           <td className="admin-record-id">
-            {detail.expectedCurrentVersionId ?? "No current version"}
+            {detail.expectedCurrentVersionId ?? "현재 버전 없음"}
           </td>
         </tr>
       </tbody>
@@ -103,24 +105,24 @@ export function MonitoringDetail({
   return (
     <div className="admin-page admin-detail-page admin-monitoring-detail">
       <AdminPageHeader
-        kicker="Monitoring / Decision"
+        kicker="모니터링 / 검수"
         title={targetName}
-        description="Review the exact canonical binding and submit candidate facts only. Server commands retain authority over truth and signaling."
+        description="출처 연결을 확인하고 변경할 정보만 입력해 주세요. 기준 정보 반영과 알림 여부는 서버가 결정해요."
       />
 
       <section aria-labelledby="monitoring-binding-heading">
         <div className="admin-section-heading">
-          <h2 id="monitoring-binding-heading">Binding and schedule</h2>
+          <h2 id="monitoring-binding-heading">출처 연결과 점검 일정</h2>
           <AdminStateChip>{detail.schedule.dueState}</AdminStateChip>
         </div>
         <div className="admin-detail-ledger">
           <dl>
             <div>
-              <dt>Source</dt>
+              <dt>출처</dt>
               <dd>{detail.source.sourceName}</dd>
             </div>
             <div>
-              <dt>Official link</dt>
+              <dt>공식 안내 링크</dt>
               <dd>
                 <AdminSourceUrl
                   displayUrl={detail.source.canonicalUrl}
@@ -129,32 +131,34 @@ export function MonitoringDetail({
               </dd>
             </div>
             <div>
-              <dt>Role</dt>
+              <dt>역할</dt>
               <dd>{formatAdminCode(detail.binding.role)}</dd>
             </div>
             <div>
-              <dt>Priority</dt>
+              <dt>우선순위</dt>
               <dd>{formatAdminCode(detail.schedule.priority)}</dd>
             </div>
             <div>
-              <dt>Last checked</dt>
+              <dt>최근 점검</dt>
               <dd>{formatAdminDate(detail.schedule.lastCheckedAt)}</dd>
             </div>
             <div>
-              <dt>Next due</dt>
+              <dt>다음 점검 예정</dt>
               <dd>{formatAdminDate(detail.schedule.nextDueAt)}</dd>
             </div>
             <div>
-              <dt>Latest outcome</dt>
+              <dt>최근 수집 결과</dt>
               <dd>
                 {detail.latestObservation === null
-                  ? "Not observed"
+                  ? "수집 기록 없음"
                   : formatAdminCode(detail.latestObservation.outcome)}
               </dd>
             </div>
             <div>
-              <dt>Latest HTTP status</dt>
-              <dd>{detail.latestObservation?.httpStatus ?? "Not available"}</dd>
+              <dt>최근 HTTP 상태</dt>
+              <dd>
+                {detail.latestObservation?.httpStatus ?? "확인할 수 없음"}
+              </dd>
             </div>
           </dl>
         </div>
@@ -162,7 +166,7 @@ export function MonitoringDetail({
 
       <section aria-labelledby="current-truth-heading">
         <div className="admin-section-heading">
-          <h2 id="current-truth-heading">Current truth</h2>
+          <h2 id="current-truth-heading">현재 기준 정보</h2>
         </div>
         <CurrentTruth detail={detail} />
       </section>

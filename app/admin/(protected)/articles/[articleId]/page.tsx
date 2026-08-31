@@ -29,13 +29,13 @@ export function AdminArticleDetailView({
   return (
     <div className="admin-page admin-detail-page">
       <AdminPageHeader
-        kicker="Editorial / Article"
+        kicker="편집 / 아티클"
         title={data.title}
-        description={`Canonical slug: ${data.slug}`}
+        description={`주소 이름(slug): ${data.slug}`}
       />
       <AdminStateChip>{data.status}</AdminStateChip>
       <p>
-        <a href={`/admin/articles/${data.id}/preview`}>Preview</a>
+        <a href={`/admin/articles/${data.id}/preview`}>저장된 내용 미리보기</a>
       </p>
       <AdminArticleEditor
         article={data}

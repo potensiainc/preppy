@@ -24,13 +24,13 @@ export function renderOpportunityChangeEmail(
     options.appBaseUrl ?? process.env.APP_BASE_URL ?? "http://localhost:3000";
   return {
     to: input.to,
-    subject: `[PREPPY] ${input.institutionName} 입학정보가 변경되었습니다`,
+    subject: `[PREPPY] ${input.institutionName} 입학정보가 변경됐어요`,
     text: [
       input.institutionName,
       input.opportunityTitle,
       input.changeSummary,
-      absoluteUrl(appBaseUrl, input.deepLinkPath),
-      absoluteUrl(appBaseUrl, "/me/settings"),
+      `변경된 입학정보 보기\n${absoluteUrl(appBaseUrl, input.deepLinkPath)}`,
+      `알림 설정 보기\n${absoluteUrl(appBaseUrl, "/me/settings")}`,
     ].join("\n\n"),
     notificationId: input.notificationId,
     deliveryId: input.deliveryId,

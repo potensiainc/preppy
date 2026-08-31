@@ -54,7 +54,7 @@ describe("WP-13 Admin Article editor UI contract", () => {
     expect(editor).toContain(
       "editor.commands.setContent(sourceHtml, { emitUpdate: true })",
     );
-    expect(editor).toContain("server may remove unsafe markup");
+    expect(editor).toContain("안전하지 않은 HTML 요소가 제거될 수 있어요");
     expect(editor).not.toMatch(/iframe|dangerouslySetInnerHTML/);
   });
 
@@ -66,19 +66,19 @@ describe("WP-13 Admin Article editor UI contract", () => {
     const relations = await source(
       "app/admin/_components/article-relations.tsx",
     );
-    expect(editor).toContain("Publish Changes");
-    expect(editor).toContain("Publish Article");
-    expect(editor).toContain("Save Draft");
-    expect(lifecycle).toContain("Unpublish");
-    expect(lifecycle).toContain("Archive");
-    expect(lifecycle).toContain("Change slug");
+    expect(editor).toContain("변경 내용 발행");
+    expect(editor).toContain("아티클 발행");
+    expect(editor).toContain("초안 저장");
+    expect(lifecycle).toContain("발행 취소");
+    expect(lifecycle).toContain("보관 처리");
+    expect(lifecycle).toContain("주소 이름 변경");
     expect(lifecycle).toContain("window.confirm");
     expect(lifecycle).toContain("onUpdated(payload.data.updatedAt)");
     expect(relations).toContain(
-      'label === "Opportunity" ? "Opportunities" : "Institutions"',
+      'label === "Opportunity" ? "입학정보" : "기관"',
     );
     expect(`${editor}\n${relations}\n${lifecycle}`).toContain(
-      "다른 운영자가 먼저 변경했을 수 있습니다.",
+      "다른 운영자가 먼저 변경했을 수 있어요.",
     );
     expect(`${editor}\n${relations}\n${lifecycle}`).not.toMatch(
       /authorAdminId|publishedAt|unpublishedAt|archivedAt|contentFingerprint|eventType|currentCanonicalPath|previousCanonicalPath|emitCustomerOutbox/,
@@ -94,9 +94,9 @@ describe("WP-13 Admin Article editor UI contract", () => {
       "app/admin/_components/article-relations.tsx",
     );
     const combined = `${editor}\n${lifecycle}\n${relations}`;
-    expect(editor).toContain("Reload latest data");
-    expect(lifecycle).toContain("Reload latest data");
-    expect(relations).toContain("Reload latest data");
+    expect(editor).toContain("최신 데이터 다시 불러오기");
+    expect(lifecycle).toContain("최신 데이터 다시 불러오기");
+    expect(relations).toContain("최신 데이터 다시 불러오기");
     expect(combined).toContain("response.status === 409");
     expect(combined).not.toMatch(
       /response\.status === 409[^}]+window\.location\.reload\(\)/s,

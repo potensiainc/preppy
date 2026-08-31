@@ -8,8 +8,8 @@ export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: {
-    default: "Operations | PREPPY Admin",
-    template: "%s | PREPPY Admin",
+    default: "운영 | PREPPY 관리자",
+    template: "%s | PREPPY 관리자",
   },
   robots: { index: false, follow: false },
 };
@@ -18,7 +18,7 @@ export default function AdminLayout({
   children,
 }: Readonly<{ children: ReactNode }>) {
   return (
-    <div className="preppy-admin-root" lang="en">
+    <div className="preppy-admin-root" lang="ko">
       {children}
     </div>
   );

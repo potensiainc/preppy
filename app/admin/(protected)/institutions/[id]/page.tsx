@@ -20,26 +20,26 @@ export function AdminInstitutionDetailView({
   return (
     <div className="admin-page admin-detail-page">
       <AdminPageHeader
-        kicker="Institution / Read only"
+        kicker="기관 / 조회 전용"
         title={data.displayName}
-        description="Canonical operating context. Stable profile changes remain outside this WP-11 inspection surface."
+        description="기관의 운영 기준 정보를 확인해요. 이 조회 화면에서는 기관 프로필을 변경할 수 없어요."
       />
       <section aria-labelledby="institution-detail-heading">
         <div className="admin-section-heading">
-          <h2 id="institution-detail-heading">Registry state</h2>
+          <h2 id="institution-detail-heading">등록 상태</h2>
           <AdminStateChip>
             {formatAdminCode(data.publicationState)}
           </AdminStateChip>
         </div>
-        <AdminDataTable caption="Institution registry state">
+        <AdminDataTable caption="기관 등록 상태">
           <tbody>
             {[
-              ["Canonical ID", data.id],
-              ["Slug", data.slug],
-              ["Category", formatAdminCode(data.category)],
-              ["Operational state", formatAdminCode(data.operationalState)],
-              ["Publication state", formatAdminCode(data.publicationState)],
-              ["Active Source bindings", String(data.activeSourceBindingCount)],
+              ["기준 ID", data.id],
+              ["주소 이름(slug)", data.slug],
+              ["분류", formatAdminCode(data.category)],
+              ["운영 상태", formatAdminCode(data.operationalState)],
+              ["공개 상태", formatAdminCode(data.publicationState)],
+              ["활성 출처 연결", String(data.activeSourceBindingCount)],
             ].map(([label, value]) => (
               <tr key={label}>
                 <th scope="row">{label}</th>
@@ -51,22 +51,20 @@ export function AdminInstitutionDetailView({
       </section>
       <section aria-labelledby="institution-opportunities-heading">
         <div className="admin-section-heading">
-          <h2 id="institution-opportunities-heading">
-            Current Opportunity summary
-          </h2>
+          <h2 id="institution-opportunities-heading">현재 입학정보 요약</h2>
         </div>
         {data.opportunitySummary.items.length === 0 ? (
           <p className="admin-empty-state" role="status">
-            No current Opportunity truth is available.
+            등록된 현재 입학정보가 없어요.
           </p>
         ) : (
-          <AdminDataTable caption="Bounded Institution Opportunity summary">
+          <AdminDataTable caption="기관 입학정보 요약">
             <thead>
               <tr>
-                <th scope="col">Opportunity</th>
-                <th scope="col">Truth</th>
-                <th scope="col">State</th>
-                <th scope="col">Verified</th>
+                <th scope="col">입학정보</th>
+                <th scope="col">기준 정보</th>
+                <th scope="col">상태</th>
+                <th scope="col">내용 확인</th>
               </tr>
             </thead>
             <tbody>
@@ -76,7 +74,7 @@ export function AdminInstitutionDetailView({
                   <td>{formatAdminCode(item.truthMode)}</td>
                   <td>
                     {item.businessState === null
-                      ? "No current truth"
+                      ? "현재 기준 정보 없음"
                       : formatAdminCode(item.businessState)}
                   </td>
                   <td>{formatAdminDate(item.verifiedAt)}</td>

@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { publicAdmissionText } from "@/src/modules/public/admission-copy";
+import { publicProse } from "@/src/modules/public/ux-writing";
+import { admissionReadingItems } from "@/app/_lib/admissions-readability";
 import { ReviewedAdmissions } from "./admissions-content";
 
 import type {
@@ -114,7 +116,7 @@ export function InstitutionListView({
         <header className="institution-list__intro">
           <p className="eyebrow">기관 탐색</p>
           <h1>기관 찾기</h1>
-          <p>공개된 기관 정보와 확인 가능한 모집·입학정보를 찾아보세요.</p>
+          <p>학교와 기관을 찾고, 입학 일정과 지원 조건을 살펴보세요.</p>
         </header>
 
         <form
@@ -169,14 +171,13 @@ export function InstitutionListView({
               type="search"
             />
           </div>
-          <button type="submit">검색</button>
+          <button type="submit">기관 검색</button>
         </form>
 
         <section aria-label="공개 기관">
           <SectionHeader
             eyebrow="검색 결과"
-            title="공개 기관"
-            description={`${data.pagination.total}개의 기관을 확인할 수 있습니다.`}
+            title={`기관 ${data.pagination.total}곳`}
           />
           {data.items.length > 0 ? (
             <div className="institution-list__cards">
@@ -186,7 +187,7 @@ export function InstitutionListView({
             </div>
           ) : (
             <EmptyState
-              title="표시할 기관이 없습니다."
+              title="조건에 맞는 기관을 찾지 못했어요"
               description="검색 조건을 조정하거나 다른 기관 유형을 살펴보세요."
             />
           )}
@@ -246,27 +247,25 @@ export function InstitutionDetailView({
 
         <ReviewedAdmissions admissions={data.reviewedAdmissions} />
 
-        <OpportunityGroup
-          title="현재 모집·입학정보"
-          opportunities={current}
-          emptyMessage={
-            reviewedIds.size
-              ? "검수된 입학정보는 위에서 확인할 수 있습니다."
-              : "현재 공개된 모집·입학정보가 없습니다."
-          }
-        />
+        {current.length || !reviewedIds.size ? (
+          <OpportunityGroup
+            title="현재 모집·입학정보"
+            opportunities={current}
+            emptyMessage="프레피에 공개된 모집·입학정보가 아직 없어요. 학교 공식 안내도 함께 확인해 주세요."
+          />
+        ) : null}
         {upcoming.length > 0 ? (
           <OpportunityGroup
             title="예정된 모집·입학정보"
             opportunities={upcoming}
-            emptyMessage="예정된 모집·입학정보가 없습니다."
+            emptyMessage="프레피에 공개된 예정 일정이 아직 없어요."
           />
         ) : null}
         {recent.length > 0 ? (
           <OpportunityGroup
             title="최근 모집·입학정보"
             opportunities={recent}
-            emptyMessage="최근 모집·입학정보가 없습니다."
+            emptyMessage="프레피에 공개된 최근 입학정보가 없어요."
           />
         ) : null}
 
@@ -276,7 +275,7 @@ export function InstitutionDetailView({
         >
           <SectionHeader
             title="확인된 기관 정보"
-            description="검증된 항목과 확인일을 표시합니다. 근거가 된 공식 자료는 아래에서 한 번에 확인할 수 있습니다."
+            description="공식 자료를 바탕으로 확인한 정보예요. 각 항목의 확인일과 아래 공식 출처를 함께 살펴보세요."
           />
           {data.verifiedFacts.length > 0 ? (
             <dl className="institution-facts">
@@ -284,15 +283,17 @@ export function InstitutionDetailView({
                 <div key={fact.factType}>
                   <dt>{factLabel(fact.factType)}</dt>
                   <dd>
-                    {publicAdmissionText(fact.displayValue) ??
-                      "학교에 문의해 주세요."}
+                    <InstitutionFactText value={fact.displayValue} />
                     <VerifiedAt verifiedAt={fact.verifiedAt} label="확인일" />
                   </dd>
                 </div>
               ))}
             </dl>
           ) : (
-            <p className="detail-empty">현재 확인된 기관 정보가 없습니다.</p>
+            <p className="detail-empty">
+              프레피에서 확인한 기관 정보가 아직 없어요. 기관의 공식
+              홈페이지에서 확인해 주세요.
+            </p>
           )}
         </section>
 
@@ -303,7 +304,7 @@ export function InstitutionDetailView({
           >
             <SectionHeader
               title="공식 출처"
-              description="기관 정보와 모집·입학정보 확인에 사용한 자료입니다."
+              description="기관 정보와 입학 안내를 확인할 때 참고한 공식 자료예요."
             />
             <div className="institution-sources">
               {officialSources.map((source) => (
@@ -333,5 +334,20 @@ export function InstitutionDetailView({
         </nav>
       </article>
     </PageContainer>
+  );
+}
+
+function InstitutionFactText({ value }: { value: string | null }) {
+  const text = publicAdmissionText(value);
+  if (!text) return "학교에 문의해 주세요.";
+  const items = admissionReadingItems(text);
+  return items.length > 1 ? (
+    <ul className="institution-fact-items">
+      {items.map((item, index) => (
+        <li key={index}>{publicProse(item)}</li>
+      ))}
+    </ul>
+  ) : (
+    publicProse(text)
   );
 }

@@ -31,27 +31,27 @@ export function AdminSourceListView({
   return (
     <div className="admin-page admin-catalog-page">
       <AdminPageHeader
-        kicker="Catalog / Sources"
-        title="Source registry"
-        description="Canonical endpoints, authority, lifecycle, Monitoring policy, bindings, and the latest bounded observation."
+        kicker="목록 / 출처"
+        title="출처 목록"
+        description="등록 URL과 출처 권한, 운영 상태를 확인해요. 모니터링 정책과 연결 정보, 최근 수집 결과도 보여줘요."
       />
       <section aria-labelledby="source-catalog-heading">
         <div className="admin-section-heading">
-          <h2 id="source-catalog-heading">Registry</h2>
-          <AdminStateChip>{data.pagination.total} records</AdminStateChip>
+          <h2 id="source-catalog-heading">등록 목록</h2>
+          <AdminStateChip>{data.pagination.total} 건</AdminStateChip>
         </div>
         {data.items.length === 0 ? (
-          <AdminEmptyState>No Sources match these filters.</AdminEmptyState>
+          <AdminEmptyState>조건에 맞는 출처가 없어요.</AdminEmptyState>
         ) : (
-          <AdminDataTable caption="Canonical Source registry">
+          <AdminDataTable caption="기준 출처 목록">
             <thead>
               <tr>
-                <th scope="col">Source</th>
-                <th scope="col">Type</th>
-                <th scope="col">Authority</th>
-                <th scope="col">Lifecycle</th>
-                <th scope="col">Bindings</th>
-                <th scope="col">Latest observation</th>
+                <th scope="col">출처</th>
+                <th scope="col">유형</th>
+                <th scope="col">출처 권한</th>
+                <th scope="col">운영 상태</th>
+                <th scope="col">연결</th>
+                <th scope="col">최근 수집 기록</th>
               </tr>
             </thead>
             <tbody>
@@ -70,12 +70,12 @@ export function AdminSourceListView({
                   <td>{formatAdminCode(item.authorityLevel)}</td>
                   <td>{formatAdminCode(item.lifecycleStatus)}</td>
                   <td>
-                    {item.activeInstitutionBindingCount} institutions ·{" "}
-                    {item.activeOpportunityBindingCount} opportunities
+                    {item.activeInstitutionBindingCount} 기관 ·{" "}
+                    {item.activeOpportunityBindingCount} 입학정보
                   </td>
                   <td>
                     {item.latestObservation === null ? (
-                      "Not observed"
+                      "수집 기록 없음"
                     ) : (
                       <>
                         {formatAdminCode(item.latestObservation.outcome)}

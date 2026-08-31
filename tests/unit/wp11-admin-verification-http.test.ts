@@ -518,7 +518,7 @@ describe("WP-11 verification candidate UI behavior", () => {
       "not-a-date",
     ]) {
       expect(() => parseExplicitOffsetDateTimeCandidate(invalid)).toThrow(
-        "명시적 시간대",
+        "시간대",
       );
     }
   });
@@ -660,9 +660,9 @@ describe("WP-11 Admin verification route and UI contracts", () => {
     );
     expect(source).toContain("/api/admin/opportunities/");
     expect(source).toContain("/api/admin/institutions/");
-    expect(source).toContain("Verification committed:");
+    expect(source).toContain("검수 결과를 반영했어요.");
     expect(source).toContain(
-      "다른 운영자가 먼저 변경했을 수 있습니다. 최신 데이터를 다시 확인한 뒤 변경 여부를 판단해주세요.",
+      "다른 운영자가 먼저 변경했을 수 있어요. 최신 데이터를 다시 불러와 확인한 뒤 수정해 주세요.",
     );
     expect(source).toContain("window.location.reload()");
     expect(source.match(/fetch\(/g)).toHaveLength(2);

@@ -2,6 +2,7 @@ import "server-only";
 
 import type { Metadata } from "next";
 import { publicAdmissionText } from "./admission-copy";
+import { publicProse } from "./ux-writing";
 
 import { sanitizeArticleHtmlV1 } from "@/src/modules/editorial/sanitizer.server";
 import type {
@@ -28,7 +29,7 @@ export type ArticleBreadcrumbJsonLd = Readonly<{
     Readonly<{
       "@type": "ListItem";
       position: 1;
-      name: "Home";
+      name: "홈";
       item: string;
     }>,
     Readonly<{
@@ -89,7 +90,8 @@ function safeAbsoluteImage(value: string | null): string | null {
 export function buildHomeMetadata(appBaseUrl: string): Metadata {
   return {
     title: "PREPPY | 입학정보를 더 차분하게",
-    description: "공식 출처를 바탕으로 정리한 프리미엄 입학정보 플랫폼",
+    description:
+      "학교와 기관의 공식 안내를 바탕으로 입학 일정과 지원 조건을 한곳에서 확인해 보세요.",
     alternates: { canonical: canonical(appBaseUrl, "/") },
     robots: { index: true, follow: true },
   };
@@ -101,7 +103,8 @@ export function buildInstitutionListMetadata(
 ): Metadata {
   return {
     title: "기관 찾기 | PREPPY",
-    description: "검증된 입학정보를 제공하는 기관을 찾아보세요.",
+    description:
+      "관심 있는 학교와 기관을 찾고, 공개된 입학 일정과 지원 조건을 확인해 보세요.",
     alternates: { canonical: canonical(appBaseUrl, "/institutions") },
     robots: { index: !hasFilters, follow: true },
   };
@@ -113,7 +116,7 @@ export function buildInstitutionMetadata(
 ): Metadata {
   return {
     title: `${dto.institution.name} | PREPPY`,
-    description: `${dto.institution.name}의 검증된 입학정보와 공식 출처를 확인하세요.`,
+    description: `${dto.institution.name}의 기관 정보와 공식 안내를 확인해 보세요.`,
     alternates: {
       canonical: canonical(appBaseUrl, `/institutions/${dto.institution.slug}`),
     },
@@ -128,8 +131,8 @@ export function buildOpportunityMetadata(
   return {
     title: `${dto.title} | PREPPY`,
     description:
-      publicAdmissionText(dto.summary) ??
-      `${dto.institution.name}의 입학정보입니다.`,
+      publicProse(publicAdmissionText(dto.summary)) ??
+      `${dto.institution.name}의 입학 안내를 확인해 보세요.`,
     alternates: {
       canonical: canonical(appBaseUrl, `/opportunities/${dto.slug}`),
     },
@@ -144,14 +147,14 @@ export function buildArticleMetadata(
   const image = safeAbsoluteImage(dto.featuredImageUrl);
   return {
     title: dto.seoTitle ?? dto.title,
-    description: dto.seoDescription ?? dto.excerpt ?? undefined,
+    description: publicProse(dto.seoDescription ?? dto.excerpt) ?? undefined,
     alternates: {
       canonical: canonical(appBaseUrl, `/articles/${dto.slug}`),
     },
     robots: robots(dto.indexability, dto.robotsFollow),
     openGraph: {
       title: dto.seoTitle ?? dto.title,
-      description: dto.seoDescription ?? dto.excerpt ?? undefined,
+      description: publicProse(dto.seoDescription ?? dto.excerpt) ?? undefined,
       type: "article",
       url: canonical(appBaseUrl, `/articles/${dto.slug}`),
       ...(image === null ? {} : { images: [image] }),
@@ -197,7 +200,7 @@ export function buildArticleJsonLd(
     "@context": "https://schema.org",
     "@type": "Article",
     headline: dto.title,
-    description: eligible.description,
+    description: publicProse(eligible.description),
     mainEntityOfPage: eligible.canonical,
     datePublished: dto.publishedAt!,
     dateModified: dto.updatedAt,
@@ -218,7 +221,7 @@ export function buildArticleBreadcrumbJsonLd(
       {
         "@type": "ListItem",
         position: 1,
-        name: "Home",
+        name: "홈",
         item: canonical(appBaseUrl, "/"),
       },
       {

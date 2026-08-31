@@ -26,11 +26,11 @@ export default async function OnboardingPage() {
   return (
     <div className="page-container onboarding-page">
       <header className="onboarding-page__intro">
-        <p className="eyebrow">Welcome to PREPPY</p>
-        <h1>알림을 위한 기본 설정</h1>
+        <p className="eyebrow">PREPPY 시작하기</p>
+        <h1>기본 설정</h1>
         <p>
-          필수 동의를 확인하고, 필요한 정보만 선택해 주세요. 선택 정보는 나중에
-          비워 둔 채 계속할 수 있습니다.
+          필수 동의를 확인해 주세요. 선택 정보는 입력하지 않아도 계속할 수
+          있어요.
         </p>
       </header>
       <OnboardingForm {...state} />

@@ -5,9 +5,9 @@ export default function NewAdminArticlePage() {
   return (
     <div className="admin-page admin-detail-page">
       <AdminPageHeader
-        kicker="Editorial / New"
-        title="New Article"
-        description="Create a bounded Article draft in this protected Admin surface."
+        kicker="편집 / 새 아티클"
+        title="새 아티클"
+        description="관리자 전용 화면에서 아티클 초안을 만들 수 있어요."
       />
       <AdminNewArticleEditor />
     </div>

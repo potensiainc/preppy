@@ -52,43 +52,39 @@ export function AdminMonitoringView({
   return (
     <div className="admin-page admin-catalog-page admin-monitoring-page">
       <AdminPageHeader
-        kicker="Operations / Monitoring"
-        title="Monitoring queue"
-        description="A live decision queue derived from canonical bindings, Source observations, and current truth. Its order is owned by WP-10B."
+        kicker="운영 / 모니터링"
+        title="모니터링 대기열"
+        description="출처 연결, 수집 결과, 현재 기준 정보를 바탕으로 점검 대상을 보여줘요. 정렬 순서는 서버의 모니터링 정책(WP-10B)을 따라요."
       />
       <section aria-labelledby="monitoring-filters-heading">
         <div className="admin-section-heading">
-          <h2 id="monitoring-filters-heading">Queue filters</h2>
-          <AdminStateChip>
-            {data.items.length} items on this page
-          </AdminStateChip>
+          <h2 id="monitoring-filters-heading">대기열 필터</h2>
+          <AdminStateChip>{data.items.length} 건(현재 페이지)</AdminStateChip>
         </div>
         <MonitoringFilters query={query} />
       </section>
       <section aria-labelledby="monitoring-results-heading">
         <div className="admin-section-heading">
-          <h2 id="monitoring-results-heading">Decision order</h2>
+          <h2 id="monitoring-results-heading">점검 순서</h2>
         </div>
         {invalidFilter ? (
           <div className="admin-filter-guidance" role="alert">
-            <h3>Filters could not be applied</h3>
-            <p>Use only the available Monitoring filters and try again.</p>
-            <Link href="/admin/monitoring">Reset Monitoring filters</Link>
+            <h3>필터를 적용하지 못했어요</h3>
+            <p>화면에 제공된 모니터링 필터를 선택한 뒤 다시 시도해 주세요.</p>
+            <Link href="/admin/monitoring">모니터링 필터 초기화</Link>
           </div>
         ) : data.items.length === 0 ? (
-          <AdminEmptyState>
-            No canonical bindings match these filters.
-          </AdminEmptyState>
+          <AdminEmptyState>조건에 맞는 출처 연결이 없어요.</AdminEmptyState>
         ) : (
-          <AdminDataTable caption="Canonical Monitoring decision queue">
+          <AdminDataTable caption="모니터링 점검 대기열">
             <thead>
               <tr>
-                <th scope="col">State</th>
-                <th scope="col">Target</th>
-                <th scope="col">Source</th>
-                <th scope="col">Binding</th>
-                <th scope="col">Checks</th>
-                <th scope="col">Current summary</th>
+                <th scope="col">상태</th>
+                <th scope="col">대상</th>
+                <th scope="col">출처</th>
+                <th scope="col">연결</th>
+                <th scope="col">점검</th>
+                <th scope="col">현재 요약</th>
               </tr>
             </thead>
             <tbody>
@@ -122,20 +118,18 @@ export function AdminMonitoringView({
                   <td>
                     {formatAdminCode(item.role)}
                     <span className="admin-cell-note">
-                      {item.isPrimary
-                        ? "Primary binding"
-                        : "Supporting binding"}
+                      {item.isPrimary ? "대표 출처 연결" : "보조 출처 연결"}
                     </span>
                   </td>
                   <td>
-                    Last: {formatAdminDate(item.lastCheckedAt)}
+                    최근: {formatAdminDate(item.lastCheckedAt)}
                     <span className="admin-cell-note">
-                      Next: {formatAdminDate(item.nextDueAt)}
+                      다음: {formatAdminDate(item.nextDueAt)}
                     </span>
                   </td>
                   <td>
                     {item.currentTruthSummary.kind === "OPPORTUNITY"
-                      ? (item.currentTruthSummary.title ?? "No current title")
+                      ? (item.currentTruthSummary.title ?? "현재 제목 없음")
                       : formatAdminCode(
                           item.currentTruthSummary.operationalState,
                         )}
@@ -155,9 +149,9 @@ export function AdminMonitoringView({
           </AdminDataTable>
         )}
         {!invalidFilter && data.hasNext && data.nextCursor !== null ? (
-          <nav className="admin-pagination" aria-label="Monitoring queue pages">
+          <nav className="admin-pagination" aria-label="모니터링 대기열 페이지">
             <Link href={nextMonitoringPageHref(query, data.nextCursor)}>
-              Next queue page
+              다음 대기열 페이지
             </Link>
           </nav>
         ) : null}

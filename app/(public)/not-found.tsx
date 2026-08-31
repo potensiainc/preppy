@@ -7,13 +7,10 @@ export default function PublicNotFound() {
     <PageContainer>
       <section className="status-surface">
         <p className="eyebrow">404</p>
-        <h1>찾으시는 정보를 확인할 수 없습니다.</h1>
-        <p>
-          공개된 정보를 다시 확인하고 있습니다. 다른 기관과 입학정보를
-          살펴보세요.
-        </p>
+        <h1>페이지를 찾을 수 없어요</h1>
+        <p>주소를 다시 확인하거나 다른 기관의 입학정보를 살펴봐 주세요.</p>
         <Link className="text-link" href="/institutions">
-          기관 찾기로 이동
+          기관 찾기
         </Link>
       </section>
     </PageContainer>

@@ -84,6 +84,23 @@ const institution = {
 } satisfies InstitutionDetailDTO;
 
 describe("WP-13 public metadata", () => {
+  it("preserves year, conditions and canonical identity in parent-facing admission descriptions", () => {
+    const metadata = buildOpportunityMetadata(
+      {
+        ...opportunity,
+        summary:
+          "2027학년도 지원자는 원본만 제출해야 한다. 2025학년도 수업료는 2,312,100원이다.",
+      },
+      appBaseUrl,
+    );
+    expect(metadata.description).toBe(
+      "2027학년도 지원자는 원본만 제출해야 해요. 2025학년도 수업료는 2,312,100원이에요.",
+    );
+    expect(metadata.alternates?.canonical).toBe(
+      "https://preppy.example/opportunities/open-admission",
+    );
+    expect(opportunity.slug).toBe("open-admission");
+  });
   it("builds exact canonical home/list metadata and noindexes filtered Institution variants", () => {
     expect(buildHomeMetadata(appBaseUrl).alternates?.canonical).toBe(
       "https://preppy.example/",

@@ -1,6 +1,18 @@
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
+import { formatAdminDate } from "@/app/admin/_components/read-ui";
+
+describe("Admin date meaning", () => {
+  it("identifies the UTC timezone without turning missing timestamps into observations", () => {
+    // Mutation caught: a UTC instant appears as an unlabeled local time or a missing timestamp becomes a made-up date.
+    expect(formatAdminDate("2026-09-01T09:00:00+09:00")).toContain("UTC");
+    expect(formatAdminDate("2026-09-01T09:00:00+09:00")).toBe(
+      formatAdminDate("2026-09-01T00:00:00Z"),
+    );
+    expect(formatAdminDate(null)).toBe("확인할 수 없음");
+  });
+});
 
 async function importReadInput() {
   try {
@@ -358,9 +370,9 @@ describe("WP-11 Admin read-only pages", () => {
       ),
     ];
 
-    expect(markups[0]).toContain("Operations overview");
+    expect(markups[0]).toContain("운영 현황");
     expect(markups[0]).not.toContain("Read projections pending");
-    expect(markups[0]).toMatch(/Due[\s\S]*3/);
+    expect(markups[0]).toMatch(/점검 대상[\s\S]*3/);
     for (const markup of markups.slice(1)) {
       expect(markup).toContain("<table");
       expect(markup).toContain("<caption");

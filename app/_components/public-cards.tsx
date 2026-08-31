@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { publicAdmissionText } from "@/src/modules/public/admission-copy";
+import { publicProse } from "@/src/modules/public/ux-writing";
 
 import { AnalyticsLink } from "@/app/_components/analytics-link";
 import type { CapturedAnalyticsEvent } from "@/src/analytics/events";
@@ -33,7 +34,7 @@ export function StateBadge({
 
 export function VerifiedAt({
   verifiedAt,
-  label = "최종 확인",
+  label = "내용 확인",
 }: {
   verifiedAt: string | null | undefined;
   label?: string;
@@ -153,7 +154,7 @@ export function ArticleCard({ article }: { article: ArticleCardDTO }) {
       <h3>
         <Link href={`/articles/${article.slug}`}>{article.title}</Link>
       </h3>
-      {article.excerpt ? <p>{article.excerpt}</p> : null}
+      {article.excerpt ? <p>{publicProse(article.excerpt)}</p> : null}
       {article.publishedAt ? (
         <p className="article-card__date">
           <time dateTime={article.publishedAt}>

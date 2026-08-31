@@ -43,34 +43,37 @@ describe("parent-facing admission copy", () => {
       "donggwang",
       [
         "원서접수 기간 안에",
-        "지정 이메일(nammi91@sen.go.kr)로 제출한다.",
+        "지정 이메일(nammi91@sen.go.kr)로 제출해요.",
         "입금자명은 수험번호와 학생 이름",
         "유효기간은 당해 학년도인 2027년 2월 말까지로 안내되어 있으나",
-        "2027년도 모집 학년도와의 관계는 학교에 확인해야 한다",
+        "2027년도 모집 학년도와의 관계는 학교에 확인해야 해요",
       ],
     ],
     [
       "seoul-dongsan",
       [
         "가족관계증명서를 학생 본인 기준·일반으로 발급",
-        "구글 로그인이 필요할 수 있다.",
-        "정확한 마감은 학교 확인이 필요하다.",
+        "구글 로그인이 필요할 수 있어요.",
+        "정확한 마감은 학교 확인이 필요해요.",
       ],
     ],
     [
       "kumsung",
-      ["동의 거부 권리가 있으나", "해당 교육서비스 이용에 제한이 생길 수 있다"],
+      [
+        "동의 거부 권리가 있으나",
+        "해당 교육서비스 이용에 제한이 생길 수 있어요",
+      ],
     ],
     ["gyeseong1882", ["수업료는 2025학년도 1분기 기준", "다음 학년도 변동"]],
     [
       "uchon",
       [
-        "2026학년도에는 변동될 수 있다",
+        "2026학년도에는 변동될 수 있어요",
         "2018년생 취학유예자",
-        "2024학년도 유예 조건은 출생연도와 학년도 관계를 학교에 확인해야 한다",
+        "2024학년도 유예 조건은 출생연도와 학년도 관계를 학교에 확인해야 해요",
       ],
     ],
-    ["suwoncca", ["입학금과 수업료는 자율화되어 있다."]],
+    ["suwoncca", ["입학금과 수업료는 자율화되어 있어요."]],
   ])(
     "preserves reviewed conditions through the complete stored %s guide",
     (slug, facts) => {
@@ -129,7 +132,7 @@ describe("parent-facing admission copy", () => {
     );
     expect(text).toContain("10월 9~21일");
     expect(text).toContain("수요일은 16:00 마감");
-    expect(text).toContain("불참하면 입학이 취소된다");
+    expect(text).toContain("불참하면 입학이 취소돼요");
     expect(text).toContain("일정 변경 시 홈페이지");
     const audience = load(
       renderToStaticMarkup(
@@ -158,9 +161,9 @@ describe("parent-facing admission copy", () => {
       "[지원 자격]\n특수교육대상자는 별도 전형이며 전형별 상세 자격은 공식 PDF 참조.\n\n[유의사항]\nPDF 4,5쪽에 따르면 중복등록은 모두 취소된다.\n\n수업료는 원문상 2025학년도 기준 2,520,000원이며 2026학년도 변동 가능하다.",
     );
     expect(text).toContain("특수교육대상자는 별도 전형");
-    expect(text).toContain("중복등록은 모두 취소된다");
+    expect(text).toContain("중복등록은 모두 취소돼요");
     expect(text).toContain("2025학년도 기준 2,520,000원");
-    expect(text).toContain("2026학년도 변동 가능하다");
+    expect(text).toContain("2026학년도 변동 가능해요");
     expect(text).not.toMatch(/PDF|쪽|원문|참조/u);
   });
 
@@ -169,10 +172,10 @@ describe("parent-facing admission copy", () => {
       renderGuide(
         "[유의사항]\n서류는 원본만 가능합니다.\nPDF 4쪽에 따르면 재학생은 지원할 수 없다.",
       ),
-    ).toContain("서류는 원본만 가능합니다.");
+    ).toContain("서류는 원본만 가능해요.");
     expect(
       renderGuide("[지원 자격]\nPDF 4쪽에 따르면 재학생은 지원할 수 없다."),
-    ).toContain("재학생은 지원할 수 없다.");
+    ).toContain("재학생은 지원할 수 없어요.");
   });
 
   it("keeps official links and distinct timestamps but hides file types and document review explanations", () => {
@@ -192,8 +195,16 @@ describe("parent-facing admission copy", () => {
       ),
     );
     expect($("body").text()).not.toMatch(/PDF|원문|원본/u);
-    expect($("body").text()).toContain("Last Collected");
-    expect($("body").text()).toContain("Last Verified");
+    expect(
+      $("dt")
+        .map((_, el) => $(el).text())
+        .get(),
+    ).toEqual(["자료 수집", "내용 확인"]);
+    expect(
+      $("time")
+        .map((_, el) => $(el).attr("datetime"))
+        .get(),
+    ).toEqual(["2026-08-30T00:00:00Z", "2026-08-31T00:00:00Z"]);
     expect($("a").attr("href")).toBe("https://school.test/guide.pdf");
   });
 });

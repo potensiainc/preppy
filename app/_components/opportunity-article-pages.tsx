@@ -1,4 +1,5 @@
 import type { PublicArticleDTO } from "@/src/modules/public/dto";
+import { publicProse } from "@/src/modules/public/ux-writing";
 
 import { TrackedFollowCta as FollowCta } from "@/app/_components/tracked-follow-cta";
 import { ArticleProse } from "@/app/_components/article-prose";
@@ -60,7 +61,9 @@ export function ArticleDetailView({ article }: { article: PublicArticleDTO }) {
             ) : null}
           </p>
           {article.excerpt ? (
-            <p className="article-detail__excerpt">{article.excerpt}</p>
+            <p className="article-detail__excerpt">
+              {publicProse(article.excerpt)}
+            </p>
           ) : null}
         </header>
 
@@ -109,14 +112,14 @@ export function ArticleDetailView({ article }: { article: PublicArticleDTO }) {
         {followTarget?.followable ? (
           <section
             className="article-detail__section article-follow"
-            aria-label="관심기관 알림"
+            aria-label="관심기관 등록"
           >
             <FollowCta
               articleId={article.id}
               context="ARTICLE"
               followable={followTarget.followable}
               institutionId={followTarget.id}
-              label={`${followTarget.name} 업데이트 받기`}
+              label={`${followTarget.name} 관심기관으로 등록`}
               returnPath={`/articles/${article.slug}`}
             />
           </section>

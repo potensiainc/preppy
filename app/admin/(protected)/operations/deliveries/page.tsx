@@ -28,27 +28,27 @@ export function AdminDeliveriesView({
   return (
     <div className="admin-page admin-operations-page">
       <AdminPageHeader
-        kicker="Operations / Deliveries"
-        title="Delivery aggregate ledger"
-        description="Inspection only. Recipient resolution and provider-specific detail remain outside this read projection."
+        kicker="운영 / 발송"
+        title="발송 집계 기록"
+        description="조회 전용 화면이에요. 수신자 식별 정보와 발송 업체별 세부 정보는 이 화면에 포함하지 않아요."
       />
       <section aria-labelledby="delivery-ledger-heading">
         <div className="admin-section-heading">
-          <h2 id="delivery-ledger-heading">Deliveries</h2>
-          <AdminStateChip>{data.pagination.total} records</AdminStateChip>
+          <h2 id="delivery-ledger-heading">발송</h2>
+          <AdminStateChip>{data.pagination.total} 건</AdminStateChip>
         </div>
         {data.items.length === 0 ? (
-          <AdminEmptyState>No Deliveries match these filters.</AdminEmptyState>
+          <AdminEmptyState>조건에 맞는 발송 기록이 없어요.</AdminEmptyState>
         ) : (
-          <AdminDataTable caption="Read-only Delivery aggregate registry">
+          <AdminDataTable caption="조회 전용 발송 집계 목록">
             <thead>
               <tr>
-                <th scope="col">Delivery</th>
-                <th scope="col">Notification</th>
-                <th scope="col">Channel / status</th>
-                <th scope="col">Attempts</th>
-                <th scope="col">Latest safe failure</th>
-                <th scope="col">Timing</th>
+                <th scope="col">발송</th>
+                <th scope="col">알림</th>
+                <th scope="col">채널 / 상태</th>
+                <th scope="col">시도 횟수</th>
+                <th scope="col">최근 오류 코드</th>
+                <th scope="col">시각</th>
               </tr>
             </thead>
             <tbody>
@@ -67,15 +67,15 @@ export function AdminDeliveriesView({
                   <td>{item.attemptCount}</td>
                   <td>
                     {item.latestAttempt === null
-                      ? "None"
+                      ? "없음"
                       : `${formatAdminCode(item.latestAttempt.errorCategory)} · ${
-                          item.latestAttempt.errorCode ?? "No code"
+                          item.latestAttempt.errorCode ?? "코드 없음"
                         }`}
                   </td>
                   <td>
-                    Created {formatAdminDate(item.createdAt)}
+                    생성 {formatAdminDate(item.createdAt)}
                     <span className="admin-cell-note">
-                      Terminal {formatAdminDate(item.terminalAt)}
+                      처리 종료 {formatAdminDate(item.terminalAt)}
                     </span>
                   </td>
                 </tr>

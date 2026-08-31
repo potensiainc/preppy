@@ -13,7 +13,7 @@ export type SubmitSourceAction = (
 function requiredTrimmed(form: FormData, name: string): string {
   const value = form.get(name);
   if (typeof value !== "string" || value.trim() === "") {
-    throw new Error("필수 Source 값을 입력해주세요.");
+    throw new Error("필수 출처 정보를 입력해 주세요.");
   }
   return value.trim();
 }
@@ -22,7 +22,7 @@ function canonicalSourceUrl(form: FormData, name: string): string {
   const value = requiredTrimmed(form, name);
   if (!isCanonicalAdminActionUrl(value) || new URL(value).hash !== "") {
     throw new Error(
-      "Source URL은 fragment 없는 정확한 HTTP(S) 주소여야 합니다.",
+      "출처 URL은 fragment(# 뒤의 부분) 없는 정확한 HTTP(S) 주소로 입력해 주세요.",
     );
   }
   return value;
@@ -30,7 +30,9 @@ function canonicalSourceUrl(form: FormData, name: string): string {
 
 export function buildUrlCorrectionBody(form: FormData) {
   if (form.get("provenanceContinuityConfirmed") !== "true") {
-    throw new Error("동일 provenance 연속성을 명시적으로 확인해주세요.");
+    throw new Error(
+      "같은 공식 출처가 이어지는지 확인하고 확인란을 선택해 주세요.",
+    );
   }
   return {
     moveMode: "URL_CORRECTION" as const,
@@ -44,7 +46,7 @@ export function buildSourceReplacementBody(
   form: FormData,
 ) {
   if (form.get("replacementConfirmed") !== "true") {
-    throw new Error("새 Source identity 전환을 명시적으로 확인해주세요.");
+    throw new Error("다른 출처로 교체하는지 확인하고 확인란을 선택해 주세요.");
   }
   return {
     moveMode: "SOURCE_REPLACEMENT" as const,
@@ -115,11 +117,11 @@ export function SourceMoveActions({
       aria-labelledby="source-move-heading"
     >
       <div className="admin-section-heading">
-        <h2 id="source-move-heading">Source location</h2>
+        <h2 id="source-move-heading">출처 주소 관리</h2>
       </div>
       <p className="admin-callout">
-        Choose a mode explicitly. PREPPY never infers whether Source provenance
-        continues.
+        주소 수정과 출처 교체 중 직접 선택해 주세요. 같은 공식 출처가
+        이어지는지는 PREPPY가 추정하지 않아요.
       </p>
       <div className="admin-source-move__modes">
         <form
@@ -127,13 +129,13 @@ export function SourceMoveActions({
           onSubmit={submitUrlCorrection}
         >
           <p className="admin-action-code">URL_CORRECTION</p>
-          <h3>URL correction</h3>
+          <h3>URL 수정</h3>
           <p id="url-correction-description">
-            Keep <strong>{sourceName}</strong> as the same Source identity and
-            correct only its canonical URL.
+            <strong>{sourceName}</strong>의 대표 URL만 수정해요. 동일한 출처
+            기록은 유지해요.
           </p>
           <label htmlFor="source-correction-url">
-            New official URL
+            새 공식 URL
             <input
               id="source-correction-url"
               name="newUrl"
@@ -154,11 +156,10 @@ export function SourceMoveActions({
               value="true"
               required
             />
-            I confirmed this is the same official provenance and Source
-            identity.
+            같은 공식 출처이며 동일한 출처 기록을 유지하는 변경임을 확인했어요.
           </label>
           <button type="submit" disabled={correctionPending}>
-            {correctionPending ? "Correcting…" : "Apply URL correction"}
+            {correctionPending ? "URL 수정 중…" : "URL 수정 반영"}
           </button>
         </form>
 
@@ -167,13 +168,13 @@ export function SourceMoveActions({
           onSubmit={submitSourceReplacement}
         >
           <p className="admin-action-code">SOURCE_REPLACEMENT</p>
-          <h3>Source replacement</h3>
+          <h3>출처 교체</h3>
           <p id="source-replacement-warning" className="admin-warning">
-            Historical Evidence remains attached to the old Source. The old
-            identity is not rewritten.
+            기존 근거 자료는 이전 출처에 그대로 남아요. 이전 출처 기록을
+            덮어쓰지 않아요.
           </p>
           <fieldset aria-describedby="source-replacement-warning">
-            <legend>Replacement identity</legend>
+            <legend>교체할 출처</legend>
             <label>
               <input
                 name="replacementKind"
@@ -183,7 +184,7 @@ export function SourceMoveActions({
                 onChange={() => setReplacementKind("CREATE")}
                 required
               />
-              CREATE a new Source identity
+              새 출처 생성(CREATE)
             </label>
             <label>
               <input
@@ -194,13 +195,13 @@ export function SourceMoveActions({
                 onChange={() => setReplacementKind("REUSE")}
                 required
               />
-              REUSE an existing Source identity
+              기존 출처 사용(REUSE)
             </label>
           </fieldset>
           {replacementKind === "CREATE" ? (
             <>
               <label htmlFor="replacement-source-name">
-                New Source name
+                새 출처 이름
                 <input
                   id="replacement-source-name"
                   name="sourceName"
@@ -210,7 +211,7 @@ export function SourceMoveActions({
                 />
               </label>
               <label htmlFor="replacement-canonical-url">
-                New canonical URL
+                새 대표 URL
                 <input
                   id="replacement-canonical-url"
                   name="canonicalUrl"
@@ -221,7 +222,7 @@ export function SourceMoveActions({
             </>
           ) : (
             <label htmlFor="replacement-source-id">
-              Existing Source ID
+              기존 출처 ID
               <input
                 id="replacement-source-id"
                 name="replacementSourceId"
@@ -240,10 +241,10 @@ export function SourceMoveActions({
               value="true"
               required
             />
-            I understand this creates or reuses a different Source identity.
+            다른 출처를 새로 만들거나 기존 출처로 교체하는 작업임을 확인했어요.
           </label>
           <button type="submit" disabled={replacementPending}>
-            {replacementPending ? "Replacing…" : "Replace Source identity"}
+            {replacementPending ? "출처 교체 중…" : "출처 교체"}
           </button>
         </form>
       </div>

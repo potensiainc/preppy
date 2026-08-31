@@ -7,11 +7,11 @@ export default function GlobalError({
   reset: () => void;
 }>) {
   return (
-    <section lang="en" role="alert" aria-labelledby="root-error-heading">
-      <h1 id="root-error-heading">Unable to display this page</h1>
-      <p>Try again, or return to the previous page.</p>
+    <section lang="ko" role="alert" aria-labelledby="root-error-heading">
+      <h1 id="root-error-heading">페이지 불러오기 오류</h1>
+      <p>페이지를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.</p>
       <button type="button" onClick={reset}>
-        Try again
+        페이지 다시 불러오기
       </button>
     </section>
   );

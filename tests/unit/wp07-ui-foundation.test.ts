@@ -87,7 +87,7 @@ describe("WP-07 public UI foundation", () => {
     expect(categoryLabel("INTERNATIONAL_SCHOOL")).toBe("국제학교");
     expect(opportunityKindLabel("RECRUITMENT")).toBe("모집");
     expect(opportunityStateLabel("OPEN")).toBe("모집 중");
-    expect(factLabel("TARGET_AGE_GRADE")).toBe("대상 연령/학년");
+    expect(factLabel("TARGET_AGE_GRADE")).toBe("대상 연령과 학년");
     expect(articleTypeLabel("GUIDE")).toBe("가이드");
     expect(formatPublicDate("2026-08-23T03:30:00.000Z")).toBe(
       "2026년 8월 23일",
@@ -189,9 +189,7 @@ describe("WP-07 public UI foundation", () => {
     );
 
     expect(markup).toContain("관심기관 상태 확인 중");
-    expect(markup).toContain(
-      "현재 관심기관 상태를 안전하게 확인하고 있습니다.",
-    );
+    expect(markup).toContain("관심기관 등록 여부를 확인하고 있어요.");
     expect(markup).toContain("550e8400-e29b-41d4-a716-446655440000");
     expect(markup).not.toMatch(/팔로우 완료|등록되었습니다/);
   });
@@ -208,7 +206,7 @@ describe("WP-07 public UI foundation", () => {
     expect(source).toContain('role="alert"');
   });
 
-  it("allows the Follow Client Component to import React only", async () => {
+  it("limits Follow client imports to React and public navigation", async () => {
     // Mutation caught: adding any server, data, REST, or application dependency to the interactive client island.
     const source = await readFile(
       new URL("../../app/_components/follow-cta.tsx", import.meta.url),
@@ -220,7 +218,11 @@ describe("WP-07 public UI foundation", () => {
     );
 
     expect(source).toContain('"use client"');
-    expect(imports).toEqual(["react"]);
+    expect(
+      imports.filter(
+        (specifier) => specifier !== "react" && specifier !== "next/link",
+      ),
+    ).toEqual([]);
   });
 
   it("keeps the segment error surface inside the document supplied by RootLayout", () => {

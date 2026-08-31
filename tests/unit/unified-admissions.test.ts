@@ -134,14 +134,12 @@ describe("unified school-cycle admission experience", () => {
       ],
     });
     expect($("#admission-sessions").text()).not.toContain("2020년 출생");
-    expect($("#admission-sessions").text()).toContain("보호자만 참석합니다.");
-    expect($("#admission-sessions").text()).toContain(
-      "학생 동반이 필요합니다.",
-    );
+    expect($("#admission-sessions").text()).toContain("보호자만 참석해요.");
+    expect($("#admission-sessions").text()).toContain("학생 동반이 필요해요.");
     expect(
       $("body")
         .text()
-        .match(/일정은 변경될 수 있습니다/g),
+        .match(/일정은 변경될 수 있어요/g),
     ).toHaveLength(1);
     expect($("a[href='https://school.example/apply']")).toHaveLength(1);
   });
@@ -180,14 +178,14 @@ describe("unified school-cycle admission experience", () => {
     expect(
       $("body")
         .text()
-        .match(/공통 제출 서류입니다/g),
+        .match(/공통 제출 서류예요/g),
     ).toHaveLength(1);
     expect($("body").text()).toContain("2025학년도 기준 2,312,100원");
     expect($("#admission-sessions").text()).toContain(
-      "서류는 원본만 가능합니다.",
+      "서류는 원본만 가능해요.",
     );
     expect($("#admission-sessions details").text()).not.toContain(
-      "서류는 원본만 가능합니다.",
+      "서류는 원본만 가능해요.",
     );
   });
 
@@ -268,8 +266,8 @@ describe("unified school-cycle admission experience", () => {
     const $ = render({ ...main, relatedAdmissions: events });
     const list = $("#admission-sessions");
     expect(list.find("article")).toHaveLength(2);
-    expect(list.text()).toContain("학생 동반이 필요합니다.");
-    expect(list.text()).toContain("보호자만 참석합니다.");
+    expect(list.text()).toContain("학생 동반이 필요해요.");
+    expect(list.text()).toContain("보호자만 참석해요.");
     expect(list.text()).toContain("오전 10:00");
     expect(list.text()).toContain("오전 9:30");
     expect(list.find("a[href^='/opportunities/']")).toHaveLength(0);
@@ -285,9 +283,9 @@ describe("unified school-cycle admission experience", () => {
     expect(
       $("body")
         .text()
-        .match(/공통 제출 서류입니다/g),
+        .match(/공통 제출 서류예요/g),
     ).toHaveLength(1);
-    expect($("section[aria-label='관심기관 알림']")).toHaveLength(0);
+    expect($("section[aria-label='관심기관 등록']")).toHaveLength(0);
   });
 
   it("groups only exact school-cycle children on institution details and retains ungrouped records", () => {
@@ -311,7 +309,7 @@ describe("unified school-cycle admission experience", () => {
     expect($("section[aria-label='입학정보'] > div > article")).toHaveLength(2);
     expect($("[data-admission-session]")).toHaveLength(1);
     expect($("body").text()).toContain("2026학년도 설명회");
-    expect($("body").text()).toContain("학생 동반이 필요합니다.");
+    expect($("body").text()).toContain("학생 동반이 필요해요.");
   });
 
   it("omits the unavailable Follow wrapper entirely, not just its message", () => {

@@ -69,19 +69,21 @@ export function UnfollowPresentation({
         className="unfollow-confirmation"
         role="group"
         aria-live="polite"
-        aria-label={`${institutionName} 업데이트 해제 확인`}
+        aria-label={`${institutionName} 관심기관 해제 확인`}
       >
-        <p>정말 해제할까요? 기존 관심 기록은 안전하게 보존됩니다.</p>
+        <p>
+          이 기관을 관심기관에서 해제할까요? 해제하면 내 프레피 목록에서 빠져요.
+        </p>
         <div className="unfollow-confirmation__actions">
           <button ref={confirmRef} type="button" onClick={onConfirm}>
-            해제 확인
+            관심기관 해제
           </button>
           <button
             type="button"
             className="unfollow-button--quiet"
             onClick={onCancel}
           >
-            취소
+            관심기관 유지
           </button>
         </div>
       </div>
@@ -97,9 +99,11 @@ export function UnfollowPresentation({
   if (state === "error") {
     return (
       <div className="unfollow-confirmation">
-        <p role="alert">해제하지 못했습니다. 관심기관은 그대로 유지됩니다.</p>
+        <p role="alert">
+          해제 결과를 확인하지 못했어요. 잠시 후 다시 시도해 주세요.
+        </p>
         <button type="button" onClick={onRetry}>
-          다시 시도
+          해제 다시 시도
         </button>
       </div>
     );
@@ -111,7 +115,7 @@ export function UnfollowPresentation({
       type="button"
       onClick={onRequest}
     >
-      업데이트 받기 해제
+      관심기관 해제
     </button>
   );
 }

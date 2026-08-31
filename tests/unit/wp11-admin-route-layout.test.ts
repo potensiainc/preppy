@@ -142,8 +142,8 @@ describe("WP-11 public/Admin route and layout separation", () => {
       createElement(RootNotFound),
     );
 
-    expect(rootErrorMarkup).toContain("Unable to display this page");
-    expect(rootNotFoundMarkup).toContain("Page not found");
+    expect(rootErrorMarkup).toContain("페이지를 불러오지 못했어요");
+    expect(rootNotFoundMarkup).toContain("페이지를 찾을 수 없어요");
     for (const rootMarkup of [rootErrorMarkup, rootNotFoundMarkup]) {
       expect(rootMarkup).not.toMatch(
         /class=|PREPPY|status-surface|page-container|eyebrow|institutions|기관/,
@@ -193,10 +193,10 @@ describe("WP-11 public/Admin route and layout separation", () => {
       expect(publicMarkup).toContain('class="site-footer"');
     }
     expect(publicErrorMarkup).toContain(
-      "정보를 불러오는 중 잠시 문제가 생겼습니다.",
+      "정보를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.",
     );
     expect(publicNotFoundMarkup).toContain('href="/institutions"');
-    expect(publicNotFoundMarkup).toContain("기관 찾기로 이동");
+    expect(publicNotFoundMarkup).toContain("기관 찾기");
 
     const adminErrorMarkup = renderToStaticMarkup(
       createElement(adminError.default, {
@@ -211,7 +211,7 @@ describe("WP-11 public/Admin route and layout separation", () => {
       expect(adminMarkup).toContain('class="preppy-admin-fallback"');
       expect(adminMarkup).not.toMatch(/site-header|site-footer|\/institutions/);
     }
-    expect(adminErrorMarkup).toContain("Admin view unavailable");
+    expect(adminErrorMarkup).toContain("운영 화면을 불러오지 못했어요");
     expect(adminNotFoundMarkup).toContain('href="/admin"');
 
     const [adminErrorSource, adminNotFoundSource, adminCss] = await Promise.all(
@@ -227,8 +227,8 @@ describe("WP-11 public/Admin route and layout separation", () => {
     expect(adminCss).toMatch(/\.preppy-admin-fallback\s*\{/);
   });
 
-  it("declares the public document Korean and the English Admin subtree locally", async () => {
-    // Mutation caught: Admin English copy inherits the root Korean pronunciation context.
+  it("declares both public and Admin Korean for correct screen-reader pronunciation", async () => {
+    // Mutation caught: Korean Admin copy is announced with an English pronunciation context.
     const loaded = await importOptional<{
       default: ComponentType<{ children?: ReactNode }>;
     }>("@/app/admin/layout");
@@ -253,16 +253,12 @@ describe("WP-11 public/Admin route and layout separation", () => {
       createElement(
         RootLayout,
         null,
-        createElement(
-          loaded.default,
-          null,
-          createElement("p", null, "Operations"),
-        ),
+        createElement(loaded.default, null, createElement("p", null, "운영")),
       ),
     );
     expect(adminMarkup).toContain('<html lang="ko"');
     expect(adminMarkup).toMatch(
-      /<div[^>]*class="preppy-admin-root"[^>]*lang="en"/,
+      /<div[^>]*class="preppy-admin-root"[^>]*lang="ko"/,
     );
   });
 
@@ -326,18 +322,18 @@ describe("WP-11 public/Admin route and layout separation", () => {
     expect(markup).toContain('href="#admin-main"');
     expect(markup).toContain('id="admin-main"');
     expect(markup).toContain("<nav");
-    expect(markup).toContain('aria-label="Admin sections"');
-    expect(markup).toContain('aria-label="Compact Admin sections"');
+    expect(markup).toContain('aria-label="관리자 메뉴"');
+    expect(markup).toContain('aria-label="모바일 관리자 메뉴"');
     for (const [href, label] of [
-      ["/admin", "Dashboard"],
-      ["/admin/monitoring", "Monitoring"],
-      ["/admin/institutions", "Institutions"],
-      ["/admin/opportunities", "Opportunities"],
-      ["/admin/sources", "Sources"],
-      ["/admin/articles", "Articles"],
-      ["/admin/notifications", "Notifications"],
-      ["/admin/users", "Users"],
-      ["/admin/operations", "Operations"],
+      ["/admin", "대시보드"],
+      ["/admin/monitoring", "모니터링"],
+      ["/admin/institutions", "기관"],
+      ["/admin/opportunities", "입학정보"],
+      ["/admin/sources", "출처"],
+      ["/admin/articles", "아티클"],
+      ["/admin/notifications", "알림"],
+      ["/admin/users", "회원"],
+      ["/admin/operations", "운영"],
     ]) {
       expect(markup).toContain(`href="${href}"`);
       expect(markup).toContain(label);
@@ -428,10 +424,10 @@ describe("WP-11 public/Admin route and layout separation", () => {
         },
       }),
     );
-    expect(markup).toContain("Operations overview");
+    expect(markup).toContain("운영 현황");
     expect(markup).not.toContain("Read projections pending");
-    expect(markup).toMatch(/Due[\s\S]*3/);
-    expect(markup).toMatch(/Overdue[\s\S]*2/);
+    expect(markup).toMatch(/점검 대상[\s\S]*3/);
+    expect(markup).toMatch(/점검 기한 초과[\s\S]*2/);
     const visibleText = markup.replace(/<[^>]+>/g, " ");
     expect(visibleText).not.toMatch(/\b(?:12|24|99|100)%\b/);
   });

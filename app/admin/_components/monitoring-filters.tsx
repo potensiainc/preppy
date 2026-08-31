@@ -5,22 +5,22 @@ import type { MonitoringAdminQueueInput } from "@/src/modules/admin/read-model/m
 const FILTERS = [
   {
     name: "dueState",
-    label: "Due state",
+    label: "점검 기한 상태",
     values: ["OVERDUE", "DUE", "UPCOMING", "MANUAL"],
   },
   {
     name: "priority",
-    label: "Priority",
+    label: "우선순위",
     values: ["P0_ACTIVE", "P1_UPCOMING", "P2_WATCH", "P3_PASSIVE"],
   },
   {
     name: "targetType",
-    label: "Target type",
+    label: "대상 유형",
     values: ["INSTITUTION", "OPPORTUNITY"],
   },
   {
     name: "role",
-    label: "Binding role",
+    label: "연결 역할",
     values: [
       "OFFICIAL_MAIN",
       "ADMISSIONS",
@@ -35,7 +35,7 @@ const FILTERS = [
   },
   {
     name: "sourceLifecycle",
-    label: "Source lifecycle",
+    label: "출처 상태 관리",
     values: ["DISCOVERED", "ACTIVE", "PAUSED", "RETIRED"],
   },
 ] as const;
@@ -78,16 +78,18 @@ export function MonitoringFilters({
                   </option>
                 ))}
               </select>
-              <small id={descriptionId}>Select zero or more values.</small>
+              <small id={descriptionId}>
+                필요한 항목을 선택해 주세요. 선택하지 않으면 전체를 조회해요.
+              </small>
             </label>
           );
         })}
       </div>
       <div className="admin-filter-actions">
         <button className="admin-button" type="submit">
-          Apply filters
+          필터 적용
         </button>
-        <Link href="/admin/monitoring">Clear filters</Link>
+        <Link href="/admin/monitoring">필터 초기화</Link>
       </div>
     </form>
   );

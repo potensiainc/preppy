@@ -17,7 +17,7 @@ const article: AdminArticleDetailDTO = {
   publishedAt: null,
   institutionRelationCount: 0,
   opportunityRelationCount: 0,
-  excerpt: "Summary",
+  excerpt: "요약",
   sanitizedContentHtml: "<p>Sanitized body</p>",
   seoTitle: null,
   seoDescription: null,
@@ -58,6 +58,6 @@ describe("WP-13 Admin Article pages", () => {
       expect(markup).toContain("Sanitized body");
       expect(markup).not.toMatch(/onclick|javascript:|<script/i);
     }
-    expect(preview).toContain("Preview");
+    expect(preview).toContain("미리보기");
   });
 });
