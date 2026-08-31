@@ -170,6 +170,53 @@ it("shows a full-width reviewed card with dates before guidance and removes only
   ).toHaveLength(1);
 });
 
+it("keeps Soongeui's grouped caution heading and early-admission caveat visible while safe guide sections can collapse", async () => {
+  const bundle = JSON.parse(
+    await readFile(
+      new URL(
+        "../../data/corrections/PREPPY_PRIVATE_ELEMENTARY_FULL_GUIDES_20260831.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as {
+    schools: Array<{
+      target: { slug: string };
+      admissions: Array<{ key: string; summary: string }>;
+    }>;
+  };
+  const summary = bundle.schools
+    .find((school) => school.target.slug === "soongeui")!
+    .admissions.find((admission) => admission.key === "main")!.summary;
+  const $ = load(
+    renderToStaticMarkup(
+      createElement(InstitutionDetailView, {
+        data: {
+          ...detail,
+          reviewedAdmissions: [
+            { ...detail.reviewedAdmissions[0]!, summary },
+            {
+              ...detail.reviewedAdmissions[0]!,
+              id: "safe-guide",
+              slug: "safe-guide",
+              summary: "[지원 조건]\n지원 연령을 참고하세요.",
+            },
+          ],
+        },
+      }),
+    ),
+  );
+  const reviewed = $("[aria-label='입학정보']");
+  const closed = reviewed.find("details:not([open])");
+  const caution =
+    "조기입학 희망자는 학습능력뿐 아니라 교우관계와 정서적 적응도 신중하게 고려하라고 안내한다.";
+  expect(closed.text()).not.toContain("교육비·유의사항·문의");
+  expect(closed.text()).not.toContain(caution);
+  expect(reviewed.find("h3").text()).toContain("교육비·유의사항·문의");
+  expect(reviewed.text()).toContain(caution);
+  expect(closed.text()).toContain("지원 연령을 참고하세요.");
+});
+
 it("presents recruitment and canonical main guides before event cards without mutating or losing the reviewed records", () => {
   const base = detail.reviewedAdmissions[0]!;
   const records: InstitutionDetailDTO["reviewedAdmissions"] = [

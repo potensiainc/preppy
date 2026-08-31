@@ -67,7 +67,7 @@ export function canCollapseAdmissionSection(
       section.heading,
     ) &&
     !/확인|주의|유의|경고|충돌|불일치|취소|예외|원문|출처|변경|미확인|포기/u.test(
-      section.paragraphs.join(" "),
+      [section.heading, ...section.paragraphs].join(" "),
     )
   );
 }
