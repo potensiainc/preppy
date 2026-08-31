@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
+import { load } from "cheerio";
 import { describe, expect, it } from "vitest";
 
 import type {
@@ -131,6 +132,190 @@ const detail: InstitutionDetailDTO = {
   indexability: "INDEX",
 };
 
+it("shows a full-width reviewed card with dates before guidance and removes only the same opportunity from generic groups", () => {
+  const $ = load(
+    renderToStaticMarkup(
+      createElement(InstitutionDetailView, {
+        data: {
+          ...detail,
+          reviewedAdmissions: [
+            {
+              ...detail.reviewedAdmissions[0]!,
+              summary:
+                "[지원 조건]\n조건 전체\n\n[확인 필요]\n날짜가 충돌하므로 학교 확인이 필요합니다.",
+            },
+          ],
+        },
+      }),
+    ),
+  );
+  const reviewed = $("[aria-label='입학정보']");
+  expect(reviewed.find(".institution-detail__cards")).toHaveLength(0);
+  expect(reviewed.text().indexOf("2026년 9월 1일")).toBeLessThan(
+    reviewed.text().indexOf("조건 전체"),
+  );
+  expect(reviewed.find("details").text()).toContain("조건 전체");
+  expect(reviewed.find("details:not([open])").text()).not.toContain(
+    "날짜가 충돌",
+  );
+  expect(
+    $(
+      "[aria-label='현재 모집·입학정보'] a[href='/opportunities/2027-admissions']",
+    ),
+  ).toHaveLength(0);
+  expect(
+    $(
+      "[aria-label='예정된 모집·입학정보'] a[href='/opportunities/2027-admissions']",
+    ),
+  ).toHaveLength(1);
+});
+
+it("keeps Soongeui's grouped caution heading and early-admission caveat visible while safe guide sections can collapse", async () => {
+  const bundle = JSON.parse(
+    await readFile(
+      new URL(
+        "../../data/corrections/PREPPY_PRIVATE_ELEMENTARY_FULL_GUIDES_20260831.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as {
+    schools: Array<{
+      target: { slug: string };
+      admissions: Array<{ key: string; summary: string }>;
+    }>;
+  };
+  const summary = bundle.schools
+    .find((school) => school.target.slug === "soongeui")!
+    .admissions.find((admission) => admission.key === "main")!.summary;
+  const $ = load(
+    renderToStaticMarkup(
+      createElement(InstitutionDetailView, {
+        data: {
+          ...detail,
+          reviewedAdmissions: [
+            { ...detail.reviewedAdmissions[0]!, summary },
+            {
+              ...detail.reviewedAdmissions[0]!,
+              id: "safe-guide",
+              slug: "safe-guide",
+              summary: "[지원 조건]\n지원 연령을 참고하세요.",
+            },
+          ],
+        },
+      }),
+    ),
+  );
+  const reviewed = $("[aria-label='입학정보']");
+  const closed = reviewed.find("details:not([open])");
+  const caution =
+    "조기입학 희망자는 학습능력뿐 아니라 교우관계와 정서적 적응도 신중하게 고려하라고 안내한다.";
+  expect(closed.text()).not.toContain("교육비·유의사항·문의");
+  expect(closed.text()).not.toContain(caution);
+  expect(reviewed.find("h3").text()).toContain("교육비·유의사항·문의");
+  expect(reviewed.text()).toContain(caution);
+  expect(closed.text()).toContain("지원 연령을 참고하세요.");
+});
+
+it("presents recruitment and canonical main guides before event cards without mutating or losing the reviewed records", () => {
+  const base = detail.reviewedAdmissions[0]!;
+  const records: InstitutionDetailDTO["reviewedAdmissions"] = [
+    {
+      ...base,
+      id: "session-2",
+      slug: "session-2",
+      kind: "INFORMATION_SESSION",
+      title: "오후 설명회",
+    },
+    {
+      ...base,
+      id: "main",
+      slug: "main",
+      kind: "RECRUITMENT",
+      title: "신입생 모집요강",
+    },
+    {
+      ...base,
+      id: "lottery-event",
+      slug: "lottery-event",
+      kind: "LOTTERY",
+      title: "추첨 행사",
+    },
+    {
+      ...base,
+      id: "session-1",
+      slug: "session-1",
+      kind: "INFORMATION_SESSION",
+      title: "오전 설명회",
+    },
+    {
+      ...base,
+      id: "additional",
+      slug: "additional",
+      kind: "ADDITIONAL_RECRUITMENT",
+      title: "추가 모집",
+    },
+    {
+      ...base,
+      id: "lottery-main",
+      slug: "live-admissions-12345678-1234-1234-1234-123456789abc-2026",
+      kind: "LOTTERY",
+      title: "추첨 전형 전체 요강",
+    },
+  ];
+  const admissions = records.map((admission) => ({
+    ...admission,
+    summary: `[원문 유의사항]\n${admission.title} 원문 날짜 충돌은 학교 확인이 필요합니다.`,
+    officialSources: [
+      {
+        ...base.officialSource,
+        name: `${admission.title} 공식 자료`,
+        url: `https://school.example.test/${admission.id}.pdf`,
+      },
+    ],
+  }));
+  const original = structuredClone(admissions);
+  Object.freeze(admissions);
+  const $ = load(
+    renderToStaticMarkup(
+      createElement(InstitutionDetailView, {
+        data: { ...detail, reviewedAdmissions: admissions },
+      }),
+    ),
+  );
+  const cards = $("[aria-label='입학정보'] article");
+  expect(
+    cards.map((_, card) => $(card).find("h3 a").first().text()).get(),
+  ).toEqual([
+    "신입생 모집요강",
+    "추가 모집",
+    "추첨 전형 전체 요강",
+    "오후 설명회",
+    "추첨 행사",
+    "오전 설명회",
+  ]);
+  expect(admissions).toEqual(original);
+  expect(cards).toHaveLength(6);
+  for (const admission of original) {
+    const card = cards.filter(
+      (_, element) =>
+        $(element).find(`h3 a[href='/opportunities/${admission.slug}']`)
+          .length === 1,
+    );
+    expect(card.text()).toContain(
+      `${admission.title} 원문 날짜 충돌은 학교 확인이 필요합니다.`,
+    );
+    expect(card.find("details:not([open])").text()).not.toContain(
+      "원문 날짜 충돌",
+    );
+    expect(
+      card
+        .find(`a[href='https://school.example.test/${admission.id}.pdf']`)
+        .text(),
+    ).toContain(`${admission.title} 공식 자료`);
+  }
+});
+
 it("labels a verified lottery as 추첨, never as an information session, and renders every source", () => {
   const admission = detail.reviewedAdmissions[0]!;
   const markup = renderToStaticMarkup(
@@ -160,7 +345,9 @@ it("labels a verified lottery as 추첨, never as an information session, and re
       },
     }),
   );
-  expect(markup).toContain("<dt>추첨</dt>");
+  expect(load(markup)("[aria-label='주요 일정']").text()).toContain(
+    "추첨 일정",
+  );
   expect(markup).not.toContain("설명회 / Open House");
   expect(markup).toContain(
     'href="https://admissions.example.test/original.png"',
@@ -200,8 +387,17 @@ it("does not imply missing applications or sessions when the fields are represen
     }),
   );
   expect(markup).not.toContain("확인된 일정 없음");
-  expect(markup.match(/<dt>원서접수<\/dt>/gu)).toHaveLength(1);
-  expect(markup.match(/<dt>설명회 \/ Open House<\/dt>/gu)).toHaveLength(2);
+  const $ = load(markup);
+  expect(
+    $("[aria-label='주요 일정']").filter((_, element) =>
+      $(element).text().includes("원서접수 일정"),
+    ),
+  ).toHaveLength(1);
+  expect(
+    $("[aria-label='주요 일정']").filter((_, element) =>
+      $(element).text().includes("입학설명회 일정"),
+    ),
+  ).toHaveLength(2);
 });
 
 it("shows the separate 10:00 and 14:00 session clocks and the result announcement label", () => {
@@ -225,8 +421,10 @@ it("shows the separate 10:00 and 14:00 session clocks and the result announcemen
     }),
   );
   expect(markup).toContain("10:00");
-  expect(markup).toContain("14:00");
-  expect(markup).toContain("<dt>결과 발표</dt>");
+  expect(markup).toContain("오후 2:00");
+  expect(load(markup)("[aria-label='주요 일정']").text()).toContain(
+    "결과 발표 일정",
+  );
 });
 
 it("labels a qualified admission-session card as provisional instead of a confirmed schedule", () => {

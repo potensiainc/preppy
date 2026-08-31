@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { isProvisionalAdmissionGuidance } from "@/src/modules/live-admissions/guidance";
+import { ReviewedAdmissions } from "./admissions-content";
 
 import type {
   InstitutionDetailDTO,
@@ -7,7 +7,6 @@ import type {
   InstitutionListQuery,
   OfficialSourceDTO,
   OpportunityCardDTO,
-  ReviewedAdmissionDTO,
 } from "@/src/modules/public/dto";
 
 import { TrackedFollowCta as FollowCta } from "@/app/_components/tracked-follow-cta";
@@ -28,134 +27,8 @@ import {
 import {
   categoryLabel,
   factLabel,
-  formatPublicDateTime,
   opportunityStateLabel,
 } from "@/app/_lib/presentation";
-
-function admissionKnowledgeLabel(
-  state: ReviewedAdmissionDTO["knowledgeState"],
-): string {
-  if (state === "SCHEDULE_FOUND") return "공식 일정 확인됨";
-  if (state === "GUIDANCE_FOUND") return "모집 안내 확인 · 날짜 미확인";
-  if (state === "NOT_ANNOUNCED") return "일정 미발표";
-  return "관련 일정·지원 정보 미발견";
-}
-
-function AdmissionDate({
-  label,
-  start,
-  end,
-}: {
-  label: string;
-  start: string | null;
-  end?: string | null;
-}) {
-  return (
-    <div>
-      <dt>{label}</dt>
-      <dd>
-        {start ? (
-          <>
-            <time dateTime={start}>{formatPublicDateTime(start)}</time>
-            {end ? (
-              <>
-                {" ~ "}
-                <time dateTime={end}>{formatPublicDateTime(end)}</time>
-              </>
-            ) : null}
-          </>
-        ) : (
-          "확인된 일정 없음"
-        )}
-      </dd>
-    </div>
-  );
-}
-
-function ReviewedAdmissions({
-  admissions,
-}: {
-  admissions: ReviewedAdmissionDTO[];
-}) {
-  if (admissions.length === 0) return null;
-  return (
-    <section className="institution-detail__section" aria-label="입학정보">
-      <SectionHeader
-        title="입학정보"
-        description="공식 Source evidence와 운영자 검수까지 완료된 정보입니다."
-      />
-      <div className="institution-detail__cards">
-        {admissions.map((admission) => (
-          <article className="public-card opportunity-card" key={admission.id}>
-            <div className="card-kicker">
-              <span>{admission.academicYearLabel ?? "학년도 미확인"}</span>
-              <span>
-                {isProvisionalAdmissionGuidance(
-                  `${admission.title} ${admission.summary ?? ""}`,
-                )
-                  ? "예정 안내 · 변경 가능"
-                  : admissionKnowledgeLabel(admission.knowledgeState)}
-              </span>
-            </div>
-            <h3>
-              <Link href={`/opportunities/${admission.slug}`}>
-                {admission.title}
-              </Link>
-            </h3>
-            {admission.summary
-              ?.split(/\n\s*\n/u)
-              .filter(Boolean)
-              .map((paragraph, index) => (
-                <p key={index}>{paragraph}</p>
-              ))}
-            <dl className="institution-facts">
-              {admission.kind === "RECRUITMENT" ? (
-                <AdmissionDate
-                  label="원서접수"
-                  start={admission.keyDates.applicationOpensAt}
-                  end={admission.keyDates.applicationClosesAt}
-                />
-              ) : null}
-              {admission.keyDates.eventStartsAt ||
-              admission.keyDates.eventEndsAt ? (
-                <AdmissionDate
-                  label={
-                    admission.kind === "LOTTERY"
-                      ? "추첨"
-                      : admission.kind === "RESULT_ANNOUNCEMENT"
-                        ? "결과 발표"
-                        : "설명회 / Open House"
-                  }
-                  start={admission.keyDates.eventStartsAt}
-                  end={admission.keyDates.eventEndsAt}
-                />
-              ) : null}
-              <div>
-                <dt>지원 대상 / 자격</dt>
-                <dd>
-                  {admission.targetAudience ?? "공식 Source에서 확인된 값 없음"}
-                </dd>
-              </div>
-            </dl>
-            {(admission.officialSources ?? [admission.officialSource]).map(
-              (source) => (
-                <TrustSource key={source.url} source={source} />
-              ),
-            )}
-            <VerifiedAt
-              verifiedAt={admission.lastCollectedAt}
-              label="Last Collected"
-            />
-            <VerifiedAt
-              verifiedAt={admission.lastVerifiedAt}
-              label="Last Verified"
-            />
-          </article>
-        ))}
-      </div>
-    </section>
-  );
-}
 
 const categories = [
   { value: "ENGLISH_KINDERGARTEN", label: "영어유치원" },
@@ -333,6 +206,18 @@ export function InstitutionDetailView({
 }) {
   const { institution } = data;
   const officialSources = collectOfficialSources(data);
+  const reviewedIds = new Set(
+    data.reviewedAdmissions.map((admission) => admission.id),
+  );
+  const current = data.currentOpportunities.filter(
+    (item) => !reviewedIds.has(item.id),
+  );
+  const upcoming = data.upcomingOpportunities.filter(
+    (item) => !reviewedIds.has(item.id),
+  );
+  const recent = data.recentOpportunities.filter(
+    (item) => !reviewedIds.has(item.id),
+  );
   return (
     <PageContainer>
       <article className="institution-detail">
@@ -362,20 +247,24 @@ export function InstitutionDetailView({
 
         <OpportunityGroup
           title="현재 모집·입학정보"
-          opportunities={data.currentOpportunities}
-          emptyMessage="현재 공개된 모집·입학정보가 없습니다."
+          opportunities={current}
+          emptyMessage={
+            reviewedIds.size
+              ? "검수된 입학정보는 위에서 확인할 수 있습니다."
+              : "현재 공개된 모집·입학정보가 없습니다."
+          }
         />
-        {data.upcomingOpportunities.length > 0 ? (
+        {upcoming.length > 0 ? (
           <OpportunityGroup
             title="예정된 모집·입학정보"
-            opportunities={data.upcomingOpportunities}
+            opportunities={upcoming}
             emptyMessage="예정된 모집·입학정보가 없습니다."
           />
         ) : null}
-        {data.recentOpportunities.length > 0 ? (
+        {recent.length > 0 ? (
           <OpportunityGroup
             title="최근 모집·입학정보"
-            opportunities={data.recentOpportunities}
+            opportunities={recent}
             emptyMessage="최근 모집·입학정보가 없습니다."
           />
         ) : null}

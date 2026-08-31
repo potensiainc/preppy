@@ -232,6 +232,7 @@ async function insertNativeCorrectionOpportunity({
   title,
   publicationState = "PUBLISHED",
   verificationState = "VERIFIED",
+  eventStartAt = null,
 }: {
   institutionId: string;
   slug: string;
@@ -239,6 +240,7 @@ async function insertNativeCorrectionOpportunity({
   title: string;
   publicationState?: "DRAFT" | "PUBLISHED" | "HIDDEN" | "ARCHIVED";
   verificationState?: "UNVERIFIED" | "VERIFIED";
+  eventStartAt?: string | null;
 }) {
   const opportunityId = randomUUID();
   const versionId = randomUUID();
@@ -274,12 +276,12 @@ async function insertNativeCorrectionOpportunity({
     await transaction`
       insert into opportunity_versions (
         id, opportunity_id, truth_mode, version_number, verification_state,
-        business_state, is_current, title, summary, verified_at
+        business_state, is_current, title, summary, verified_at, event_start_at
       ) values (
         ${versionId}, ${opportunityId}, 'NATIVE', 1, ${verificationState}, 'OPEN',
         ${verificationState === "VERIFIED"}, ${title},
         '[지원 대상 및 모집인원]\\n초등 과정 84명',
-        ${verificationState === "VERIFIED" ? "2026-08-25T02:30:00.000Z" : null}
+        ${verificationState === "VERIFIED" ? "2026-08-25T02:30:00.000Z" : null}, ${eventStartAt}
       )
     `;
     await transaction`
@@ -315,6 +317,7 @@ async function createNativeCorrectionFixture({
     slug: `${mainSlug}-event-session-1`,
     kind: "INFORMATION_SESSION",
     title: "2027학년도 입학설명회",
+    eventStartAt: "2026-10-31T01:00:00Z",
   });
   const main = includeMain
     ? await insertNativeCorrectionOpportunity({
@@ -568,6 +571,99 @@ async function cleanupFixtures(): Promise<void> {
 }
 
 describe("WP-06A canonical Opportunity query", () => {
+  it("projects only public official verified exact-cycle siblings with canonical dates and no private identifiers", async () => {
+    const fixture = await createNativeCorrectionFixture();
+    const second = await insertNativeCorrectionOpportunity({
+      institutionId: fixture.institution.id,
+      slug: `${fixture.mainSlug}-event-session-2`,
+      kind: "INFORMATION_SESSION",
+      title: "오후 설명회",
+      eventStartAt: "2026-10-31T05:00:00Z",
+    });
+    for (const [suffix, publicationState, verificationState] of [
+      ["draft", "DRAFT", "VERIFIED"],
+      ["hidden", "HIDDEN", "VERIFIED"],
+      ["unverified", "DRAFT", "UNVERIFIED"],
+    ] as const)
+      await insertNativeCorrectionOpportunity({
+        institutionId: fixture.institution.id,
+        slug: `${fixture.mainSlug}-event-${suffix}`,
+        kind: "INFORMATION_SESSION",
+        title: suffix,
+        publicationState,
+        verificationState,
+      });
+    const sourceLess = await insertNativeCorrectionOpportunity({
+      institutionId: fixture.institution.id,
+      slug: `${fixture.mainSlug}-event-source-less`,
+      kind: "INFORMATION_SESSION",
+      title: "no official source",
+      publicationState: "DRAFT",
+    });
+    await runtime.client`delete from opportunity_version_evidence where opportunity_version_id=${sourceLess.versionId}`;
+    await insertNativeCorrectionOpportunity({
+      institutionId: fixture.institution.id,
+      slug: `live-admissions-${fixture.institution.id}-2028-event-session-1`,
+      kind: "INFORMATION_SESSION",
+      title: "different year",
+    });
+    await insertNativeCorrectionOpportunity({
+      institutionId: fixture.institution.id,
+      slug: `${fixture.mainSlug}-extra-event-session-1`,
+      kind: "INFORMATION_SESSION",
+      title: "malformed identity",
+    });
+    const other = await createNativeCorrectionFixture();
+    await insertNativeCorrectionOpportunity({
+      institutionId: other.institution.id,
+      slug: `${fixture.mainSlug}-event-other-school`,
+      kind: "INFORMATION_SESSION",
+      title: "different institution",
+    });
+    for (const slug of [fixture.mainSlug, fixture.child.slug, second.slug]) {
+      const result = await getOpportunityBySlug(runtime.executor, slug);
+      expect(result.academicYearLabel).toBe("2027학년도");
+      expect(result.relatedAdmissions?.map((row) => row.slug)).toEqual([
+        fixture.child.slug,
+        second.slug,
+      ]);
+      expect(
+        result.relatedAdmissions?.map((row) => row.keyDates.eventStartsAt),
+      ).toEqual(["2026-10-31T01:00:00.000Z", "2026-10-31T05:00:00.000Z"]);
+      expect(
+        result.relatedAdmissions?.every(
+          (row) => row.keyDates.eventEndsAt === null,
+        ),
+      ).toBe(true);
+      for (const row of result.relatedAdmissions ?? [])
+        expect(Object.keys(row).sort()).toEqual([
+          "businessState",
+          "keyDates",
+          "kind",
+          "slug",
+          "title",
+        ]);
+      assertNoForbiddenKeys(result);
+    }
+  });
+
+  it("does not guess a cycle or academic year from legacy, malformed, or current-token titles", async () => {
+    const legacy = await createLegacyFixture();
+    const native = await createNativeFixture({ title: "2027학년도 모집" });
+    const current = await createNativeCorrectionFixture({ year: "current" });
+    for (const slug of [legacy.opportunitySlug, native.opportunitySlug]) {
+      await expect(
+        getOpportunityBySlug(runtime.executor, slug),
+      ).resolves.toMatchObject({
+        academicYearLabel: null,
+        relatedAdmissions: [],
+      });
+    }
+    await expect(
+      getOpportunityBySlug(runtime.executor, current.child.slug),
+    ).resolves.toMatchObject({ academicYearLabel: null });
+  });
+
   beforeAll(async () => {
     await schemaLockSql`
       select pg_advisory_lock(hashtext('admissionradar-schema-tests'))

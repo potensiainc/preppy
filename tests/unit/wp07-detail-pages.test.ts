@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
+import { load } from "cheerio";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
 import type {
@@ -138,6 +139,163 @@ const unsafeArticle: UnsafeStoredArticleDetailDTO = {
 };
 
 describe("WP-07 Opportunity and Article detail pages", () => {
+  it("renders the exact stored provisional notice once even when it is also attached to the parent guide", () => {
+    const notice =
+      "예정 안내 · 변경 가능: 공식 원문이 예정 또는 초안임을 명시합니다. 지원 전 최종 공지를 확인해 주세요.";
+    const $ = load(
+      renderToStaticMarkup(
+        createElement(OpportunityDetailView, {
+          opportunity: {
+            ...opportunity,
+            summary: `${notice}\n\n[일정]\n공식 일정 안내.`,
+            admissionGuide: {
+              title: "2027학년도 모집요강(안)",
+              slug: "parent",
+              summary: `${notice}\n\n[추가 안내]\n학교별 예외.`,
+              officialSources: [],
+              lastCollectedAt: null,
+              lastVerifiedAt: "2026-08-30T23:51:03.205Z",
+            },
+          },
+        }),
+      ),
+    );
+    expect($("body").text().split("예정 안내 · 변경 가능:").length - 1).toBe(1);
+    expect($("header").text()).toContain(notice);
+    expect($("body").text()).toContain("학교별 예외.");
+  });
+
+  it("does not invent midnight, KST for zone-less local dates, quota, tuition or region", () => {
+    for (const [value, expected, absent] of [
+      ["2026-10-31", "2026년 10월 31일", "오전"],
+      ["2026-10-31T14:15", "오후 2:15 · 원문 현지 시각", "KST"],
+    ]) {
+      const $ = load(
+        renderToStaticMarkup(
+          createElement(OpportunityDetailView, {
+            opportunity: {
+              ...opportunity,
+              kind: "INFORMATION_SESSION",
+              summary: null,
+              targetAudience: null,
+              institution: { ...opportunity.institution, region: null },
+              keyDates: {
+                eventStartsAt: null,
+                eventEndsAt: value!,
+                applicationOpensAt: null,
+                applicationClosesAt: null,
+              },
+            },
+          }),
+        ),
+      );
+      expect($("header").text()).toContain(expected);
+      expect($("header").text()).not.toContain(absent);
+      expect($("header").text()).not.toMatch(
+        /84명|수업료|기관 소재 지역|00:00/,
+      );
+      expect($("header").text()).toContain("시작 일정 미확인");
+    }
+  });
+
+  it("puts canonical event time first and navigates real same-cycle sessions without inventing an end", () => {
+    const $ = load(
+      renderToStaticMarkup(
+        createElement(OpportunityDetailView, {
+          opportunity: {
+            ...opportunity,
+            academicYearLabel: "2027학년도",
+            kind: "INFORMATION_SESSION",
+            keyDates: {
+              eventStartsAt: "2026-10-31T05:00:00.000Z",
+              eventEndsAt: null,
+              applicationOpensAt: "2026-10-01",
+              applicationClosesAt: null,
+            },
+            relatedAdmissions: [
+              {
+                slug: "morning-session",
+                title: "설명회 1",
+                kind: "INFORMATION_SESSION",
+                businessState: "UPCOMING",
+                keyDates: {
+                  eventStartsAt: "2026-10-31T01:00:00.000Z",
+                  eventEndsAt: null,
+                  applicationOpensAt: null,
+                  applicationClosesAt: null,
+                },
+              },
+              {
+                slug: opportunity.slug,
+                title: "설명회 2",
+                kind: "INFORMATION_SESSION",
+                businessState: "UPCOMING",
+                keyDates: {
+                  eventStartsAt: "2026-10-31T05:00:00.000Z",
+                  eventEndsAt: null,
+                  applicationOpensAt: null,
+                  applicationClosesAt: null,
+                },
+              },
+            ],
+          },
+        }),
+      ),
+    );
+    expect($("header [aria-label='주요 일정']").text()).toContain("오후 2:00");
+    expect($("header").text()).toContain("2027학년도");
+    expect(
+      $(
+        "[aria-label='같은 학년도 일정'] a[href='/opportunities/morning-session']",
+      ).text(),
+    ).toContain("오전 10:00");
+    expect($("[aria-current='page']").text()).toContain("오후 2:00");
+    expect($("header").text()).toContain("종료 일정 미확인");
+    expect($("body").text()).not.toContain("2026년 10월 1일 00:00");
+  });
+
+  it("preserves every paragraph and unknown heading, exposing caveats and distinct source times without collapsed warnings", () => {
+    const $ = load(
+      renderToStaticMarkup(
+        createElement(OpportunityDetailView, {
+          opportunity: {
+            ...opportunity,
+            summary:
+              "서문입니다.\n\n[서류·추첨·등록]\n첫 문단: 원서와 증빙.\n\n둘째 문단: 중복등록 시 모두 취소.\n[학교별 추가 조건]\n쌍둥이 예외와 예비당첨.\n\n[원문 확인 필요]\n11월 23–25일과 11월 17–19일이 충돌합니다.\n\n[수업료]\n2025학년도 1기 2,312,100원.\n\n[공식 출처]\n원문 추가 공지도 확인하세요.",
+            lastCollectedAt: "2026-08-30T22:53:18.107Z",
+            lastVerifiedAt: "2026-08-30T23:51:03.205Z",
+            officialSources: [
+              {
+                name: "학교 원문",
+                url: "https://school.test/guide.PNG?download=1",
+                authorityLevel: "PRIMARY",
+              },
+            ],
+          },
+        }),
+      ),
+    );
+    expect($("h3").text()).toContain("학교별 추가 조건");
+    expect($("nav[aria-label='이 페이지 안내'] a").length).toBeLessThanOrEqual(
+      6,
+    );
+    $("nav[aria-label='이 페이지 안내'] a").each((_, element) => {
+      expect($($(element).attr("href")!).length).toBe(1);
+    });
+    const caveat = $("section").filter(
+      (_, el) => $(el).children("h3").text() === "원문 확인 필요",
+    );
+    expect(caveat.text()).toContain("11월 23–25일과 11월 17–19일");
+    expect(caveat.parents("details:not([open])")).toHaveLength(0);
+    expect($("body").text()).toContain("둘째 문단: 중복등록 시 모두 취소.");
+    expect($("body").text()).toContain("2025학년도 1기 2,312,100원.");
+    expect($("body").text()).toContain("07:53:18 KST");
+    expect($("body").text()).toContain("08:51:03 KST");
+    expect(
+      $("a[href='https://school.test/guide.PNG?download=1']").text(),
+    ).toContain("원본 이미지");
+    expect($("img")).toHaveLength(0);
+  });
   it("renders planned guidance in separate paragraphs and labels dates as provisional", () => {
     const markup = renderToStaticMarkup(
       createElement(OpportunityDetailView, {

@@ -532,6 +532,75 @@ async function getSameCycleAdmissionGuide(
   };
 }
 
+function canonicalAdmissionCycle(root: OpportunityRoot): string | null {
+  const match =
+    /^live-admissions-([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})-(20\d{2}|current)(?:-event-[a-z0-9]+(?:-[a-z0-9]+)*)?$/u.exec(
+      root.slug,
+    );
+  return root.truthMode === "NATIVE" && match?.[1] === root.institution.id
+    ? match[2]!
+    : null;
+}
+
+async function getSameCycleAdmissions(
+  executor: DatabaseExecutor,
+  root: OpportunityRoot,
+): Promise<NonNullable<PublicOpportunityDTO["relatedAdmissions"]>> {
+  const cycle = canonicalAdmissionCycle(root);
+  if (cycle === null) return [];
+  const eventPattern = `^live-admissions-${root.institution.id}-${cycle}-event-[a-z0-9]+(-[a-z0-9]+)*$`;
+  const rows = await executor.drizzle
+    .select({
+      slug: opportunities.slug,
+      kind: opportunities.kind,
+      title: opportunityVersions.title,
+      businessState: opportunityVersions.businessState,
+      eventStartAt: opportunityVersions.eventStartAt,
+      eventEndAt: opportunityVersions.eventEndAt,
+      applicationOpenAt: opportunityVersions.applicationOpenAt,
+      applicationCloseAt: opportunityVersions.applicationCloseAt,
+    })
+    .from(opportunities)
+    .innerJoin(
+      opportunityVersions,
+      and(
+        eq(opportunityVersions.opportunityId, opportunities.id),
+        eq(opportunityVersions.isCurrent, true),
+        eq(opportunityVersions.verificationState, "VERIFIED"),
+        sql`${opportunityVersions.verifiedAt} is not null`,
+      ),
+    )
+    .where(
+      and(
+        eq(opportunities.institutionId, root.institution.id),
+        eq(opportunities.truthMode, "NATIVE"),
+        eq(opportunities.publicationState, "PUBLISHED"),
+        sql`${opportunities.slug} ~ ${eventPattern}`,
+        sql`exists (
+      select 1 from ${opportunityVersionEvidence}
+      join ${sources} on ${sources.id} = ${opportunityVersionEvidence.sourceId}
+      where ${opportunityVersionEvidence.opportunityVersionId} = ${opportunityVersions.id}
+      and ${inArray(sources.sourceType, officialSourceTypes)}
+      and ${inArray(sources.authorityLevel, ["PRIMARY", "SECONDARY_OFFICIAL"])}
+    )`,
+      ),
+    )
+    .orderBy(asc(opportunityVersions.eventStartAt), asc(opportunities.slug))
+    .limit(24);
+  return rows.map((row) => ({
+    slug: row.slug,
+    title: row.title,
+    kind: row.kind,
+    businessState: row.businessState,
+    keyDates: {
+      eventStartsAt: toOptionalIso(row.eventStartAt),
+      eventEndsAt: toOptionalIso(row.eventEndAt),
+      applicationOpensAt: toOptionalIso(row.applicationOpenAt),
+      applicationClosesAt: toOptionalIso(row.applicationCloseAt),
+    },
+  }));
+}
+
 export async function getRelatedArticles(
   executor: DatabaseExecutor,
   target: RelatedArticlesTarget,
@@ -629,12 +698,17 @@ export async function getOpportunityBySlug(
       ? await getNativeTruth(executor, root.id)
       : await getLegacyTruth(executor, root.id);
 
-  const [recentMeaningfulChanges, relatedArticles, admissionGuide] =
-    await Promise.all([
-      getRecentMeaningfulChanges(executor, root.id),
-      getRelatedArticles(executor, { opportunityId: root.id }),
-      getSameCycleAdmissionGuide(executor, root),
-    ]);
+  const [
+    recentMeaningfulChanges,
+    relatedArticles,
+    admissionGuide,
+    relatedAdmissions,
+  ] = await Promise.all([
+    getRecentMeaningfulChanges(executor, root.id),
+    getRelatedArticles(executor, { opportunityId: root.id }),
+    getSameCycleAdmissionGuide(executor, root),
+    getSameCycleAdmissions(executor, root),
+  ]);
 
   return {
     id: root.id,
@@ -653,6 +727,10 @@ export async function getOpportunityBySlug(
       truth.officialSources ??
       (truth.officialSource ? [truth.officialSource] : []),
     admissionGuide,
+    academicYearLabel: /^20\d{2}$/u.test(canonicalAdmissionCycle(root) ?? "")
+      ? `${canonicalAdmissionCycle(root)}학년도`
+      : null,
+    relatedAdmissions,
     lastCollectedAt: truth.lastCollectedAt,
     lastVerifiedAt: truth.lastVerifiedAt,
     recentMeaningfulChanges,
