@@ -85,7 +85,12 @@ const liveAdmissionProposalSchema = z
       .string()
       .regex(/^20\d{2}학년도$/u)
       .nullable(),
-    knowledgeState: z.enum(["SCHEDULE_FOUND", "NOT_ANNOUNCED", "NOT_FOUND"]),
+    knowledgeState: z.enum([
+      "SCHEDULE_FOUND",
+      "GUIDANCE_FOUND",
+      "NOT_ANNOUNCED",
+      "NOT_FOUND",
+    ]),
     kind: z.enum([
       "RECRUITMENT",
       "ADDITIONAL_RECRUITMENT",
@@ -112,7 +117,7 @@ const liveAdmissionProposalSchema = z
       "UNKNOWN",
     ]),
     title: z.string().trim().min(1).max(500),
-    summary: z.string().trim().min(1).max(5_000).nullable(),
+    summary: z.string().trim().min(1).max(8_000).nullable(),
     targetAudience: z.string().trim().min(1).max(1_000).nullable(),
     eventStartAt: nullableIsoDateSchema,
     eventEndAt: nullableIsoDateSchema,

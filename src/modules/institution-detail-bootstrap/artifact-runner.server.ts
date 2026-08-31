@@ -231,7 +231,12 @@ export async function runBootstrapArtifacts(
         "SIDE_EFFECT_DETECTED",
         "Dry-run database counts changed",
       );
-    const admissions = { SCHEDULE_FOUND: 0, NOT_ANNOUNCED: 0, NOT_FOUND: 0 };
+    const admissions = {
+      SCHEDULE_FOUND: 0,
+      GUIDANCE_FOUND: 0,
+      NOT_ANNOUNCED: 0,
+      NOT_FOUND: 0,
+    };
     const academicYears: Record<string, number> = {};
     for (const record of records.filter(
       (r) => r.status === "PERSISTED" || r.status === "DRY_RUN_VALID",

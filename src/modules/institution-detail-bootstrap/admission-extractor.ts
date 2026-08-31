@@ -32,6 +32,8 @@ function knowledgeScore(proposal: LiveAdmissionProposal): number {
   switch (proposal.knowledgeState) {
     case "SCHEDULE_FOUND":
       return 3;
+    case "GUIDANCE_FOUND":
+      return 2.5;
     case "NOT_ANNOUNCED":
       return 2;
     case "NOT_FOUND":

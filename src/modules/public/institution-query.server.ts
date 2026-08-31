@@ -794,7 +794,9 @@ function admissionKnowledgeState(
     `${title} ${summary ?? ""}`,
   )
     ? "NOT_ANNOUNCED"
-    : "NOT_FOUND";
+    : summary && /모집\s*인원|전형료|입학금|수업료|제출\s*서류/u.test(summary)
+      ? "GUIDANCE_FOUND"
+      : "NOT_FOUND";
 }
 
 async function getReviewedAdmissions(

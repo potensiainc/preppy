@@ -26,6 +26,8 @@ if (!databaseUrl) {
 assertDedicatedTestDatabaseUrl(databaseUrl);
 
 const prefix = `wp06a-opportunity-query-${randomUUID()}`;
+const nativeCorrectionOpportunityIds = new Set<string>();
+const nativeCorrectionVersionIds = new Set<string>();
 const runtime = getRuntimeDatabase({
   DATABASE_URL: databaseUrl,
   DATABASE_MAX_CONNECTIONS: 4,
@@ -223,6 +225,110 @@ async function createNativeFixture({
   };
 }
 
+async function insertNativeCorrectionOpportunity({
+  institutionId,
+  slug,
+  kind,
+  title,
+  publicationState = "PUBLISHED",
+  verificationState = "VERIFIED",
+}: {
+  institutionId: string;
+  slug: string;
+  kind: "RECRUITMENT" | "LOTTERY" | "INFORMATION_SESSION";
+  title: string;
+  publicationState?: "DRAFT" | "PUBLISHED" | "HIDDEN" | "ARCHIVED";
+  verificationState?: "UNVERIFIED" | "VERIFIED";
+}) {
+  const opportunityId = randomUUID();
+  const versionId = randomUUID();
+  const source = await insertSource({ sourceName: `${title} official PDF` });
+  const supporting = await insertSource({
+    sourceName: `${title} admission notice`,
+    authorityLevel: "SECONDARY_OFFICIAL",
+  });
+  const snapshotId = randomUUID();
+  await runtime.client`
+    insert into source_snapshots (
+      id, source_id, captured_at, content_hash, normalized_text
+    ) values (
+      ${snapshotId}, ${source.id}, '2026-08-24T01:30:00.000Z',
+      ${`guide-${snapshotId}`}, 'Official guide source text'
+    )
+  `;
+  const [observation] = await runtime.client<{ id: bigint }[]>`
+    insert into source_observations (source_id, observed_at, outcome, snapshot_id)
+    values (${source.id}, '2026-08-24T01:30:00.000Z', 'SUCCESS', ${snapshotId})
+    returning id
+  `;
+  await runtime.client.begin(async (transaction) => {
+    await transaction`
+      insert into opportunities (
+        id, institution_id, slug, kind, truth_mode, publication_state, published_at
+      ) values (
+        ${opportunityId}, ${institutionId}, ${slug}, ${kind}, 'NATIVE',
+        ${publicationState},
+        ${publicationState === "PUBLISHED" ? "2026-08-24T00:00:00.000Z" : null}
+      )
+    `;
+    await transaction`
+      insert into opportunity_versions (
+        id, opportunity_id, truth_mode, version_number, verification_state,
+        business_state, is_current, title, summary, verified_at
+      ) values (
+        ${versionId}, ${opportunityId}, 'NATIVE', 1, ${verificationState}, 'OPEN',
+        ${verificationState === "VERIFIED"}, ${title},
+        '[지원 대상 및 모집인원]\\n초등 과정 84명',
+        ${verificationState === "VERIFIED" ? "2026-08-25T02:30:00.000Z" : null}
+      )
+    `;
+    await transaction`
+      insert into opportunity_version_evidence (
+        opportunity_version_id, source_id, source_observation_id, source_snapshot_id, evidence_role
+      ) values
+        (${versionId}, ${source.id}, ${String(observation!.id)}, ${snapshotId}, 'PRIMARY'),
+        (${versionId}, ${supporting.id}, null, null, 'SUPPORTING')
+    `;
+  });
+  nativeCorrectionOpportunityIds.add(opportunityId);
+  nativeCorrectionVersionIds.add(versionId);
+  return { opportunityId, slug, versionId, source, supporting };
+}
+
+async function createNativeCorrectionFixture({
+  mainKind = "RECRUITMENT",
+  mainPublicationState = "PUBLISHED",
+  mainVerificationState = "VERIFIED",
+  includeMain = true,
+  year = "2027",
+}: {
+  mainKind?: "RECRUITMENT" | "LOTTERY";
+  mainPublicationState?: "DRAFT" | "PUBLISHED" | "HIDDEN" | "ARCHIVED";
+  mainVerificationState?: "UNVERIFIED" | "VERIFIED";
+  includeMain?: boolean;
+  year?: string;
+} = {}) {
+  const institution = await insertInstitution();
+  const mainSlug = `live-admissions-${institution.id}-${year}`;
+  const child = await insertNativeCorrectionOpportunity({
+    institutionId: institution.id,
+    slug: `${mainSlug}-event-session-1`,
+    kind: "INFORMATION_SESSION",
+    title: "2027학년도 입학설명회",
+  });
+  const main = includeMain
+    ? await insertNativeCorrectionOpportunity({
+        institutionId: institution.id,
+        slug: mainSlug,
+        kind: mainKind,
+        title: "2027학년도 신입생 모집요강",
+        publicationState: mainPublicationState,
+        verificationState: mainVerificationState,
+      })
+    : null;
+  return { institution, year, mainSlug, child, main };
+}
+
 async function createLegacyFixture({
   eventPublic = true,
 }: {
@@ -327,8 +433,36 @@ async function createLegacyFixture({
 }
 
 async function cleanupFixtures(): Promise<void> {
+  const createdNativeOpportunityIds = [...nativeCorrectionOpportunityIds];
+  const createdNativeVersionIds = [...nativeCorrectionVersionIds];
   await runtime.client.begin(async (transaction) => {
     await transaction.unsafe("set local session_replication_role = replica");
+    if (createdNativeOpportunityIds.length > 0) {
+      await transaction`
+        delete from opportunity_changes
+        where opportunity_id = any(${createdNativeOpportunityIds}::uuid[])
+      `;
+      await transaction`
+        delete from opportunity_version_evidence
+        where opportunity_version_id = any(${createdNativeVersionIds}::uuid[])
+      `;
+      await transaction`
+        delete from opportunity_source_bindings
+        where opportunity_id = any(${createdNativeOpportunityIds}::uuid[])
+      `;
+      await transaction`
+        delete from opportunity_admission_event_links
+        where opportunity_id = any(${createdNativeOpportunityIds}::uuid[])
+      `;
+      await transaction`
+        delete from opportunity_versions
+        where id = any(${createdNativeVersionIds}::uuid[])
+      `;
+      await transaction`
+        delete from opportunities
+        where id = any(${createdNativeOpportunityIds}::uuid[])
+      `;
+    }
     await transaction`
       delete from article_opportunities
       where article_id in (select id from articles where slug like ${`${prefix}%`})
@@ -347,6 +481,10 @@ async function cleanupFixtures(): Promise<void> {
       )
     `;
     await transaction`
+      delete from opportunity_source_bindings
+      where opportunity_id in (select id from opportunities where slug like ${`${prefix}%`})
+    `;
+    await transaction`
       delete from event_version_evidence
       where event_version_id in (
         select version.id from admission_event_versions as version
@@ -356,6 +494,12 @@ async function cleanupFixtures(): Promise<void> {
     `;
     await transaction`
       delete from source_observations
+      where source_id in (
+        select id from sources where canonical_url like ${`https://source.example.test/${prefix}/%`}
+      )
+    `;
+    await transaction`
+      delete from source_snapshots
       where source_id in (
         select id from sources where canonical_url like ${`https://source.example.test/${prefix}/%`}
       )
@@ -401,6 +545,26 @@ async function cleanupFixtures(): Promise<void> {
       where canonical_url like ${`https://source.example.test/${prefix}/%`}
     `;
   });
+
+  if (createdNativeOpportunityIds.length > 0) {
+    const remaining = await runtime.client<{ count: string }[]>`
+      select count(*)::text as count from opportunities
+      where id = any(${createdNativeOpportunityIds}::uuid[])
+    `;
+    expect(Number(remaining[0]!.count)).toBe(0);
+    const remainingVersions = await runtime.client<{ count: string }[]>`
+      select count(*)::text as count from opportunity_versions
+      where id = any(${createdNativeVersionIds}::uuid[])
+    `;
+    expect(Number(remainingVersions[0]!.count)).toBe(0);
+    const remainingEvidence = await runtime.client<{ count: string }[]>`
+      select count(*)::text as count from opportunity_version_evidence
+      where opportunity_version_id = any(${createdNativeVersionIds}::uuid[])
+    `;
+    expect(Number(remainingEvidence[0]!.count)).toBe(0);
+  }
+  nativeCorrectionOpportunityIds.clear();
+  nativeCorrectionVersionIds.clear();
 }
 
 describe("WP-06A canonical Opportunity query", () => {
@@ -469,6 +633,21 @@ describe("WP-06A canonical Opportunity query", () => {
       },
       indexability: "INDEX",
     });
+    expect(nativeResult.officialSources).toEqual([nativeResult.officialSource]);
+    const supplementary = await insertSource({
+      sourceName: "Registration and fee guide",
+    });
+    await runtime.client`insert into opportunity_version_evidence (opportunity_version_id, source_id, evidence_role)
+      values (${native.versionId}, ${supplementary.id}, 'SUPPORTING')`;
+    const supplemented = await getOpportunityBySlug(
+      runtime.executor,
+      native.opportunitySlug,
+    );
+    expect(supplemented.officialSources).toHaveLength(2);
+    expect(
+      supplemented.officialSources?.map((source) => source.name),
+    ).toContain("Registration and fee guide");
+    expect(supplemented.officialSource).toEqual(nativeResult.officialSource);
     expect(nativeResult.officialSource?.url).toContain("source.example.test");
     expect(legacyResult.officialSource?.url).toContain("source.example.test");
     expect(nativeResult.institution.followable).toBe(true);
@@ -512,6 +691,101 @@ describe("WP-06A canonical Opportunity query", () => {
         authorityLevel: "PRIMARY",
       },
     });
+  });
+
+  it("attaches the exact native canonical main guide to a native child event and does not duplicate it on the main page", async () => {
+    const fixture = await createNativeCorrectionFixture({
+      mainKind: "LOTTERY",
+    });
+
+    await expect(
+      getOpportunityBySlug(runtime.executor, fixture.child.slug),
+    ).resolves.toMatchObject({
+      admissionGuide: {
+        title: "2027학년도 신입생 모집요강",
+        slug: fixture.mainSlug,
+        summary: "[지원 대상 및 모집인원]\\n초등 과정 84명",
+        officialSources: [
+          { name: "2027학년도 신입생 모집요강 official PDF" },
+          { name: "2027학년도 신입생 모집요강 admission notice" },
+        ],
+        lastCollectedAt: "2026-08-24T01:30:00.000Z",
+        lastVerifiedAt: "2026-08-25T02:30:00.000Z",
+      },
+    });
+    await expect(
+      getOpportunityBySlug(runtime.executor, fixture.mainSlug),
+    ).resolves.toMatchObject({ admissionGuide: null });
+  });
+
+  it("rejects native guides with mismatched institution or year identity and non-public or unverified truth", async () => {
+    const missingYear = await createNativeCorrectionFixture({
+      includeMain: false,
+    });
+    await insertNativeCorrectionOpportunity({
+      institutionId: missingYear.institution.id,
+      slug: `live-admissions-${missingYear.institution.id}-2028`,
+      kind: "RECRUITMENT",
+      title: "2028학년도 신입생 모집요강",
+    });
+
+    const otherInstitution = await insertInstitution();
+    const mismatchedChild = await insertNativeCorrectionOpportunity({
+      institutionId: missingYear.institution.id,
+      slug: `live-admissions-${otherInstitution.id}-2027-event-session-2`,
+      kind: "INFORMATION_SESSION",
+      title: "Institution mismatch child",
+    });
+    await insertNativeCorrectionOpportunity({
+      institutionId: otherInstitution.id,
+      slug: `live-admissions-${otherInstitution.id}-2027`,
+      kind: "RECRUITMENT",
+      title: "Other institution main guide",
+    });
+
+    const hidden = await createNativeCorrectionFixture({
+      mainPublicationState: "HIDDEN",
+    });
+    const unverified = await createNativeCorrectionFixture({
+      mainPublicationState: "DRAFT",
+      mainVerificationState: "UNVERIFIED",
+    });
+
+    await expect(
+      getOpportunityBySlug(runtime.executor, missingYear.child.slug),
+    ).resolves.toMatchObject({ admissionGuide: null });
+    await expect(
+      getOpportunityBySlug(runtime.executor, mismatchedChild.slug),
+    ).resolves.toMatchObject({ admissionGuide: null });
+    await expect(
+      getOpportunityBySlug(runtime.executor, hidden.child.slug),
+    ).resolves.toMatchObject({ admissionGuide: null });
+    await expect(
+      getOpportunityBySlug(runtime.executor, unverified.child.slug),
+    ).resolves.toMatchObject({ admissionGuide: null });
+  });
+
+  it("resolves the exact native current token without falling back to a numbered year", async () => {
+    const current = await createNativeCorrectionFixture({ year: "current" });
+    const noFallback = await createNativeCorrectionFixture({
+      year: "current",
+      includeMain: false,
+    });
+    await insertNativeCorrectionOpportunity({
+      institutionId: noFallback.institution.id,
+      slug: `live-admissions-${noFallback.institution.id}-2026`,
+      kind: "RECRUITMENT",
+      title: "2026학년도 신입생 모집요강",
+    });
+
+    await expect(
+      getOpportunityBySlug(runtime.executor, current.child.slug),
+    ).resolves.toMatchObject({
+      admissionGuide: { slug: current.mainSlug },
+    });
+    await expect(
+      getOpportunityBySlug(runtime.executor, noFallback.child.slug),
+    ).resolves.toMatchObject({ admissionGuide: null });
   });
 
   it("uses only bounded deterministic canonical changes and published related Articles", async () => {

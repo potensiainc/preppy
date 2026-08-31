@@ -16,6 +16,7 @@ import {
   opportunityChanges,
   opportunityVersionEvidence,
   opportunityVersions,
+  sourceObservations,
   sources,
 } from "@/src/db/schema";
 import type { DatabaseExecutor } from "@/src/infrastructure/db/runtime.server";
@@ -64,8 +65,10 @@ type Truth = {
   targetAudience: string | null;
   summary: string | null;
   actionUrl: string | null;
+  lastCollectedAt: string | null;
   lastVerifiedAt: string;
   officialSource: OfficialSourceDTO | null;
+  officialSources?: OfficialSourceDTO[];
 };
 
 function toIso(value: Date): string {
@@ -205,11 +208,11 @@ async function getRootBySlug(
   };
 }
 
-async function getNativeOfficialSource(
+async function getNativeOfficialSources(
   executor: DatabaseExecutor,
   versionId: string,
-): Promise<OfficialSourceDTO | null> {
-  const [source] = await executor.drizzle
+): Promise<OfficialSourceDTO[]> {
+  const sourceRows = await executor.drizzle
     .select({
       sourceName: sources.sourceName,
       canonicalUrl: sources.canonicalUrl,
@@ -233,10 +236,40 @@ async function getNativeOfficialSource(
       ),
       asc(sources.canonicalUrl),
       asc(sources.id),
+    );
+
+  return [
+    ...new Map(
+      sourceRows.map((source) => [
+        source.canonicalUrl,
+        toOfficialSource(source),
+      ]),
+    ).values(),
+  ];
+}
+
+async function getNativeLastCollectedAt(
+  executor: DatabaseExecutor,
+  versionId: string,
+): Promise<string | null> {
+  const [observation] = await executor.drizzle
+    .select({ observedAt: sourceObservations.observedAt })
+    .from(opportunityVersionEvidence)
+    .innerJoin(
+      sourceObservations,
+      and(
+        eq(
+          sourceObservations.id,
+          opportunityVersionEvidence.sourceObservationId,
+        ),
+        eq(sourceObservations.sourceId, opportunityVersionEvidence.sourceId),
+      ),
     )
+    .where(eq(opportunityVersionEvidence.opportunityVersionId, versionId))
+    .orderBy(desc(sourceObservations.observedAt))
     .limit(1);
 
-  return source === undefined ? null : toOfficialSource(source);
+  return observation === undefined ? null : toIso(observation.observedAt);
 }
 
 async function getLegacyOfficialSource(
@@ -271,6 +304,27 @@ async function getLegacyOfficialSource(
   return source === undefined ? null : toOfficialSource(source);
 }
 
+async function getLegacyLastCollectedAt(
+  executor: DatabaseExecutor,
+  eventVersionId: string,
+): Promise<string | null> {
+  const [observation] = await executor.drizzle
+    .select({ observedAt: sourceObservations.observedAt })
+    .from(eventVersionEvidence)
+    .innerJoin(
+      sourceObservations,
+      and(
+        eq(sourceObservations.id, eventVersionEvidence.sourceObservationId),
+        eq(sourceObservations.sourceId, eventVersionEvidence.sourceId),
+      ),
+    )
+    .where(eq(eventVersionEvidence.eventVersionId, eventVersionId))
+    .orderBy(desc(sourceObservations.observedAt))
+    .limit(1);
+
+  return observation === undefined ? null : toIso(observation.observedAt);
+}
+
 async function getNativeTruth(
   executor: DatabaseExecutor,
   opportunityId: string,
@@ -303,6 +357,10 @@ async function getNativeTruth(
     throw new NotFoundError();
   }
 
+  const [officialSources, lastCollectedAt] = await Promise.all([
+    getNativeOfficialSources(executor, version.id),
+    getNativeLastCollectedAt(executor, version.id),
+  ]);
   return {
     title: version.title,
     businessState: version.businessState,
@@ -315,8 +373,10 @@ async function getNativeTruth(
     targetAudience: version.targetAudience,
     summary: version.summary,
     actionUrl: version.actionUrl,
+    lastCollectedAt,
     lastVerifiedAt: toIso(version.verifiedAt),
-    officialSource: await getNativeOfficialSource(executor, version.id),
+    officialSource: officialSources[0] ?? null,
+    officialSources,
   };
 }
 
@@ -371,6 +431,11 @@ async function getLegacyTruth(
     throw new NotFoundError();
   }
 
+  const [officialSource, lastCollectedAt] = await Promise.all([
+    getLegacyOfficialSource(executor, version.eventVersionId),
+    getLegacyLastCollectedAt(executor, version.eventVersionId),
+  ]);
+
   return {
     title: version.title,
     businessState,
@@ -399,11 +464,71 @@ async function getLegacyTruth(
     targetAudience: version.targetAudience,
     summary: version.summary,
     actionUrl: version.actionUrl,
+    lastCollectedAt,
     lastVerifiedAt: toIso(version.verifiedAt),
-    officialSource: await getLegacyOfficialSource(
-      executor,
-      version.eventVersionId,
-    ),
+    officialSource,
+  };
+}
+
+async function getSameCycleAdmissionGuide(
+  executor: DatabaseExecutor,
+  root: OpportunityRoot,
+): Promise<PublicOpportunityDTO["admissionGuide"]> {
+  const childMatch =
+    /^live-admissions-([0-9a-f-]{36})-(20\d{2}|current)-event-([a-z0-9]+(?:-[a-z0-9]+)*)$/u.exec(
+      root.slug,
+    );
+  if (
+    root.truthMode !== "NATIVE" ||
+    childMatch === null ||
+    childMatch[1] !== root.institution.id
+  ) {
+    return null;
+  }
+
+  const mainSlug = `live-admissions-${childMatch[1]}-${childMatch[2]}`;
+  const [guide] = await executor.drizzle
+    .select({
+      id: opportunities.id,
+      slug: opportunities.slug,
+      versionId: opportunityVersions.id,
+      title: opportunityVersions.title,
+      summary: opportunityVersions.summary,
+      verifiedAt: opportunityVersions.verifiedAt,
+    })
+    .from(opportunities)
+    .innerJoin(
+      opportunityVersions,
+      and(
+        eq(opportunityVersions.opportunityId, opportunities.id),
+        eq(opportunityVersions.isCurrent, true),
+        eq(opportunityVersions.verificationState, "VERIFIED"),
+      ),
+    )
+    .where(
+      and(
+        eq(opportunities.institutionId, root.institution.id),
+        eq(opportunities.slug, mainSlug),
+        eq(opportunities.truthMode, "NATIVE"),
+        inArray(opportunities.kind, ["RECRUITMENT", "LOTTERY"]),
+        eq(opportunities.publicationState, "PUBLISHED"),
+      ),
+    )
+    .limit(1);
+  if (guide === undefined) return null;
+
+  const [officialSources, lastCollectedAt] = await Promise.all([
+    getNativeOfficialSources(executor, guide.versionId),
+    getNativeLastCollectedAt(executor, guide.versionId),
+  ]);
+  if (officialSources.length === 0 || guide.verifiedAt === null) return null;
+  return {
+    title: guide.title,
+    slug: guide.slug,
+    summary: guide.summary,
+    officialSources,
+    lastCollectedAt,
+    lastVerifiedAt: toIso(guide.verifiedAt),
   };
 }
 
@@ -504,6 +629,13 @@ export async function getOpportunityBySlug(
       ? await getNativeTruth(executor, root.id)
       : await getLegacyTruth(executor, root.id);
 
+  const [recentMeaningfulChanges, relatedArticles, admissionGuide] =
+    await Promise.all([
+      getRecentMeaningfulChanges(executor, root.id),
+      getRelatedArticles(executor, { opportunityId: root.id }),
+      getSameCycleAdmissionGuide(executor, root),
+    ]);
+
   return {
     id: root.id,
     slug: root.slug,
@@ -517,14 +649,14 @@ export async function getOpportunityBySlug(
     summary: truth.summary,
     actionUrl: truth.actionUrl,
     officialSource: truth.officialSource,
+    officialSources:
+      truth.officialSources ??
+      (truth.officialSource ? [truth.officialSource] : []),
+    admissionGuide,
+    lastCollectedAt: truth.lastCollectedAt,
     lastVerifiedAt: truth.lastVerifiedAt,
-    recentMeaningfulChanges: await getRecentMeaningfulChanges(
-      executor,
-      root.id,
-    ),
-    relatedArticles: await getRelatedArticles(executor, {
-      opportunityId: root.id,
-    }),
+    recentMeaningfulChanges,
+    relatedArticles,
     indexability: getIndexability({
       entity: "OPPORTUNITY",
       publicationState: root.publicationState,

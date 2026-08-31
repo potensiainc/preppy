@@ -1,0 +1,3265 @@
+[
+  {
+    "slug": "cau",
+    "institutionId": "1968cc29-a427-54e6-9326-6750e711d27a",
+    "sections": [
+      {
+        "heading": "2026 모집·접수",
+        "paragraphHashes": [
+          "d3d5f16a742f0ca3c503c7ac437d46c3632090f4e674447d50aba515d4a5077f"
+        ],
+        "sourceUrls": ["https://cau.sen.es.kr/122768/subMenu.do"]
+      },
+      {
+        "heading": "추첨·쌍둥이·후보자",
+        "paragraphHashes": [
+          "2087c8a3a20411ddb4f1da9411184326372b0f68801fbc08871a257cd5c361f5",
+          "dc3d3bff1c3cd7d314eed75efdd6068519cf262837cb996f80bb3d06a72654a3"
+        ],
+        "sourceUrls": ["https://cau.sen.es.kr/122768/subMenu.do"]
+      },
+      {
+        "heading": "등록·서류·비용",
+        "paragraphHashes": [
+          "f3960c4d4d66a80c0fc22f2ffd9518c6a8e8425c516d164d2cdad2557b4e655d",
+          "b1748f4fbd13292fd10f90118f61de6aa2f91a3d3db6d07b4623416f25af2721",
+          "e882623895d609777687c637acb7fa235e16106362db6b6f6414b29e7f4a0d2e"
+        ],
+        "sourceUrls": ["https://cau.sen.es.kr/122768/subMenu.do"]
+      }
+    ],
+    "warningHashes": [
+      "a26c055a60f9f5ea3751e64f1157497a205ea1427c0afbc9f4e8eb4689b03e0a"
+    ],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://cau.sen.es.kr/122768/subMenu.do",
+        "finalUrl": "https://cau.sen.es.kr/122768/subMenu.do",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "d6f522d7a53d94e53d9856ec76ee263199b4f7f7653109d0ac5ace469afb9f00",
+        "fetchedAt": "2026-08-30T22:53:13.461Z"
+      }
+    ]
+  },
+  {
+    "slug": "cheongwon",
+    "institutionId": "98064bab-136b-5320-b7a4-894ff3e767fc",
+    "sections": [
+      {
+        "heading": "2026 모집 대상·인원",
+        "paragraphHashes": [
+          "3a8aa89c70cfb186e9b3337756731153c1d6f1747d6022c543ca244bbf9771f7"
+        ],
+        "sourceUrls": [
+          "https://cheongwon.sen.es.kr/crosseditor/binary/images/006024/(%EC%B2%AD%EC%9B%90%EC%B4%88)_2026_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95001_1.jpg"
+        ]
+      },
+      {
+        "heading": "접수·서류·전형료",
+        "paragraphHashes": [
+          "45947d389382bd36cca20f0ab512b28b4ee280d67799ab377d59424418a456b0",
+          "bcbe474921905c16dba298a36aa97cb41967c425a513c02a2150304ca3accb53"
+        ],
+        "sourceUrls": [
+          "https://cheongwon.sen.es.kr/crosseditor/binary/images/006024/(%EC%B2%AD%EC%9B%90%EC%B4%88)_2026_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95001_1.jpg"
+        ]
+      },
+      {
+        "heading": "추첨·쌍둥이",
+        "paragraphHashes": [
+          "3119d668aeaf5d9947f58f5a55bdc8bcafaa798d1f91f8272975b0b0950e80e0",
+          "5a4c666baf4e8a1ae45e65f79a1ee1c355c5562f81e81181ddcd52f8a5730c02"
+        ],
+        "sourceUrls": [
+          "https://cheongwon.sen.es.kr/crosseditor/binary/build_images_new/images/002990/(%EC%B2%AD%EC%9B%90%EC%B4%88)_2026_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95(%EC%95%88)-%EC%B5%9C%EC%A2%85002.jpg"
+        ]
+      },
+      {
+        "heading": "등록·결원·비용",
+        "paragraphHashes": [
+          "790e11b380c7d440fee90ede5b365d51b00c304b4f0ac9d7343d02009a82fce1",
+          "61d174b14f6b4f660e8f4b8ceae4559770c95d19a2067a451f85dad73da414f7",
+          "084b6c9f70dc3940c5927661479bc619409c2529e730bd2d9be5e62b820fbb9d"
+        ],
+        "sourceUrls": [
+          "https://cheongwon.sen.es.kr/crosseditor/binary/build_images_new/images/002990/(%EC%B2%AD%EC%9B%90%EC%B4%88)_2026_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95(%EC%95%88)-%EC%B5%9C%EC%A2%85002.jpg",
+          "https://cheongwon.sen.es.kr/crosseditor/binary/build_images_new/images/002990/(%EC%B2%AD%EC%9B%90%EC%B4%88)_2026_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95(%EC%95%88)-%EC%B5%9C%EC%A2%85003.jpg"
+        ]
+      }
+    ],
+    "warningHashes": [
+      "cbb6cd081b011f7168ee31f4166942a7f12c770e55492fc34c4ecb2630b9e9e1"
+    ],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://cheongwon.sen.es.kr/crosseditor/binary/images/006024/(%EC%B2%AD%EC%9B%90%EC%B4%88)_2026_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95001_1.jpg",
+        "finalUrl": "https://cheongwon.sen.es.kr/crosseditor/binary/images/006024/(%EC%B2%AD%EC%9B%90%EC%B4%88)_2026_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95001_1.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "46c9947e605779c0426572ce5c71038e2351d85c8452333a6135ec89ea07f40b",
+        "fetchedAt": "2026-08-30T22:53:13.560Z"
+      },
+      {
+        "requestedUrl": "https://cheongwon.sen.es.kr/crosseditor/binary/build_images_new/images/002990/(%EC%B2%AD%EC%9B%90%EC%B4%88)_2026_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95(%EC%95%88)-%EC%B5%9C%EC%A2%85002.jpg",
+        "finalUrl": "https://cheongwon.sen.es.kr/crosseditor/binary/build_images_new/images/002990/(%EC%B2%AD%EC%9B%90%EC%B4%88)_2026_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95(%EC%95%88)-%EC%B5%9C%EC%A2%85002.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "b97cb481c36b64cf9b0cb0f02b595f0bac9de481d54c17d8677bcdcdcbd17bc8",
+        "fetchedAt": "2026-08-30T22:53:13.561Z"
+      },
+      {
+        "requestedUrl": "https://cheongwon.sen.es.kr/crosseditor/binary/build_images_new/images/002990/(%EC%B2%AD%EC%9B%90%EC%B4%88)_2026_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95(%EC%95%88)-%EC%B5%9C%EC%A2%85003.jpg",
+        "finalUrl": "https://cheongwon.sen.es.kr/crosseditor/binary/build_images_new/images/002990/(%EC%B2%AD%EC%9B%90%EC%B4%88)_2026_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95(%EC%95%88)-%EC%B5%9C%EC%A2%85003.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "aadc547871614c500c63d276f14f9f44e90e5eef31efe5695d83ab58855d902b",
+        "fetchedAt": "2026-08-30T22:53:14.538Z"
+      },
+      {
+        "requestedUrl": "https://cheongwon.sen.es.kr/149044/subMenu.do",
+        "finalUrl": "https://cheongwon.sen.es.kr/149044/subMenu.do",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "698e8c7be7f82e7cdb99b89fc56a9bcb9a561021435d714422d45486ca2d3fb9",
+        "fetchedAt": "2026-08-30T22:53:14.825Z"
+      }
+    ]
+  },
+  {
+    "slug": "choongam",
+    "institutionId": "6f6df02f-3bf9-5cdb-bf2d-80353a0ee646",
+    "sections": [
+      {
+        "heading": "2026 모집·접수",
+        "paragraphHashes": [
+          "a0c3fae63bae880dac38291a257d46fd487278b7415374acc2152de8110c4d44"
+        ],
+        "sourceUrls": [
+          "https://choongam.sen.es.kr/crosseditor/binary/images/006136/2026_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%9A%94%EA%B0%95_(730_x_2500_px)_(5).jpg"
+        ]
+      },
+      {
+        "heading": "추첨·등록·쌍둥이",
+        "paragraphHashes": [
+          "8f416fd4a31a41a43f9455bdb60e8829bccf1f3a3be15077469c8b2af58b667c",
+          "d1b019434e4eb784f2b5cf8bfe6671c0a2f1d084b38a3887036dcc929130bd7f"
+        ],
+        "sourceUrls": [
+          "https://choongam.sen.es.kr/crosseditor/binary/images/006136/2026_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%9A%94%EA%B0%95_(730_x_2500_px)_(5).jpg"
+        ]
+      },
+      {
+        "heading": "결원·비용",
+        "paragraphHashes": [
+          "9010a24695142b6aa8fbca04dc3c94751e24ef32202d6063536b93fd773d0c93",
+          "40d6cf5bdfb83c2ca2788e1c221e460af9d0adc6099d70ae460d9be6c567c74a"
+        ],
+        "sourceUrls": [
+          "https://choongam.sen.es.kr/crosseditor/binary/images/006136/2026_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%9A%94%EA%B0%95_(730_x_2500_px)_(5).jpg"
+        ]
+      }
+    ],
+    "warningHashes": [
+      "14946cb156783384bc317168966665ca6316178d62c5cfefa45a9882bacf352a"
+    ],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://choongam.sen.es.kr/crosseditor/binary/images/006136/2026_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%9A%94%EA%B0%95_(730_x_2500_px)_(5).jpg",
+        "finalUrl": "https://choongam.sen.es.kr/crosseditor/binary/images/006136/2026_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%9A%94%EA%B0%95_(730_x_2500_px)_(5).jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "97e02a298b39078c0798fc3d842f8adbe6e053f65d10d8d14661841260800539",
+        "fetchedAt": "2026-08-30T23:14:46.723Z"
+      },
+      {
+        "requestedUrl": "https://choongam.sen.es.kr/184618/subMenu.do",
+        "finalUrl": "https://choongam.sen.es.kr/184618/subMenu.do",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "28be53b6aca5713bfa95f3ebacd95f86b4cf54519d54fc4f14a630acb20128fe",
+        "fetchedAt": "2026-08-30T22:53:15.263Z"
+      },
+      {
+        "requestedUrl": "https://choongam.sen.es.kr/crosseditor/binary/images/006079/111_%EC%88%98%EC%97%85%EC%B2%B4%ED%97%98.jpg",
+        "finalUrl": "https://choongam.sen.es.kr/crosseditor/binary/images/006079/111_%EC%88%98%EC%97%85%EC%B2%B4%ED%97%98.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "83cf4122f7fed5424097d0dbde28106486d0ec6d426ed2b77f6c1db01b720224",
+        "fetchedAt": "2026-08-30T23:15:05.054Z"
+      }
+    ]
+  },
+  {
+    "slug": "chugye",
+    "institutionId": "7bd27832-3120-5335-acb1-b3ebc6c09707",
+    "sections": [
+      {
+        "heading": "2026학년도 모집 대상·접수·서류",
+        "paragraphHashes": [
+          "5bcaee0b6fcec66b86c58e361b4d58c1a09646098d8db05e6172e30be298208f",
+          "80b446415c1fc6a2c6875368ad33abaaf0c7a6e063d989ff4e81a45623b3f2f2",
+          "d1fdb978deb04e5f8d33e983c73b997af545e3014d08c7f603b0f8c294ebe270"
+        ],
+        "sourceUrls": [
+          "https://chugye.sen.es.kr/crosseditor/binary/images/006123/2025_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95(%ED%99%88%ED%8E%98%EC%9D%B4%EC%A7%80).png"
+        ]
+      },
+      {
+        "heading": "추첨·쌍둥이",
+        "paragraphHashes": [
+          "8fa7990af3e9f825fe49a31823bc300bc9d3784ff9238a265380953f91374654",
+          "7ecced6e28d51e1ba1ce30a11fa175923e48a51c655988a2ff3a5aadd81f577a"
+        ],
+        "sourceUrls": [
+          "https://chugye.sen.es.kr/crosseditor/binary/images/006123/2025_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95(%ED%99%88%ED%8E%98%EC%9D%B4%EC%A7%80).png"
+        ]
+      },
+      {
+        "heading": "결원 보충·취학 행정",
+        "paragraphHashes": [
+          "16ddfc29ec769ecd32a699c2c7aff5d980189c9ec4d2a91654e311c8a128f9fc",
+          "da0a75553c8cac7bd8fc4814743b11c9d3e6e7b7641520ab2792d19d9ff8ad19"
+        ],
+        "sourceUrls": [
+          "https://chugye.sen.es.kr/crosseditor/binary/images/006123/2025_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95(%ED%99%88%ED%8E%98%EC%9D%B4%EC%A7%80).png"
+        ]
+      },
+      {
+        "heading": "등록·입학금·수업료",
+        "paragraphHashes": [
+          "d7360e9532021441f0755ca74a1ba71be7bd2d83785c61fe71e6dcfd038016fc",
+          "2fa77a690caba3f37995465a844a14231e61d3bff2b1b6aef9019583d79fda09"
+        ],
+        "sourceUrls": [
+          "https://chugye.sen.es.kr/crosseditor/binary/images/006123/2025_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95(%ED%99%88%ED%8E%98%EC%9D%B4%EC%A7%80).png"
+        ]
+      }
+    ],
+    "warningHashes": [
+      "c9bbe35801a9de01ab02e69076a75f8de4b6ac41d9d6711855d3a0ed760eaf26",
+      "8286c21fc604751a1450b44d3e65b54e0f3e8c4aa1c0d2ad2eec4873952940d9"
+    ],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://chugye.sen.es.kr/crosseditor/binary/images/006123/2025_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95(%ED%99%88%ED%8E%98%EC%9D%B4%EC%A7%80).png",
+        "finalUrl": "https://chugye.sen.es.kr/crosseditor/binary/images/006123/2025_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95(%ED%99%88%ED%8E%98%EC%9D%B4%EC%A7%80).png",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "78fbdc82534290df346cde992c5401e7550b7eceff34abf6d9278a1a42ff3612",
+        "fetchedAt": "2026-08-30T22:53:16.114Z"
+      },
+      {
+        "requestedUrl": "https://chugye.sen.es.kr/97974/subMenu.do",
+        "finalUrl": "https://chugye.sen.es.kr/97974/subMenu.do",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "f2c4d30a918f75fbf5726dd862cfeacdd38a89ee148d1a96bb9c862c65cefdce",
+        "fetchedAt": "2026-08-30T22:53:16.140Z"
+      }
+    ]
+  },
+  {
+    "slug": "daegwang",
+    "institutionId": "4902ef41-0b2a-55f0-8e9b-2602e9fdd702",
+    "sections": [
+      {
+        "heading": "2026 모집·접수·추첨",
+        "paragraphHashes": [
+          "a41db6a098de62cfca7edff45c832330badcdd7a1e700a5b15f2d668389dd89b",
+          "50ede708cbf23c6aba36c2049f2af71fc33137a496eaf4811399821cb1448598"
+        ],
+        "sourceUrls": [
+          "https://daegwang.sen.es.kr/crosseditor/binary/images/007591/(%EB%8C%80%EA%B4%91%EC%B4%88)2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95(%EC%B5%9C%EC%A2%85%EC%95%88)_1.png"
+        ]
+      },
+      {
+        "heading": "결원·쌍둥이·비용",
+        "paragraphHashes": [
+          "c84de34fbd701b49270674e2a7667474d90dcc12fab144eec059ac0d4f9634d1",
+          "b25cec3e5d33415e71d7fa2c7151ad9bb2528baef8ca4f0faa74904d32d01590",
+          "3a1f2de87a0bcad769660823412db532face4442294898b85704877ef553487d"
+        ],
+        "sourceUrls": [
+          "https://daegwang.sen.es.kr/crosseditor/binary/images/007591/(%EB%8C%80%EA%B4%91%EC%B4%88)2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95(%EC%B5%9C%EC%A2%85%EC%95%88)_2.png"
+        ]
+      }
+    ],
+    "warningHashes": [
+      "605a80f38b0b46c55ebac76cd7dbcf70f0811613021766fc4011dee6b6974a9c"
+    ],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://daegwang.sen.es.kr/crosseditor/binary/images/007591/(%EB%8C%80%EA%B4%91%EC%B4%88)2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95(%EC%B5%9C%EC%A2%85%EC%95%88)_1.png",
+        "finalUrl": "https://daegwang.sen.es.kr/crosseditor/binary/images/007591/(%EB%8C%80%EA%B4%91%EC%B4%88)2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95(%EC%B5%9C%EC%A2%85%EC%95%88)_1.png",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "3c42916c33f9a369bd68f6b81ce6d9a8932ab8836e87e9d76c07b327ce52b565",
+        "fetchedAt": "2026-08-30T22:53:16.612Z"
+      },
+      {
+        "requestedUrl": "https://daegwang.sen.es.kr/207100/subMenu.do",
+        "finalUrl": "https://daegwang.sen.es.kr/207100/subMenu.do",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "95eab1e09fc0d70fb70cf867983e293dbae4d2cb91a0d16b62854ddf1aa6758c",
+        "fetchedAt": "2026-08-30T22:53:16.969Z"
+      },
+      {
+        "requestedUrl": "https://daegwang.sen.es.kr/crosseditor/binary/images/007591/(%EB%8C%80%EA%B4%91%EC%B4%88)2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95(%EC%B5%9C%EC%A2%85%EC%95%88)_2.png",
+        "finalUrl": "https://daegwang.sen.es.kr/crosseditor/binary/images/007591/(%EB%8C%80%EA%B4%91%EC%B4%88)2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95(%EC%B5%9C%EC%A2%85%EC%95%88)_2.png",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "a132a398bffcaf0c7aa32732a4771173d40dbb1877e0067aa3bff1de6f59c1a2",
+        "fetchedAt": "2026-08-30T23:41:01.469Z"
+      }
+    ]
+  },
+  {
+    "slug": "dongbuk",
+    "institutionId": "442d7449-7fbd-5f94-a3cf-68895897b1bd",
+    "sections": [
+      {
+        "heading": "2026학년도 모집·접수",
+        "paragraphHashes": [
+          "4c56a3fe774ff2583c6206dc6bd8c7d32214e8d69a837653f2801737995d1460",
+          "bb127c88979221c5ba3828a88730224a54229244407411c9c6328ed7478537ad"
+        ],
+        "sourceUrls": [
+          "https://dongbuk.sen.es.kr/crosseditor/binary/images/006132/26%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95_251105_%EC%88%98%EC%A0%95001.png"
+        ]
+      },
+      {
+        "heading": "추첨·쌍둥이·예비당첨",
+        "paragraphHashes": [
+          "b2bf40f9a61e9837b45085f0913c0bc3dfbe6125c4d40b09c7f7ba8492eff96e",
+          "f7a4f0bd36c2807b57a8357d92ef0e8ccd3d7e2b4258e0eebe2649e3f52fd49c",
+          "0dee06e7995efd219fe6e2053aeba40f756274a1213e68da0f5b411f96836e7a"
+        ],
+        "sourceUrls": [
+          "https://dongbuk.sen.es.kr/crosseditor/binary/images/006132/26%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95_251105_%EC%88%98%EC%A0%95001.png"
+        ]
+      },
+      {
+        "heading": "등록·예비소집·교육비",
+        "paragraphHashes": [
+          "64848037132c04687889cf357f8a6765475d667eb674711ffbe22280fb46c998",
+          "ab2f3373711567f2796efc88f071c4023e7553e2b19358d98bd4c5dc797c4b87"
+        ],
+        "sourceUrls": [
+          "https://dongbuk.sen.es.kr/crosseditor/binary/images/006132/26%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95_251105_%EC%88%98%EC%A0%95001.png"
+        ]
+      }
+    ],
+    "warningHashes": [
+      "274baa7673907486e949336b78777541f893ffeb826472ad3d2b84217f8a3d1f",
+      "636d1c6b048d24fa0c534f66a3cdfb5f10f8f5c3ee6f034b0f44d35e4a775eee",
+      "1652707a7ebdc53ad9a205d7e80774796e21a16986e352807dabb8659924fa49"
+    ],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://dongbuk.sen.es.kr/crosseditor/binary/images/006132/26%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95_251105_%EC%88%98%EC%A0%95001.png",
+        "finalUrl": "https://dongbuk.sen.es.kr/crosseditor/binary/images/006132/26%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95_251105_%EC%88%98%EC%A0%95001.png",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "46d4e34076d3a950805a7beb6b0d019fccbd1787b445b1400b414e04300c4181",
+        "fetchedAt": "2026-08-30T22:53:17.560Z"
+      }
+    ]
+  },
+  {
+    "slug": "donggwang",
+    "institutionId": "301c71ed-7d55-591a-9499-a66332a9a783",
+    "sections": [
+      {
+        "heading": "2027년도 모집요강(안)·모집 대상",
+        "paragraphHashes": [
+          "627c6f40b56edd533c11f1f823b37b0e2b5128a6fcf55cf75a81d6aeb15c2362"
+        ],
+        "sourceUrls": [
+          "https://donggwang.sen.es.kr/crosseditor/binary/images/008169/donggwang_new_2026.png"
+        ]
+      },
+      {
+        "heading": "설명회·원서접수·증빙",
+        "paragraphHashes": [
+          "ccd103451935c262ed45dfdcde61928268efc5ad8366f55f4f335c8cacbfaa09",
+          "c96d168d4d957ad7c4fdc8df89cb42f20b3b77eb1be75f1aae0f66d75fdf8933"
+        ],
+        "sourceUrls": [
+          "https://donggwang.sen.es.kr/crosseditor/binary/images/008169/donggwang_new_2026.png"
+        ]
+      },
+      {
+        "heading": "추첨·쌍둥이·발표",
+        "paragraphHashes": [
+          "15aba2e8bdfbfb93887a69bb5c0faea3b1b2010a30d16ea5ddbcfb752f68e96e",
+          "52f0fadc8066544dfd3cb95dae0441f808b33e9bddd4bd7adfa2884f03d3799f"
+        ],
+        "sourceUrls": [
+          "https://donggwang.sen.es.kr/crosseditor/binary/images/008169/donggwang_new_2026.png"
+        ]
+      },
+      {
+        "heading": "등록·방문서류·입학금",
+        "paragraphHashes": [
+          "21041d09d6a40aeea709dcea588b4170c7c38b904e382566e9561014d8206774",
+          "3902c36c7ee62697311114297b45224a35fde7aaced79bfdfda5f8514daea67f",
+          "a6ada5af604fa597e03fcc4b82fc818e1054fa9d0583f3265a935169552ec021"
+        ],
+        "sourceUrls": [
+          "https://donggwang.sen.es.kr/crosseditor/binary/images/008169/donggwang_new_2026.png"
+        ]
+      },
+      {
+        "heading": "결원보충·교육비·문의",
+        "paragraphHashes": [
+          "51434fd7be03ff0c24e918e625b8ccaeb7324912dfdbc11c4c474561bbfc8a3f",
+          "a17f1ef267206407f0767e86a59b8493eb0f347cdc42822803b6278308024ac5"
+        ],
+        "sourceUrls": [
+          "https://donggwang.sen.es.kr/crosseditor/binary/images/008169/donggwang_new_2026.png"
+        ]
+      }
+    ],
+    "warningHashes": [
+      "a1bde4e14c6f46d213537bf2463847b7d16a23159b660faf8eaca1e1bb64f032",
+      "8d4919c3a2fd56e8a706d50b271557ca9f30c137b7018303d0e892c5f963f385",
+      "cec25f077d69a77d613d55d8f0a0c2c6583226e2dbf6183519b138c811585beb",
+      "8b6596f8f5776eddc3e3e1228f6266cd4ca175c0fd7800d4933949c04226a44b",
+      "d7dff705f4c35da4183db2569d62bd40f18fb826290a529942d1004deaeb616e"
+    ],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://donggwang.sen.es.kr/crosseditor/binary/images/008169/donggwang_new_2026.png",
+        "finalUrl": "https://donggwang.sen.es.kr/crosseditor/binary/images/008169/donggwang_new_2026.png",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "6969bcb58b57fa118575d4194d5025498fa158a005d1503ef2ec3014bbc098c4",
+        "fetchedAt": "2026-08-30T22:53:18.107Z"
+      },
+      {
+        "requestedUrl": "https://donggwang.sen.es.kr/161542/subMenu.do",
+        "finalUrl": "https://donggwang.sen.es.kr/161542/subMenu.do",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "b76850680ed466016bb4b9b80d533abc71722965a8d8c63ca15e156dafe0a351",
+        "fetchedAt": "2026-08-30T22:53:18.617Z"
+      },
+      {
+        "requestedUrl": "https://donggwang.sen.es.kr/crosseditor/binary/images/006122/%EC%A0%9C%EB%AA%A9%EC%9D%84_%EC%9E%85%EB%A0%A5%ED%95%B4%EC%A3%BC%EC%84%B8%EC%9A%94..png",
+        "finalUrl": "https://donggwang.sen.es.kr/crosseditor/binary/images/006122/%EC%A0%9C%EB%AA%A9%EC%9D%84_%EC%9E%85%EB%A0%A5%ED%95%B4%EC%A3%BC%EC%84%B8%EC%9A%94..png",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "3ece80df949ab0c1e72d3ff64f799a812dcbbb66b2a8275baafa14045c2dde63",
+        "fetchedAt": "2026-08-30T23:14:47.042Z"
+      }
+    ]
+  },
+  {
+    "slug": "eunseok",
+    "institutionId": "0af8b3c4-626f-55f5-81ee-ee36800d75d3",
+    "sections": [
+      {
+        "heading": "2026학년도 모집 대상·원서접수",
+        "paragraphHashes": [
+          "2bfe3a76ad85f139590188c4b722318694028d12f96fa5a7550e3da41284ac69",
+          "93f34dbfbc745822ef3a1d9d42605249f0d81f90fd4ff02ea0919dfea01d1b6f",
+          "4007157e9ef4f6a7e8360ebf2e1aac4e216478ed4a571ef095b5cbb389999a27"
+        ],
+        "sourceUrls": [
+          "https://eunseok.sen.es.kr/crosseditor/binary/images/006058/25%EC%9D%80%EC%84%9D%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90-A4_%ED%99%8D%EB%B3%B4%EC%B1%85%EC%9E%90_(4)_1.jpg"
+        ]
+      },
+      {
+        "heading": "추첨·등록·쌍둥이",
+        "paragraphHashes": [
+          "ca40c6ad8f98ff8cdd997468f05a03d7ae552ba090824efc59b129314c917117",
+          "a11547f3a10ccf4b2430c980511c0040e6771d97b0becde5b23b7c83313ab887",
+          "85b5a214993ab3ce07b5cc2dee5e63c724c7ca2024924fea4722dd181f7fb2a3"
+        ],
+        "sourceUrls": [
+          "https://eunseok.sen.es.kr/crosseditor/binary/images/006058/25%EC%9D%80%EC%84%9D%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90-A4_%ED%99%8D%EB%B3%B4%EC%B1%85%EC%9E%90_(4)_1.jpg",
+          "https://eunseok.sen.es.kr/crosseditor/binary/images/006058/25%EC%9D%80%EC%84%9D%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90-A4_%ED%99%8D%EB%B3%B4%EC%B1%85%EC%9E%90_(4)_2_1.jpg"
+        ]
+      },
+      {
+        "heading": "결원보충·대기자",
+        "paragraphHashes": [
+          "1182907a0fa07c9939de1f01febe726ab5f4baead57da687b8cd702219117fe6",
+          "1d4617a181f9fbaa459d21614318f9f28682f96e62c1d7a8039cdf53558fb3e4"
+        ],
+        "sourceUrls": [
+          "https://eunseok.sen.es.kr/crosseditor/binary/images/006058/25%EC%9D%80%EC%84%9D%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90-A4_%ED%99%8D%EB%B3%B4%EC%B1%85%EC%9E%90_(4)_2_1.jpg"
+        ]
+      },
+      {
+        "heading": "입학금·수업료·문의",
+        "paragraphHashes": [
+          "e03b34bd31c2eaccb1d520ea69daadb499fd443be900be5e152f0902c7713a75"
+        ],
+        "sourceUrls": [
+          "https://eunseok.sen.es.kr/crosseditor/binary/images/006058/25%EC%9D%80%EC%84%9D%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90-A4_%ED%99%8D%EB%B3%B4%EC%B1%85%EC%9E%90_(4)_2_1.jpg"
+        ]
+      }
+    ],
+    "warningHashes": [
+      "d1fb713c1a34310851a4d5c8bb15b9b2550c9a41628bafd69c1316eaa47049d8"
+    ],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://eunseok.sen.es.kr/crosseditor/binary/images/006058/25%EC%9D%80%EC%84%9D%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90-A4_%ED%99%8D%EB%B3%B4%EC%B1%85%EC%9E%90_(4)_1.jpg",
+        "finalUrl": "https://eunseok.sen.es.kr/crosseditor/binary/images/006058/25%EC%9D%80%EC%84%9D%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90-A4_%ED%99%8D%EB%B3%B4%EC%B1%85%EC%9E%90_(4)_1.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "33422391a6ed1807711ee94ac805b8a111e2cd8d787ab9aa58ecefac5301b484",
+        "fetchedAt": "2026-08-30T22:53:19.227Z"
+      },
+      {
+        "requestedUrl": "https://eunseok.sen.es.kr/crosseditor/binary/images/006058/25%EC%9D%80%EC%84%9D%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90-A4_%ED%99%8D%EB%B3%B4%EC%B1%85%EC%9E%90_(4)_2_1.jpg",
+        "finalUrl": "https://eunseok.sen.es.kr/crosseditor/binary/images/006058/25%EC%9D%80%EC%84%9D%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90-A4_%ED%99%8D%EB%B3%B4%EC%B1%85%EC%9E%90_(4)_2_1.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "38020a050b328cbd2d29be7924f5c226e4b344c763275fad39c0a6f837ed7906",
+        "fetchedAt": "2026-08-30T23:29:19.251Z"
+      }
+    ]
+  },
+  {
+    "slug": "ewha",
+    "institutionId": "3df6cf6c-2016-5626-83a4-3c78a87be1fb",
+    "sections": [
+      {
+        "heading": "2026학년도 모집·접수·서류",
+        "paragraphHashes": [
+          "c8113269e04846537ea6bd2d7de1fa8c645f6c85ae94be34e6c75a8aebf89f98",
+          "30d0b1772e0fbdd854af6be483e0912bcdca8c12af49c8898821d54ea6afcffb"
+        ],
+        "sourceUrls": [
+          "https://ewha.sen.es.kr/crosseditor/binary/images/006126/2026_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%9A%94%EA%B0%95_(7).png"
+        ]
+      },
+      {
+        "heading": "추첨·쌍둥이",
+        "paragraphHashes": [
+          "c12d93b6c56388909664a68dd22d31acbf26f5f322be65a1bf9866af6cedf01b",
+          "a139f2965734ce20bbf45e02bcefd8ffe5b610b179dbee635832cee2d0ecdb50"
+        ],
+        "sourceUrls": [
+          "https://ewha.sen.es.kr/crosseditor/binary/images/006126/2026_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%9A%94%EA%B0%95_(7).png"
+        ]
+      },
+      {
+        "heading": "등록·서류 수령·결원 보충",
+        "paragraphHashes": [
+          "5afa926dad23734a57d813ac95e384a9f16dcc0693d05b189b613521f191fed4",
+          "33ef69e861c3acff58bde503f22cc2aab116eb420545d027cbe02f384c40dc67",
+          "8fb61a96bb2845f659c15c93ac08a32b19e08dd8b78093577bd6574530cdc855"
+        ],
+        "sourceUrls": [
+          "https://ewha.sen.es.kr/crosseditor/binary/images/006126/2026_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%9A%94%EA%B0%95_(7).png"
+        ]
+      },
+      {
+        "heading": "입학금·수업료·취학 절차",
+        "paragraphHashes": [
+          "6d76c3bdbcca7b8889a3c3fad1af59bb42567a2784514c8b319f7bcab416402e",
+          "c157c654fb79b148732062c76e9bf16da96702ff88e9fcfebf5a480d21b14a1f",
+          "7eb671e9df1840103b9c852b3ab61acd52f3f0ed0a3c50bb9cc977bc1f4663f4"
+        ],
+        "sourceUrls": [
+          "https://ewha.sen.es.kr/crosseditor/binary/images/006126/2026_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%9A%94%EA%B0%95_(7).png"
+        ]
+      }
+    ],
+    "warningHashes": [
+      "6a7df21fd41f89c618ea18cd7b126a5f926ae9cff97f1663124ecf3cbabdbf23"
+    ],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://ewha.sen.es.kr/crosseditor/binary/images/006126/2026_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%9A%94%EA%B0%95_(7).png",
+        "finalUrl": "https://ewha.sen.es.kr/crosseditor/binary/images/006126/2026_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%9A%94%EA%B0%95_(7).png",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "4084fea37250517ad70cd39f872cec7d69a65a578f0341b8168e9c8c139ded5e",
+        "fetchedAt": "2026-08-30T22:53:20.525Z"
+      },
+      {
+        "requestedUrl": "https://ewha.sen.es.kr/198674/subMenu.do",
+        "finalUrl": "https://ewha.sen.es.kr/198674/subMenu.do",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "06dc04b31ad623374f86d17f3d8243dd1af7419299f618dd68e9d6e55bba269b",
+        "fetchedAt": "2026-08-30T22:53:20.591Z"
+      },
+      {
+        "requestedUrl": "https://ewha.sen.es.kr/crosseditor/binary/images/006143/MjAyNTExMDcwOTMxNTE1NjFfN1dQSTlYQTI=.png",
+        "finalUrl": "https://ewha.sen.es.kr/crosseditor/binary/images/006143/MjAyNTExMDcwOTMxNTE1NjFfN1dQSTlYQTI=.png",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "4e04ac1d281f15f5490400b5443685384f5fa29b8780f7e0342a50600969342c",
+        "fetchedAt": "2026-08-30T23:14:47.122Z"
+      },
+      {
+        "requestedUrl": "https://ewha.sen.es.kr/crosseditor/binary/images/006143/MjAyNTExMDcwOTMwMDA0MzdfNkE2QkgxWDA=.png",
+        "finalUrl": "https://ewha.sen.es.kr/crosseditor/binary/images/006143/MjAyNTExMDcwOTMwMDA0MzdfNkE2QkgxWDA=.png",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "1faf2a3872807b5242e1e1a90bf09d0f00fc8e53003aadfe344288dd3829e699",
+        "fetchedAt": "2026-08-30T23:14:47.194Z"
+      }
+    ]
+  },
+  {
+    "slug": "gyeseong1882",
+    "institutionId": "fe7b3e2f-e401-5ec8-9e97-c0d8182cfd53",
+    "sections": [
+      {
+        "heading": "2026 모집·접수",
+        "paragraphHashes": [
+          "a391ca04315b5758495c234d01b4b0c0b0fcd9ec499bb784a9c6c2a6fc6338f4",
+          "d8eb8bc881da9cc552cdbe5d7d13bcc887bf81e949dcf89f2b9b65aad4c33bd5"
+        ],
+        "sourceUrls": [
+          "https://www.gyeseong1882.es.kr/data/image/20251022/1761111554_1.jpg"
+        ]
+      },
+      {
+        "heading": "추첨·등록·대기",
+        "paragraphHashes": [
+          "ad0d8626df2be7e2c2f40d8f8a07b3f28eb09fd743c23578b0a22b7d6902e30d",
+          "3dc5f73391cfa8071a490cacc351c5351544a49bcc76c24cd442fea1f46bd88a",
+          "19fb60b498cbb5142458abadb5ec530bdc248b5b0c39db3069900a4810b51b2b"
+        ],
+        "sourceUrls": [
+          "https://www.gyeseong1882.es.kr/data/image/20251022/1761111554_1.jpg",
+          "https://www.gyeseong1882.es.kr/data/image/20251022/1761113132_0.jpg"
+        ]
+      },
+      {
+        "heading": "설명회",
+        "paragraphHashes": [
+          "8ff8f2516af93bad9f6ac420f9a6afb4a1b91347421a8d5a994170c2a1469c82"
+        ],
+        "sourceUrls": [
+          "https://www.gyeseong1882.es.kr/bbs/view.html?category=info_enter2&header=&seq=2729687&tpage=1"
+        ]
+      }
+    ],
+    "warningHashes": [
+      "7c31c0514bdb3afeea5d9c7b849a9e991832da576c9c636d6298b99bca7d08c2"
+    ],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://www.gyeseong1882.es.kr/data/image/20251022/1761111554_1.jpg",
+        "finalUrl": "https://www.gyeseong1882.es.kr/data/image/20251022/1761111554_1.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "bbbb7b558dff06900b7eceb2b10d330067a9205b74a8361c6f595e299c790e45",
+        "fetchedAt": "2026-08-30T22:53:20.752Z"
+      },
+      {
+        "requestedUrl": "https://www.gyeseong1882.es.kr/data/image/20251022/1761113132_0.jpg",
+        "finalUrl": "https://www.gyeseong1882.es.kr/data/image/20251022/1761113132_0.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "e0f45435a972dbb7097656fd8a9b79924cdaec00bfa3ae71f9cf246682c9ebf7",
+        "fetchedAt": "2026-08-30T22:53:21.618Z"
+      },
+      {
+        "requestedUrl": "https://www.gyeseong1882.es.kr/bbs/view.html?category=info_enter2&header=&seq=2729687&tpage=1",
+        "finalUrl": "https://www.gyeseong1882.es.kr/bbs/view.html?category=info_enter2&header=&seq=2729687&tpage=1",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "b2d53b9391b3e7284f837d7110013fb059053db02529c5ffee41491d1cd40d94",
+        "fetchedAt": "2026-08-30T22:53:21.954Z"
+      }
+    ]
+  },
+  {
+    "slug": "hongik",
+    "institutionId": "34c9f6bd-b46b-5fcc-aac8-a8cc77d3dc3e",
+    "sections": [
+      {
+        "heading": "2026 모집·접수",
+        "paragraphHashes": [
+          "23704be3e24c445381aa8d193cc98d6d8e0b8a160496afff00331694775e1faa",
+          "d9b6e3daca890ad38e10080968eda44345dd219daff0c8b125810c1933a5055b"
+        ],
+        "sourceUrls": ["https://hongik.sen.es.kr/199027/subMenu.do"]
+      },
+      {
+        "heading": "추첨·쌍둥이·등록",
+        "paragraphHashes": [
+          "dda2ad0ebbf951d4e7b238e22cf6439e52b29e4f1975261e95b8a9ad10bcb457",
+          "ac7a0f0504f06d1de407f2eb43faab1c791670296d6f5cbcfd0d4d7bad67aa81"
+        ],
+        "sourceUrls": ["https://hongik.sen.es.kr/199027/subMenu.do"]
+      },
+      {
+        "heading": "대기·서류·비용",
+        "paragraphHashes": [
+          "1ae360599d905bed3f81ac9d6849b9a3e72dd3ab8107f9b134bbfaaa52606497",
+          "e5292fe553626d72c4511c5c729202125f9ac085a40eb2f1b75ea96066f9ff8b"
+        ],
+        "sourceUrls": ["https://hongik.sen.es.kr/199027/subMenu.do"]
+      }
+    ],
+    "warningHashes": [
+      "7ab937eb458c49862e2dbf874587f3bcf38950e05c73aa9e5d6c88ef3d2e5fb1"
+    ],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://hongik.sen.es.kr/199027/subMenu.do",
+        "finalUrl": "https://hongik.sen.es.kr/199027/subMenu.do",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "ca545cca71ca87e89ce7d6c24f101b78995679cdc017ca9c1238547cf0b8e6f1",
+        "fetchedAt": "2026-08-30T22:53:21.990Z"
+      }
+    ]
+  },
+  {
+    "slug": "hwarang-s",
+    "institutionId": "bbad0468-6d31-5061-8a48-dcc9acb50167",
+    "sections": [
+      {
+        "heading": "2027학년도 모집 대상·인원·서류",
+        "paragraphHashes": [
+          "cfbe09ed92c23e1bcf0f52e5d33be07cfaee62f1b61318990dc094b64cacd89f",
+          "fd8b7375873fcf116d670759bfe40f189c7c0c109bc7e97519e301d9a1714b14"
+        ],
+        "sourceUrls": [
+          "https://hwarang-s.sen.es.kr/crosseditor/binary/images/008025/001.png"
+        ]
+      },
+      {
+        "heading": "접수·입학설명회 예약",
+        "paragraphHashes": [
+          "72272fba368d100ec25a98600809bbd7a6cbe042defbc9ae824622a807160ba0",
+          "c503b02e2a3f6d84d8bdc24d31b485e3a921f03aeaab971546cba69a37b99097"
+        ],
+        "sourceUrls": [
+          "https://hwarang-s.sen.es.kr/crosseditor/binary/images/008025/001.png",
+          "https://hwarang-s.sen.es.kr/crosseditor/binary/images/008025/002.png"
+        ]
+      },
+      {
+        "heading": "추첨·쌍둥이·등록",
+        "paragraphHashes": [
+          "bca9f2eb8bfaefe84842dc7c23c36e232fde22a5d8191655fb81b1586910c3b0",
+          "4f1ef65b2c46b45702d5bf2c546fc308479a3b7d6a95de9611778ec5b8f847d5",
+          "cb4204259120e514afd4fa638b320daf2cbd875dce28d865fc795eb54fc2b970"
+        ],
+        "sourceUrls": [
+          "https://hwarang-s.sen.es.kr/crosseditor/binary/images/008025/002.png"
+        ]
+      },
+      {
+        "heading": "결원보충",
+        "paragraphHashes": [
+          "c7d5fd074d0b94f3591f770142a12df96796dc02c1e0aac3707d7294124dcaeb",
+          "ac90a2fdb09b418f16d570edd92869343677d0ffe01080e2dd61742f63d1e0c8"
+        ],
+        "sourceUrls": [
+          "https://hwarang-s.sen.es.kr/crosseditor/binary/images/008025/002.png"
+        ]
+      },
+      {
+        "heading": "교육비·유의사항·문의",
+        "paragraphHashes": [
+          "0d9ecedbf709f92c6220b6df9c25814cc1fdca167c17b7369061ba523d8d28b8",
+          "79a5041068d81f8448c5e873ec3a63a3caea84041a4f00ce734093aa44ed4df3"
+        ],
+        "sourceUrls": [
+          "https://hwarang-s.sen.es.kr/crosseditor/binary/images/008025/003.png"
+        ]
+      }
+    ],
+    "warningHashes": [
+      "7ab129a95b39b4e72cac4fef7aea66347a2409ca601e4ceeeac6ab1e421acf0c",
+      "2ebcfba193e3c645053254e15bf5e1561dd47c11101b989b8fd613d279779486"
+    ],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://hwarang-s.sen.es.kr/crosseditor/binary/images/008025/001.png",
+        "finalUrl": "https://hwarang-s.sen.es.kr/crosseditor/binary/images/008025/001.png",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "4835b51e0068e36e3ea820d932660994d5a78a9c61acbcb944dfce35a7192764",
+        "fetchedAt": "2026-08-30T22:53:22.080Z"
+      },
+      {
+        "requestedUrl": "https://hwarang-s.sen.es.kr/crosseditor/binary/images/008025/002.png",
+        "finalUrl": "https://hwarang-s.sen.es.kr/crosseditor/binary/images/008025/002.png",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "acbc562ce3ae1afff05fdcbd811c99bbbf3149723a48a71ac342b4fc8fbfbecf",
+        "fetchedAt": "2026-08-30T22:53:22.322Z"
+      },
+      {
+        "requestedUrl": "https://hwarang-s.sen.es.kr/206940/subMenu.do",
+        "finalUrl": "https://hwarang-s.sen.es.kr/206940/subMenu.do",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "3f92c8a65c55bde7de90ba693f779e687652ad42a6eb5ccd21a25b35dee006b0",
+        "fetchedAt": "2026-08-30T22:53:22.434Z"
+      },
+      {
+        "requestedUrl": "https://hwarang-s.sen.es.kr/crosseditor/binary/images/008025/003.png",
+        "finalUrl": "https://hwarang-s.sen.es.kr/crosseditor/binary/images/008025/003.png",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "755927ad0e92e66c94e38994d4158686729af1fe26792d7cb337076aa399fdf4",
+        "fetchedAt": "2026-08-30T23:41:01.834Z"
+      }
+    ]
+  },
+  {
+    "slug": "hye",
+    "institutionId": "9e2801d0-2a63-5ef6-8261-55e4cbf02237",
+    "sections": [
+      {
+        "heading": "2026학년도 모집 대상·접수",
+        "paragraphHashes": [
+          "b8e1f29a466078537ed7154e88175d4514268c3624ad6a8e14b2e7165b9482f5",
+          "040401a7a63c774351cddca7716cc81c5cf18c5e2de9c3fef41a47ae5a804a92",
+          "40890d5898f0145cb0f961956bf62b55412b038f3a4c294524fbb497cceaa9c9"
+        ],
+        "sourceUrls": [
+          "https://www.hye.or.kr/layouts/default/img/sub/20251105_01.jpg",
+          "https://www.hye.or.kr/layouts/default/img/sub/20251105_02.jpg"
+        ]
+      },
+      {
+        "heading": "추첨·쌍둥이·등록",
+        "paragraphHashes": [
+          "1db40011301cfe193c4f27b58c7337921a2f6e10cd0168cb257611a455e71dc3",
+          "397193d672d31efad5b54d17a1447a61c87a31c8df4422cee2381105f695c149",
+          "528d444c68d0caa004b9261259113d244283f83ab42e68f9baca706bc1763ab6"
+        ],
+        "sourceUrls": [
+          "https://www.hye.or.kr/layouts/default/img/sub/20251105_01.jpg",
+          "https://www.hye.or.kr/layouts/default/img/sub/20251105_02.jpg",
+          "https://www.hye.or.kr/layouts/default/img/sub/20251105_03.jpg"
+        ]
+      },
+      {
+        "heading": "서류 제출·수령·예비소집",
+        "paragraphHashes": [
+          "0822550379523d9e0c89476917ab086070cb6bde9a04bcccddb4d28e5fb1d56a",
+          "ef39a7202847f284a0f359c3698f7acda9e8d3aa7b0631ce8e952404bd3f40ad"
+        ],
+        "sourceUrls": [
+          "https://www.hye.or.kr/layouts/default/img/sub/20251105_02.jpg",
+          "https://www.hye.or.kr/layouts/default/img/sub/20251105_03.jpg"
+        ]
+      },
+      {
+        "heading": "결원 보충",
+        "paragraphHashes": [
+          "cfd6299466c49785f8feb768ca6c7c81cd180b819301c8caf34f785900cd4996",
+          "36fd94f7be43fcadc268189f62a2735c03bb7efc5ca1c89f8d41ca7a00b61582"
+        ],
+        "sourceUrls": [
+          "https://www.hye.or.kr/layouts/default/img/sub/20251105_03.jpg"
+        ]
+      },
+      {
+        "heading": "입학금·수업료·통학·문의",
+        "paragraphHashes": [
+          "28233a65fc8d6ce27cb7daf2002372e2f8a7f673cdc3113906fc018e42393a62",
+          "5848012bf59709ffd7aa3dec4f7265917242f971329125400ba72ddd090efef4",
+          "b463c8f269031b953e61728554e98bf65da09fb58c950e793bca385df432f9f4"
+        ],
+        "sourceUrls": [
+          "https://www.hye.or.kr/layouts/default/img/sub/20251105_03.jpg",
+          "https://www.hye.or.kr/layouts/default/img/sub/20251105_04.jpg"
+        ]
+      }
+    ],
+    "warningHashes": [
+      "491efa40bf925a56d9a0c45c16a057e1babd4b3781b4d5ce7fb10ccb3c5f72fb"
+    ],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://www.hye.or.kr/layouts/default/img/sub/20251105_01.jpg",
+        "finalUrl": "https://www.hye.or.kr/layouts/default/img/sub/20251105_01.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "23559b329250f672c55d2ffa6e089260b4347e056ce30cb509da853e82d5123f",
+        "fetchedAt": "2026-08-30T22:53:22.513Z"
+      },
+      {
+        "requestedUrl": "https://www.hye.or.kr/?c=A1000/A2400/A2401",
+        "finalUrl": "https://www.hye.or.kr/?c=A1000/A2400/A2401",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "c1845e403f2aa91c8fdbeab0c5d8f0df690f4618b9f6a36d9903639f908fbfd1",
+        "fetchedAt": "2026-08-30T22:53:22.575Z"
+      },
+      {
+        "requestedUrl": "https://www.hye.or.kr/layouts/default/img/sub/20251105_02.jpg",
+        "finalUrl": "https://www.hye.or.kr/layouts/default/img/sub/20251105_02.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "0ac1db309a736645e9254c6f3a63a6eebeb8684ff83d5443bdac25c3d05dc2fd",
+        "fetchedAt": "2026-08-30T23:41:01.912Z"
+      },
+      {
+        "requestedUrl": "https://www.hye.or.kr/layouts/default/img/sub/20251105_03.jpg",
+        "finalUrl": "https://www.hye.or.kr/layouts/default/img/sub/20251105_03.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "c2e31f7158ac5de1f1c68e46e6a266db6beef5f91be5712477275d5322fc85d8",
+        "fetchedAt": "2026-08-30T23:41:02.005Z"
+      },
+      {
+        "requestedUrl": "https://www.hye.or.kr/layouts/default/img/sub/20251105_04.jpg",
+        "finalUrl": "https://www.hye.or.kr/layouts/default/img/sub/20251105_04.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "6a9962d7933b19c697093f2d1a0296b556dbcb3746e5f5e9c874f1ee7b8b2d57",
+        "fetchedAt": "2026-08-30T23:41:02.092Z"
+      }
+    ]
+  },
+  {
+    "slug": "ihansin",
+    "institutionId": "409f2fe0-f572-5c0f-89ab-9c11cd726424",
+    "sections": [
+      {
+        "heading": "2026 모집·접수",
+        "paragraphHashes": [
+          "2a792f8989e79ff4cc2e65641daaa490740c2ad01c214894865d0656347e4710"
+        ],
+        "sourceUrls": [
+          "https://ihansin.sen.es.kr/crosseditor/binary/build_images_new/images/003004/250922_%ED%95%9C%EC%8B%A0%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EB%A6%AC%ED%94%8C%EB%A0%9B-%ED%95%9C%ED%8E%98%EC%9D%B4%EC%A7%80_1-vert.jpg"
+        ]
+      },
+      {
+        "heading": "입학 설명회·학교 탐방",
+        "paragraphHashes": [
+          "1a60340ca9e45d471c436724a5212bdc4aad80cf7f016726902736ac61150c24"
+        ],
+        "sourceUrls": [
+          "https://ihansin.sen.es.kr/crosseditor/binary/build_images_new/images/003004/250922_%ED%95%9C%EC%8B%A0%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EB%A6%AC%ED%94%8C%EB%A0%9B-%ED%95%9C%ED%8E%98%EC%9D%B4%EC%A7%80_1-vert.jpg"
+        ]
+      },
+      {
+        "heading": "추첨·발표·등록",
+        "paragraphHashes": [
+          "8e37e2c89ccbf92d1d9ae378a054418f65a67b9a894b2f94248b354d082c6d8a",
+          "b749fba557f625d2f5c4ea94a9d48324aa800bde90693d93683ef9ce0a827824"
+        ],
+        "sourceUrls": [
+          "https://ihansin.sen.es.kr/crosseditor/binary/build_images_new/images/003004/250922_%ED%95%9C%EC%8B%A0%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EB%A6%AC%ED%94%8C%EB%A0%9B-%ED%95%9C%ED%8E%98%EC%9D%B4%EC%A7%80_1-vert.jpg"
+        ]
+      },
+      {
+        "heading": "쌍둥이·결원 대기자·문의",
+        "paragraphHashes": [
+          "7391352ab7842f081489d74031612f06ed58cc3a4999c51ab40e84d21d33f86e",
+          "5a402b369731344bc420d091d88b8c2618998220899a50aac9a015175fe4cba5"
+        ],
+        "sourceUrls": [
+          "https://ihansin.sen.es.kr/crosseditor/binary/build_images_new/images/003004/250922_%ED%95%9C%EC%8B%A0%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EB%A6%AC%ED%94%8C%EB%A0%9B-%ED%95%9C%ED%8E%98%EC%9D%B4%EC%A7%80_1-vert.jpg"
+        ]
+      }
+    ],
+    "warningHashes": [
+      "5c2934e5431ce6d3e70ee88ace79c5149119638057dbca51aa343638908b5084"
+    ],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://ihansin.sen.es.kr/crosseditor/binary/build_images_new/images/003004/250922_%ED%95%9C%EC%8B%A0%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EB%A6%AC%ED%94%8C%EB%A0%9B-%ED%95%9C%ED%8E%98%EC%9D%B4%EC%A7%80_1-vert.jpg",
+        "finalUrl": "https://ihansin.sen.es.kr/crosseditor/binary/build_images_new/images/003004/250922_%ED%95%9C%EC%8B%A0%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EB%A6%AC%ED%94%8C%EB%A0%9B-%ED%95%9C%ED%8E%98%EC%9D%B4%EC%A7%80_1-vert.jpg",
+        "captureMethod": "BROWSER_CAPTURE",
+        "responseContentHash": "6e2c456f6907cd60800747601e7475862cd448524d072bd923687e83551e326c",
+        "fetchedAt": "2026-08-30T23:26:52.916Z"
+      }
+    ]
+  },
+  {
+    "slug": "kbes",
+    "institutionId": "abcb72f0-a6aa-53b1-9104-77d318660f8a",
+    "sections": [
+      {
+        "heading": "모집 대상·인원·지역",
+        "paragraphHashes": [
+          "7f360aec6976d552ceed8737bc2e4635fb3288b8053331516cbeb5f5e265b7bb",
+          "9114717e6f3af39b556772ba574d9cfd973194ea1e835fda1e9935f21dc3bd55"
+        ],
+        "sourceUrls": ["https://www.kbes.kr/bbs/content.php?co_id=1_3"]
+      },
+      {
+        "heading": "원서 접수·전형료",
+        "paragraphHashes": [
+          "2e3b4eeeed476141471bd90374ab75dcece8098b2b3bb8a803b1e375ec022f8e",
+          "b2dd53a375269b6038cf8257a757ad0668b7e106a95dfafd2606439a400a307e"
+        ],
+        "sourceUrls": ["https://www.kbes.kr/bbs/content.php?co_id=1_3"]
+      },
+      {
+        "heading": "추첨·발표·등록",
+        "paragraphHashes": [
+          "932f13d6033d68f97446661e165de5842ece12cf880efa1e3b6032c8c463741b",
+          "c9052aa880ff14a4ae192fba1ab3ebe6dcd37dc02022ad08156ab9caaa0fb6b6"
+        ],
+        "sourceUrls": ["https://www.kbes.kr/bbs/content.php?co_id=1_3"]
+      },
+      {
+        "heading": "쌍둥이·결원 충원",
+        "paragraphHashes": [
+          "a1ffcfa2ce0af1ca699119793f0ec6897a456b5610974179b480162a4e4d2982",
+          "588297dcb6d6480d43a91018dbf4b57d10beeda4e9a1ad3ac42e91e3a9fa279f",
+          "479d8a8982abd4246389bbb0fff51d63c5d5aa4479df4373e697f629d9b4c87f",
+          "ff273b365d0a508d2a26710b0a909ac3c698cb6d8d52c2ee67191be1c5003bf4"
+        ],
+        "sourceUrls": ["https://www.kbes.kr/bbs/content.php?co_id=1_3"]
+      },
+      {
+        "heading": "서류·취소·교육비",
+        "paragraphHashes": [
+          "aa4853d8d59695b9a4e4f891d06ac3cbd13c1a3089c91b81025ecb7738d4439d",
+          "f778459d70384c170f365eb44a4930bb5598e29fc2539579c3165518a13381d2"
+        ],
+        "sourceUrls": ["https://www.kbes.kr/bbs/content.php?co_id=1_3"]
+      }
+    ],
+    "warningHashes": [],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_3",
+        "finalUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_3",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "ffac50ce754f0b412506daf4d91b40916f5254cdc03e50e72529ccc115a671f4",
+        "fetchedAt": "2026-08-30T22:53:22.702Z"
+      }
+    ]
+  },
+  {
+    "slug": "kumsung",
+    "institutionId": "9550da3f-04eb-5eee-877d-877491461201",
+    "sections": [
+      {
+        "heading": "모집 대상·인원·지역",
+        "paragraphHashes": [
+          "f20dabe4b617b191893b61bb1c1cdff2f14b0e3e08adc28e97faabc66a3e79d2",
+          "3b8ae15ce6286f3628b6f6590e35c90e4d8b7882c55d8f0cb05359334208328a"
+        ],
+        "sourceUrls": ["https://www.kumsung.net/bbs/content.php?co_id=1_11_4"]
+      },
+      {
+        "heading": "원서·설명회·학교 방문",
+        "paragraphHashes": [
+          "7355a7523ca0c9c8aa72a757022e962a1f60994497f35ef181b75995d8ea1629",
+          "aa545a5e00860584ce383a7dd8e9de9960272531740245fe562a0b73a8dc5d95"
+        ],
+        "sourceUrls": ["https://www.kumsung.net/bbs/content.php?co_id=1_11_4"]
+      },
+      {
+        "heading": "추첨·당첨·대기자",
+        "paragraphHashes": [
+          "8591c96c758c06175b26a64ef0f7944b589b8271d32018f15e9528f7757d223c",
+          "081349ce13ed7b907f0f3f76768d24e22e8185082c658cd0b8cd70136d11db31"
+        ],
+        "sourceUrls": [
+          "https://www.kumsung.net/bbs/content.php?co_id=1_11_4",
+          "https://www.kumsung.net/bbs/board.php?bo_table=1_11_3&wr_id=3155"
+        ]
+      },
+      {
+        "heading": "등록·제출서류·예비소집",
+        "paragraphHashes": [
+          "618de12fbc18a4da16b6a00736d88c804e9f7d4b5e934b7e3a9ac6ee2a277e50",
+          "047d93187baeef0879117299923ab290f2a5f6f4d388715dd58808234f168c37",
+          "b6ddf352aab412815570edec9ba24d26bdd6bf107ff1ffd4303225d30698b7a4",
+          "d78b8dfca4c377be41bf2c122722fe726b54f77266dca15568b325cbc0b315d5"
+        ],
+        "sourceUrls": [
+          "https://www.kumsung.net/data/editor/2511/796b72a1a353cedcc4df4da80465948e_1763108630_82.jpg",
+          "https://www.kumsung.net/bbs/board.php?bo_table=1_11_3&wr_id=3156",
+          "https://www.kumsung.net/data/editor/2511/796b72a1a353cedcc4df4da80465948e_1763108631_33.jpg"
+        ]
+      },
+      {
+        "heading": "입학금·버스·입학식",
+        "paragraphHashes": [
+          "901c4cacf7602eaa1c511fef4151f8d7181e171d275f0a35d20a7465b744619c",
+          "243dab4903c8b53f87a60d46e6c1be74ffdd87b78a3ab09e77b766050352c498",
+          "c4712230c26ff718eca83c369ef15c7a5f8b69bad384f63fb53fa8b0f4b6254f",
+          "3d8933e984c855501e9ecbe65b6b2dd7c5645f2a1567a90b89f14323d5ae5594"
+        ],
+        "sourceUrls": [
+          "https://www.kumsung.net/data/file/1_11_3/1994256923_0ojx3Cb1_b63968b12f18cea3319a349f75d7c153d7149d6c.jpg",
+          "https://www.kumsung.net/data/editor/2511/796b72a1a353cedcc4df4da80465948e_1763108631_08.jpg",
+          "https://www.kumsung.net/data/file/1_11_3/1994256923_vaZAxmzI_b63968b12f18cea3319a349f75d7c153d7149d6c.jpg"
+        ]
+      },
+      {
+        "heading": "자동납부·개인정보 동의서 안내",
+        "paragraphHashes": [
+          "58220426dbcda4a39a68c65e42b531b7a8ec632e34f8da68114ce804d987bd08",
+          "3ac66522be3a2fa7d0598e3888bbcae62a25a7108276629ab18ff37725dcf8c3"
+        ],
+        "sourceUrls": [
+          "https://www.kumsung.net/data/editor/2511/796b72a1a353cedcc4df4da80465948e_1763108630_95.jpg",
+          "https://www.kumsung.net/data/editor/2511/796b72a1a353cedcc4df4da80465948e_1763108631_2.jpg"
+        ]
+      }
+    ],
+    "warningHashes": [
+      "ef700414e49ec229f332b5556349bbd2a61390e864bf4b7cac3c9cede5d56602",
+      "bf688e5ffca17daa891aee7ee7aa27f8919b0475edf573c6cf47e9a6d09e848b",
+      "710e374a80b2cd156768ac945396c636a01b1467f4ed4c3348103d027cfb751b"
+    ],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://www.kumsung.net/bbs/content.php?co_id=1_11_4",
+        "finalUrl": "https://www.kumsung.net/bbs/content.php?co_id=1_11_4",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "73b66dbaa273b49f23a57eddc194283aa303a5fdc7ccb303f53e91cbac477807",
+        "fetchedAt": "2026-08-30T22:53:22.737Z"
+      },
+      {
+        "requestedUrl": "https://www.kumsung.net/bbs/board.php?bo_table=1_11_3&wr_id=3155",
+        "finalUrl": "https://www.kumsung.net/bbs/board.php?bo_table=1_11_3&wr_id=3155",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "d9ffb2c9c56fe283b267c27d05a11032778ca816e7b7dfe9a6e94f55a8ad47e4",
+        "fetchedAt": "2026-08-30T23:43:58.702Z"
+      },
+      {
+        "requestedUrl": "https://www.kumsung.net/bbs/board.php?bo_table=1_11_3&wr_id=3156",
+        "finalUrl": "https://www.kumsung.net/bbs/board.php?bo_table=1_11_3&wr_id=3156",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "1835b29c0bbcc166834175d60f0066b6a63da3c8627ce813aefbf865d9763041",
+        "fetchedAt": "2026-08-30T23:43:58.884Z"
+      },
+      {
+        "requestedUrl": "https://www.kumsung.net/data/editor/2511/796b72a1a353cedcc4df4da80465948e_1763108630_82.jpg",
+        "finalUrl": "https://www.kumsung.net/data/editor/2511/796b72a1a353cedcc4df4da80465948e_1763108630_82.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "2a58e844f9451873c29b81648ad49a37423bd2bc1b7190087c692448f9e6193e",
+        "fetchedAt": "2026-08-30T23:20:38.572Z"
+      },
+      {
+        "requestedUrl": "https://www.kumsung.net/data/editor/2511/796b72a1a353cedcc4df4da80465948e_1763108630_95.jpg",
+        "finalUrl": "https://www.kumsung.net/data/editor/2511/796b72a1a353cedcc4df4da80465948e_1763108630_95.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "e012b06f4bbb52edaf205b67945f9c84991a3eedb8bcaed528bb8dfb8a321cc2",
+        "fetchedAt": "2026-08-30T23:20:38.824Z"
+      },
+      {
+        "requestedUrl": "https://www.kumsung.net/data/editor/2511/796b72a1a353cedcc4df4da80465948e_1763108631_08.jpg",
+        "finalUrl": "https://www.kumsung.net/data/editor/2511/796b72a1a353cedcc4df4da80465948e_1763108631_08.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "ace87d78cdfac0e98bc5d6bdd71fe7bd78b7643b2eebaa14e1a4d2a8b04ce491",
+        "fetchedAt": "2026-08-30T23:20:38.972Z"
+      },
+      {
+        "requestedUrl": "https://www.kumsung.net/data/editor/2511/796b72a1a353cedcc4df4da80465948e_1763108631_2.jpg",
+        "finalUrl": "https://www.kumsung.net/data/editor/2511/796b72a1a353cedcc4df4da80465948e_1763108631_2.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "fa27f2503cd34578e5a31e8ec797b8ebe4016811c3fcb15f01516ccc91135b19",
+        "fetchedAt": "2026-08-30T23:20:39.111Z"
+      },
+      {
+        "requestedUrl": "https://www.kumsung.net/data/editor/2511/796b72a1a353cedcc4df4da80465948e_1763108631_33.jpg",
+        "finalUrl": "https://www.kumsung.net/data/editor/2511/796b72a1a353cedcc4df4da80465948e_1763108631_33.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "51b3bca14cb0738b6f44cf12369076135e7e505c20686650a2797af98b3a010c",
+        "fetchedAt": "2026-08-30T23:20:39.266Z"
+      },
+      {
+        "requestedUrl": "https://www.kumsung.net/data/file/1_11_3/1994256923_0ojx3Cb1_b63968b12f18cea3319a349f75d7c153d7149d6c.jpg",
+        "finalUrl": "https://www.kumsung.net/data/file/1_11_3/1994256923_0ojx3Cb1_b63968b12f18cea3319a349f75d7c153d7149d6c.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "14349f99e9bc1dfe28dc00d2020b5420b4852ecb7750c6c5f018ab54e7354906",
+        "fetchedAt": "2026-08-30T23:20:39.471Z"
+      },
+      {
+        "requestedUrl": "https://www.kumsung.net/data/file/1_11_3/1994256923_vaZAxmzI_b63968b12f18cea3319a349f75d7c153d7149d6c.jpg",
+        "finalUrl": "https://www.kumsung.net/data/file/1_11_3/1994256923_vaZAxmzI_b63968b12f18cea3319a349f75d7c153d7149d6c.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "a945e9d335be5c7acec0d287230b07613f8db7b06321a9c69980d200f1649f7f",
+        "fetchedAt": "2026-08-30T23:20:39.577Z"
+      }
+    ]
+  },
+  {
+    "slug": "kwangwoon",
+    "institutionId": "511a74d5-ed4f-5cf8-95c7-25477feffb2c",
+    "sections": [
+      {
+        "heading": "모집 대상·인원·지역",
+        "paragraphHashes": [
+          "6f87630adcab1a2d346b29efd3dcccda148be3f3dbf5bf89be79ecda68113a3d"
+        ],
+        "sourceUrls": ["https://kwangwoon.sen.es.kr/198507/subMenu.do"]
+      },
+      {
+        "heading": "원서접수·전형료·조기입학",
+        "paragraphHashes": [
+          "26966197a7e1f552bacbe9f8494b9aa4b1936ffa5c1e525089dbca5d6b60fa3b",
+          "a834bd34393955cb0a5fb77cd95de842a3fbae9edeecdd5ab948faf2a5392741"
+        ],
+        "sourceUrls": ["https://kwangwoon.sen.es.kr/198507/subMenu.do"]
+      },
+      {
+        "heading": "쌍둥이·다둥이 전형",
+        "paragraphHashes": [
+          "aa1ffc3ce9ee8dd56d3cd61f531c7fb6e98efe3f2a97b46ab16b9336c27e927f",
+          "ba5cb6bf14a6cadba8ed0210f8ca8e3768b7d622ec4d9f6a3a1d417cf85c44fb"
+        ],
+        "sourceUrls": ["https://kwangwoon.sen.es.kr/198507/subMenu.do"]
+      },
+      {
+        "heading": "추첨·발표·등록",
+        "paragraphHashes": [
+          "15d3cca2364c7ef8d82733256c6e43ffffa3674addea6e236dcc31eb844e2d40",
+          "7d8eaf8ec675fe3af136c89a8fb86cb9ed25732906f91d3fce968b50d860d871"
+        ],
+        "sourceUrls": ["https://kwangwoon.sen.es.kr/198507/subMenu.do"]
+      },
+      {
+        "heading": "대기자·결원 충원",
+        "paragraphHashes": [
+          "edcbbf4a2260338a003740e4ef087a54fb40217f06a1b83729572e999af98864",
+          "c9fcd00195b4f0d158e89f6c5b88b5622b63d32d1e1e9ee187ffdcd7d675931c",
+          "0bf3b411dc6eb93b7375f7fa0153e3c31d8cd666c06194da5c0ed580dd42a9fd"
+        ],
+        "sourceUrls": ["https://kwangwoon.sen.es.kr/198507/subMenu.do"]
+      },
+      {
+        "heading": "납부금·설명회·문의",
+        "paragraphHashes": [
+          "7e41ce904b7d43aeab00fe253c00e7a0979ddce9ef41e419f188d6565b82fe39",
+          "e0ffc837ee9d4d52ba2dba3138fa60fdee906ddb18f3099c4d4c023dc5b1c512"
+        ],
+        "sourceUrls": ["https://kwangwoon.sen.es.kr/198507/subMenu.do"]
+      }
+    ],
+    "warningHashes": [
+      "107b6c876927b53796380c1329bfbbcc1f9da63e11f72fc9c3c54f69335ee61b"
+    ],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://kwangwoon.sen.es.kr/crosseditor/binary/images/008119/2027%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EC%A0%84%ED%98%95_%EA%B4%80%EB%A0%A8_%EC%95%88%EB%82%B4.png",
+        "finalUrl": "https://kwangwoon.sen.es.kr/crosseditor/binary/images/008119/2027%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EC%A0%84%ED%98%95_%EA%B4%80%EB%A0%A8_%EC%95%88%EB%82%B4.png",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "efd22ba2203f6c457844f84561dba95dc5dc024da335f3fb1c37b36f330c8c12",
+        "fetchedAt": "2026-08-30T22:53:22.891Z"
+      },
+      {
+        "requestedUrl": "https://kwangwoon.sen.es.kr/209624/subMenu.do",
+        "finalUrl": "https://kwangwoon.sen.es.kr/209624/subMenu.do",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "621713f65909cce3466c8881df24fa9e28f72ec84803c246b9e4c00b69ff2d94",
+        "fetchedAt": "2026-08-30T22:53:22.948Z"
+      },
+      {
+        "requestedUrl": "https://kwangwoon.sen.es.kr/198507/subMenu.do",
+        "finalUrl": "https://kwangwoon.sen.es.kr/198507/subMenu.do",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "08c9d068b23ae71140a6cccff526d85caf3e6f52980e2ac9e2b24d7002ad392a",
+        "fetchedAt": "2026-08-30T23:17:58.968Z"
+      }
+    ]
+  },
+  {
+    "slug": "kyonggi",
+    "institutionId": "28f80b0a-1ae9-5e7b-81eb-6fd72486452c",
+    "sections": [
+      {
+        "heading": "모집 대상·인원·지역",
+        "paragraphHashes": [
+          "a3a3f6e47037464ee0b4ec19a54fe321868d091bcc8300538bef4d10ae4f68e8",
+          "98103e49a158b63c40a9390d2ff388c6daffca4c930144ac999c9b415d144bc9"
+        ],
+        "sourceUrls": [
+          "https://kyonggi.sen.es.kr/crosseditor/binary/images/006139/2026%ED%95%99%EB%85%84%EB%8F%84_%EA%B2%BD%EA%B8%B0%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%9A%94%EA%B0%95(2025._11._6.jpg"
+        ]
+      },
+      {
+        "heading": "접수·서류",
+        "paragraphHashes": [
+          "ea736895f3a00137830c9262b181bcd91c542c87de50b02786916bdb5eb1eda9",
+          "4740b169d7ae1c3bb84d1558b8bb5281a56b4dc277e6738ceb7259ae8f766eaf"
+        ],
+        "sourceUrls": [
+          "https://kyonggi.sen.es.kr/crosseditor/binary/images/006139/2026%ED%95%99%EB%85%84%EB%8F%84_%EA%B2%BD%EA%B8%B0%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%9A%94%EA%B0%95(2025._11._6.jpg"
+        ]
+      },
+      {
+        "heading": "추첨·등록·쌍둥이",
+        "paragraphHashes": [
+          "21e46e83f5d2485af39f9869d53d36c610de8fe4849c9f03b39a9bbe8ac8f3f3",
+          "0e68c1f03d439201b81dab87a48a9624a617b068c272203bc108b93c7fd13a54"
+        ],
+        "sourceUrls": [
+          "https://kyonggi.sen.es.kr/crosseditor/binary/images/006139/2026%ED%95%99%EB%85%84%EB%8F%84_%EA%B2%BD%EA%B8%B0%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%9A%94%EA%B0%95(2025._11._6.jpg"
+        ]
+      },
+      {
+        "heading": "대기자·교육비·교통",
+        "paragraphHashes": [
+          "8af7f2ec9daec8d3e7c9f6f123a53eba6458d4978c247f80a24b3b46ecc85b91",
+          "accdbf6e2c6c489f3e58ca08e35a4468b67ca125cc942e07d3c72519e18ee5aa",
+          "4adb4c8f2d9b9cf00e3c4fe8f0c7241d013b5cd904e2010a30ce621e9e909cd9"
+        ],
+        "sourceUrls": [
+          "https://kyonggi.sen.es.kr/crosseditor/binary/images/006139/2026%ED%95%99%EB%85%84%EB%8F%84_%EA%B2%BD%EA%B8%B0%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%9A%94%EA%B0%95(2025._11._6.jpg"
+        ]
+      }
+    ],
+    "warningHashes": [],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://kyonggi.sen.es.kr/crosseditor/binary/images/006139/2026%ED%95%99%EB%85%84%EB%8F%84_%EA%B2%BD%EA%B8%B0%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%9A%94%EA%B0%95(2025._11._6.jpg",
+        "finalUrl": "https://kyonggi.sen.es.kr/crosseditor/binary/images/006139/2026%ED%95%99%EB%85%84%EB%8F%84_%EA%B2%BD%EA%B8%B0%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%9A%94%EA%B0%95(2025._11._6.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "f10db4d9fa9c3a95325d3482f9fb78f1a11e11d57f5d4fea1566272553d36fa6",
+        "fetchedAt": "2026-08-30T22:53:23.059Z"
+      },
+      {
+        "requestedUrl": "https://kyonggi.sen.es.kr/212349/subMenu.do",
+        "finalUrl": "https://kyonggi.sen.es.kr/212349/subMenu.do",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "ca4ad19e1cb97f680381f8da55cb0c731242fc3c9b8b39de6426d5b8c46e6b29",
+        "fetchedAt": "2026-08-30T22:53:23.499Z"
+      }
+    ]
+  },
+  {
+    "slug": "kyunghee",
+    "institutionId": "d4460d1b-cf80-5cb7-b49c-d13557060d1f",
+    "sections": [
+      {
+        "heading": "대상·인원·서류",
+        "paragraphHashes": [
+          "a2872581079de711d6a1fb5a17868c3ae34e4cf4404d75510226a42954c16f98",
+          "ea7db7bf959dbbf14d01f68095bc6e8fce0fe1b2172373d2faa3939f87b559a2"
+        ],
+        "sourceUrls": ["https://kyunghee.sen.es.kr/198502/subMenu.do"]
+      },
+      {
+        "heading": "접수·추첨·등록",
+        "paragraphHashes": [
+          "5f21a5eb7c378f2cff145cea565e7156adcf2a1544d2571b25d435e2d240f07f",
+          "a656482ff3f2dd4ce8b919d65cee184d9e3bb26852d76e8ae5e817e196c85ea9"
+        ],
+        "sourceUrls": ["https://kyunghee.sen.es.kr/198502/subMenu.do"]
+      },
+      {
+        "heading": "쌍둥이·대기자",
+        "paragraphHashes": [
+          "e164939013f250226d98adb7770bcd3974a37ca238d08f68685f703f002546f2",
+          "0b9de03a7786e69a3b88a1759cbb47f60bf45b09fd02a59b75425d302799d3e0",
+          "89d7752d78565a486e82b8ff3173727e73acbb7514b3e6ad67727f3683bc0525"
+        ],
+        "sourceUrls": ["https://kyunghee.sen.es.kr/198502/subMenu.do"]
+      },
+      {
+        "heading": "서류·납부·환불",
+        "paragraphHashes": [
+          "b46ae653122a9f2c0b96a9462410d829d5eea446e2554397c58a0afeff08d7a7",
+          "e3a47ccde8652299b0a0d527fa12e4e67ba6474ce38765dc45ebe58dc64fa142"
+        ],
+        "sourceUrls": ["https://kyunghee.sen.es.kr/198502/subMenu.do"]
+      }
+    ],
+    "warningHashes": [],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://kyunghee.sen.es.kr/198502/subMenu.do",
+        "finalUrl": "https://kyunghee.sen.es.kr/198502/subMenu.do",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "f05bae35699af3ba4bf3997d62481a9d20c380911152103084a5590cb5a49d41",
+        "fetchedAt": "2026-08-30T22:53:23.548Z"
+      },
+      {
+        "requestedUrl": "https://kyunghee.sen.es.kr/crosseditor/binary/images/006133/2026_%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95_%ED%83%80%EC%9D%B4%ED%8B%80.jpg",
+        "finalUrl": "https://kyunghee.sen.es.kr/crosseditor/binary/images/006133/2026_%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95_%ED%83%80%EC%9D%B4%ED%8B%80.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "6e010e78a77c6a1ea7d7164b3bc3ec692e211fa613a081970ffe05e0729758d3",
+        "fetchedAt": "2026-08-30T22:53:23.719Z"
+      }
+    ]
+  },
+  {
+    "slug": "lila",
+    "institutionId": "9aa75c7b-e7de-55bc-ba67-03201af8cb6e",
+    "sections": [
+      {
+        "heading": "대상·인원·접수",
+        "paragraphHashes": [
+          "1648bca0f3effa82b9ddd52981043d84e109419913a8c4de64544f55e514543b",
+          "e86ba69645ac76f36aff10bb175c660b7b4b5c4e5c98a6bca21198b12ebcce07"
+        ],
+        "sourceUrls": ["https://www.lila.es.kr/kr/about/admission_guide.php"]
+      },
+      {
+        "heading": "추첨·쌍둥이·등록",
+        "paragraphHashes": [
+          "da5eec95df6ea5c791eda1b83fc21ea8c7d53b4439bc4625ef1a0e6af20c7704",
+          "f7fb8862dd1489d28350b3d4080a13ea79e32140f5059ce5a695a673a48f15aa",
+          "4ec61512af458587b433e90a8cd671b8f87cf955d9712b7565166b14f866200f"
+        ],
+        "sourceUrls": ["https://www.lila.es.kr/kr/about/admission_guide.php"]
+      },
+      {
+        "heading": "대기자·취소·교육비",
+        "paragraphHashes": [
+          "731b70293b78f7e60df0ccd47c8b16cc2dcb0545e74079da3362cbf2ce08337b",
+          "3d28c593af4e0f0a264d2f2d518223e9f999ae8f0adab80c89fef1b747f253e1"
+        ],
+        "sourceUrls": ["https://www.lila.es.kr/kr/about/admission_guide.php"]
+      }
+    ],
+    "warningHashes": [
+      "f7f87ad6eaf2551eb442453c4b27a9632b9adfe2fb88e3f17344c241d491b13f"
+    ],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://www.lila.es.kr/kr/about/admission_guide.php",
+        "finalUrl": "https://www.lila.es.kr/kr/about/admission_guide.php",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "09df272aa10e7eaabaa94f1dc5c0bb3f91876b9024c784c1cd8f6b967b65265e",
+        "fetchedAt": "2026-08-30T22:53:23.902Z"
+      }
+    ]
+  },
+  {
+    "slug": "maewon",
+    "institutionId": "a65efc5c-8ebc-5fc8-9d2b-88ed461d39a3",
+    "sections": [
+      {
+        "heading": "대상·인원·서류",
+        "paragraphHashes": [
+          "a5d4a41e0e46bbb48c383c19113379c5863e4305bfa35451b7773f51449ecac0",
+          "d06ca6939ad1bbafacc2317f15f628ee118d42afb5c6b89a09fd33391f05b0ed"
+        ],
+        "sourceUrls": ["https://maewon.sen.es.kr/153574/subMenu.do"]
+      },
+      {
+        "heading": "접수·추첨·등록",
+        "paragraphHashes": [
+          "e83d25c5d8d87ae574d536fab8e3bc91c742bd11cbb2e071e3afc7007cad7ea7",
+          "fef911e1a06f2f2059cc4e9bf67b21ae3b489bcb6d003e5c1ab833385c4a572d",
+          "f08925f0c8fef9d397410d84b58498e4cb5f58fc348ef26ec8dc2a18b17e81a9"
+        ],
+        "sourceUrls": ["https://maewon.sen.es.kr/153574/subMenu.do"]
+      },
+      {
+        "heading": "쌍둥이·대기자·교육비",
+        "paragraphHashes": [
+          "152e4d269bf88570904d67a6600216cae050ba767ca44ba51f910b9008e44801",
+          "400073d802031b003abfccd92ec1960dcb7797dd3f5955c1f08d6889b87ec656",
+          "0c27fe247bef2112f7826040f37a2c4ee7ea30f0ca3934544db04c636319fc29",
+          "9b58dc3d15b5daf6340aeeafb3d852bff6c707745e19b8de74796b8ebbfbe72c"
+        ],
+        "sourceUrls": ["https://maewon.sen.es.kr/153574/subMenu.do"]
+      },
+      {
+        "heading": "후속 추가등록 안내",
+        "paragraphHashes": [
+          "474b8ec7cc09345965759873f508f0737425c168c7ffecfad5e85dcc743e0bed",
+          "5d65269a5e1906014461951152a0e6caaa837ba0da428070323fabc82c2e7c1a"
+        ],
+        "sourceUrls": ["https://maewon.sen.es.kr/212569/subMenu.do"]
+      },
+      {
+        "heading": "예비학교",
+        "paragraphHashes": [
+          "dbb30be03ff9c2dbb31ab033be5ff9958f7954c5992256a5b94bbdec903cd5be"
+        ],
+        "sourceUrls": ["https://maewon.sen.es.kr/212888/subMenu.do"]
+      }
+    ],
+    "warningHashes": [],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://maewon.sen.es.kr/153574/subMenu.do",
+        "finalUrl": "https://maewon.sen.es.kr/153574/subMenu.do",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "04c49125b09829a711c5460dd6e9ae49972ce63584d29c9e5a0af1f5e2b23f63",
+        "fetchedAt": "2026-08-30T22:53:24.059Z"
+      },
+      {
+        "requestedUrl": "https://maewon.sen.es.kr/212569/subMenu.do",
+        "finalUrl": "https://maewon.sen.es.kr/212569/subMenu.do",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "3701968dc8ae18c522bf94b5c4670414397a44a7778f72461ec963fa0c583ef3",
+        "fetchedAt": "2026-08-30T23:22:37.907Z"
+      },
+      {
+        "requestedUrl": "https://maewon.sen.es.kr/212888/subMenu.do",
+        "finalUrl": "https://maewon.sen.es.kr/212888/subMenu.do",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "8b138d7f7c3c511799e30efd5eb7eda7df9ddacd1891e627b12047dcf42ec10e",
+        "fetchedAt": "2026-08-30T23:22:38.712Z"
+      }
+    ]
+  },
+  {
+    "slug": "myongji",
+    "institutionId": "4b732452-6f4b-5f7e-9303-456667250a67",
+    "sections": [
+      {
+        "heading": "대상·인원·접수",
+        "paragraphHashes": [
+          "d1cfb2b81a907ad7f839882c6a2dd01eb3f73dc9101735b64b4900f3ef4481f5",
+          "afd83c3346008f3d2f1c63da2db8339e7bb5b372a9f9329836890d5828038d26"
+        ],
+        "sourceUrls": ["http://www.myongji.net/subpage.php?p=m24"]
+      },
+      {
+        "heading": "추첨·쌍둥이·등록",
+        "paragraphHashes": [
+          "28452921d51f695b4d6af0b81f21b40ce69fa16a59b31bff646acba15fb30064",
+          "1df6366837710ea5708a11e0d968be305e97b21214671c41db311ee3f99a1020",
+          "f0c0d84b30230272c28a283dff7b27e495e6f513757fda71c93800fb7906081e",
+          "b27df7d16d1970dcffb68875b172453d97d485e3a9dddff40ab780add4381bc4"
+        ],
+        "sourceUrls": ["http://www.myongji.net/subpage.php?p=m24"]
+      },
+      {
+        "heading": "대기자·납부·행정",
+        "paragraphHashes": [
+          "688e746d15f9e13f72edd332ac8b490c8adf736c1bc701e041de8f1d39bd4bfc",
+          "93c21f5bbd6e5ae7d8e29e67bfb7886dd222de204efebf244f895ae9c035ac8c",
+          "13d57320f36075b3eb40d559edbab36543921074fbf93239f60b9a904bad311e"
+        ],
+        "sourceUrls": ["http://www.myongji.net/subpage.php?p=m24"]
+      }
+    ],
+    "warningHashes": [],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "http://www.myongji.net/subpage.php?p=m24",
+        "finalUrl": "http://www.myongji.net/subpage.php?p=m24",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "994abd4176b7894381f5d3e7c8dabd7af65da0bdda5ee5c4616fc19fc71e10d6",
+        "fetchedAt": "2026-08-30T22:53:24.350Z"
+      }
+    ]
+  },
+  {
+    "slug": "sangmyung-ae",
+    "institutionId": "1d459c6d-cd3d-5f2d-98e5-a41e60079404",
+    "sections": [
+      {
+        "heading": "모집 대상·인원·원서접수",
+        "paragraphHashes": [
+          "508fe6edbee028ce399132bc2449eb4d9605a61aa6fed9fe4862e8a9cf414d96",
+          "c56dec88ae3f97f54511581a94081cc843407085dbdda8ca754a4f27ea1a72a9"
+        ],
+        "sourceUrls": [
+          "https://sangmyung-ae.sen.es.kr/crosseditor/binary/images/006132/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%9A%94%EA%B0%95_%EC%95%88%EB%82%B4(%ED%99%88%ED%8E%98%EC%9D%B4%EC%A7%80)-%EC%B5%9C%EC%A2%85001.jpg"
+        ]
+      },
+      {
+        "heading": "추첨·발표·등록",
+        "paragraphHashes": [
+          "c9290d24bde00c3f740eec75d273f756b9e1af1acc9188a1c441fb47ff1203b9",
+          "8552d6f8c20d10270ac4a83ebd2d1b536ff55ad85864e317f1f31f14d9522d8e"
+        ],
+        "sourceUrls": [
+          "https://sangmyung-ae.sen.es.kr/crosseditor/binary/images/006132/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%9A%94%EA%B0%95_%EC%95%88%EB%82%B4(%ED%99%88%ED%8E%98%EC%9D%B4%EC%A7%80)-%EC%B5%9C%EC%A2%85001.jpg"
+        ]
+      },
+      {
+        "heading": "쌍둥이 본추첨·결선추첨",
+        "paragraphHashes": [
+          "b68d519cd38e7006aa0f7cd07e7f514ec8934823b4e97898a42282535113f382",
+          "e47e80686665b99d888462866e211c040bb5d77c3be513eb880e6533a5c73262"
+        ],
+        "sourceUrls": [
+          "https://sangmyung-ae.sen.es.kr/crosseditor/binary/images/006132/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%9A%94%EA%B0%95_%EC%95%88%EB%82%B4(%ED%99%88%ED%8E%98%EC%9D%B4%EC%A7%80)-%EC%B5%9C%EC%A2%85001.jpg"
+        ]
+      },
+      {
+        "heading": "쌍둥이 추가모집의 예외",
+        "paragraphHashes": [
+          "b8461364d593090690ae1ef077c83e0c07911f8597163ccc8f27f1c0543eb5da",
+          "3f3bbfaed4f89ae3505f00eb912b3566231594f57c97b40a70407d4d9c1d3673"
+        ],
+        "sourceUrls": [
+          "https://sangmyung-ae.sen.es.kr/crosseditor/binary/images/006132/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%9A%94%EA%B0%95_%EC%95%88%EB%82%B4(%ED%99%88%ED%8E%98%EC%9D%B4%EC%A7%80)-%EC%B5%9C%EC%A2%85001.jpg"
+        ]
+      },
+      {
+        "heading": "대기자·결원·유효기간",
+        "paragraphHashes": [
+          "87d3dac46fbf5afd21379e4743b44bf17b059a54e09bfcc6095595aff5805f36",
+          "a449b93825ddea7b1f0c24ee2f66095972a25cd10e2e4e9888b51ffbd1b7e78c"
+        ],
+        "sourceUrls": [
+          "https://sangmyung-ae.sen.es.kr/crosseditor/binary/images/006132/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%9A%94%EA%B0%95_%EC%95%88%EB%82%B4(%ED%99%88%ED%8E%98%EC%9D%B4%EC%A7%80)-%EC%B5%9C%EC%A2%85001.jpg"
+        ]
+      },
+      {
+        "heading": "입학금·수업료·행정 유의사항",
+        "paragraphHashes": [
+          "487c46683c19f23eee375cd960919d4d70c3d9015285b8ba8afafb616e8de794",
+          "f001c9e21c4714853901ed0808df6166695bd6ac8a3bdf8d67a0a423a95cb9c6"
+        ],
+        "sourceUrls": [
+          "https://sangmyung-ae.sen.es.kr/crosseditor/binary/images/006132/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%9A%94%EA%B0%95_%EC%95%88%EB%82%B4(%ED%99%88%ED%8E%98%EC%9D%B4%EC%A7%80)-%EC%B5%9C%EC%A2%85001.jpg"
+        ]
+      },
+      {
+        "heading": "학부모 Q&A: 교육비·통학·돌봄",
+        "paragraphHashes": [
+          "d7fa4ca49a17e240e88714fa776db266a143737e668781ca5b30d20a15d94603",
+          "b07ea416492f5a2f377e95dbd2f8aea08877f7a8e143ce1e2820309416b3fc98",
+          "8af15ad10b78359678e7583c0ba1959fc82963b54964be2367b185b5636d8310"
+        ],
+        "sourceUrls": [
+          "https://sangmyung-ae.sen.es.kr/crosseditor/binary/images/006026/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%ED%95%99%EB%B6%80%EB%AA%A8_Q_%26_A(%EC%88%98%EC%A0%95)001.jpg",
+          "https://sangmyung-ae.sen.es.kr/crosseditor/binary/images/006026/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%ED%95%99%EB%B6%80%EB%AA%A8_Q_%26_A(%EC%88%98%EC%A0%95)003.jpg",
+          "https://sangmyung-ae.sen.es.kr/crosseditor/binary/images/006026/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%ED%95%99%EB%B6%80%EB%AA%A8_Q_%26_A(%EC%88%98%EC%A0%95)004.jpg"
+        ]
+      },
+      {
+        "heading": "학부모 Q&A: 교육·입학 적응",
+        "paragraphHashes": [
+          "555350a5ea2fb6c4280fa0d9125d3b936dc6faa82717b9ae46275ca6f4c23822",
+          "df3ee5c2b70d9b9bc5bcb17dd19d2d065f7da0af1c27e4ef610c898db318908b",
+          "1844ad480200a5791e5d7dc859771d5de3dbe6668ce5c9bb15c011820c61fdad"
+        ],
+        "sourceUrls": [
+          "https://sangmyung-ae.sen.es.kr/crosseditor/binary/images/006026/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%ED%95%99%EB%B6%80%EB%AA%A8_Q_%26_A(%EC%88%98%EC%A0%95)001.jpg",
+          "https://sangmyung-ae.sen.es.kr/crosseditor/binary/images/006026/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%ED%95%99%EB%B6%80%EB%AA%A8_Q_%26_A(%EC%88%98%EC%A0%95)002.jpg",
+          "https://sangmyung-ae.sen.es.kr/crosseditor/binary/images/006026/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%ED%95%99%EB%B6%80%EB%AA%A8_Q_%26_A(%EC%88%98%EC%A0%95)003.jpg",
+          "https://sangmyung-ae.sen.es.kr/crosseditor/binary/images/006026/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%ED%95%99%EB%B6%80%EB%AA%A8_Q_%26_A(%EC%88%98%EC%A0%95)004.jpg"
+        ]
+      }
+    ],
+    "warningHashes": [
+      "6165517d3231d3bda8a3ef330e67e8ddf6c7439dd088f8cca981a2029b8bc901",
+      "29b96bf55882c3b1d9860fdbd217dc6abbfe8b878a3dc3e4325937c1e8eec1ec"
+    ],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://sangmyung-ae.sen.es.kr/crosseditor/binary/images/006132/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%9A%94%EA%B0%95_%EC%95%88%EB%82%B4(%ED%99%88%ED%8E%98%EC%9D%B4%EC%A7%80)-%EC%B5%9C%EC%A2%85001.jpg",
+        "finalUrl": "https://sangmyung-ae.sen.es.kr/crosseditor/binary/images/006132/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%9A%94%EA%B0%95_%EC%95%88%EB%82%B4(%ED%99%88%ED%8E%98%EC%9D%B4%EC%A7%80)-%EC%B5%9C%EC%A2%85001.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "692e5bb4f7e598aba2c96cf51b7f479be645ea4cdfa4887aac648ba7ad73904b",
+        "fetchedAt": "2026-08-30T22:53:24.401Z"
+      },
+      {
+        "requestedUrl": "https://sangmyung-ae.sen.es.kr/207241/subMenu.do",
+        "finalUrl": "https://sangmyung-ae.sen.es.kr/207241/subMenu.do",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "530ab89ade80b259406b56f0cd48e98efaafa75ac558b78c628fd3e2d2b0f995",
+        "fetchedAt": "2026-08-30T22:53:24.495Z"
+      },
+      {
+        "requestedUrl": "https://sangmyung-ae.sen.es.kr/crosseditor/binary/images/006026/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%ED%95%99%EB%B6%80%EB%AA%A8_Q_%26_A(%EC%88%98%EC%A0%95)001.jpg",
+        "finalUrl": "https://sangmyung-ae.sen.es.kr/crosseditor/binary/images/006026/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%ED%95%99%EB%B6%80%EB%AA%A8_Q_%26_A(%EC%88%98%EC%A0%95)001.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "37e8560ff23cd0bd46e25c3d1a434c5169caf3ed6e8a7b07e7ddd3a24bb484a2",
+        "fetchedAt": "2026-08-30T23:20:39.964Z"
+      },
+      {
+        "requestedUrl": "https://sangmyung-ae.sen.es.kr/crosseditor/binary/images/006026/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%ED%95%99%EB%B6%80%EB%AA%A8_Q_%26_A(%EC%88%98%EC%A0%95)002.jpg",
+        "finalUrl": "https://sangmyung-ae.sen.es.kr/crosseditor/binary/images/006026/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%ED%95%99%EB%B6%80%EB%AA%A8_Q_%26_A(%EC%88%98%EC%A0%95)002.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "85512e9f7cb92ccecfc42e90bf92dc4f614234c447ad9b2fe5395c8ad186462b",
+        "fetchedAt": "2026-08-30T23:20:40.029Z"
+      },
+      {
+        "requestedUrl": "https://sangmyung-ae.sen.es.kr/crosseditor/binary/images/006026/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%ED%95%99%EB%B6%80%EB%AA%A8_Q_%26_A(%EC%88%98%EC%A0%95)003.jpg",
+        "finalUrl": "https://sangmyung-ae.sen.es.kr/crosseditor/binary/images/006026/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%ED%95%99%EB%B6%80%EB%AA%A8_Q_%26_A(%EC%88%98%EC%A0%95)003.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "76657bcb26b58a13fdedc6a484383f1ea261ba1a2b5489b92075ce91ab8da1b7",
+        "fetchedAt": "2026-08-30T23:20:40.085Z"
+      },
+      {
+        "requestedUrl": "https://sangmyung-ae.sen.es.kr/crosseditor/binary/images/006026/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%ED%95%99%EB%B6%80%EB%AA%A8_Q_%26_A(%EC%88%98%EC%A0%95)004.jpg",
+        "finalUrl": "https://sangmyung-ae.sen.es.kr/crosseditor/binary/images/006026/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%ED%95%99%EB%B6%80%EB%AA%A8_Q_%26_A(%EC%88%98%EC%A0%95)004.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "aa3c843857016c200a0e758f5991d84f6beb56b790ec09a26ab230c749759cdd",
+        "fetchedAt": "2026-08-30T23:20:40.160Z"
+      }
+    ]
+  },
+  {
+    "slug": "sejong",
+    "institutionId": "88f5b382-24e3-5758-bcb9-5f521867413c",
+    "sections": [
+      {
+        "heading": "대상·인원·지역",
+        "paragraphHashes": [
+          "2ba812409e4823abf947bbb1e526744b408d0a2344c308aff1c48a48b0d509f3",
+          "cc06662704219b770839ffcc623d3a26061a1a2cfc16bff4a060e53f0b348452"
+        ],
+        "sourceUrls": [
+          "https://sejong.sen.es.kr/crosseditor/binary/images/006028/(%EC%84%B8%EC%A2%85%EC%B4%88)_2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95(%EC%95%88)-20251023001.jpg"
+        ]
+      },
+      {
+        "heading": "접수·구비서류",
+        "paragraphHashes": [
+          "a74257d058d26c2e645f3ef05fe89c09be934c5ba6d6a232c9b0e7405fbd0a0d",
+          "c0404ee9ab6c03bb06013db836b73ce35e44f8cca9662aec0bd266b5e77f06c8"
+        ],
+        "sourceUrls": [
+          "https://sejong.sen.es.kr/crosseditor/binary/images/006028/(%EC%84%B8%EC%A2%85%EC%B4%88)_2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95(%EC%95%88)-20251023001.jpg"
+        ]
+      },
+      {
+        "heading": "추첨·발표·등록",
+        "paragraphHashes": [
+          "82137ad7faf723e2bf2a880ffd939c72c55a97cb9860ba8744ccfd8eb8bad298",
+          "64ad36c5959df08903bae33052a2bb4bae1c528597ff0de3557bf414fe9309d0"
+        ],
+        "sourceUrls": [
+          "https://sejong.sen.es.kr/crosseditor/binary/images/006028/(%EC%84%B8%EC%A2%85%EC%B4%88)_2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95(%EC%95%88)-20251023002.jpg"
+        ]
+      },
+      {
+        "heading": "쌍둥이·등록포기·행정",
+        "paragraphHashes": [
+          "2abaa9f8e0a7de3e573d557b3490bac91a4944d822b4ac0ac87b9721db3a3f30",
+          "8563cdc7ead95fb79a1c40bdbd70fe6be3d895c48bbf469c6e9b4c4bc48fc61a"
+        ],
+        "sourceUrls": [
+          "https://sejong.sen.es.kr/crosseditor/binary/images/006028/(%EC%84%B8%EC%A2%85%EC%B4%88)_2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95(%EC%95%88)-20251023002.jpg"
+        ]
+      },
+      {
+        "heading": "대기자·충원·유효기간",
+        "paragraphHashes": [
+          "e3f9b897a1cbead00cb8c14e1a99e71d476f3e592e60e5539500ceb438cbbb43",
+          "041184715dc4935c7ad94d73625528396dba67acc0b117c2101815882a474b68"
+        ],
+        "sourceUrls": [
+          "https://sejong.sen.es.kr/crosseditor/binary/images/006028/(%EC%84%B8%EC%A2%85%EC%B4%88)_2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95(%EC%95%88)-20251023003.jpg"
+        ]
+      },
+      {
+        "heading": "교육비·교통비·문의",
+        "paragraphHashes": [
+          "0d72a78f1d25fefaae968f9c5b572a1b289d0101ea46d0dcede65193c66dcd2e",
+          "d8f4683eab19e6b1be70894c6f04c3c74b565078b1f8b9b33191c9b6627ad523"
+        ],
+        "sourceUrls": [
+          "https://sejong.sen.es.kr/crosseditor/binary/images/006028/(%EC%84%B8%EC%A2%85%EC%B4%88)_2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95(%EC%95%88)-20251023003.jpg"
+        ]
+      }
+    ],
+    "warningHashes": [
+      "edd9a34a9326cf5e0f98c5474e5c0cd866144883b85fa467442abb4a73bd305e"
+    ],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://sejong.sen.es.kr/crosseditor/binary/images/006028/(%EC%84%B8%EC%A2%85%EC%B4%88)_2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95(%EC%95%88)-20251023001.jpg",
+        "finalUrl": "https://sejong.sen.es.kr/crosseditor/binary/images/006028/(%EC%84%B8%EC%A2%85%EC%B4%88)_2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95(%EC%95%88)-20251023001.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "ab29f0dfe6a5422c867fcd319ca9ddfe71964b5c2d3ee5e03018f6f9df08295b",
+        "fetchedAt": "2026-08-30T22:53:24.595Z"
+      },
+      {
+        "requestedUrl": "https://sejong.sen.es.kr/crosseditor/binary/images/006028/(%EC%84%B8%EC%A2%85%EC%B4%88)_2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95(%EC%95%88)-20251023002.jpg",
+        "finalUrl": "https://sejong.sen.es.kr/crosseditor/binary/images/006028/(%EC%84%B8%EC%A2%85%EC%B4%88)_2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95(%EC%95%88)-20251023002.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "92a547b26bca51937ccf5481f56ebe1a2a614e2e329a888c082b71176cb13a7c",
+        "fetchedAt": "2026-08-30T23:10:32.925Z"
+      },
+      {
+        "requestedUrl": "https://sejong.sen.es.kr/crosseditor/binary/images/006028/(%EC%84%B8%EC%A2%85%EC%B4%88)_2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95(%EC%95%88)-20251023003.jpg",
+        "finalUrl": "https://sejong.sen.es.kr/crosseditor/binary/images/006028/(%EC%84%B8%EC%A2%85%EC%B4%88)_2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95(%EC%95%88)-20251023003.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "3df76f58c2c9db8552996bf07aef1563eb3ae713b847420c1a15eb4475ccc94e",
+        "fetchedAt": "2026-08-30T23:10:33.278Z"
+      }
+    ]
+  },
+  {
+    "slug": "seoul-dongsan",
+    "institutionId": "261bd28b-6f4c-54f7-9950-2e7b78f8c291",
+    "sections": [
+      {
+        "heading": "대상·인원·접수",
+        "paragraphHashes": [
+          "83a0d0e507617321c3fa14191e0ba774e326f0f3947d4990cbceb399533f6b76",
+          "f32de38a550a701b9fb3d364007a684404c70468d69cbd17a751b7413ee1ee59"
+        ],
+        "sourceUrls": ["https://seoul-dongsan.sen.es.kr/46786/subMenu.do"]
+      },
+      {
+        "heading": "추첨·등록·쌍둥이",
+        "paragraphHashes": [
+          "bc9c5793f6b81f04075f06123b896be0b1909d2c56859111ba0406f80b55d099",
+          "cb462b979daf97242e855a9ec7745aa63d0995f984a93e380583a8bb4876e666",
+          "e0b337a17b8226b29e6a79de2654f3b4268172997c9101f34de8d3aef7899b50"
+        ],
+        "sourceUrls": ["https://seoul-dongsan.sen.es.kr/46786/subMenu.do"]
+      },
+      {
+        "heading": "대기자·납부금",
+        "paragraphHashes": [
+          "e095dbd1f5e11f3cf70de4e9e0743a193c6ee698cbc257bce46e418cd490563a",
+          "40ecab06b62b31c5aecf3c9f34a16a06de58df337e2f5f66f244a5a1de136eef"
+        ],
+        "sourceUrls": ["https://seoul-dongsan.sen.es.kr/46786/subMenu.do"]
+      },
+      {
+        "heading": "후속 입학수속·온라인 서류·등록금",
+        "paragraphHashes": [
+          "f5a92b3475fea644324ae57117a79e1d43ba1b4c52a85fe874538d2c1ff2ded9",
+          "bec6c06701e2d206e25d13e320b953f44f6a55f1dc8e79dc08aeaa44301208ee",
+          "782a17cd7de0e760368857fe8723975f760d406290c394aa19a9f09824a7b56b"
+        ],
+        "sourceUrls": [
+          "https://sites.google.com/seoul-dongsan.es.kr/entrance",
+          "https://drive.google.com/file/d/1WYax-IXii_wwtjxHJKPmhrEUz8lWP2fH/preview?authuser=0"
+        ]
+      },
+      {
+        "heading": "예비소집·입학식 후속 안내",
+        "paragraphHashes": [
+          "4840c63d99afd5d66def080d5a51bdc1b6bcb008bf05650980ea9c310febce2f",
+          "3f5f7d14b966b9d5dc4e97c86e9e993e6d11f14c9ed00528fd19b2d6a37d92b8",
+          "38845030278b094b23a7da32e24ada2642e38a408df82bcb098ba51f1766cad1"
+        ],
+        "sourceUrls": [
+          "https://drive.google.com/file/d/1WYax-IXii_wwtjxHJKPmhrEUz8lWP2fH/preview?authuser=0",
+          "https://sites.google.com/seoul-dongsan.es.kr/entrance"
+        ]
+      }
+    ],
+    "warningHashes": [
+      "a6fc23bcd35e598f353453a78447bdaa455ed9fa2a5980594070490f0ef718cf",
+      "f88fd038d5aa5187475f5ffbf6481328e232f63b6454985e7a5b2941f3ef7a17"
+    ],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://seoul-dongsan.sen.es.kr/46786/subMenu.do",
+        "finalUrl": "https://seoul-dongsan.sen.es.kr/46786/subMenu.do",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "2ff27b1e18e7d551a3284b315d3c3dfd6975ae4979bf15326b12cd51c368152e",
+        "fetchedAt": "2026-08-30T22:53:24.826Z"
+      },
+      {
+        "requestedUrl": "https://sites.google.com/seoul-dongsan.es.kr/entrance",
+        "finalUrl": "https://sites.google.com/seoul-dongsan.es.kr/entrance",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "0ccef72fdc7da058c21ec4749b6a822287e8bbad73495a5bc8683aac170183a7",
+        "fetchedAt": "2026-08-30T23:22:39.248Z"
+      },
+      {
+        "requestedUrl": "https://drive.google.com/file/d/1WYax-IXii_wwtjxHJKPmhrEUz8lWP2fH/preview?authuser=0",
+        "finalUrl": "https://drive.google.com/file/d/1WYax-IXii_wwtjxHJKPmhrEUz8lWP2fH/preview",
+        "captureMethod": "BROWSER_CAPTURE",
+        "responseContentHash": "90762b355b59abd2e60118222e965ae1fb34a0a562dd20344eac9d40f70ede30",
+        "fetchedAt": "2026-08-30T23:28:45.541Z"
+      }
+    ]
+  },
+  {
+    "slug": "seoul36",
+    "institutionId": "50ad011d-dac6-55a6-9c39-16615a495f9f",
+    "sections": [
+      {
+        "heading": "대상·인원·특별전형",
+        "paragraphHashes": [
+          "52b16f4be253db787a5c3f957cc42a59b530c54882de704f679d891e984134c5",
+          "bf70369f42b87e4a5ccb10f5e71c0b359069bfe50175cfc3a5d3194cb28bce45"
+        ],
+        "sourceUrls": [
+          "https://seoul36.sen.es.kr/crosseditor/binary/images/006047/2026_%EC%84%9C%EC%9A%B8%EC%82%BC%EC%9C%A1%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%95%88%EB%82%B4.jpg"
+        ]
+      },
+      {
+        "heading": "서류·접수·추첨",
+        "paragraphHashes": [
+          "46c1bb00776880fd0dd9208d3a723e40ada6f65d77f6b0f2f68e691424794b52",
+          "7f7ed630f06348aba3a3729002a64cb3c5f44c6556f2791d30a6ec70947335cc"
+        ],
+        "sourceUrls": [
+          "https://seoul36.sen.es.kr/crosseditor/binary/images/006047/2026_%EC%84%9C%EC%9A%B8%EC%82%BC%EC%9C%A1%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%95%88%EB%82%B4.jpg"
+        ]
+      },
+      {
+        "heading": "2026 특별전형 증빙",
+        "paragraphHashes": [
+          "83c31e580241890af40866604ca1a345ca93d7dc2739e02f9afe70ba325582a8",
+          "0fdc318342e5ff6419dae1b33c4fc5dba191cc3ccf92f809c545b8a5b6fd1374"
+        ],
+        "sourceUrls": [
+          "https://seoul36.sen.es.kr/176266/subMenu.do",
+          "https://seoul36.sen.es.kr/crosseditor/binary/images/006047/2026_%EC%84%9C%EC%9A%B8%EC%82%BC%EC%9C%A1%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%95%88%EB%82%B4.jpg"
+        ]
+      },
+      {
+        "heading": "후속 등록·방문·예비소집",
+        "paragraphHashes": [
+          "caab38187a12c8e774fae77a180e73489c8b929d221fa46ed656adfa52ea93ee",
+          "d4b5c5c62ea184c71f8d94d995d16ec5170f96589b009102d3a4c530aaf70a83",
+          "5cfae15dad4476efab3c68938acc38e9bc14ea3ef31cba0b53e604dc943e2e4e"
+        ],
+        "sourceUrls": [
+          "https://seoul36.sen.es.kr/crosseditor/binary/images/006176/%EC%8A%AC%EB%9D%BC%EC%9D%B4%EB%93%9C1_1.jpg",
+          "https://seoul36.sen.es.kr/crosseditor/binary/images/006176/%EC%8A%AC%EB%9D%BC%EC%9D%B4%EB%93%9C2.jpg"
+        ]
+      },
+      {
+        "heading": "후속 입학금·입학포기",
+        "paragraphHashes": [
+          "1b4e5f60d8d0cbd5475240bb6b2619bcabb7e667e5cc8cec363cd346aeb4e891",
+          "4f309221f3b8f26224386490828f7c05a1964ad2f50c13276768dcd6ccf9f414"
+        ],
+        "sourceUrls": [
+          "https://seoul36.sen.es.kr/crosseditor/binary/images/006205/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%9E%85%ED%95%99%EC%A0%84%ED%98%95_%EB%8B%B9%EC%B2%A8%EC%9E%90_%EB%93%B1%EB%A1%9D_%EC%A0%88%EC%B0%A8_%EC%95%88%EB%82%B4(%EC%88%98%EC%A0%952)_%EC%8A%AC%EB%9D%BC%EC%9D%B4%EB%93%9C3.jpg"
+        ]
+      }
+    ],
+    "warningHashes": [
+      "f27920a6c0ca629690f72611274eaecc698fd18fbe5683cf6e48a9333cd1921e",
+      "4a597209695293cd591f4c799deedfe02082593d11336e51e0df21f186ca112d"
+    ],
+    "supplementary": [
+      {
+        "title": "2027 서울삼육초 신입생 특별전형 기준 안내 (2026-04-02 수정)",
+        "sections": [
+          {
+            "heading": "지원자격·충원 예외",
+            "paragraphHashes": [
+              "5740e5e8c4d1cea1fa7a66ad879701a5d22f60c7705d255148785ff6f1865969"
+            ],
+            "sourceUrls": ["https://seoul36.sen.es.kr/176266/subMenu.do"]
+          },
+          {
+            "heading": "증빙·충족 기준",
+            "paragraphHashes": [
+              "4c8a3cb2ff42381266598e77c14d406acc059c34f6b74d755a5dc44eb39f8c3f"
+            ],
+            "sourceUrls": ["https://seoul36.sen.es.kr/176266/subMenu.do"]
+          }
+        ]
+      }
+    ],
+    "captures": [
+      {
+        "requestedUrl": "https://seoul36.sen.es.kr/crosseditor/binary/images/006047/2026_%EC%84%9C%EC%9A%B8%EC%82%BC%EC%9C%A1%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%95%88%EB%82%B4.jpg",
+        "finalUrl": "https://seoul36.sen.es.kr/crosseditor/binary/images/006047/2026_%EC%84%9C%EC%9A%B8%EC%82%BC%EC%9C%A1%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%95%88%EB%82%B4.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "f324349a874d68b30870e7046f03ccae1d27b6b48a08e917c8419514082016b8",
+        "fetchedAt": "2026-08-30T22:53:24.867Z"
+      },
+      {
+        "requestedUrl": "https://seoul36.sen.es.kr/176266/subMenu.do",
+        "finalUrl": "https://seoul36.sen.es.kr/176266/subMenu.do",
+        "captureMethod": "BROWSER_CAPTURE",
+        "responseContentHash": "a7c05fd4feb5c279082fb4611ee2f243b1343469ffec3b3a4e3f4b2f23023703",
+        "fetchedAt": "2026-08-30T23:19:14.600Z"
+      },
+      {
+        "requestedUrl": "https://seoul36.sen.es.kr/crosseditor/binary/images/006176/%EC%8A%AC%EB%9D%BC%EC%9D%B4%EB%93%9C1_1.jpg",
+        "finalUrl": "https://seoul36.sen.es.kr/crosseditor/binary/images/006176/%EC%8A%AC%EB%9D%BC%EC%9D%B4%EB%93%9C1_1.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "6a01689cd45c52d2ffdb035e3d4dd6c861aa7a59f5045be570899f8661e0d45c",
+        "fetchedAt": "2026-08-30T23:17:59.527Z"
+      },
+      {
+        "requestedUrl": "https://seoul36.sen.es.kr/crosseditor/binary/images/006176/%EC%8A%AC%EB%9D%BC%EC%9D%B4%EB%93%9C2.jpg",
+        "finalUrl": "https://seoul36.sen.es.kr/crosseditor/binary/images/006176/%EC%8A%AC%EB%9D%BC%EC%9D%B4%EB%93%9C2.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "b96b004a6ea7aca1a5797ae9a958eb21983c720f9661e89fde0e78d5cf4c9d1f",
+        "fetchedAt": "2026-08-30T23:17:59.660Z"
+      },
+      {
+        "requestedUrl": "https://seoul36.sen.es.kr/crosseditor/binary/images/006205/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%9E%85%ED%95%99%EC%A0%84%ED%98%95_%EB%8B%B9%EC%B2%A8%EC%9E%90_%EB%93%B1%EB%A1%9D_%EC%A0%88%EC%B0%A8_%EC%95%88%EB%82%B4(%EC%88%98%EC%A0%952)_%EC%8A%AC%EB%9D%BC%EC%9D%B4%EB%93%9C3.jpg",
+        "finalUrl": "https://seoul36.sen.es.kr/crosseditor/binary/images/006205/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%9E%85%ED%95%99%EC%A0%84%ED%98%95_%EB%8B%B9%EC%B2%A8%EC%9E%90_%EB%93%B1%EB%A1%9D_%EC%A0%88%EC%B0%A8_%EC%95%88%EB%82%B4(%EC%88%98%EC%A0%952)_%EC%8A%AC%EB%9D%BC%EC%9D%B4%EB%93%9C3.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "5d2297e72d66de7972bd7df6675c7a7a8ac168657d9675db5ba37ef19b3fb872",
+        "fetchedAt": "2026-08-30T23:17:59.728Z"
+      }
+    ]
+  },
+  {
+    "slug": "simseok-e",
+    "institutionId": "00718d93-055d-5b90-af48-341166061258",
+    "sections": [
+      {
+        "heading": "모집 대상·인원·지역",
+        "paragraphHashes": [
+          "cdcb6e601e7467d06f3c0aac4f384e79b1091a8c389134406497c2c0e1a8123f",
+          "40e90bd7aef9896059cfb596ad004e29fff99608cc12df5d09aac17a89f9623c"
+        ],
+        "sourceUrls": ["https://mysimes.cafe24.com/mjon/newbie/index.php"]
+      },
+      {
+        "heading": "원서·추첨",
+        "paragraphHashes": [
+          "bb77d3c92d9e2802dc9d1af83f29895007826f0aa01991e17314ba2980a28fc6",
+          "7117ddc86b447088e43cd5bbc70a6f847e603e49f8d9458f29d78afdb4c55ae4"
+        ],
+        "sourceUrls": ["https://mysimes.cafe24.com/mjon/newbie/index.php"]
+      }
+    ],
+    "warningHashes": [
+      "b10fcbc742e4792a0ab37fa02ed8de9bd723bedad09ab59431d3aecf3d0b3f3c"
+    ],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://mysimes.cafe24.com/mjon/newbie/index.php",
+        "finalUrl": "https://mysimes.cafe24.com/mjon/newbie/index.php",
+        "captureMethod": "BROWSER_CAPTURE",
+        "responseContentHash": "33ee96f62b5cb6b85912501e5f8154ec1ffca6534c0033b1f83e53dabb798aed",
+        "fetchedAt": "2026-08-30T22:55:12.475Z"
+      }
+    ]
+  },
+  {
+    "slug": "skes",
+    "institutionId": "030ac9b0-b1f8-5307-9dca-e8fcb8945bb0",
+    "sections": [
+      {
+        "heading": "대상·인원·지역",
+        "paragraphHashes": [
+          "980197fd5b27f5c5e34de32c0051125fe614e976b97abbf8655bf3d47a7ae4d5",
+          "5bff4684b82bd7889ff8ff223e0f2b476db0765a66ae83c9343ff51b884cd57b"
+        ],
+        "sourceUrls": [
+          "https://skes.sen.es.kr/crosseditor/binary/images/006973/1.jpg"
+        ]
+      },
+      {
+        "heading": "접수·추첨·등록",
+        "paragraphHashes": [
+          "c99eaaff27ec87bdad4d01c7e3e423c47133229686c2491e452c1075ca981d6f",
+          "ff646bfb0d75bf27d0661d4066823a46fa28d827bb878ad7ac3a770994e621da"
+        ],
+        "sourceUrls": [
+          "https://skes.sen.es.kr/crosseditor/binary/images/006973/1.jpg"
+        ]
+      },
+      {
+        "heading": "쌍둥이·정원 외 입학",
+        "paragraphHashes": [
+          "acc89b4bd9dd566769ab6d13ba86df7eb264a1795daf6bf8129a489b6749d42a",
+          "4abc5c87c19f44d6ff9ccab273dc13098a516aaa3b5237360971430c2821551b"
+        ],
+        "sourceUrls": [
+          "https://skes.sen.es.kr/crosseditor/binary/images/006973/2.jpg"
+        ]
+      },
+      {
+        "heading": "대기자·결원 충원",
+        "paragraphHashes": [
+          "1efb6ff6ed3df78026536c2b0c7a716086758f4982097032eabe2195bf18098c",
+          "e912e5a28690d1673f04a6799250f4258320decaba7a8c214cd8c6231bb640f9"
+        ],
+        "sourceUrls": [
+          "https://skes.sen.es.kr/crosseditor/binary/images/006973/1.jpg",
+          "https://skes.sen.es.kr/crosseditor/binary/images/006973/2.jpg"
+        ]
+      },
+      {
+        "heading": "교육비·급식·별도 비용",
+        "paragraphHashes": [
+          "583fd76a16e7728c5115f2686af92c51414ea2e67273c32bd2a7d2098b8259d0",
+          "35b0116adc1d6a5fa05659474a7f26fc6580ac21dc2a5e1054a3dc387db1aca9"
+        ],
+        "sourceUrls": [
+          "https://skes.sen.es.kr/crosseditor/binary/images/006973/2.jpg"
+        ]
+      }
+    ],
+    "warningHashes": [
+      "b9bb0d1f0aa558ea3beab3e919bec05475aeb46bcc4caedfd0c0b6c7c757aa02"
+    ],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://skes.sen.es.kr/crosseditor/binary/images/006973/1.jpg",
+        "finalUrl": "https://skes.sen.es.kr/crosseditor/binary/images/006973/1.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "7e052d97d5156521e09f5b0f3c37887b56e1c68bdf3d2956aa5d9627c44ba660",
+        "fetchedAt": "2026-08-30T22:53:25.013Z"
+      },
+      {
+        "requestedUrl": "https://skes.sen.es.kr/214345/subMenu.do",
+        "finalUrl": "https://skes.sen.es.kr/214345/subMenu.do",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "d5e33108899aae236dd71aec59d88d76d9639badcd5021bb1bcf55d38b6d7152",
+        "fetchedAt": "2026-08-30T22:53:25.237Z"
+      },
+      {
+        "requestedUrl": "https://skes.sen.es.kr/crosseditor/binary/images/006973/2.jpg",
+        "finalUrl": "https://skes.sen.es.kr/crosseditor/binary/images/006973/2.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "658d5dc20cc7f5813e8b8068838c590d9d1682e78db799b6576a1cbfdc71e284",
+        "fetchedAt": "2026-08-30T23:10:33.410Z"
+      }
+    ]
+  },
+  {
+    "slug": "smcho",
+    "institutionId": "445bcd41-2388-529a-a51b-74ddd99c7cb7",
+    "sections": [
+      {
+        "heading": "모집 대상·인원·지역",
+        "paragraphHashes": [
+          "879bc94aa40692042b8631d1ebe681b71fcc92ec925d90844def3d59619e4e6e"
+        ],
+        "sourceUrls": [
+          "https://smcho.sen.es.kr/crosseditor/binary/build_images_new/images/002989/Screenshot_2025-09-26_at_11.11.35.jpg"
+        ]
+      },
+      {
+        "heading": "원서 접수",
+        "paragraphHashes": [
+          "3d262b8ff2769b8a58c89a34dd6d909930eb166bb9cf9523f996750fedc4cb68"
+        ],
+        "sourceUrls": [
+          "https://smcho.sen.es.kr/crosseditor/binary/build_images_new/images/002989/Screenshot_2025-09-26_at_11.11.35.jpg"
+        ]
+      },
+      {
+        "heading": "추첨·발표·등록",
+        "paragraphHashes": [
+          "2f23bdcd2bfa873153299a22577fbf0a3cb1e4da4fb8da516001ece801de96db",
+          "58cdb4b53ebdb3925649bf045adf18464a21a028911dc1fef3e8887e266cc798"
+        ],
+        "sourceUrls": [
+          "https://smcho.sen.es.kr/crosseditor/binary/build_images_new/images/002989/Screenshot_2025-09-26_at_11.11.35.jpg"
+        ]
+      },
+      {
+        "heading": "쌍둥이·결원 보충",
+        "paragraphHashes": [
+          "505effc4e23a30bddfedc495d44277760d0717de564ac67370a7edfabbcf85b8",
+          "50020ab105f644d31a60f3bbe70bbf3a9bdb0a06228e67a97c005a647bb0083c",
+          "c16c7b9499b9cd737604a6c5d4d9ea3e2a3f0ac71c25b077695a61349091185e"
+        ],
+        "sourceUrls": [
+          "https://smcho.sen.es.kr/crosseditor/binary/build_images_new/images/002989/Screenshot_2025-09-26_at_11.11.35.jpg"
+        ]
+      },
+      {
+        "heading": "납부금·통학·유의사항",
+        "paragraphHashes": [
+          "c9988cb6ac028a4f9a94aa4f8b849046030524e9c0e58f8be79db89747efeaaa",
+          "4a0420b07a174a18c46f5ef033224e8bd3832b50c5bcf1ab8d6ddcef1af9b444"
+        ],
+        "sourceUrls": [
+          "https://smcho.sen.es.kr/crosseditor/binary/build_images_new/images/002989/Screenshot_2025-09-26_at_11.11.35.jpg"
+        ]
+      }
+    ],
+    "warningHashes": [
+      "201e905d87e17d5b23cefa3639d957ce42122219c22dcb51e166910e810d8cc7"
+    ],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://smcho.sen.es.kr/crosseditor/binary/build_images_new/images/002989/Screenshot_2025-09-26_at_11.11.35.jpg",
+        "finalUrl": "https://smcho.sen.es.kr/crosseditor/binary/build_images_new/images/002989/Screenshot_2025-09-26_at_11.11.35.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "c552ac69a847540b1b8bc919f100c3ce72a5d11c6966d2e42da1f8f5251baf6d",
+        "fetchedAt": "2026-08-30T22:53:25.275Z"
+      },
+      {
+        "requestedUrl": "https://smcho.sen.es.kr/84314/subMenu.do",
+        "finalUrl": "https://smcho.sen.es.kr/84314/subMenu.do",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "2a9fc3992dea2e2fb6ba3f8f8a9af10cea94b2a4897352027eb785cb3b938d09",
+        "fetchedAt": "2026-08-30T22:53:25.424Z"
+      }
+    ]
+  },
+  {
+    "slug": "sohwa-e",
+    "institutionId": "882945e4-f9a1-58a3-aef8-56a09118caab",
+    "sections": [
+      {
+        "heading": "일반전형 추첨",
+        "paragraphHashes": [
+          "65d0e4feadc814eb8087b6820e12910f13206dc5fff57691b628a3579f5f03e1",
+          "c4163addf8608e0bb57951db269840167d8410ba7470bb4550422ffe481dd837"
+        ],
+        "sourceUrls": [
+          "https://sohwa-e.goesw.kr/sohwa-e/na/ntt/selectNttInfo.do?mi=18035&bbsId=10521&nttSn=124421",
+          "https://sohwa-e.goesw.kr/upload/old_data/upload/ceditor/binary/images/003280/9._2026_%EC%9D%BC%EB%B0%98%EC%A0%84%ED%98%95_%EC%B6%94%EC%B2%A8_%EC%95%88%EB%82%B4(%ED%8C%9D%EC%97%85)_-_%EC%88%98%EC%A0%95%EB%B3%B8.jpg"
+        ]
+      },
+      {
+        "heading": "합격자 학부모 모임",
+        "paragraphHashes": [
+          "298347b0cc624619959ffc8c23aea2d1717cd0d96c7f93026869d360e465aa46",
+          "41ed7068f1cb450cedfa839460736498efd8fd934127d24fd88e5f2cd8b3ca6c"
+        ],
+        "sourceUrls": [
+          "https://sohwa-e.goesw.kr/sohwa-e/na/ntt/selectNttInfo.do?mi=18035&bbsId=10521&nttSn=124424",
+          "https://sohwa-e.goesw.kr/upload/old_data/upload/ceditor/binary/images/003289/%EB%93%B1%EB%A1%9D%EC%84%9C%EB%A5%98_%EA%B5%90%EB%B6%80_%EB%AA%A8%EC%9E%84_%EC%95%88%EB%82%B4.jpg"
+        ]
+      },
+      {
+        "heading": "예비소집",
+        "paragraphHashes": [
+          "be77c91c1e47b51d622a7d832ea8cd1d358b8cdb56b496e71347923de3efff66",
+          "1b586fe0f7d61b67d82d7eef6051c420886981acb7e5e2a77a8ce3b52bdc59b4"
+        ],
+        "sourceUrls": [
+          "https://sohwa-e.goesw.kr/sohwa-e/na/ntt/selectNttInfo.do?mi=18035&bbsId=10521&nttSn=124425",
+          "https://sohwa-e.goesw.kr/upload/old_data/upload/ceditor/binary/images/003329/%EC%98%88%EB%B9%84%EC%86%8C%EC%A7%91_%EC%95%88%EB%82%B4.jpg"
+        ]
+      },
+      {
+        "heading": "대기자 등록 안내",
+        "paragraphHashes": [
+          "42c69ceb4a64cc9896c65f78dad1ac36a22b4000b15f4634a388a7043a3fb3f2",
+          "7e63d4be4978ff22fd5554ef724a23ac6ae2042e3bece349f44e9771d5056563"
+        ],
+        "sourceUrls": [
+          "https://sohwa-e.goesw.kr/sohwa-e/na/ntt/selectNttInfo.do?mi=18035&bbsId=10521&nttSn=124427"
+        ]
+      }
+    ],
+    "warningHashes": [
+      "42ce0ee4ba055b5407192fc7a280741f1b71179b6cc47ec867bd6d0e7ca4bcfd",
+      "83b71d52a8edbbd060dee2b153881154b843e49665caf2c88d999d29186f9d9d",
+      "78c09c530c191b595a63dff6f5c6a1579946ae4835e961f68eef05fcb8d9a118"
+    ],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://sohwa-e.goesw.kr/upload/old_data/upload/ceditor/binary/images/003280/9._2026_%EC%9D%BC%EB%B0%98%EC%A0%84%ED%98%95_%EC%B6%94%EC%B2%A8_%EC%95%88%EB%82%B4(%ED%8C%9D%EC%97%85)_-_%EC%88%98%EC%A0%95%EB%B3%B8.jpg",
+        "finalUrl": "https://sohwa-e.goesw.kr/upload/old_data/upload/ceditor/binary/images/003280/9._2026_%EC%9D%BC%EB%B0%98%EC%A0%84%ED%98%95_%EC%B6%94%EC%B2%A8_%EC%95%88%EB%82%B4(%ED%8C%9D%EC%97%85)_-_%EC%88%98%EC%A0%95%EB%B3%B8.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "18ffe9443a155c9a8d9bedd467f5882a3d0bb6cfe8a5939be0470880cd806507",
+        "fetchedAt": "2026-08-30T22:53:25.552Z"
+      },
+      {
+        "requestedUrl": "https://sohwa-e.goesw.kr/sohwa-e/na/ntt/selectNttInfo.do?mi=18035&bbsId=10521&nttSn=124421",
+        "finalUrl": "https://sohwa-e.goesw.kr/sohwa-e/na/ntt/selectNttInfo.do?mi=18035&bbsId=10521&nttSn=124421",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "178c9e4dade633445ea78a6c216cdc54e6eeafb740bd868f87f9649eaada83b9",
+        "fetchedAt": "2026-08-30T22:53:25.665Z"
+      },
+      {
+        "requestedUrl": "https://sohwa-e.goesw.kr/sohwa-e/na/ntt/selectNttInfo.do?mi=18035&bbsId=10521&nttSn=124427",
+        "finalUrl": "https://sohwa-e.goesw.kr/sohwa-e/na/ntt/selectNttInfo.do?mi=18035&bbsId=10521&nttSn=124427",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "f4a940e5a589b2d478f006e7920fe47108610dbe728df4a6c32c07fcae1cf448",
+        "fetchedAt": "2026-08-30T23:22:42.840Z"
+      },
+      {
+        "requestedUrl": "https://sohwa-e.goesw.kr/sohwa-e/na/ntt/selectNttInfo.do?mi=18035&bbsId=10521&nttSn=124424",
+        "finalUrl": "https://sohwa-e.goesw.kr/sohwa-e/na/ntt/selectNttInfo.do?mi=18035&bbsId=10521&nttSn=124424",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "df81dd068cd88d911033fc9aad8b3234d2525f62fb95f33efa8cdf6e65f6d7ef",
+        "fetchedAt": "2026-08-30T23:22:43.107Z"
+      },
+      {
+        "requestedUrl": "https://sohwa-e.goesw.kr/upload/old_data/upload/ceditor/binary/images/003289/%EB%93%B1%EB%A1%9D%EC%84%9C%EB%A5%98_%EA%B5%90%EB%B6%80_%EB%AA%A8%EC%9E%84_%EC%95%88%EB%82%B4.jpg",
+        "finalUrl": "https://sohwa-e.goesw.kr/upload/old_data/upload/ceditor/binary/images/003289/%EB%93%B1%EB%A1%9D%EC%84%9C%EB%A5%98_%EA%B5%90%EB%B6%80_%EB%AA%A8%EC%9E%84_%EC%95%88%EB%82%B4.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "daf9601677528e2d67a3b7066423b001edbdfe57ba9dc13f4909de31443d9514",
+        "fetchedAt": "2026-08-30T23:22:43.218Z"
+      },
+      {
+        "requestedUrl": "https://sohwa-e.goesw.kr/sohwa-e/na/ntt/selectNttInfo.do?mi=18035&bbsId=10521&nttSn=124425",
+        "finalUrl": "https://sohwa-e.goesw.kr/sohwa-e/na/ntt/selectNttInfo.do?mi=18035&bbsId=10521&nttSn=124425",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "4fb0a9ff9f9cee036197745a4ebcf3052305043bce70088189877ad18a5e2e30",
+        "fetchedAt": "2026-08-30T23:22:43.261Z"
+      },
+      {
+        "requestedUrl": "https://sohwa-e.goesw.kr/upload/old_data/upload/ceditor/binary/images/003329/%EC%98%88%EB%B9%84%EC%86%8C%EC%A7%91_%EC%95%88%EB%82%B4.jpg",
+        "finalUrl": "https://sohwa-e.goesw.kr/upload/old_data/upload/ceditor/binary/images/003329/%EC%98%88%EB%B9%84%EC%86%8C%EC%A7%91_%EC%95%88%EB%82%B4.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "7df884407c3387ddba725609044318bf0f499f9d314040ea9c7a01f2d55a7e70",
+        "fetchedAt": "2026-08-30T23:22:43.374Z"
+      }
+    ]
+  },
+  {
+    "slug": "soongeui",
+    "institutionId": "fa8c1bbf-4e79-500d-9109-dafa1a620df0",
+    "sections": [
+      {
+        "heading": "모집 대상·인원·지역",
+        "paragraphHashes": [
+          "58b5ecc34b6de5fe6793010c01d832c94d85f7a789608434a6eac0734416c878"
+        ],
+        "sourceUrls": [
+          "https://soongeui.sen.es.kr/crosseditor/binary/images/006063/(%EC%88%AD%EC%9D%98%EC%B4%88)_2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%A0%84%ED%98%95_%EC%B5%9C%EC%A2%85%EC%9A%94%EA%B0%95001.png"
+        ]
+      },
+      {
+        "heading": "접수·구비서류",
+        "paragraphHashes": [
+          "89a419ea07e059812e7779c9e1d57994acda0d54df55680f3049f462fa0aed48",
+          "a06300fdf3c44dcad016f1c5baa6992156e7802af7e0f2f3cdca3035589cd9c6"
+        ],
+        "sourceUrls": [
+          "https://soongeui.sen.es.kr/crosseditor/binary/images/006063/(%EC%88%AD%EC%9D%98%EC%B4%88)_2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%A0%84%ED%98%95_%EC%B5%9C%EC%A2%85%EC%9A%94%EA%B0%95001.png"
+        ]
+      },
+      {
+        "heading": "추첨·발표·등록",
+        "paragraphHashes": [
+          "0e0cec8ea38a797a4214cc13a341d95c80dd5340af9b0f0111db42247ab168a2",
+          "4d5e64a3b2f344639a055a5687edf458be1c2369e65e06bcf877c36b541f1643"
+        ],
+        "sourceUrls": [
+          "https://soongeui.sen.es.kr/crosseditor/binary/images/006063/(%EC%88%AD%EC%9D%98%EC%B4%88)_2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%A0%84%ED%98%95_%EC%B5%9C%EC%A2%85%EC%9A%94%EA%B0%95002.png"
+        ]
+      },
+      {
+        "heading": "쌍둥이·결원 보충",
+        "paragraphHashes": [
+          "b74b2fdde53cc0f2e35b98167f84418b776d72c60bcea84f90a82991d026a5ab"
+        ],
+        "sourceUrls": [
+          "https://soongeui.sen.es.kr/crosseditor/binary/images/006063/(%EC%88%AD%EC%9D%98%EC%B4%88)_2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%A0%84%ED%98%95_%EC%B5%9C%EC%A2%85%EC%9A%94%EA%B0%95002.png"
+        ]
+      },
+      {
+        "heading": "대기자 순위·유효기간",
+        "paragraphHashes": [
+          "a3f40c8eb3fc268da4930b684d39dce081700eed970f737bb8756b5ccc0c22d4",
+          "a401e373cf27969fcd39087a6c2b198c4ade0f31a41e98236a61ccd30cd56d89"
+        ],
+        "sourceUrls": [
+          "https://soongeui.sen.es.kr/crosseditor/binary/images/006063/(%EC%88%AD%EC%9D%98%EC%B4%88)_2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%A0%84%ED%98%95_%EC%B5%9C%EC%A2%85%EC%9A%94%EA%B0%95002.png",
+          "https://soongeui.sen.es.kr/crosseditor/binary/images/006063/(%EC%88%AD%EC%9D%98%EC%B4%88)_2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%A0%84%ED%98%95_%EC%B5%9C%EC%A2%85%EC%9A%94%EA%B0%95003.png"
+        ]
+      },
+      {
+        "heading": "교육비·유의사항·문의",
+        "paragraphHashes": [
+          "6cdf4466fdca2326b670b9fd43ddb16ca0009e5e1bd6f673597d39b3f2e92df5",
+          "6e61b63f2030646c49a69d3f999bbc72b37c28a6e344a181d2a1ddf1e46c5b74"
+        ],
+        "sourceUrls": [
+          "https://soongeui.sen.es.kr/crosseditor/binary/images/006063/(%EC%88%AD%EC%9D%98%EC%B4%88)_2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%A0%84%ED%98%95_%EC%B5%9C%EC%A2%85%EC%9A%94%EA%B0%95001.png",
+          "https://soongeui.sen.es.kr/crosseditor/binary/images/006063/(%EC%88%AD%EC%9D%98%EC%B4%88)_2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%A0%84%ED%98%95_%EC%B5%9C%EC%A2%85%EC%9A%94%EA%B0%95003.png"
+        ]
+      }
+    ],
+    "warningHashes": [
+      "29e4a99adec0caf83ef2feef3c89a69ff0fd94ee8c9e733418c4ca0bc5f38431"
+    ],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://soongeui.sen.es.kr/crosseditor/binary/images/006063/(%EC%88%AD%EC%9D%98%EC%B4%88)_2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%A0%84%ED%98%95_%EC%B5%9C%EC%A2%85%EC%9A%94%EA%B0%95001.png",
+        "finalUrl": "https://soongeui.sen.es.kr/crosseditor/binary/images/006063/(%EC%88%AD%EC%9D%98%EC%B4%88)_2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%A0%84%ED%98%95_%EC%B5%9C%EC%A2%85%EC%9A%94%EA%B0%95001.png",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "39b7f03bd4d4c66fcf772d632bff468c7aef4a2e9558c0b2d3432acb5d45d387",
+        "fetchedAt": "2026-08-30T22:53:25.789Z"
+      },
+      {
+        "requestedUrl": "https://soongeui.sen.es.kr/crosseditor/binary/images/006063/(%EC%88%AD%EC%9D%98%EC%B4%88)_2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%A0%84%ED%98%95_%EC%B5%9C%EC%A2%85%EC%9A%94%EA%B0%95002.png",
+        "finalUrl": "https://soongeui.sen.es.kr/crosseditor/binary/images/006063/(%EC%88%AD%EC%9D%98%EC%B4%88)_2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%A0%84%ED%98%95_%EC%B5%9C%EC%A2%85%EC%9A%94%EA%B0%95002.png",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "4ed5f9710f66a20b95c3a099783b355e22c40aa563f0aa4d7d31449f657d8192",
+        "fetchedAt": "2026-08-30T23:05:54.476Z"
+      },
+      {
+        "requestedUrl": "https://soongeui.sen.es.kr/crosseditor/binary/images/006063/(%EC%88%AD%EC%9D%98%EC%B4%88)_2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%A0%84%ED%98%95_%EC%B5%9C%EC%A2%85%EC%9A%94%EA%B0%95003.png",
+        "finalUrl": "https://soongeui.sen.es.kr/crosseditor/binary/images/006063/(%EC%88%AD%EC%9D%98%EC%B4%88)_2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%A0%84%ED%98%95_%EC%B5%9C%EC%A2%85%EC%9A%94%EA%B0%95003.png",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "130de5d226b8548742cd9add54c7e52c1546415db26d65370ffb819f24339b00",
+        "fetchedAt": "2026-08-30T23:05:54.560Z"
+      }
+    ]
+  },
+  {
+    "slug": "sungdong",
+    "institutionId": "10367b3a-a743-57df-9906-c4fb6bfe97d5",
+    "sections": [
+      {
+        "heading": "설명회",
+        "paragraphHashes": [
+          "a5865a1ce3ae8697cd96d88fbc2ec928fe27adb8dffb65e3bbe6461860d2715b",
+          "6edbefaa8515f7cf458340c709bcaaae381d9da401b17ed03fe3ff32c19135d4"
+        ],
+        "sourceUrls": [
+          "https://sungdong.sen.es.kr/crosseditor/binary/images/006042/%EC%9E%85%ED%95%99%EC%84%A4%EB%AA%85%ED%9A%8C%EC%95%88%EB%82%B4_%EA%B2%8C%EC%8B%9C%EA%B8%80%ED%8E%98%EC%9D%B4%EC%A7%80_2025.jpg"
+        ]
+      },
+      {
+        "heading": "모집 대상·인원·지역",
+        "paragraphHashes": [
+          "6210c33fcdb572bff52a947bfb326d1fa132899f7998cca35828acdbe83039ac",
+          "3d963befe960294e3740109c9f8cfed1bbbbed7f82d5b42bf8b8d171c23d94be"
+        ],
+        "sourceUrls": [
+          "https://sungdong.sen.es.kr/crosseditor/binary/images/006136/1.jpg"
+        ]
+      },
+      {
+        "heading": "원서 접수·서류",
+        "paragraphHashes": [
+          "9b65a2f1698d6dd937670863f6a6361ba0c880f98e024cd7c9446191ce64cf89",
+          "0c78eb38c472015ad8f2be419fe007287b52351323be39fc6604f086d16d21d9"
+        ],
+        "sourceUrls": [
+          "https://sungdong.sen.es.kr/crosseditor/binary/images/006136/1.jpg"
+        ]
+      },
+      {
+        "heading": "추첨·등록·쌍둥이",
+        "paragraphHashes": [
+          "f16ab6c2830c3f9b946ef3f35c9caec0e0623546a59320c7d7e149ff172f203b",
+          "005922d2a071f765ee88fcc2c68f90fde2a2e03c106fd28c2247e3481ecde411",
+          "911013743c168cadbafd03e69407febbd3049a12e1b59e05bed13f39dbecee72"
+        ],
+        "sourceUrls": [
+          "https://sungdong.sen.es.kr/crosseditor/binary/images/006136/1.jpg"
+        ]
+      },
+      {
+        "heading": "대기자·결원 보충",
+        "paragraphHashes": [
+          "e763f3bbe09c7027a5565d4301179bbfc9e3ce5b100dc85f119fa588deb89a9d",
+          "12b05b5672bbf0b726ea621f615aecc54dba024e90c0019859047cb7eb9d2fd9"
+        ],
+        "sourceUrls": [
+          "https://sungdong.sen.es.kr/crosseditor/binary/images/006136/1.jpg"
+        ]
+      },
+      {
+        "heading": "납부금",
+        "paragraphHashes": [
+          "5cb328f408df1289d06a3bc0d40baa6c608c7017e3acba90346e9410986cb29b"
+        ],
+        "sourceUrls": [
+          "https://sungdong.sen.es.kr/crosseditor/binary/images/006136/1.jpg"
+        ]
+      }
+    ],
+    "warningHashes": [
+      "3047e750301c65043131dc9f1a719b6163c9901b278c5148e9247725821ec997",
+      "b5c8acc8a1be321362f587a8a96c11821e3f0d087ee6dca8184b3f79a36cd013"
+    ],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://sungdong.sen.es.kr/crosseditor/binary/images/006042/%EC%9E%85%ED%95%99%EC%84%A4%EB%AA%85%ED%9A%8C%EC%95%88%EB%82%B4_%EA%B2%8C%EC%8B%9C%EA%B8%80%ED%8E%98%EC%9D%B4%EC%A7%80_2025.jpg",
+        "finalUrl": "https://sungdong.sen.es.kr/crosseditor/binary/images/006042/%EC%9E%85%ED%95%99%EC%84%A4%EB%AA%85%ED%9A%8C%EC%95%88%EB%82%B4_%EA%B2%8C%EC%8B%9C%EA%B8%80%ED%8E%98%EC%9D%B4%EC%A7%80_2025.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "463c6dea65d92be7f1b11b5f6509c0dd1aba465a388991546f0b76d8f9bb193c",
+        "fetchedAt": "2026-08-30T22:53:25.831Z"
+      },
+      {
+        "requestedUrl": "https://sungdong.sen.es.kr/crosseditor/binary/images/006136/1.jpg",
+        "finalUrl": "https://sungdong.sen.es.kr/crosseditor/binary/images/006136/1.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "dc713c2ac0740b5baebe1d6a631d117929f0b6699e4cd907501404db41a8d641",
+        "fetchedAt": "2026-08-30T22:53:25.843Z"
+      }
+    ]
+  },
+  {
+    "slug": "sungshin",
+    "institutionId": "b7a5ec9e-3447-5822-af34-20f95290e0a8",
+    "sections": [
+      {
+        "heading": "모집·접수·서류",
+        "paragraphHashes": [
+          "08738c99accd169108525e22a19f11cc60fee9228cb016b0f5b3b415e0da2c0c",
+          "61bc93355aab35f028c1ae2908650b427107ec2f40c7a11893199d4283911828",
+          "02f609a1015051b28ef69f0a709d69d770da8af5478847646340213954a6837a"
+        ],
+        "sourceUrls": [
+          "https://sungshin.sen.es.kr/crosseditor/binary/images/006032/111_1.jpg"
+        ]
+      },
+      {
+        "heading": "추첨·쌍둥이",
+        "paragraphHashes": [
+          "144517c47fd7f727f46a5e7857d435a2d3733870459d33a2a8822e8a467638ac",
+          "68351393eaea0ade064f0c5be1cae050e3a09c4938ccfb6f76979d190799af0d"
+        ],
+        "sourceUrls": [
+          "https://sungshin.sen.es.kr/crosseditor/binary/images/006032/2.jpg"
+        ]
+      },
+      {
+        "heading": "결원·대기명부",
+        "paragraphHashes": [
+          "cacdf4718ba83db466caa1f582cfef9743e07f613015e6c1f14203736ccf544f",
+          "ea500883355237db1017633edeb590a63c09bd4451700b621fadc6b941d7e63c"
+        ],
+        "sourceUrls": [
+          "https://sungshin.sen.es.kr/crosseditor/binary/images/006032/2.jpg"
+        ]
+      },
+      {
+        "heading": "등록·방문 서류",
+        "paragraphHashes": [
+          "5e194a74e377b8f40e10be7d3cef06e68b85f5e7c06310c84311068659f63da7",
+          "631cc16791af1323967dfc6cadffcee6b56a7d13b760297ee0f67430101516a9"
+        ],
+        "sourceUrls": [
+          "https://sungshin.sen.es.kr/crosseditor/binary/images/006032/2.jpg",
+          "https://sungshin.sen.es.kr/crosseditor/binary/images/006031/3.jpg"
+        ]
+      },
+      {
+        "heading": "교육비·유의사항·문의",
+        "paragraphHashes": [
+          "85a0b8a642dffb7e5449ab42adb441617fa209851dc33136bd7f8490eb7d19be",
+          "a78647908b9fb0bea0461ff979333cdc77205dd7a42048b73aa273dedf2e4abe",
+          "5c1228a45f500e0e8bb218aee5a39a1ef061e62092965680eeccc31b1a4d6472"
+        ],
+        "sourceUrls": [
+          "https://sungshin.sen.es.kr/crosseditor/binary/images/006031/3.jpg"
+        ]
+      }
+    ],
+    "warningHashes": [
+      "1bed15d4420741b9fab4dbf63f4e4caf90ce18b11d4aaf421b559870616425cb"
+    ],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://sungshin.sen.es.kr/crosseditor/binary/images/006032/111_1.jpg",
+        "finalUrl": "https://sungshin.sen.es.kr/crosseditor/binary/images/006032/111_1.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "9c1a6da0157736a1c8efdbb81214d130c5f5f1f2bd9c681858188dd747cf1cc7",
+        "fetchedAt": "2026-08-30T22:53:25.925Z"
+      },
+      {
+        "requestedUrl": "https://sungshin.sen.es.kr/198368/subMenu.do",
+        "finalUrl": "https://sungshin.sen.es.kr/198368/subMenu.do",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "532540d59fc2c191ef0b29b05ccbeabf14ae5c3fcfd85d2505987526b4a0c342",
+        "fetchedAt": "2026-08-30T22:53:25.992Z"
+      },
+      {
+        "requestedUrl": "https://sungshin.sen.es.kr/crosseditor/binary/images/006032/2.jpg",
+        "finalUrl": "https://sungshin.sen.es.kr/crosseditor/binary/images/006032/2.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "753915fdb23a5994466de2e357c8d32d403ba359b20f5e8dddc1fd570cc4634f",
+        "fetchedAt": "2026-08-30T23:05:53.392Z"
+      },
+      {
+        "requestedUrl": "https://sungshin.sen.es.kr/crosseditor/binary/images/006031/3.jpg",
+        "finalUrl": "https://sungshin.sen.es.kr/crosseditor/binary/images/006031/3.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "e5c5c44a812b210dee93786c8cd8a9a8d34a17aded466497a94771fd11fc03c5",
+        "fetchedAt": "2026-08-30T23:05:53.565Z"
+      }
+    ]
+  },
+  {
+    "slug": "sunil",
+    "institutionId": "3c0f61b7-d66b-56b6-be6e-ba33f99f03f5",
+    "sections": [
+      {
+        "heading": "모집·접수·서류",
+        "paragraphHashes": [
+          "47e43537be75bc25becc37ceb9d63310ca41f248eb9538a068f3f3b192427733",
+          "621a5529cf8cb81d4b3f61a900d8697592f3a30d00ea55168b16ce6b20639601",
+          "7c04ca196af5c160b4dd679119b2405052624f2fa75442d8156bdba0680a01bd"
+        ],
+        "sourceUrls": [
+          "https://sunil.sen.es.kr/crosseditor/binary/images/006128/new%EC%8B%A0%EC%9E%85%EC%83%9D%EB%AA%A8%EC%A7%91%EC%95%88%EB%82%B4(2026%ED%95%99%EB%85%84%EB%8F%84).jpg"
+        ]
+      },
+      {
+        "heading": "추첨·발표",
+        "paragraphHashes": [
+          "e007e204229f423dbe20dc91bcea2b5e6d77adcb2829788830f9f8ab62d0fd42",
+          "a244e1fc48179f9b52e96e031e3d41e5642da454913697671c9949f551516767"
+        ],
+        "sourceUrls": [
+          "https://sunil.sen.es.kr/crosseditor/binary/images/006128/new%EC%8B%A0%EC%9E%85%EC%83%9D%EB%AA%A8%EC%A7%91%EC%95%88%EB%82%B4(2026%ED%95%99%EB%85%84%EB%8F%84).jpg"
+        ]
+      },
+      {
+        "heading": "쌍둥이 추첨",
+        "paragraphHashes": [
+          "a78aba452b4266864bbb47ee6906f5f2f79cdc65ce548510912bc1a811f8816d",
+          "174b41a1a90b51287b4835e7333a4f91cc2d691d4534bab79a9f47cda9cdd7e2"
+        ],
+        "sourceUrls": [
+          "https://sunil.sen.es.kr/crosseditor/binary/images/006128/new%EC%8B%A0%EC%9E%85%EC%83%9D%EB%AA%A8%EC%A7%91%EC%95%88%EB%82%B4(2026%ED%95%99%EB%85%84%EB%8F%84).jpg"
+        ]
+      },
+      {
+        "heading": "등록·입학금·취소",
+        "paragraphHashes": [
+          "381ae8f195be2bf150c53a99eaf478b88925c369d09e14cba90c9a4e147b315d",
+          "f5f2cf86a8b40f306e90102d8c4ab66458c5d080ea51ea45e89252023526616b",
+          "80f7a5d21739a340e200ec4dc08904d041e76d938770fc6be75510739dc81f76"
+        ],
+        "sourceUrls": [
+          "https://sunil.sen.es.kr/crosseditor/binary/images/006128/new%EC%8B%A0%EC%9E%85%EC%83%9D%EB%AA%A8%EC%A7%91%EC%95%88%EB%82%B4(2026%ED%95%99%EB%85%84%EB%8F%84).jpg"
+        ]
+      },
+      {
+        "heading": "대기자·결원 보충",
+        "paragraphHashes": [
+          "6e14dc2aaa4db1fdba86b3fee7fbc40f6d98acc0136c8e1dfa0c92a9231ad854",
+          "0128af059ed10ff1b86c1c37c94a728b8be62df9337bd2c14895b8406ac58d41",
+          "d88a829cfd6cfc473d6cbe121f22ae944d3eb89fa2362a1a398504e0cfa2a2a5"
+        ],
+        "sourceUrls": [
+          "https://sunil.sen.es.kr/crosseditor/binary/images/006128/new%EC%8B%A0%EC%9E%85%EC%83%9D%EB%AA%A8%EC%A7%91%EC%95%88%EB%82%B4(2026%ED%95%99%EB%85%84%EB%8F%84).jpg"
+        ]
+      },
+      {
+        "heading": "수업료·문의",
+        "paragraphHashes": [
+          "f4c2f29f213fe7ce874406a3148be959c13dfbd8583b804b72eb1a58adb1750b"
+        ],
+        "sourceUrls": [
+          "https://sunil.sen.es.kr/crosseditor/binary/images/006128/new%EC%8B%A0%EC%9E%85%EC%83%9D%EB%AA%A8%EC%A7%91%EC%95%88%EB%82%B4(2026%ED%95%99%EB%85%84%EB%8F%84).jpg"
+        ]
+      }
+    ],
+    "warningHashes": [
+      "31ce4b07e39b946c6ee5c2ca4bb56d8667b9660026d28d7b25043b034600da73"
+    ],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://sunil.sen.es.kr/crosseditor/binary/images/006128/new%EC%8B%A0%EC%9E%85%EC%83%9D%EB%AA%A8%EC%A7%91%EC%95%88%EB%82%B4(2026%ED%95%99%EB%85%84%EB%8F%84).jpg",
+        "finalUrl": "https://sunil.sen.es.kr/crosseditor/binary/images/006128/new%EC%8B%A0%EC%9E%85%EC%83%9D%EB%AA%A8%EC%A7%91%EC%95%88%EB%82%B4(2026%ED%95%99%EB%85%84%EB%8F%84).jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "c96fa049e4d25a29e88b48e3f05e6d76f44cd81c7bbdc1358280e6848b1ac74b",
+        "fetchedAt": "2026-08-30T22:53:26.072Z"
+      },
+      {
+        "requestedUrl": "https://sunil.sen.es.kr/183573/subMenu.do",
+        "finalUrl": "https://sunil.sen.es.kr/183573/subMenu.do",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "8619623caa5c56299d7b97bb56a67f4a5648575915495a8606298715267fbbb7",
+        "fetchedAt": "2026-08-30T22:53:26.105Z"
+      }
+    ]
+  },
+  {
+    "slug": "suwoncca",
+    "institutionId": "b1f15bd1-d338-5444-9e36-98e052fb129c",
+    "sections": [
+      {
+        "heading": "전형별 모집인원·공통 원칙",
+        "paragraphHashes": [
+          "7ed9f8c240b4d43065d54bf92fd9b4d82a8854aef6502dc770ec6b1b1ab2955d",
+          "09d41e16e0704c2a371ad3458df60cfda85e02e614a75eb53218a17fd1ec1c72"
+        ],
+        "sourceUrls": ["https://admission.suwoncca.org/pdf/2027CCAES.pdf"]
+      },
+      {
+        "heading": "전형별 지원자격",
+        "paragraphHashes": [
+          "a4fbac47f14e909c5243330a11ec0b28d4586101b478ecde548656787787e6c9",
+          "77cd248f2f50b94767f90d0c42ee5f39b8ee425503e01e472ed9c56d7bcd6275",
+          "799c915a8950cf64f6a7eccd6426638af1ce58fa39eb1c0e54dde89505c71d20"
+        ],
+        "sourceUrls": ["https://admission.suwoncca.org/pdf/2027CCAES.pdf"]
+      },
+      {
+        "heading": "제출서류",
+        "paragraphHashes": [
+          "96a0d0bc31320a7b4256d6042456eeb0b0198f573774131aa1fdb2296c2e0696",
+          "77a2c873e43f4d8f2c9798a1e679430a467437a861d6b1f1cf7e16d1e6093ab2"
+        ],
+        "sourceUrls": ["https://admission.suwoncca.org/pdf/2027CCAES.pdf"]
+      },
+      {
+        "heading": "우선전형 일정",
+        "paragraphHashes": [
+          "6b49317d50f2397d5baaf89daee34090b9c593279f58c546456e651212bccaaa",
+          "e7ee6f32c0b4e7bef9cf9fe117819c1be9fe9700391a2df46f469d1d265efcdf",
+          "49c024e9348b7da27ab82e42165abfc571d5104b481b9a7f7d0d3ce5cff2e304"
+        ],
+        "sourceUrls": ["https://admission.suwoncca.org/pdf/2027CCAES.pdf"]
+      },
+      {
+        "heading": "일반 추첨전형 일정·등록",
+        "paragraphHashes": [
+          "0a906033fdfb37e1b889eec896aa56e62211f07de4bf5e02040c02174c89a432",
+          "e92cb1a0a2324221c12acfa80e8bec5bcdafbdf7a7d03d143ddb5a25f42e941b",
+          "bf67948791c630f2c6fc03ee3d112777ce789beaa4fea5ab79398cd211643a16"
+        ],
+        "sourceUrls": ["https://admission.suwoncca.org/pdf/2027CCAES.pdf"]
+      },
+      {
+        "heading": "심의·유의사항·교육비",
+        "paragraphHashes": [
+          "a09d97c0b506af6e682ac8af2da9a03278172eb5ca0b7d1b4f1c4be438b390be",
+          "0d30f712a06ac2f3c5ec579ac7643acf4a39d92ad43a2205c478e54494db03c9",
+          "3a87fa029507883d197b57391ad3d458eb4ce615cb9a4a9893465f73e196a756"
+        ],
+        "sourceUrls": ["https://admission.suwoncca.org/pdf/2027CCAES.pdf"]
+      },
+      {
+        "heading": "입학처 문의",
+        "paragraphHashes": [
+          "0448b94f888ecc38985f2d47299df0c836dedbd417df6244ed104e1ac0c7ddd2"
+        ],
+        "sourceUrls": ["https://admission.suwoncca.org/content/es_infor"]
+      }
+    ],
+    "warningHashes": [
+      "41c639206cec875527a64378575a4f39fddac288deda01192fe6570465d6ec6d",
+      "8253ce8e8b912c325293ade94c147790132c793bc377947932ace0f8f163e917"
+    ],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://admission.suwoncca.org/pdf/2027CCAES.pdf",
+        "finalUrl": "https://admission.suwoncca.org/pdf/2027CCAES.pdf",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "b9c4bd01028daa4b643792fa2baf475070c4ca19a86101e943b412d923a661fe",
+        "fetchedAt": "2026-08-30T22:53:26.423Z"
+      },
+      {
+        "requestedUrl": "https://admission.suwoncca.org/content/es_infor",
+        "finalUrl": "https://admission.suwoncca.org/content/es_infor",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "78c009fd73ebe32d7dd54be2e1282680bf6286dd6829e8765abdf59fdb2e2afa",
+        "fetchedAt": "2026-08-30T22:53:26.623Z"
+      }
+    ]
+  },
+  {
+    "slug": "taegang",
+    "institutionId": "dfb38543-f8b0-57df-915f-38e35da21b06",
+    "sections": [
+      {
+        "heading": "전형·자격·서류",
+        "paragraphHashes": [
+          "c7187b00e72f251442826fdd0380711c47e84710eac615176a5c9fcb358e2202",
+          "059c35a4ccb1f07baae549861366764e939e8a917f1757f582d075d7091c8184"
+        ],
+        "sourceUrls": ["https://taegang.sen.es.kr/111804/subMenu.do"]
+      },
+      {
+        "heading": "특별전형·접수·추첨",
+        "paragraphHashes": [
+          "ab53f339dc2205c3c9cb9a8aafb95c6551d053bea0aaf794da7a3a00d76b9084",
+          "bb708d237f96f309d429516838adf91abbe1b9c9059d19a5b5f52fd210f00e18"
+        ],
+        "sourceUrls": ["https://taegang.sen.es.kr/111804/subMenu.do"]
+      },
+      {
+        "heading": "쌍둥이·결원·등록",
+        "paragraphHashes": [
+          "6623e7ec3d35b76484c1b160c8b04dcf1090b91090e9c0fe0d2aa68f34d75c16",
+          "ea8077562405068cdc93561f3e9c81a359dcafd11fbcc62b17141d55e90852f5"
+        ],
+        "sourceUrls": ["https://taegang.sen.es.kr/111804/subMenu.do"]
+      },
+      {
+        "heading": "방문 서류·납부금·문의",
+        "paragraphHashes": [
+          "848221af1c900b12dc119bb4dab3e8775bbb8c6329676a762849fee2f7156d7c",
+          "890f4ef9bce5cd9ad4b663b6d5656093a07b402c9eec6a193f05980a91678935"
+        ],
+        "sourceUrls": ["https://taegang.sen.es.kr/111804/subMenu.do"]
+      },
+      {
+        "heading": "2026학년도 특별전형 교회생활 심사 기준",
+        "paragraphHashes": [
+          "da86ecbdcca3e8b499d832922f440a89b5899616802dec565613f66140be2336",
+          "19f3388c6bad14f73e120925f662972fe43053bbf3e314748bfaa540a1744c54",
+          "30f84978ecf6931bcf435d46a567e20f163ee6a05a902e830ab2025682dc823c"
+        ],
+        "sourceUrls": ["https://taegang.sen.es.kr/111804/subMenu.do"]
+      },
+      {
+        "heading": "2026학년도 교인확인서 작성·증빙·심사",
+        "paragraphHashes": [
+          "6d62a9df6295d8615fd5021aa9c3a8caa2ab6f58075e73f5ec79d5859760b8ba",
+          "6597c212fa4391b436df8433b45dd9e18ee22287fc59cb463b7bb6397643fb1a",
+          "94922a5a63b93d3387476489d6606fb30876d830ed4bf053b286186c1fee1a1b"
+        ],
+        "sourceUrls": ["https://taegang.sen.es.kr/111804/subMenu.do"]
+      }
+    ],
+    "warningHashes": [
+      "2e2d471d003121f444d42be8cf68b1ef7ce0a5d3482f3e6912d04784d1a55d3b"
+    ],
+    "supplementary": [
+      {
+        "title": "2027학년도 신입생 특별전형 교인확인서 안내",
+        "sections": [
+          {
+            "heading": "2027학년도 특별전형 교회생활 심사 기준",
+            "paragraphHashes": [
+              "5b6be34695c919706457311eefea0b7ab664a71c66414d69b8f66d1c78213949",
+              "c32b35b00412e96c60dfc1859739191c228d867ff5ae58c6dab312cd2b1618bf",
+              "30f84978ecf6931bcf435d46a567e20f163ee6a05a902e830ab2025682dc823c"
+            ],
+            "sourceUrls": ["https://taegang.sen.es.kr/111804/subMenu.do"]
+          },
+          {
+            "heading": "2027학년도 교인확인서 작성·증빙·심사",
+            "paragraphHashes": [
+              "6d62a9df6295d8615fd5021aa9c3a8caa2ab6f58075e73f5ec79d5859760b8ba",
+              "c5e49636af04cd0c72039cfaa722b641edf7144cf4d89897559f42295fc69d8b",
+              "94922a5a63b93d3387476489d6606fb30876d830ed4bf053b286186c1fee1a1b"
+            ],
+            "sourceUrls": ["https://taegang.sen.es.kr/111804/subMenu.do"]
+          }
+        ]
+      }
+    ],
+    "captures": [
+      {
+        "requestedUrl": "https://taegang.sen.es.kr/crosseditor/binary/images/006125/2026%ED%95%99%EB%85%84%EB%8F%84_%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95_1.png",
+        "finalUrl": "https://taegang.sen.es.kr/crosseditor/binary/images/006125/2026%ED%95%99%EB%85%84%EB%8F%84_%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95_1.png",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "b2cfd8d5ca05c5a43bacc334f7a12296fd573e213d9a691dc08e56bfd873374c",
+        "fetchedAt": "2026-08-30T22:53:26.662Z"
+      },
+      {
+        "requestedUrl": "https://taegang.sen.es.kr/175148/subMenu.do",
+        "finalUrl": "https://taegang.sen.es.kr/175148/subMenu.do",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "85f0f16f0476ecf059b76a49c0bd243785f4c09060f0b81a1c12d699cf4a1ea0",
+        "fetchedAt": "2026-08-30T22:53:26.710Z"
+      },
+      {
+        "requestedUrl": "https://taegang.sen.es.kr/111804/subMenu.do",
+        "finalUrl": "https://taegang.sen.es.kr/111804/subMenu.do",
+        "captureMethod": "BROWSER_CAPTURE",
+        "responseContentHash": "a0323b706cb2df15350bfcc1d480f2638a15b225e11e986433edc5e898ed8624",
+        "fetchedAt": "2026-08-30T23:55:40.836Z"
+      }
+    ]
+  },
+  {
+    "slug": "uchon",
+    "institutionId": "37de5a08-cbb8-5dec-95d1-faca0a5d8009",
+    "sections": [
+      {
+        "heading": "모집·서류·접수",
+        "paragraphHashes": [
+          "3ef385812b6970b4fa1c867bd369bcaf6c17ad4cf072617124910d961ccbc765",
+          "05370df8b9ae085f3cbec250ea3373ca6fbb596a7f8c60480cdedc230409491c"
+        ],
+        "sourceUrls": [
+          "https://uchon.sen.es.kr/crosseditor/binary/images/006071/%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95_%ED%99%88%ED%8E%98%EC%9D%B4%EC%A7%80%EC%9A%A9_2026.jpg"
+        ]
+      },
+      {
+        "heading": "추첨·쌍둥이·결원",
+        "paragraphHashes": [
+          "f2c1324a1ad61502a2346dde79afc1b3198096b5d5b3533c194a933b198a8aa0",
+          "6e1efc7d47cc56b74e31c2017c6bb29bfea686f5275c563f46f62af22c90c2df",
+          "7732beac7969ec4f464bd5845589081677f89081b47723e4820ae3303fcc8dd3"
+        ],
+        "sourceUrls": [
+          "https://uchon.sen.es.kr/crosseditor/binary/images/006071/%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95_%ED%99%88%ED%8E%98%EC%9D%B4%EC%A7%80%EC%9A%A9_2026.jpg"
+        ]
+      },
+      {
+        "heading": "등록·교육비",
+        "paragraphHashes": [
+          "21862a7c2b8aca2d297bb7bcb89cd27cf6f5152293b67d51a94eb5068a9500d5",
+          "105924961eba524223400d7fa2465a6574afdf46f29835f79893bac3ab4003bd"
+        ],
+        "sourceUrls": [
+          "https://uchon.sen.es.kr/crosseditor/binary/images/006071/%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95_%ED%99%88%ED%8E%98%EC%9D%B4%EC%A7%80%EC%9A%A9_2026.jpg"
+        ]
+      },
+      {
+        "heading": "위치·문의",
+        "paragraphHashes": [
+          "47bafa3651144d689c9adf4542c423007320e844469ef75a46fedbb4eb30ef0e"
+        ],
+        "sourceUrls": [
+          "https://uchon.sen.es.kr/crosseditor/binary/images/006071/%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95_%ED%99%88%ED%8E%98%EC%9D%B4%EC%A7%80%EC%9A%A9_2026.jpg"
+        ]
+      }
+    ],
+    "warningHashes": [
+      "ae50fe4af191385db57e45d835cc529000f26af54359bda8ff3f586bfdfd9015",
+      "0f757dee4951c281c951dc473a8ec402a75b13f5e725677a7aa01ad791065066"
+    ],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://uchon.sen.es.kr/crosseditor/binary/images/006071/%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95_%ED%99%88%ED%8E%98%EC%9D%B4%EC%A7%80%EC%9A%A9_2026.jpg",
+        "finalUrl": "https://uchon.sen.es.kr/crosseditor/binary/images/006071/%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95_%ED%99%88%ED%8E%98%EC%9D%B4%EC%A7%80%EC%9A%A9_2026.jpg",
+        "captureMethod": "BROWSER_CAPTURE",
+        "responseContentHash": "1812a8963eb8aab788fa71ff83ba97ccc1826543db596cdc7794d023b1b868e9",
+        "fetchedAt": "2026-08-30T23:42:31.494Z"
+      },
+      {
+        "requestedUrl": "https://uchon.sen.es.kr/183353/subMenu.do",
+        "finalUrl": "https://uchon.sen.es.kr/183353/subMenu.do",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "20155ad972ca207a3cb15f08978a67686d6299dc27206d429a660ab526d4d79c",
+        "fetchedAt": "2026-08-30T22:53:26.789Z"
+      }
+    ]
+  },
+  {
+    "slug": "unhyun",
+    "institutionId": "b1204d52-f578-5601-b066-543e15680e9a",
+    "sections": [
+      {
+        "heading": "모집·접수·서류",
+        "paragraphHashes": [
+          "10c76d8225ce02b54313f51cb00e29158d85b89cae5dc37fd80928429467e218",
+          "f5844628ef5670b84e98ff384f8f2276cb26e08a593e4096d129a290410f9cd9",
+          "4a9678c9dfb2f72e1804a3955a75b419c8f2aa01cabd755b6ad6781bc3d2a8e0"
+        ],
+        "sourceUrls": [
+          "https://unhyun.sen.es.kr/crosseditor/binary/images/006055/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%9A%B4%ED%98%84%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95001_1.jpg"
+        ]
+      },
+      {
+        "heading": "추첨·발표·등록",
+        "paragraphHashes": [
+          "dfbbdab1db7069e26573553bc0517c87b6494e58e12bdcc9af0bcc492da91af8"
+        ],
+        "sourceUrls": [
+          "https://unhyun.sen.es.kr/crosseditor/binary/images/006055/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%9A%B4%ED%98%84%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95001_1.jpg"
+        ]
+      },
+      {
+        "heading": "등록·쌍둥이·결원",
+        "paragraphHashes": [
+          "773d6cbd2f2cebb1b6f1f3713adbca14f24574f92bb0c816d304aa0088588a1c",
+          "a36471acbdd5bdcfc7f4ed4c3d9e241c6c1bbf93e1fbf771549e7cc061fe03cb",
+          "cd874530860336239d7eff140b3725aa8d78e5f0a3a4b82cab9a0d555aa63248"
+        ],
+        "sourceUrls": [
+          "https://unhyun.sen.es.kr/crosseditor/binary/images/006055/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%9A%B4%ED%98%84%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95002_1.jpg"
+        ]
+      },
+      {
+        "heading": "교육비·통학·문의",
+        "paragraphHashes": [
+          "38bbfd0c7bf6d8c0e7a541efaf6c31fb565ec0a4913ea241e436c7d101ff5177",
+          "2f51f27756565f02004e49a8e71b59ac3859915ed3d5c58ff1f675cb6909a4ec"
+        ],
+        "sourceUrls": [
+          "https://unhyun.sen.es.kr/crosseditor/binary/images/006055/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%9A%B4%ED%98%84%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95001_1.jpg",
+          "https://unhyun.sen.es.kr/crosseditor/binary/images/006055/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%9A%B4%ED%98%84%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95002_1.jpg"
+        ]
+      }
+    ],
+    "warningHashes": [
+      "ee32af848a9d765491e08f11bda77d6ab19379303fda77bfb6d3536f387498f3"
+    ],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://unhyun.sen.es.kr/crosseditor/binary/images/006055/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%9A%B4%ED%98%84%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95001_1.jpg",
+        "finalUrl": "https://unhyun.sen.es.kr/crosseditor/binary/images/006055/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%9A%B4%ED%98%84%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95001_1.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "23d5fb518c0c0335e8ad709220cba8a12e0c3670b1a15534379528702e626897",
+        "fetchedAt": "2026-08-30T22:53:26.942Z"
+      },
+      {
+        "requestedUrl": "https://unhyun.sen.es.kr/104922/subMenu.do",
+        "finalUrl": "https://unhyun.sen.es.kr/104922/subMenu.do",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "f536367c628b6fd2e061af673ffe888f27e8967de463ff45cb69021e1ea9ae18",
+        "fetchedAt": "2026-08-30T22:53:27.196Z"
+      },
+      {
+        "requestedUrl": "https://unhyun.sen.es.kr/crosseditor/binary/images/006055/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%9A%B4%ED%98%84%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95002_1.jpg",
+        "finalUrl": "https://unhyun.sen.es.kr/crosseditor/binary/images/006055/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%9A%B4%ED%98%84%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95002_1.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "9865040eece48d1ad4e0b9390dee99cda1ddcfcb7d27af79a1942cb1ae803f9d",
+        "fetchedAt": "2026-08-30T23:05:53.598Z"
+      }
+    ]
+  },
+  {
+    "slug": "yale",
+    "institutionId": "af494821-037e-5730-a54e-809cb7253e41",
+    "sections": [
+      {
+        "heading": "모집 대상·인원·서류",
+        "paragraphHashes": [
+          "eb83184d7e6fd1153e167b5e687a3b143bfc16bb1c6c002c729d25ad90be6c3d",
+          "ff28996d27595ee818ea93b567ec9b0211412144e16472b9627fe13ecbb08ece"
+        ],
+        "sourceUrls": [
+          "https://yale.sen.es.kr/crosseditor/binary/build_images_new/images/003032/KakaoTalk_20251001_155705952_04.jpg"
+        ]
+      },
+      {
+        "heading": "접수·추첨·등록",
+        "paragraphHashes": [
+          "790e9461a7dd86d9f0431e272c8b2fbc6b41ccc8723535ded26958d29ff844f0",
+          "e032ef7300c6bc70244c610b453b2f69ecc7b147ddabb2bf7fa80087ba4ea4fd",
+          "5a10200ba2c63b3aa98767bee6c9d9092986025bc5a9b78fdb422b0e32f26698"
+        ],
+        "sourceUrls": [
+          "https://yale.sen.es.kr/crosseditor/binary/images/006031/(%EC%98%88%EC%9D%BC%EC%B4%88)2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95_(%EC%88%98%EC%A0%95_10.23)_2.png"
+        ]
+      },
+      {
+        "heading": "쌍둥이",
+        "paragraphHashes": [
+          "7c22111f31b7468f1e1f6b446c7ebe41682b3fa3e9e07ee96f6bc87e56b79de8",
+          "86842be84f4f963a4ce08e7226dfbbacf4e3bfc8b2a282009dd87c07b4ee2c98"
+        ],
+        "sourceUrls": [
+          "https://yale.sen.es.kr/crosseditor/binary/images/006059/(%EC%98%88%EC%9D%BC%EC%B4%88)2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95_(%EC%88%98%EC%A0%95_10.28)_3.png"
+        ]
+      },
+      {
+        "heading": "결원·대기명부",
+        "paragraphHashes": [
+          "a4d51500d3e54f27516368ee559f996bcfe55595e91a1d9cd5bbbdb239f3db4c",
+          "8cb632cb4b1520367078be72a8e4d20fe37c5c4c8dcae5cfb3e86593c194e1fb"
+        ],
+        "sourceUrls": [
+          "https://yale.sen.es.kr/crosseditor/binary/images/006059/(%EC%98%88%EC%9D%BC%EC%B4%88)2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95_(%EC%88%98%EC%A0%95_10.28)_3.png",
+          "https://yale.sen.es.kr/crosseditor/binary/build_images_new/images/003033/(%EC%98%88%EC%9D%BC%EC%B4%88)2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95_4.jpg"
+        ]
+      },
+      {
+        "heading": "방문 서류·입학금·수업료",
+        "paragraphHashes": [
+          "f622a590146501a848927f6c1a0f7777e6d216028158048eabfb99d5d7022fc2",
+          "69a2d6f64eadf498a4e67eadaa20a057e85d6908d6e36a48a23f6c6f5ce6a699",
+          "109dea3fb0a7efa054f60f75131583a16234b60104d455a55d832067081bbd20"
+        ],
+        "sourceUrls": [
+          "https://yale.sen.es.kr/crosseditor/binary/build_images_new/images/003033/(%EC%98%88%EC%9D%BC%EC%B4%88)2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95_4.jpg"
+        ]
+      },
+      {
+        "heading": "지원 전 확인·문의",
+        "paragraphHashes": [
+          "e7f4906e54902f730f22253f8e1efd4f29fa0285868764569480f4aaecbd30d6",
+          "6bf963117b6cb1bc87ae68067eb5ec5ab710d467ebc01d3ad989622a1e7aa98b"
+        ],
+        "sourceUrls": [
+          "https://yale.sen.es.kr/crosseditor/binary/build_images_new/images/003032/KakaoTalk_20251001_155705952_04.jpg",
+          "https://yale.sen.es.kr/crosseditor/binary/build_images_new/images/003032/KakaoTalk_20251001_155705952_03.jpg"
+        ]
+      }
+    ],
+    "warningHashes": [
+      "a8b16eef2f3a918288b1290bf0c9bb018483a8bf6d149a195c080e7fe82f38f6"
+    ],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://yale.sen.es.kr/crosseditor/binary/images/006031/(%EC%98%88%EC%9D%BC%EC%B4%88)2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95_(%EC%88%98%EC%A0%95_10.23)_2.png",
+        "finalUrl": "https://yale.sen.es.kr/crosseditor/binary/images/006031/(%EC%98%88%EC%9D%BC%EC%B4%88)2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95_(%EC%88%98%EC%A0%95_10.23)_2.png",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "c0bf38495552d3b25384ba9eede0addfdafeb830c6847f855a446ce9c6138c6d",
+        "fetchedAt": "2026-08-30T22:53:27.226Z"
+      },
+      {
+        "requestedUrl": "https://yale.sen.es.kr/189272/subMenu.do",
+        "finalUrl": "https://yale.sen.es.kr/189272/subMenu.do",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "0a7db2268dbe64299a55af2c82f63f2f3fc9a6700dc4c46f8fdf25c93addf064",
+        "fetchedAt": "2026-08-30T22:53:27.547Z"
+      },
+      {
+        "requestedUrl": "https://yale.sen.es.kr/crosseditor/binary/build_images_new/images/003032/KakaoTalk_20251001_155705952_04.jpg",
+        "finalUrl": "https://yale.sen.es.kr/crosseditor/binary/build_images_new/images/003032/KakaoTalk_20251001_155705952_04.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "40bec67d9de4e94b88374efa1b5f126860a9801354bfd7d4bfe82c67f6d830e2",
+        "fetchedAt": "2026-08-30T23:05:53.816Z"
+      },
+      {
+        "requestedUrl": "https://yale.sen.es.kr/crosseditor/binary/images/006059/(%EC%98%88%EC%9D%BC%EC%B4%88)2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95_(%EC%88%98%EC%A0%95_10.28)_3.png",
+        "finalUrl": "https://yale.sen.es.kr/crosseditor/binary/images/006059/(%EC%98%88%EC%9D%BC%EC%B4%88)2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95_(%EC%88%98%EC%A0%95_10.28)_3.png",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "04410fdc27dee107c36a99c7c21640f5433dd029e847d710591b58f6ad7b8250",
+        "fetchedAt": "2026-08-30T23:05:53.908Z"
+      },
+      {
+        "requestedUrl": "https://yale.sen.es.kr/crosseditor/binary/build_images_new/images/003033/(%EC%98%88%EC%9D%BC%EC%B4%88)2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95_4.jpg",
+        "finalUrl": "https://yale.sen.es.kr/crosseditor/binary/build_images_new/images/003033/(%EC%98%88%EC%9D%BC%EC%B4%88)2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95_4.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "e7920971a5fc69989ad4367b0f833ac91c464498406d1c67bc376800f42d42dc",
+        "fetchedAt": "2026-08-30T23:05:54.057Z"
+      },
+      {
+        "requestedUrl": "https://yale.sen.es.kr/crosseditor/binary/build_images_new/images/003032/KakaoTalk_20251001_155705952_03.jpg",
+        "finalUrl": "https://yale.sen.es.kr/crosseditor/binary/build_images_new/images/003032/KakaoTalk_20251001_155705952_03.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "cf484b00d900146deda5a0664a8803f6a025290143f5727ffac13bfb6fa6285d",
+        "fetchedAt": "2026-08-30T23:05:54.150Z"
+      }
+    ]
+  },
+  {
+    "slug": "yooseok",
+    "institutionId": "d8acf075-8300-516c-94b5-bc485c485b5e",
+    "sections": [
+      {
+        "heading": "모집·서류·접수",
+        "paragraphHashes": [
+          "9fc8df596a4551bde59a1afdeb21dadb6541dcaf86bcc03a5a39c6de5c8f5c63",
+          "903beeb6c6d40ef0d4779fd78b6aa1f02fdbd69d341fa9e09eb1f4ae5dbccee9",
+          "f8a64fca9256e4422284cc14d6656ff5f9f1e3bef0a45bb6a5fa29d21dce2de0"
+        ],
+        "sourceUrls": [
+          "https://yooseok.sen.es.kr/crosseditor/binary/images/006133/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%9C%A0%EC%84%9D%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95001.jpg"
+        ]
+      },
+      {
+        "heading": "추첨·발표",
+        "paragraphHashes": [
+          "a60bf08344a8508945bd9597951c1313ff01a76d5db048e3d240db26ff87f84f"
+        ],
+        "sourceUrls": [
+          "https://yooseok.sen.es.kr/crosseditor/binary/images/006133/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%9C%A0%EC%84%9D%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95001.jpg"
+        ]
+      },
+      {
+        "heading": "등록·쌍둥이",
+        "paragraphHashes": [
+          "1d7969c96b88c7a985fd19769c4321423a342fd1e8317a337f20a872e84836bf",
+          "b4bb0cd3cd0f767f7a19efe5262b49ff5958f349896e6073fc7eb3b77be04dac"
+        ],
+        "sourceUrls": [
+          "https://yooseok.sen.es.kr/crosseditor/binary/images/006133/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%9C%A0%EC%84%9D%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95002.jpg"
+        ]
+      },
+      {
+        "heading": "결원·대기명부",
+        "paragraphHashes": [
+          "e918ea536fbcce68a328682309b093d1d710d7474e65bcc2a67a480964bf1a70",
+          "85aaab198b28670ee406e4ad6efa6df86b79693c37d364daee82e7921c184337"
+        ],
+        "sourceUrls": [
+          "https://yooseok.sen.es.kr/crosseditor/binary/images/006133/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%9C%A0%EC%84%9D%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95002.jpg"
+        ]
+      },
+      {
+        "heading": "입학금·수업료",
+        "paragraphHashes": [
+          "51ad7e62fa2aa968d3c0f08a392ecbe1b6d47759575183bcb61f0460db543df9",
+          "e5de835c783be69657ba3320f6f4bfdb587aafa4bbc5cf9ed54b37b67d77dced"
+        ],
+        "sourceUrls": [
+          "https://yooseok.sen.es.kr/crosseditor/binary/images/006133/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%9C%A0%EC%84%9D%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95002.jpg"
+        ]
+      },
+      {
+        "heading": "위치·문의",
+        "paragraphHashes": [
+          "ea82376a74a9e298c6acc380c0e05744723c8eab19997b867ef6f32e9b94cd21"
+        ],
+        "sourceUrls": [
+          "https://yooseok.sen.es.kr/crosseditor/binary/images/006132/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%9C%A0%EC%84%9D%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95003.jpg"
+        ]
+      }
+    ],
+    "warningHashes": [
+      "667e3bb98a2290f8b2de730f19b3e893984b472f529e0ee8f9c7b2f6923268c3"
+    ],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "https://yooseok.sen.es.kr/crosseditor/binary/images/006133/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%9C%A0%EC%84%9D%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95001.jpg",
+        "finalUrl": "https://yooseok.sen.es.kr/crosseditor/binary/images/006133/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%9C%A0%EC%84%9D%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95001.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "307fd13d736916409e1da9a029db894db9d696d4546be4b3c3248aee5802dc52",
+        "fetchedAt": "2026-08-30T22:53:27.645Z"
+      },
+      {
+        "requestedUrl": "https://yooseok.sen.es.kr/120146/subMenu.do",
+        "finalUrl": "https://yooseok.sen.es.kr/120146/subMenu.do",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "c663f2c1534167cc0ff915b87c5b7394304a1f598ae72480f53b57400630a125",
+        "fetchedAt": "2026-08-30T22:53:28.909Z"
+      },
+      {
+        "requestedUrl": "https://yooseok.sen.es.kr/crosseditor/binary/images/006133/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%9C%A0%EC%84%9D%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95002.jpg",
+        "finalUrl": "https://yooseok.sen.es.kr/crosseditor/binary/images/006133/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%9C%A0%EC%84%9D%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95002.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "06fbd159f6fdd2c8727fb302643f4f7a3a1648f874a450a5fa968227a127de91",
+        "fetchedAt": "2026-08-30T23:05:54.179Z"
+      },
+      {
+        "requestedUrl": "https://yooseok.sen.es.kr/crosseditor/binary/images/006132/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%9C%A0%EC%84%9D%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95003.jpg",
+        "finalUrl": "https://yooseok.sen.es.kr/crosseditor/binary/images/006132/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%9C%A0%EC%84%9D%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95003.jpg",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "68034a82133b3a1cb53a1c42aa37b54c572eb6d50cb46178b21d2b2c11b41e96",
+        "fetchedAt": "2026-08-30T23:05:54.408Z"
+      }
+    ]
+  },
+  {
+    "slug": "younghoon",
+    "institutionId": "626f9b01-1855-536f-b7cc-1608ab65eb9b",
+    "sections": [
+      {
+        "heading": "모집 대상·인원",
+        "paragraphHashes": [
+          "f7ee333b173ebc15e394c6039c20c8a339a84b8fe7dede6c180fd1f447b1c435"
+        ],
+        "sourceUrls": [
+          "http://www.younghoon.es.kr/younghoon_e/admission/typical-syllabus.do"
+        ]
+      },
+      {
+        "heading": "접수·서류",
+        "paragraphHashes": [
+          "81f171322bbf1bf0887751d1f92fd889904d9a06f1c8138ac99cd8a8efac268a",
+          "40e624432759985252e3cb2cc0837e11f8855c1af7eb2e0d30fd212ae518753e"
+        ],
+        "sourceUrls": [
+          "http://www.younghoon.es.kr/younghoon_e/admission/typical-syllabus.do"
+        ]
+      },
+      {
+        "heading": "추첨·등록",
+        "paragraphHashes": [
+          "8b0d0075c24dba26769352477bd8b29c29908ad9cef4ad23dc826233e049f2bb",
+          "787b42e41892a34be7bcddcd68485689c2eb6c3209a55727865e5ae37e0dfbc0"
+        ],
+        "sourceUrls": [
+          "http://www.younghoon.es.kr/younghoon_e/admission/typical-syllabus.do"
+        ]
+      },
+      {
+        "heading": "쌍둥이·다둥이",
+        "paragraphHashes": [
+          "a7f24f31a8846deb8dd73401f68e7670833a96833f4f10ab6ee593678907ab4d",
+          "72f2c31b14da5e5475ce32e8f1f2a0efcb475844930c523cb7eb04d51aa04c04"
+        ],
+        "sourceUrls": [
+          "http://www.younghoon.es.kr/younghoon_e/admission/typical-syllabus.do"
+        ]
+      },
+      {
+        "heading": "대기자·결원",
+        "paragraphHashes": [
+          "119d7eb44101cef39ad0b0833bd750036374bde5fb9fb5600bfcc2775bec00dd",
+          "2d54cfbdb33818af73af01a4d19b92649dc933d261a6a6a67c1fcdc3039ed45c"
+        ],
+        "sourceUrls": [
+          "http://www.younghoon.es.kr/younghoon_e/admission/typical-syllabus.do"
+        ]
+      },
+      {
+        "heading": "교육비·방문 서류·문의",
+        "paragraphHashes": [
+          "eaa49fc79fd856315574fa9603f338a033e77c7712e87b45fa07954f80a43dee",
+          "8e9ade028a0df7a99d0739502a5ef83243b86ed517eaa57a3c0b72725a0fb082",
+          "b0f76631dcd1db47d7c625af5836fdd3597c27cf17e25616ef1e188a1e958a97"
+        ],
+        "sourceUrls": [
+          "http://www.younghoon.es.kr/younghoon_e/admission/typical-syllabus.do"
+        ]
+      }
+    ],
+    "warningHashes": [
+      "c858796c1b5084c6c7ca21cbd626c3a6b26200065ca9b4a9b97001beb689b3ce"
+    ],
+    "supplementary": [],
+    "captures": [
+      {
+        "requestedUrl": "http://www.younghoon.es.kr/younghoon_e/admission/typical-syllabus.do",
+        "finalUrl": "http://www.younghoon.es.kr/younghoon_e/admission/typical-syllabus.do",
+        "captureMethod": "HTTP_ORIGINAL_MEDIA",
+        "responseContentHash": "f8f7bb6f9669a69736b8e2f492d56d76c5a92e0302bbc036fb171a04a78281eb",
+        "fetchedAt": "2026-08-30T22:53:28.997Z"
+      }
+    ]
+  }
+]
