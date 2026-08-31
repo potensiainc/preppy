@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
+import { load } from "cheerio";
 import { describe, expect, it } from "vitest";
 
 import type {
@@ -131,6 +132,44 @@ const detail: InstitutionDetailDTO = {
   indexability: "INDEX",
 };
 
+it("shows a full-width reviewed card with dates before guidance and removes only the same opportunity from generic groups", () => {
+  const $ = load(
+    renderToStaticMarkup(
+      createElement(InstitutionDetailView, {
+        data: {
+          ...detail,
+          reviewedAdmissions: [
+            {
+              ...detail.reviewedAdmissions[0]!,
+              summary:
+                "[지원 조건]\n조건 전체\n\n[확인 필요]\n날짜가 충돌하므로 학교 확인이 필요합니다.",
+            },
+          ],
+        },
+      }),
+    ),
+  );
+  const reviewed = $("[aria-label='입학정보']");
+  expect(reviewed.find(".institution-detail__cards")).toHaveLength(0);
+  expect(reviewed.text().indexOf("2026년 9월 1일")).toBeLessThan(
+    reviewed.text().indexOf("조건 전체"),
+  );
+  expect(reviewed.find("details").text()).toContain("조건 전체");
+  expect(reviewed.find("details:not([open])").text()).not.toContain(
+    "날짜가 충돌",
+  );
+  expect(
+    $(
+      "[aria-label='현재 모집·입학정보'] a[href='/opportunities/2027-admissions']",
+    ),
+  ).toHaveLength(0);
+  expect(
+    $(
+      "[aria-label='예정된 모집·입학정보'] a[href='/opportunities/2027-admissions']",
+    ),
+  ).toHaveLength(1);
+});
+
 it("labels a verified lottery as 추첨, never as an information session, and renders every source", () => {
   const admission = detail.reviewedAdmissions[0]!;
   const markup = renderToStaticMarkup(
@@ -160,7 +199,9 @@ it("labels a verified lottery as 추첨, never as an information session, and re
       },
     }),
   );
-  expect(markup).toContain("<dt>추첨</dt>");
+  expect(load(markup)("[aria-label='주요 일정']").text()).toContain(
+    "추첨 일정",
+  );
   expect(markup).not.toContain("설명회 / Open House");
   expect(markup).toContain(
     'href="https://admissions.example.test/original.png"',
@@ -200,8 +241,17 @@ it("does not imply missing applications or sessions when the fields are represen
     }),
   );
   expect(markup).not.toContain("확인된 일정 없음");
-  expect(markup.match(/<dt>원서접수<\/dt>/gu)).toHaveLength(1);
-  expect(markup.match(/<dt>설명회 \/ Open House<\/dt>/gu)).toHaveLength(2);
+  const $ = load(markup);
+  expect(
+    $("[aria-label='주요 일정']").filter((_, element) =>
+      $(element).text().includes("원서접수 일정"),
+    ),
+  ).toHaveLength(1);
+  expect(
+    $("[aria-label='주요 일정']").filter((_, element) =>
+      $(element).text().includes("입학설명회 일정"),
+    ),
+  ).toHaveLength(2);
 });
 
 it("shows the separate 10:00 and 14:00 session clocks and the result announcement label", () => {
@@ -225,8 +275,10 @@ it("shows the separate 10:00 and 14:00 session clocks and the result announcemen
     }),
   );
   expect(markup).toContain("10:00");
-  expect(markup).toContain("14:00");
-  expect(markup).toContain("<dt>결과 발표</dt>");
+  expect(markup).toContain("오후 2:00");
+  expect(load(markup)("[aria-label='주요 일정']").text()).toContain(
+    "결과 발표 일정",
+  );
 });
 
 it("labels a qualified admission-session card as provisional instead of a confirmed schedule", () => {

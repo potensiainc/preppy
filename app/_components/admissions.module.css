@@ -1,0 +1,412 @@
+.admissions,
+.reviewedCard {
+  color: #1d2d28;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  line-height: 1.8;
+}
+.admissions h1 {
+  font-size: clamp(29px, 3.3vw, 43px);
+  line-height: 1.35;
+  margin: 10px 0 0;
+  max-width: 850px;
+}
+.admissions h2 {
+  font-size: 25px;
+  line-height: 1.4;
+  margin-bottom: 20px;
+}
+.admissions h3,
+.reviewedCard h3 {
+  font-size: 20px;
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+.breadcrumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  color: #596963;
+  font-size: 12px;
+  margin-bottom: 26px;
+}
+.hero {
+  padding-bottom: 30px;
+}
+.heroHeading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+}
+.kicker {
+  font-size: 12px;
+  letter-spacing: 0.07em;
+  color: #285747;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+.school {
+  color: #285747;
+  font-size: 16px;
+}
+.status {
+  padding-top: 8px;
+  flex-shrink: 0;
+}
+.notice {
+  border-left: 3px solid #ba955b;
+  background: #faf2e2;
+  color: #785319;
+  padding: 14px 18px;
+  border-radius: 0 7px 7px 0;
+  font-size: 14px;
+  margin: 22px 0;
+}
+.notice strong {
+  font-weight: 500;
+}
+.summaryGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+  gap: 18px;
+  margin-top: 24px;
+}
+.summaryGrid > :only-child {
+  grid-column: 1 / -1;
+}
+.datePanel {
+  background: #173d30;
+  border-radius: 14px;
+  padding: 25px 28px;
+  color: white;
+}
+.datePanel > p {
+  font-size: 14px;
+  margin-bottom: 18px;
+}
+.dateWindow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin: 0;
+}
+.dateWindow > div + div {
+  border-left: 1px solid #6c8879;
+  padding-left: 24px;
+}
+.dateWindow dt {
+  font-size: 12px;
+  color: #d4e2d7;
+  margin-bottom: 8px;
+}
+.dateWindow dd {
+  margin: 0;
+  font-size: 16px;
+}
+.date {
+  display: block;
+  font-size: clamp(20px, 2vw, 28px);
+  line-height: 1.4;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.clock {
+  display: block;
+  font-size: 23px;
+  line-height: 1.5;
+  margin-top: 10px;
+  font-variant-numeric: tabular-nums;
+}
+.supplement {
+  margin: 12px 0 0;
+  font-size: 13px;
+  color: #596963;
+}
+.supplement > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
+.supplement dd {
+  margin: 0;
+}
+.essentials {
+  border: 1px solid #dce3db;
+  border-radius: 14px;
+  background: white;
+  padding: 20px 24px;
+  margin: 0;
+}
+.essentials > div + div {
+  border-top: 1px solid #dce3db;
+  margin-top: 16px;
+  padding-top: 16px;
+}
+.essentials dt,
+.essentials > span {
+  font-size: 12px;
+  color: #596963;
+}
+.essentials dd {
+  margin: 5px 0 0;
+  font-size: 16px;
+}
+.essentials > p {
+  margin: 8px 0 20px;
+}
+.parentLink {
+  font-size: 14px;
+  margin: 20px 0 0;
+  font-weight: 600;
+}
+.sectionNav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 24px;
+  border-block: 1px solid #dce3db;
+  padding: 10px 0;
+}
+.sectionNav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: #285747;
+  font-size: 13px;
+  text-decoration: none;
+}
+.sectionNav a:hover {
+  text-decoration: underline;
+}
+.bodyGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 290px;
+  gap: 44px;
+  padding-top: 36px;
+}
+.content {
+  min-width: 0;
+}
+.section {
+  scroll-margin-top: 96px;
+}
+.section + .section {
+  border-top: 1px solid #dce3db;
+  padding-top: 32px;
+  margin-top: 38px;
+}
+.guideSection {
+  scroll-margin-top: 96px;
+  margin: 26px 0;
+}
+.guideSection + .guideSection {
+  padding-top: 25px;
+  border-top: 1px solid #dce3db;
+}
+.guideSection p,
+.guideDetails p {
+  white-space: pre-line;
+  font-size: 16px;
+  line-height: 1.9;
+  margin-bottom: 14px;
+}
+.guideSection p:last-child {
+  margin-bottom: 0;
+}
+.helper {
+  color: #596963;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.sessions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.session {
+  display: grid;
+  gap: 8px;
+  background: white;
+  border: 1px solid #dce3db;
+  border-radius: 10px;
+  padding: 18px;
+  text-decoration: none;
+}
+.session[aria-current="page"] {
+  background: #eaf0e8;
+  border: 2px solid #285747;
+  padding: 17px;
+}
+.session > span {
+  color: #596963;
+  font-size: 12px;
+}
+.session > strong {
+  font-size: 15px;
+  line-height: 1.6;
+}
+.session .date {
+  font-size: 16px;
+  font-weight: 400;
+}
+.session .clock {
+  font-size: 23px;
+}
+.sourceAside {
+  align-self: start;
+  position: sticky;
+  top: 96px;
+  scroll-margin-top: 96px;
+}
+.sourceCard {
+  border: 1px solid #dce3db;
+  border-radius: 12px;
+  background: white;
+  padding: 22px;
+}
+.sourceCard h2 {
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+.sourceLink {
+  display: block;
+  border: 1px solid #dce3db;
+  border-radius: 7px;
+  padding: 12px;
+  margin-top: 10px;
+  text-decoration: none;
+}
+.sourceLink strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+}
+.sourceLink span {
+  display: block;
+  color: #596963;
+  font-size: 12px;
+  margin-top: 4px;
+}
+.action {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  background: #285747;
+  color: white;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 13px;
+  text-decoration: none;
+  margin-top: 12px;
+}
+.timestamps {
+  border-top: 1px solid #dce3db;
+  padding-top: 16px;
+  margin: 22px 0 16px;
+}
+.timestamps > div + div {
+  margin-top: 12px;
+}
+.timestamps dt {
+  color: #596963;
+  font-size: 11px;
+}
+.timestamps dd {
+  font-size: 12px;
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+.changes {
+  padding-left: 20px;
+}
+.changes time {
+  color: #596963;
+  font-size: 13px;
+}
+.reviewedList {
+  display: grid;
+  gap: 24px;
+}
+.reviewedCard {
+  border: 1px solid #dce3db;
+  padding: 28px;
+  border-radius: 14px;
+  background: #f8f9f5;
+  min-width: 0;
+}
+.reviewedCard h3 a {
+  text-decoration: none;
+}
+.reviewedGuide {
+  margin: 24px 0;
+}
+.guideDetails {
+  border-bottom: 1px solid #dce3db;
+  padding: 4px 0;
+}
+.guideDetails summary {
+  cursor: pointer;
+  padding: 14px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+.reviewedCard .sourceCard {
+  margin-top: 24px;
+}
+@media (max-width: 900px) {
+  .bodyGrid {
+    grid-template-columns: minmax(0, 1fr) 250px;
+    gap: 26px;
+  }
+  .summaryGrid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 780px) {
+  .bodyGrid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  .sourceAside {
+    position: static;
+  }
+  .heroHeading {
+    flex-direction: column;
+    gap: 14px;
+  }
+  .sectionNav {
+    gap: 0 18px;
+  }
+  .datePanel {
+    padding: 22px;
+  }
+  .reviewedCard {
+    padding: 20px;
+  }
+}
+@media (max-width: 460px) {
+  .dateWindow {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .dateWindow > div + div {
+    border-left: 0;
+    border-top: 1px solid #6c8879;
+    padding: 18px 0 0;
+  }
+  .date {
+    font-size: 26px;
+  }
+  .sessions {
+    grid-template-columns: 1fr;
+  }
+  .sectionNav a {
+    font-size: 12px;
+  }
+  .essentials {
+    padding: 18px;
+  }
+  .reviewedCard {
+    padding: 18px;
+  }
+}

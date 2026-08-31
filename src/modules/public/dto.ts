@@ -83,6 +83,16 @@ export type OpportunityCardDTO = {
  * legacy linkage identifiers, provenance internals, and user state stay private.
  */
 export type PublicOpportunityDTO = OpportunityCardDTO & {
+  /** Canonical numbered cycle only; current/legacy/unrecognized stays unknown. */
+  academicYearLabel?: string | null;
+  /** Public, verified same-school/cycle event routes; no persistence IDs. */
+  relatedAdmissions?: Array<{
+    slug: string;
+    title: string;
+    kind: OpportunityKind;
+    businessState: OpportunityBusinessState;
+    keyDates: OpportunityKeyDatesDTO;
+  }>;
   keyDates: OpportunityKeyDatesDTO;
   targetAudience: string | null;
   summary: string | null;
