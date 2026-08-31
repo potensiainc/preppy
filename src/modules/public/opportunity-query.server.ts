@@ -551,6 +551,7 @@ async function getSameCycleAdmissions(
   const eventPattern = `^live-admissions-${root.institution.id}-${cycle}-event-[a-z0-9]+(-[a-z0-9]+)*$`;
   const rows = await executor.drizzle
     .select({
+      versionId: opportunityVersions.id,
       slug: opportunities.slug,
       kind: opportunities.kind,
       title: opportunityVersions.title,
@@ -559,6 +560,10 @@ async function getSameCycleAdmissions(
       eventEndAt: opportunityVersions.eventEndAt,
       applicationOpenAt: opportunityVersions.applicationOpenAt,
       applicationCloseAt: opportunityVersions.applicationCloseAt,
+      summary: opportunityVersions.summary,
+      targetAudience: opportunityVersions.targetAudience,
+      actionUrl: opportunityVersions.actionUrl,
+      verifiedAt: opportunityVersions.verifiedAt,
     })
     .from(opportunities)
     .innerJoin(
@@ -587,18 +592,26 @@ async function getSameCycleAdmissions(
     )
     .orderBy(asc(opportunityVersions.eventStartAt), asc(opportunities.slug))
     .limit(24);
-  return rows.map((row) => ({
-    slug: row.slug,
-    title: row.title,
-    kind: row.kind,
-    businessState: row.businessState,
-    keyDates: {
-      eventStartsAt: toOptionalIso(row.eventStartAt),
-      eventEndsAt: toOptionalIso(row.eventEndAt),
-      applicationOpensAt: toOptionalIso(row.applicationOpenAt),
-      applicationClosesAt: toOptionalIso(row.applicationCloseAt),
-    },
-  }));
+  return Promise.all(
+    rows.map(async (row) => ({
+      slug: row.slug,
+      title: row.title,
+      kind: row.kind,
+      businessState: row.businessState,
+      summary: row.summary,
+      targetAudience: row.targetAudience,
+      actionUrl: row.actionUrl,
+      officialSources: await getNativeOfficialSources(executor, row.versionId),
+      lastCollectedAt: await getNativeLastCollectedAt(executor, row.versionId),
+      lastVerifiedAt: toOptionalIso(row.verifiedAt),
+      keyDates: {
+        eventStartsAt: toOptionalIso(row.eventStartAt),
+        eventEndsAt: toOptionalIso(row.eventEndAt),
+        applicationOpensAt: toOptionalIso(row.applicationOpenAt),
+        applicationClosesAt: toOptionalIso(row.applicationCloseAt),
+      },
+    })),
+  );
 }
 
 export async function getRelatedArticles(

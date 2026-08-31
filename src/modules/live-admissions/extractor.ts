@@ -1,4 +1,5 @@
 import { load } from "cheerio";
+import { publicAdmissionText } from "@/src/modules/public/admission-copy";
 
 import { normalizeVisibleText } from "@/src/modules/http-collector/html";
 import {
@@ -404,8 +405,8 @@ export function extractLiveAdmissionProposal(
         )
       : "UNKNOWN",
     title,
-    summary,
-    targetAudience,
+    summary: publicAdmissionText(summary),
+    targetAudience: publicAdmissionText(targetAudience),
     eventStartAt,
     eventEndAt: null,
     applicationOpenAt,

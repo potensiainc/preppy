@@ -132,6 +132,35 @@ const detail: InstitutionDetailDTO = {
   indexability: "INDEX",
 };
 
+it("filters document narration from institution facts and source labels while preserving conditions and links", () => {
+  const $ = load(
+    renderToStaticMarkup(
+      createElement(InstitutionDetailView, {
+        data: {
+          ...detail,
+          verifiedFacts: [
+            {
+              ...detail.verifiedFacts[0]!,
+              displayValue:
+                "특수교육대상자는 일반(추첨)전형이 아닌 별도 전형이며 전형별 상세 자격은 공식 PDF 참조.",
+              officialSource: {
+                name: "학교 공식 모집요강 PDF",
+                url: "https://school.test/guide.pdf",
+                authorityLevel: "PRIMARY",
+              },
+            },
+          ],
+        },
+      }),
+    ),
+  );
+  expect($("body").text()).not.toContain("PDF");
+  expect($(".institution-facts").text()).toContain(
+    "특수교육대상자는 일반(추첨)전형이 아닌 별도 전형이다.",
+  );
+  expect($("a[href='https://school.test/guide.pdf']")).toHaveLength(1);
+});
+
 it("shows a full-width reviewed card with dates before guidance and removes only the same opportunity from generic groups", () => {
   const $ = load(
     renderToStaticMarkup(
@@ -305,7 +334,7 @@ it("presents recruitment and canonical main guides before event cards without mu
         $(element).find(`h3 a[href='/opportunities/${admission.slug}']`)
           .length === 1,
     );
-    expect(card.text()).toContain(
+    expect(card.text()).not.toContain(
       `${admission.title} 원문 날짜 충돌은 학교 확인이 필요합니다.`,
     );
     expect(card.find("details:not([open])").text()).not.toContain(

@@ -1,4 +1,5 @@
 import type { AdmissionSection } from "./admissions-presentation";
+import { publicAdmissionText } from "@/src/modules/public/admission-copy";
 
 type Topic =
   | "지원 대상"
@@ -69,8 +70,9 @@ export function admissionReadingItems(text: string): string[] {
 export function admissionAudienceRows(
   value: string | null,
 ): { label: string; value: string }[] {
-  if (!value?.trim()) return [];
-  return admissionReadingItems(value)
+  const text = publicAdmissionText(value);
+  if (!text) return [];
+  return admissionReadingItems(text)
     .flatMap((item) => item.split(/[,，]\s*(?=(?:유예|조기입학|취학|미취학))/u))
     .map((item) => ({
       label: /출생|년생|학년|연령|만\s*\d+\s*세/u.test(item)

@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { cache } from "react";
+import { redirect } from "next/navigation";
+import { unifiedAdmissionDestination } from "@/app/_lib/admission-navigation";
 
 import { OpportunityDetailView } from "@/app/_components/opportunity-article-pages";
 import { PageAnalytics } from "@/app/_components/page-analytics";
@@ -39,6 +41,8 @@ export default async function OpportunityDetailPage({
 }) {
   const { slug } = await params;
   const opportunity = await loadOpportunity(slug);
+  const destination = unifiedAdmissionDestination(opportunity);
+  if (destination) redirect(destination);
 
   return (
     <>

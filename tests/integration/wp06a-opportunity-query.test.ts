@@ -233,6 +233,11 @@ async function insertNativeCorrectionOpportunity({
   publicationState = "PUBLISHED",
   verificationState = "VERIFIED",
   eventStartAt = null,
+  summary = "[지원 대상 및 모집인원]\\n초등 과정 84명",
+  targetAudience = null,
+  actionUrl = null,
+  collectedAt = "2026-08-24T01:30:00.000Z",
+  verifiedAt = "2026-08-25T02:30:00.000Z",
 }: {
   institutionId: string;
   slug: string;
@@ -241,6 +246,11 @@ async function insertNativeCorrectionOpportunity({
   publicationState?: "DRAFT" | "PUBLISHED" | "HIDDEN" | "ARCHIVED";
   verificationState?: "UNVERIFIED" | "VERIFIED";
   eventStartAt?: string | null;
+  summary?: string;
+  targetAudience?: string | null;
+  actionUrl?: string | null;
+  collectedAt?: string;
+  verifiedAt?: string;
 }) {
   const opportunityId = randomUUID();
   const versionId = randomUUID();
@@ -260,7 +270,7 @@ async function insertNativeCorrectionOpportunity({
   `;
   const [observation] = await runtime.client<{ id: bigint }[]>`
     insert into source_observations (source_id, observed_at, outcome, snapshot_id)
-    values (${source.id}, '2026-08-24T01:30:00.000Z', 'SUCCESS', ${snapshotId})
+    values (${source.id}, ${collectedAt}, 'SUCCESS', ${snapshotId})
     returning id
   `;
   await runtime.client.begin(async (transaction) => {
@@ -276,12 +286,14 @@ async function insertNativeCorrectionOpportunity({
     await transaction`
       insert into opportunity_versions (
         id, opportunity_id, truth_mode, version_number, verification_state,
-        business_state, is_current, title, summary, verified_at, event_start_at
+        business_state, is_current, title, summary, verified_at, event_start_at,
+        target_audience, action_url
       ) values (
         ${versionId}, ${opportunityId}, 'NATIVE', 1, ${verificationState}, 'OPEN',
         ${verificationState === "VERIFIED"}, ${title},
-        '[지원 대상 및 모집인원]\\n초등 과정 84명',
-        ${verificationState === "VERIFIED" ? "2026-08-25T02:30:00.000Z" : null}, ${eventStartAt}
+        ${summary},
+        ${verificationState === "VERIFIED" ? verifiedAt : null}, ${eventStartAt},
+        ${targetAudience}, ${actionUrl}
       )
     `;
     await transaction`
@@ -579,6 +591,11 @@ describe("WP-06A canonical Opportunity query", () => {
       kind: "INFORMATION_SESSION",
       title: "오후 설명회",
       eventStartAt: "2026-10-31T05:00:00Z",
+      summary: "오후 회차는 보호자만 참석합니다.",
+      targetAudience: "보호자",
+      actionUrl: "https://admissions.example.test/afternoon",
+      verifiedAt: "2026-08-26T03:40:00Z",
+      collectedAt: "2026-08-25T02:40:00Z",
     });
     for (const [suffix, publicationState, verificationState] of [
       ["draft", "DRAFT", "VERIFIED"],
@@ -637,12 +654,39 @@ describe("WP-06A canonical Opportunity query", () => {
       ).toBe(true);
       for (const row of result.relatedAdmissions ?? [])
         expect(Object.keys(row).sort()).toEqual([
+          "actionUrl",
           "businessState",
           "keyDates",
           "kind",
+          "lastCollectedAt",
+          "lastVerifiedAt",
+          "officialSources",
           "slug",
+          "summary",
+          "targetAudience",
           "title",
         ]);
+      expect(result.relatedAdmissions?.[0]).toMatchObject({
+        targetAudience: null,
+        actionUrl: null,
+        lastCollectedAt: "2026-08-24T01:30:00.000Z",
+        lastVerifiedAt: "2026-08-25T02:30:00.000Z",
+        officialSources: [
+          { name: "2027학년도 입학설명회 official PDF" },
+          { name: "2027학년도 입학설명회 admission notice" },
+        ],
+      });
+      expect(result.relatedAdmissions?.[1]).toMatchObject({
+        summary: "오후 회차는 보호자만 참석합니다.",
+        targetAudience: "보호자",
+        actionUrl: "https://admissions.example.test/afternoon",
+        lastCollectedAt: "2026-08-25T02:40:00.000Z",
+        lastVerifiedAt: "2026-08-26T03:40:00.000Z",
+        officialSources: [
+          { name: "오후 설명회 official PDF" },
+          { name: "오후 설명회 admission notice" },
+        ],
+      });
       assertNoForbiddenKeys(result);
     }
   });
