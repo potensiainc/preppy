@@ -307,18 +307,34 @@ function knowledgeLabel(state: ReviewedAdmissionDTO["knowledgeState"]): string {
   return "관련 일정·지원 정보 미발견";
 }
 
+function isPrimaryAdmissionGuide(admission: ReviewedAdmissionDTO): boolean {
+  return (
+    admission.kind === "RECRUITMENT" ||
+    admission.kind === "ADDITIONAL_RECRUITMENT" ||
+    /^live-admissions-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}-(20\d{2}|current)$/u.test(
+      admission.slug,
+    )
+  );
+}
+
 export function ReviewedAdmissions({
   admissions,
 }: {
   admissions: ReviewedAdmissionDTO[];
 }) {
   if (!admissions.length) return null;
+  // Presentation only: preserve source order within guide and event groups,
+  // including canonical main guides whose admission kind is LOTTERY.
+  const orderedAdmissions = [
+    ...admissions.filter(isPrimaryAdmissionGuide),
+    ...admissions.filter((admission) => !isPrimaryAdmissionGuide(admission)),
+  ];
   return (
     <section className="institution-detail__section" aria-label="입학정보">
       <h2>입학정보</h2>
       <p className={styles.helper}>공식 자료와 검수를 거친 입학 안내입니다.</p>
       <div className={styles.reviewedList}>
-        {admissions.map((admission, index) => {
+        {orderedAdmissions.map((admission, index) => {
           const provisional = isProvisionalAdmissionGuidance(
             `${admission.title} ${admission.summary ?? ""}`,
           );

@@ -170,6 +170,105 @@ it("shows a full-width reviewed card with dates before guidance and removes only
   ).toHaveLength(1);
 });
 
+it("presents recruitment and canonical main guides before event cards without mutating or losing the reviewed records", () => {
+  const base = detail.reviewedAdmissions[0]!;
+  const records: InstitutionDetailDTO["reviewedAdmissions"] = [
+    {
+      ...base,
+      id: "session-2",
+      slug: "session-2",
+      kind: "INFORMATION_SESSION",
+      title: "오후 설명회",
+    },
+    {
+      ...base,
+      id: "main",
+      slug: "main",
+      kind: "RECRUITMENT",
+      title: "신입생 모집요강",
+    },
+    {
+      ...base,
+      id: "lottery-event",
+      slug: "lottery-event",
+      kind: "LOTTERY",
+      title: "추첨 행사",
+    },
+    {
+      ...base,
+      id: "session-1",
+      slug: "session-1",
+      kind: "INFORMATION_SESSION",
+      title: "오전 설명회",
+    },
+    {
+      ...base,
+      id: "additional",
+      slug: "additional",
+      kind: "ADDITIONAL_RECRUITMENT",
+      title: "추가 모집",
+    },
+    {
+      ...base,
+      id: "lottery-main",
+      slug: "live-admissions-12345678-1234-1234-1234-123456789abc-2026",
+      kind: "LOTTERY",
+      title: "추첨 전형 전체 요강",
+    },
+  ];
+  const admissions = records.map((admission) => ({
+    ...admission,
+    summary: `[원문 유의사항]\n${admission.title} 원문 날짜 충돌은 학교 확인이 필요합니다.`,
+    officialSources: [
+      {
+        ...base.officialSource,
+        name: `${admission.title} 공식 자료`,
+        url: `https://school.example.test/${admission.id}.pdf`,
+      },
+    ],
+  }));
+  const original = structuredClone(admissions);
+  Object.freeze(admissions);
+  const $ = load(
+    renderToStaticMarkup(
+      createElement(InstitutionDetailView, {
+        data: { ...detail, reviewedAdmissions: admissions },
+      }),
+    ),
+  );
+  const cards = $("[aria-label='입학정보'] article");
+  expect(
+    cards.map((_, card) => $(card).find("h3 a").first().text()).get(),
+  ).toEqual([
+    "신입생 모집요강",
+    "추가 모집",
+    "추첨 전형 전체 요강",
+    "오후 설명회",
+    "추첨 행사",
+    "오전 설명회",
+  ]);
+  expect(admissions).toEqual(original);
+  expect(cards).toHaveLength(6);
+  for (const admission of original) {
+    const card = cards.filter(
+      (_, element) =>
+        $(element).find(`h3 a[href='/opportunities/${admission.slug}']`)
+          .length === 1,
+    );
+    expect(card.text()).toContain(
+      `${admission.title} 원문 날짜 충돌은 학교 확인이 필요합니다.`,
+    );
+    expect(card.find("details:not([open])").text()).not.toContain(
+      "원문 날짜 충돌",
+    );
+    expect(
+      card
+        .find(`a[href='https://school.example.test/${admission.id}.pdf']`)
+        .text(),
+    ).toContain(`${admission.title} 공식 자료`);
+  }
+});
+
 it("labels a verified lottery as 추첨, never as an information session, and renders every source", () => {
   const admission = detail.reviewedAdmissions[0]!;
   const markup = renderToStaticMarkup(
