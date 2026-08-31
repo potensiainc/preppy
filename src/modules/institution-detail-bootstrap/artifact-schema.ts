@@ -49,7 +49,12 @@ export const artifactAdmissionSchema = z
       .string()
       .regex(/^20\d{2}학년도$/u)
       .nullable(),
-    knowledgeState: z.enum(["SCHEDULE_FOUND", "NOT_ANNOUNCED", "NOT_FOUND"]),
+    knowledgeState: z.enum([
+      "SCHEDULE_FOUND",
+      "GUIDANCE_FOUND",
+      "NOT_ANNOUNCED",
+      "NOT_FOUND",
+    ]),
     kind: z.enum(opportunityKindValues),
     businessState: z.enum(opportunityBusinessStateValues),
     title: text(500),

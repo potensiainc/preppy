@@ -1,4 +1,8 @@
 import Link from "next/link";
+import {
+  isProvisionalAdmissionGuidance,
+  PROVISIONAL_ADMISSION_NOTICE,
+} from "@/src/modules/live-admissions/guidance";
 
 import type {
   PublicArticleDTO,
@@ -20,6 +24,7 @@ import {
   articleTypeLabel,
   categoryLabel,
   formatPublicDate,
+  formatPublicDateTime,
   opportunityKindLabel,
   safeExternalHref,
 } from "@/app/_lib/presentation";
@@ -36,8 +41,10 @@ const opportunityDateLabels: Record<
 
 function OpportunityDates({
   keyDates,
+  provisional = false,
 }: {
   keyDates: PublicOpportunityDTO["keyDates"];
+  provisional?: boolean;
 }) {
   const dates = Object.entries(keyDates).filter(
     (entry): entry is [keyof PublicOpportunityDTO["keyDates"], string] =>
@@ -52,13 +59,72 @@ function OpportunityDates({
       <dl className="opportunity-dates">
         {dates.map(([name, value]) => (
           <div key={name}>
-            <dt>{opportunityDateLabels[name]}</dt>
+            <dt>
+              {opportunityDateLabels[name]}
+              {provisional ? " (예정)" : ""}
+            </dt>
             <dd>
-              <time dateTime={value}>{formatPublicDate(value)}</time>
+              <time dateTime={value}>{formatPublicDateTime(value)}</time>
             </dd>
           </div>
         ))}
       </dl>
+    </section>
+  );
+}
+
+function StructuredGuideText({ summary }: { summary: string }) {
+  const blocks = summary
+    .split(/\n\s*\n/u)
+    .map((block) => block.trim())
+    .filter(Boolean);
+
+  return blocks.map((block, index) => {
+    const lines = block
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean);
+    const heading = /^\[([^\]]+)\]$/u.exec(lines[0] ?? "");
+    if (!heading) return <p key={index}>{lines.join(" ")}</p>;
+
+    return (
+      <div key={index}>
+        <h3>{heading[1]}</h3>
+        {lines.slice(1).map((line, lineIndex) => (
+          <p key={lineIndex}>{line}</p>
+        ))}
+      </div>
+    );
+  });
+}
+
+function AdmissionGuide({
+  guide,
+}: {
+  guide: NonNullable<PublicOpportunityDTO["admissionGuide"]>;
+}) {
+  const provisional = isProvisionalAdmissionGuidance(
+    `${guide.title} ${guide.summary ?? ""}`,
+  );
+  return (
+    <section className="opportunity-detail__section" aria-label="공식 모집요강">
+      <SectionHeader title="공식 모집요강" />
+      <h3>
+        <Link href={`/opportunities/${guide.slug}`}>{guide.title}</Link>
+      </h3>
+      {provisional ? (
+        <p className="opportunity-detail__audience">
+          <strong>{PROVISIONAL_ADMISSION_NOTICE}</strong>
+        </p>
+      ) : null}
+      {guide.summary ? <StructuredGuideText summary={guide.summary} /> : null}
+      {guide.officialSources.map((source) => (
+        <TrustSource key={source.url} source={source} />
+      ))}
+      {guide.lastCollectedAt ? (
+        <VerifiedAt label="Last Collected" verifiedAt={guide.lastCollectedAt} />
+      ) : null}
+      <VerifiedAt label="Last Verified" verifiedAt={guide.lastVerifiedAt} />
     </section>
   );
 }
@@ -92,6 +158,9 @@ export function OpportunityDetailView({
 }: {
   opportunity: PublicOpportunityDTO;
 }) {
+  const provisional = isProvisionalAdmissionGuidance(
+    `${opportunity.title} ${opportunity.summary ?? ""}`,
+  );
   const actionHref = opportunity.actionUrl
     ? safeExternalHref(opportunity.actionUrl)
     : null;
@@ -114,9 +183,9 @@ export function OpportunityDetailView({
               </div>
               {opportunity.keyDate ? (
                 <p className="opportunity-detail__key-date">
-                  주요 일정{" "}
+                  주요 일정{provisional ? " (예정)" : ""}{" "}
                   <time dateTime={opportunity.keyDate}>
-                    {formatPublicDate(opportunity.keyDate)}
+                    {formatPublicDateTime(opportunity.keyDate)}
                   </time>
                 </p>
               ) : null}
@@ -137,7 +206,21 @@ export function OpportunityDetailView({
             aria-label="모집 안내"
           >
             <SectionHeader title="모집 안내" />
-            {opportunity.summary ? <p>{opportunity.summary}</p> : null}
+            {provisional ? (
+              <p className="opportunity-detail__audience">
+                <strong>{PROVISIONAL_ADMISSION_NOTICE}</strong>
+              </p>
+            ) : null}
+            {opportunity.summary ? (
+              <StructuredGuideText
+                summary={opportunity.summary
+                  .split(/\n\s*\n/u)
+                  .filter(
+                    (paragraph) => paragraph !== PROVISIONAL_ADMISSION_NOTICE,
+                  )
+                  .join("\n\n")}
+              />
+            ) : null}
             {opportunity.targetAudience ? (
               <p className="opportunity-detail__audience">
                 <strong>대상</strong> {opportunity.targetAudience}
@@ -146,7 +229,14 @@ export function OpportunityDetailView({
           </section>
         ) : null}
 
-        <OpportunityDates keyDates={opportunity.keyDates} />
+        <OpportunityDates
+          keyDates={opportunity.keyDates}
+          provisional={provisional}
+        />
+
+        {opportunity.admissionGuide ? (
+          <AdmissionGuide guide={opportunity.admissionGuide} />
+        ) : null}
 
         {actionHref || opportunity.officialSource ? (
           <section
@@ -165,16 +255,26 @@ export function OpportunityDetailView({
                   지원 페이지 확인
                 </a>
               ) : null}
-              {opportunity.officialSource ? (
-                <TrustSource source={opportunity.officialSource} />
-              ) : null}
+              {(
+                opportunity.officialSources ??
+                (opportunity.officialSource ? [opportunity.officialSource] : [])
+              ).map((source) => (
+                <TrustSource key={source.url} source={source} />
+              ))}
             </div>
           </section>
         ) : null}
 
+        {opportunity.lastCollectedAt ? (
+          <VerifiedAt
+            label="Last Collected"
+            verifiedAt={opportunity.lastCollectedAt}
+          />
+        ) : null}
+
         {opportunity.lastVerifiedAt ? (
           <VerifiedAt
-            label="최근 확인"
+            label="Last Verified"
             verifiedAt={opportunity.lastVerifiedAt}
           />
         ) : null}

@@ -70,7 +70,11 @@ const admissionSchema = z
       .max(80),
     academicYearLabel: z.enum(["2026학년도", "2027학년도"]).nullable(),
     rawAcademicYear: text(100).nullable(),
-    knowledgeState: z.enum(["SCHEDULE_FOUND", "NOT_ANNOUNCED"]),
+    knowledgeState: z.enum([
+      "SCHEDULE_FOUND",
+      "GUIDANCE_FOUND",
+      "NOT_ANNOUNCED",
+    ]),
     kind: z.enum([
       "RECRUITMENT",
       "INFORMATION_SESSION",

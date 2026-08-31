@@ -15,6 +15,7 @@ import {
   OpportunityDetailView,
 } from "@/app/_components/opportunity-article-pages";
 import { toPublicArticleDTO } from "@/app/_lib/public-article";
+import { isProvisionalAdmissionGuidance } from "@/src/modules/live-admissions/guidance";
 
 const relatedArticle = {
   id: "article-related-1",
@@ -28,6 +29,29 @@ const relatedArticle = {
   featuredImageAlt: null,
   indexability: "INDEX" as const,
 };
+
+type FullGuidesAdmission = {
+  key: string;
+  title: string;
+  summary: string | null;
+  kind: PublicOpportunityDTO["kind"];
+  businessState: PublicOpportunityDTO["businessState"];
+  targetAudience: string | null;
+  applicationOpenAt: string | null;
+  applicationCloseAt: string | null;
+  eventStartAt: string | null;
+  eventEndAt: string | null;
+  actionUrl: string | null;
+};
+
+type FullGuidesBundle = {
+  schools: {
+    target: { slug: string };
+    admissions: FullGuidesAdmission[];
+  }[];
+};
+
+const canonicalProvisionalPrefix = "예정 안내 · 변경 가능:";
 
 const opportunity: PublicOpportunityDTO = {
   id: "opportunity-1",
@@ -58,6 +82,7 @@ const opportunity: PublicOpportunityDTO = {
     url: "https://admissions.example.test/2027",
     authorityLevel: "PRIMARY",
   },
+  lastCollectedAt: "2026-08-22T02:30:00.000Z",
   lastVerifiedAt: "2026-08-23T03:30:00.000Z",
   recentMeaningfulChanges: [
     {
@@ -113,6 +138,202 @@ const unsafeArticle: UnsafeStoredArticleDetailDTO = {
 };
 
 describe("WP-07 Opportunity and Article detail pages", () => {
+  it("renders planned guidance in separate paragraphs and labels dates as provisional", () => {
+    const markup = renderToStaticMarkup(
+      createElement(OpportunityDetailView, {
+        opportunity: {
+          ...opportunity,
+          title: "2027학년도 신입생 모집요강(예정)",
+          summary:
+            "모집 인원: 84명\n\n전형료: 30,000원\n\n수업료: 2025학년도 기준, 변동 가능",
+        },
+      }),
+    );
+    expect(markup).toContain("예정 안내 · 변경 가능");
+    expect(markup).toContain("지원 시작 (예정)");
+    expect(markup).toContain("<p>모집 인원: 84명</p>");
+    expect(markup).toContain("<p>전형료: 30,000원</p>");
+    expect(markup).toContain("수업료: 2025학년도 기준, 변동 가능");
+  });
+
+  it("does not label an eligible child's expected enrolment as a provisional guide", () => {
+    const markup = renderToStaticMarkup(
+      createElement(OpportunityDetailView, {
+        opportunity: {
+          ...opportunity,
+          summary: "취학 예정 아동을 대상으로 모집합니다.",
+        },
+      }),
+    );
+    expect(markup).not.toContain("예정 안내 · 변경 가능");
+  });
+
+  it("labels an explicitly qualified admission-session event as provisional", () => {
+    const markup = renderToStaticMarkup(
+      createElement(OpportunityDetailView, {
+        opportunity: {
+          ...opportunity,
+          title: "2027학년도 입학설명회 1 (예정)",
+          kind: "INFORMATION_SESSION",
+          summary: "공식 입학 안내입니다.",
+        },
+      }),
+    );
+
+    expect(markup).toContain("예정 안내 · 변경 가능");
+    expect(markup).toContain("행사 시작 (예정)");
+    expect(
+      isProvisionalAdmissionGuidance(
+        "예정 안내 · 변경 가능: 공식 원문의 예정·초안 정보입니다.",
+      ),
+    ).toBe(true);
+    expect(isProvisionalAdmissionGuidance("2027학년도 신입생 입학 안내")).toBe(
+      false,
+    );
+  });
+
+  it("renders the approved Donggwang provisional events and preserves every canonical marker decision", async () => {
+    const bundle = JSON.parse(
+      await readFile(
+        new URL(
+          "../../data/corrections/PREPPY_PRIVATE_ELEMENTARY_FULL_GUIDES_20260831.json",
+          import.meta.url,
+        ),
+        "utf8",
+      ),
+    ) as FullGuidesBundle;
+    const admissions = bundle.schools.flatMap((school) =>
+      school.admissions.map((admission) => ({
+        ...admission,
+        schoolSlug: school.target.slug,
+      })),
+    );
+    const markedAdmissions = admissions.filter((admission) =>
+      admission.summary?.startsWith(canonicalProvisionalPrefix),
+    );
+
+    expect(admissions).toHaveLength(69);
+    expect(markedAdmissions).toHaveLength(17);
+    for (const admission of admissions) {
+      expect(
+        isProvisionalAdmissionGuidance(
+          `${admission.title}\n${admission.summary ?? ""}`,
+        ),
+      ).toBe(
+        admission.summary?.startsWith(canonicalProvisionalPrefix) ?? false,
+      );
+    }
+
+    const donggwang = admissions.filter(
+      (admission) =>
+        admission.schoolSlug === "donggwang" &&
+        ["session-1", "session-2", "lottery"].includes(admission.key),
+    );
+    expect(donggwang.map((admission) => admission.key)).toEqual([
+      "session-1",
+      "session-2",
+      "lottery",
+    ]);
+
+    for (const admission of donggwang) {
+      expect(
+        isProvisionalAdmissionGuidance(
+          `${admission.title}\n${admission.summary ?? ""}`,
+        ),
+      ).toBe(true);
+      const markup = renderToStaticMarkup(
+        createElement(OpportunityDetailView, {
+          opportunity: {
+            ...opportunity,
+            id: `full-guides-donggwang-${admission.key}`,
+            slug: `full-guides-donggwang-${admission.key}`,
+            title: admission.title,
+            kind: admission.kind,
+            businessState: admission.businessState,
+            keyDate: admission.eventStartAt,
+            keyDates: {
+              eventStartsAt: admission.eventStartAt,
+              eventEndsAt: admission.eventEndAt,
+              applicationOpensAt: admission.applicationOpenAt,
+              applicationClosesAt: admission.applicationCloseAt,
+            },
+            targetAudience: admission.targetAudience,
+            summary: admission.summary,
+            actionUrl: admission.actionUrl,
+          },
+        }),
+      );
+
+      expect(markup).toContain(admission.title);
+      expect(markup).toContain("예정 안내 · 변경 가능");
+      expect(markup).toContain("행사 시작 (예정)");
+    }
+
+    const hwarang2027 = admissions.find(
+      (admission) =>
+        admission.schoolSlug === "hwarang-s" && admission.key === "main",
+    )!;
+    expect(hwarang2027.title).toContain("2027학년도");
+    expect(
+      isProvisionalAdmissionGuidance(
+        `${hwarang2027.title}\n${hwarang2027.summary ?? ""}`,
+      ),
+    ).toBe(false);
+  });
+
+  it("renders KST event times, retains date-only precision, and safely structures a same-cycle guide", () => {
+    const markup = renderToStaticMarkup(
+      createElement(OpportunityDetailView, {
+        opportunity: {
+          ...opportunity,
+          keyDates: {
+            eventStartsAt: "2026-09-01T01:00:00.000Z",
+            eventEndsAt: "2026-09-01T05:00:00.000Z",
+            applicationOpensAt: "2026-08-20",
+            applicationClosesAt: null,
+          },
+          admissionGuide: {
+            title: "2027학년도 모집요강(예정)",
+            slug: "2027-seoul-international-admission-guide",
+            summary:
+              "[지원 대상 및 모집인원]\n초등 과정 신입생 84명\n\n[지원 방법]\n온라인으로 지원합니다.\n\n<img src=x onerror=alert(1)>",
+            officialSources: [
+              {
+                name: "2027 모집요강 PDF",
+                url: "https://admissions.example.test/2027-guide.pdf",
+                authorityLevel: "PRIMARY",
+              },
+              {
+                name: "입학처 공지",
+                url: "https://admissions.example.test/2027-notice",
+                authorityLevel: "SECONDARY_OFFICIAL",
+              },
+            ],
+            lastCollectedAt: "2026-08-24T01:30:00.000Z",
+            lastVerifiedAt: "2026-08-25T02:30:00.000Z",
+          },
+        },
+      }),
+    );
+
+    expect(markup).toContain("2026년 9월 1일 10:00");
+    expect(markup).toContain("2026년 9월 1일 14:00");
+    expect(markup).toContain("2026년 8월 20일");
+    expect(markup).not.toContain("2026년 8월 20일 00:00");
+    expect(markup).toContain("공식 모집요강");
+    expect(markup).toContain("예정 안내 · 변경 가능");
+    expect(markup).toContain("<h3>지원 대상 및 모집인원</h3>");
+    expect(markup).toContain("<p>초등 과정 신입생 84명</p>");
+    expect(markup).toContain("<h3>지원 방법</h3>");
+    expect(markup).toContain("<p>온라인으로 지원합니다.</p>");
+    expect(markup).toContain("&lt;img src=x onerror=alert(1)&gt;");
+    expect(markup).not.toContain("<img src=x onerror=alert(1)>");
+    expect(markup).toContain("2027 모집요강 PDF");
+    expect(markup).toContain("입학처 공지");
+    expect(markup).toContain("Last Collected");
+    expect(markup).toContain("Last Verified");
+  });
+
   it("renders every supported opportunity-detail value with truthful freshness and safe official links", () => {
     // Mutation caught: dropping public dates, using updatedAt as verification, or weakening external-link safety.
     const markup = renderToStaticMarkup(
@@ -131,8 +352,8 @@ describe("WP-07 Opportunity and Article detail pages", () => {
     expect(markup).toContain(
       "공식 모집 안내를 바탕으로 주요 일정을 정리했습니다.",
     );
-    expect(markup).toContain("최근 확인");
-    expect(markup).not.toContain("Last Verified");
+    expect(markup).toContain("Last Collected");
+    expect(markup).toContain("Last Verified");
     expect(markup).toContain("2026년 8월 23일");
     expect(markup).toContain("지원 페이지 확인");
     expect(markup).toContain('href="https://apply.example.test/2027"');
@@ -191,6 +412,7 @@ describe("WP-07 Opportunity and Article detail pages", () => {
       createElement(OpportunityDetailView, {
         opportunity: {
           ...opportunity,
+          lastCollectedAt: null,
           lastVerifiedAt: null,
           targetAudience: null,
           summary: null,
@@ -201,7 +423,8 @@ describe("WP-07 Opportunity and Article detail pages", () => {
       }),
     );
 
-    expect(markup).not.toContain("최근 확인");
+    expect(markup).not.toContain("Last Collected");
+    expect(markup).not.toContain("Last Verified");
     expect(markup).not.toContain("모집 안내");
     expect(markup).not.toContain("공식 안내");
     expect(markup).not.toContain("최근 변경 사항");

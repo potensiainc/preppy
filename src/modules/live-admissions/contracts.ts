@@ -5,7 +5,7 @@ import type {
 import type { CandidateClassification } from "@/src/modules/http-collector/classification";
 
 export type LiveAdmissionKnowledgeState =
-  "SCHEDULE_FOUND" | "NOT_ANNOUNCED" | "NOT_FOUND";
+  "SCHEDULE_FOUND" | "GUIDANCE_FOUND" | "NOT_ANNOUNCED" | "NOT_FOUND";
 
 export type LiveAdmissionExtractionInput = Readonly<{
   html: string | Uint8Array;

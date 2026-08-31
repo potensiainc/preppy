@@ -88,6 +88,22 @@ export type PublicOpportunityDTO = OpportunityCardDTO & {
   summary: string | null;
   actionUrl: string | null;
   officialSource: OfficialSourceDTO | null;
+  officialSources?: OfficialSourceDTO[];
+  /**
+   * The canonical same-school, same-cycle main recruitment guide shown on a
+   * child event page. It is absent on the main guide itself and where no
+   * current verified guide is available.
+   */
+  admissionGuide?: {
+    title: string;
+    slug: string;
+    summary: string | null;
+    officialSources: OfficialSourceDTO[];
+    lastCollectedAt: string | null;
+    lastVerifiedAt: string;
+  } | null;
+  /** Actual evidence collection time, never an operator verification time. */
+  lastCollectedAt?: string | null;
   recentMeaningfulChanges: Array<{
     occurredAt: string;
     summary: string;
@@ -115,7 +131,8 @@ export type ReviewedAdmissionDTO = {
   slug: string;
   title: string;
   academicYearLabel: string | null;
-  knowledgeState: "SCHEDULE_FOUND" | "NOT_ANNOUNCED" | "NOT_FOUND";
+  knowledgeState:
+    "SCHEDULE_FOUND" | "GUIDANCE_FOUND" | "NOT_ANNOUNCED" | "NOT_FOUND";
   kind: OpportunityKind;
   businessState: OpportunityBusinessState;
   summary: string | null;

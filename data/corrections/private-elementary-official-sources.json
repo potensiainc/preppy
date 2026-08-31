@@ -21,7 +21,8 @@
       "slug": "choongam",
       "urls": [
         "https://choongam.sen.es.kr/184618/subMenu.do",
-        "https://choongam.sen.es.kr/crosseditor/binary/images/006136/2026_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%9A%94%EA%B0%95_(730_x_2500_px)_(5).jpg"
+        "https://choongam.sen.es.kr/crosseditor/binary/images/006136/2026_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%9A%94%EA%B0%95_(730_x_2500_px)_(5).jpg",
+        "https://choongam.sen.es.kr/crosseditor/binary/images/006079/111_%EC%88%98%EC%97%85%EC%B2%B4%ED%97%98.jpg"
       ]
     },
     {
@@ -37,7 +38,8 @@
       "slug": "daegwang",
       "urls": [
         "https://daegwang.sen.es.kr/207100/subMenu.do",
-        "https://daegwang.sen.es.kr/crosseditor/binary/images/007591/(%EB%8C%80%EA%B4%91%EC%B4%88)2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95(%EC%B5%9C%EC%A2%85%EC%95%88)_1.png"
+        "https://daegwang.sen.es.kr/crosseditor/binary/images/007591/(%EB%8C%80%EA%B4%91%EC%B4%88)2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95(%EC%B5%9C%EC%A2%85%EC%95%88)_1.png",
+        "https://daegwang.sen.es.kr/crosseditor/binary/images/007591/(%EB%8C%80%EA%B4%91%EC%B4%88)2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95(%EC%B5%9C%EC%A2%85%EC%95%88)_2.png"
       ]
     },
     {
@@ -53,7 +55,8 @@
       "slug": "donggwang",
       "urls": [
         "https://donggwang.sen.es.kr/161542/subMenu.do",
-        "https://donggwang.sen.es.kr/crosseditor/binary/images/008169/donggwang_new_2026.png"
+        "https://donggwang.sen.es.kr/crosseditor/binary/images/008169/donggwang_new_2026.png",
+        "https://donggwang.sen.es.kr/crosseditor/binary/images/006122/%EC%A0%9C%EB%AA%A9%EC%9D%84_%EC%9E%85%EB%A0%A5%ED%95%B4%EC%A3%BC%EC%84%B8%EC%9A%94..png"
       ]
     },
     {
@@ -61,7 +64,8 @@
       "slug": "eunseok",
       "urls": [
         "https://eunseok.sen.es.kr/135105/subMenu.do",
-        "https://eunseok.sen.es.kr/crosseditor/binary/images/006058/25%EC%9D%80%EC%84%9D%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90-A4_%ED%99%8D%EB%B3%B4%EC%B1%85%EC%9E%90_(4)_1.jpg"
+        "https://eunseok.sen.es.kr/crosseditor/binary/images/006058/25%EC%9D%80%EC%84%9D%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90-A4_%ED%99%8D%EB%B3%B4%EC%B1%85%EC%9E%90_(4)_1.jpg",
+        "https://eunseok.sen.es.kr/crosseditor/binary/images/006058/25%EC%9D%80%EC%84%9D%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90-A4_%ED%99%8D%EB%B3%B4%EC%B1%85%EC%9E%90_(4)_2_1.jpg"
       ]
     },
     {
@@ -69,7 +73,9 @@
       "slug": "ewha",
       "urls": [
         "https://ewha.sen.es.kr/198674/subMenu.do",
-        "https://ewha.sen.es.kr/crosseditor/binary/images/006126/2026_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%9A%94%EA%B0%95_(7).png"
+        "https://ewha.sen.es.kr/crosseditor/binary/images/006126/2026_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%9A%94%EA%B0%95_(7).png",
+        "https://ewha.sen.es.kr/crosseditor/binary/images/006143/MjAyNTExMDcwOTMxNTE1NjFfN1dQSTlYQTI=.png",
+        "https://ewha.sen.es.kr/crosseditor/binary/images/006143/MjAyNTExMDcwOTMwMDA0MzdfNkE2QkgxWDA=.png"
       ]
     },
     {
@@ -92,7 +98,8 @@
       "urls": [
         "https://hwarang-s.sen.es.kr/206940/subMenu.do",
         "https://hwarang-s.sen.es.kr/crosseditor/binary/images/008025/001.png",
-        "https://hwarang-s.sen.es.kr/crosseditor/binary/images/008025/002.png"
+        "https://hwarang-s.sen.es.kr/crosseditor/binary/images/008025/002.png",
+        "https://hwarang-s.sen.es.kr/crosseditor/binary/images/008025/003.png"
       ]
     },
     {
@@ -100,7 +107,10 @@
       "slug": "hye",
       "urls": [
         "https://www.hye.or.kr/?c=A1000/A2400/A2401",
-        "https://www.hye.or.kr/layouts/default/img/sub/20251105_01.jpg"
+        "https://www.hye.or.kr/layouts/default/img/sub/20251105_01.jpg",
+        "https://www.hye.or.kr/layouts/default/img/sub/20251105_02.jpg",
+        "https://www.hye.or.kr/layouts/default/img/sub/20251105_03.jpg",
+        "https://www.hye.or.kr/layouts/default/img/sub/20251105_04.jpg"
       ]
     },
     {
@@ -119,14 +129,26 @@
     {
       "institutionId": "9550da3f-04eb-5eee-877d-877491461201",
       "slug": "kumsung",
-      "urls": ["https://www.kumsung.net/bbs/content.php?co_id=1_11_4"]
+      "urls": [
+        "https://www.kumsung.net/bbs/content.php?co_id=1_11_4",
+        "https://www.kumsung.net/bbs/board.php?bo_table=1_11_3&wr_id=3155",
+        "https://www.kumsung.net/bbs/board.php?bo_table=1_11_3&wr_id=3156",
+        "https://www.kumsung.net/data/editor/2511/796b72a1a353cedcc4df4da80465948e_1763108630_82.jpg",
+        "https://www.kumsung.net/data/editor/2511/796b72a1a353cedcc4df4da80465948e_1763108630_95.jpg",
+        "https://www.kumsung.net/data/editor/2511/796b72a1a353cedcc4df4da80465948e_1763108631_08.jpg",
+        "https://www.kumsung.net/data/editor/2511/796b72a1a353cedcc4df4da80465948e_1763108631_2.jpg",
+        "https://www.kumsung.net/data/editor/2511/796b72a1a353cedcc4df4da80465948e_1763108631_33.jpg",
+        "https://www.kumsung.net/data/file/1_11_3/1994256923_0ojx3Cb1_b63968b12f18cea3319a349f75d7c153d7149d6c.jpg",
+        "https://www.kumsung.net/data/file/1_11_3/1994256923_vaZAxmzI_b63968b12f18cea3319a349f75d7c153d7149d6c.jpg"
+      ]
     },
     {
       "institutionId": "511a74d5-ed4f-5cf8-95c7-25477feffb2c",
       "slug": "kwangwoon",
       "urls": [
         "https://kwangwoon.sen.es.kr/209624/subMenu.do",
-        "https://kwangwoon.sen.es.kr/crosseditor/binary/images/008119/2027%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EC%A0%84%ED%98%95_%EA%B4%80%EB%A0%A8_%EC%95%88%EB%82%B4.png"
+        "https://kwangwoon.sen.es.kr/crosseditor/binary/images/008119/2027%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EC%A0%84%ED%98%95_%EA%B4%80%EB%A0%A8_%EC%95%88%EB%82%B4.png",
+        "https://kwangwoon.sen.es.kr/198507/subMenu.do"
       ]
     },
     {
@@ -153,7 +175,11 @@
     {
       "institutionId": "a65efc5c-8ebc-5fc8-9d2b-88ed461d39a3",
       "slug": "maewon",
-      "urls": ["https://maewon.sen.es.kr/153574/subMenu.do"]
+      "urls": [
+        "https://maewon.sen.es.kr/153574/subMenu.do",
+        "https://maewon.sen.es.kr/212569/subMenu.do",
+        "https://maewon.sen.es.kr/212888/subMenu.do"
+      ]
     },
     {
       "institutionId": "4b732452-6f4b-5f7e-9303-456667250a67",
@@ -165,7 +191,11 @@
       "slug": "sangmyung-ae",
       "urls": [
         "https://sangmyung-ae.sen.es.kr/207241/subMenu.do",
-        "https://sangmyung-ae.sen.es.kr/crosseditor/binary/images/006132/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%9A%94%EA%B0%95_%EC%95%88%EB%82%B4(%ED%99%88%ED%8E%98%EC%9D%B4%EC%A7%80)-%EC%B5%9C%EC%A2%85001.jpg"
+        "https://sangmyung-ae.sen.es.kr/crosseditor/binary/images/006132/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%9A%94%EA%B0%95_%EC%95%88%EB%82%B4(%ED%99%88%ED%8E%98%EC%9D%B4%EC%A7%80)-%EC%B5%9C%EC%A2%85001.jpg",
+        "https://sangmyung-ae.sen.es.kr/crosseditor/binary/images/006026/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%ED%95%99%EB%B6%80%EB%AA%A8_Q_%26_A(%EC%88%98%EC%A0%95)001.jpg",
+        "https://sangmyung-ae.sen.es.kr/crosseditor/binary/images/006026/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%ED%95%99%EB%B6%80%EB%AA%A8_Q_%26_A(%EC%88%98%EC%A0%95)002.jpg",
+        "https://sangmyung-ae.sen.es.kr/crosseditor/binary/images/006026/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%ED%95%99%EB%B6%80%EB%AA%A8_Q_%26_A(%EC%88%98%EC%A0%95)003.jpg",
+        "https://sangmyung-ae.sen.es.kr/crosseditor/binary/images/006026/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%ED%95%99%EB%B6%80%EB%AA%A8_Q_%26_A(%EC%88%98%EC%A0%95)004.jpg"
       ]
     },
     {
@@ -173,20 +203,31 @@
       "slug": "sejong",
       "urls": [
         "https://sejong.sen.es.kr/199575/subMenu.do",
-        "https://sejong.sen.es.kr/crosseditor/binary/images/006028/(%EC%84%B8%EC%A2%85%EC%B4%88)_2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95(%EC%95%88)-20251023001.jpg"
+        "https://sejong.sen.es.kr/crosseditor/binary/images/006028/(%EC%84%B8%EC%A2%85%EC%B4%88)_2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95(%EC%95%88)-20251023001.jpg",
+        "https://sejong.sen.es.kr/crosseditor/binary/images/006028/(%EC%84%B8%EC%A2%85%EC%B4%88)_2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95(%EC%95%88)-20251023002.jpg",
+        "https://sejong.sen.es.kr/crosseditor/binary/images/006028/(%EC%84%B8%EC%A2%85%EC%B4%88)_2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95(%EC%95%88)-20251023003.jpg"
       ]
     },
     {
       "institutionId": "261bd28b-6f4c-54f7-9950-2e7b78f8c291",
       "slug": "seoul-dongsan",
-      "urls": ["https://seoul-dongsan.sen.es.kr/46786/subMenu.do"]
+      "urls": [
+        "https://seoul-dongsan.sen.es.kr/46786/subMenu.do",
+        "https://sites.google.com/seoul-dongsan.es.kr/entrance",
+        "https://drive.google.com/file/d/1WYax-IXii_wwtjxHJKPmhrEUz8lWP2fH/preview?authuser=0",
+        "https://drive.google.com/file/d/1WYax-IXii_wwtjxHJKPmhrEUz8lWP2fH/preview"
+      ]
     },
     {
       "institutionId": "50ad011d-dac6-55a6-9c39-16615a495f9f",
       "slug": "seoul36",
       "urls": [
         "https://seoul36.sen.es.kr/206924/subMenu.do",
-        "https://seoul36.sen.es.kr/crosseditor/binary/images/006047/2026_%EC%84%9C%EC%9A%B8%EC%82%BC%EC%9C%A1%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%95%88%EB%82%B4.jpg"
+        "https://seoul36.sen.es.kr/crosseditor/binary/images/006047/2026_%EC%84%9C%EC%9A%B8%EC%82%BC%EC%9C%A1%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%95%88%EB%82%B4.jpg",
+        "https://seoul36.sen.es.kr/176266/subMenu.do",
+        "https://seoul36.sen.es.kr/crosseditor/binary/images/006176/%EC%8A%AC%EB%9D%BC%EC%9D%B4%EB%93%9C1_1.jpg",
+        "https://seoul36.sen.es.kr/crosseditor/binary/images/006176/%EC%8A%AC%EB%9D%BC%EC%9D%B4%EB%93%9C2.jpg",
+        "https://seoul36.sen.es.kr/crosseditor/binary/images/006205/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%9E%85%ED%95%99%EC%A0%84%ED%98%95_%EB%8B%B9%EC%B2%A8%EC%9E%90_%EB%93%B1%EB%A1%9D_%EC%A0%88%EC%B0%A8_%EC%95%88%EB%82%B4(%EC%88%98%EC%A0%952)_%EC%8A%AC%EB%9D%BC%EC%9D%B4%EB%93%9C3.jpg"
       ]
     },
     {
@@ -202,7 +243,8 @@
       "slug": "skes",
       "urls": [
         "https://skes.sen.es.kr/214345/subMenu.do",
-        "https://skes.sen.es.kr/crosseditor/binary/images/006973/1.jpg"
+        "https://skes.sen.es.kr/crosseditor/binary/images/006973/1.jpg",
+        "https://skes.sen.es.kr/crosseditor/binary/images/006973/2.jpg"
       ]
     },
     {
@@ -218,7 +260,12 @@
       "slug": "sohwa-e",
       "urls": [
         "https://sohwa-e.goesw.kr/sohwa-e/na/ntt/selectNttInfo.do?mi=18035&bbsId=10521&nttSn=124421",
-        "https://sohwa-e.goesw.kr/upload/old_data/upload/ceditor/binary/images/003280/9._2026_%EC%9D%BC%EB%B0%98%EC%A0%84%ED%98%95_%EC%B6%94%EC%B2%A8_%EC%95%88%EB%82%B4(%ED%8C%9D%EC%97%85)_-_%EC%88%98%EC%A0%95%EB%B3%B8.jpg"
+        "https://sohwa-e.goesw.kr/upload/old_data/upload/ceditor/binary/images/003280/9._2026_%EC%9D%BC%EB%B0%98%EC%A0%84%ED%98%95_%EC%B6%94%EC%B2%A8_%EC%95%88%EB%82%B4(%ED%8C%9D%EC%97%85)_-_%EC%88%98%EC%A0%95%EB%B3%B8.jpg",
+        "https://sohwa-e.goesw.kr/sohwa-e/na/ntt/selectNttInfo.do?mi=18035&bbsId=10521&nttSn=124427",
+        "https://sohwa-e.goesw.kr/sohwa-e/na/ntt/selectNttInfo.do?mi=18035&bbsId=10521&nttSn=124424",
+        "https://sohwa-e.goesw.kr/upload/old_data/upload/ceditor/binary/images/003289/%EB%93%B1%EB%A1%9D%EC%84%9C%EB%A5%98_%EA%B5%90%EB%B6%80_%EB%AA%A8%EC%9E%84_%EC%95%88%EB%82%B4.jpg",
+        "https://sohwa-e.goesw.kr/sohwa-e/na/ntt/selectNttInfo.do?mi=18035&bbsId=10521&nttSn=124425",
+        "https://sohwa-e.goesw.kr/upload/old_data/upload/ceditor/binary/images/003329/%EC%98%88%EB%B9%84%EC%86%8C%EC%A7%91_%EC%95%88%EB%82%B4.jpg"
       ]
     },
     {
@@ -226,7 +273,9 @@
       "slug": "soongeui",
       "urls": [
         "https://soongeui.sen.es.kr/176862/subMenu.do",
-        "https://soongeui.sen.es.kr/crosseditor/binary/images/006063/(%EC%88%AD%EC%9D%98%EC%B4%88)_2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%A0%84%ED%98%95_%EC%B5%9C%EC%A2%85%EC%9A%94%EA%B0%95001.png"
+        "https://soongeui.sen.es.kr/crosseditor/binary/images/006063/(%EC%88%AD%EC%9D%98%EC%B4%88)_2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%A0%84%ED%98%95_%EC%B5%9C%EC%A2%85%EC%9A%94%EA%B0%95001.png",
+        "https://soongeui.sen.es.kr/crosseditor/binary/images/006063/(%EC%88%AD%EC%9D%98%EC%B4%88)_2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%A0%84%ED%98%95_%EC%B5%9C%EC%A2%85%EC%9A%94%EA%B0%95002.png",
+        "https://soongeui.sen.es.kr/crosseditor/binary/images/006063/(%EC%88%AD%EC%9D%98%EC%B4%88)_2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%A0%84%ED%98%95_%EC%B5%9C%EC%A2%85%EC%9A%94%EA%B0%95003.png"
       ]
     },
     {
@@ -243,7 +292,9 @@
       "slug": "sungshin",
       "urls": [
         "https://sungshin.sen.es.kr/198368/subMenu.do",
-        "https://sungshin.sen.es.kr/crosseditor/binary/images/006032/111_1.jpg"
+        "https://sungshin.sen.es.kr/crosseditor/binary/images/006032/111_1.jpg",
+        "https://sungshin.sen.es.kr/crosseditor/binary/images/006032/2.jpg",
+        "https://sungshin.sen.es.kr/crosseditor/binary/images/006031/3.jpg"
       ]
     },
     {
@@ -267,7 +318,8 @@
       "slug": "taegang",
       "urls": [
         "https://taegang.sen.es.kr/175148/subMenu.do",
-        "https://taegang.sen.es.kr/crosseditor/binary/images/006125/2026%ED%95%99%EB%85%84%EB%8F%84_%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95_1.png"
+        "https://taegang.sen.es.kr/crosseditor/binary/images/006125/2026%ED%95%99%EB%85%84%EB%8F%84_%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95_1.png",
+        "https://taegang.sen.es.kr/111804/subMenu.do"
       ]
     },
     {
@@ -283,7 +335,8 @@
       "slug": "unhyun",
       "urls": [
         "https://unhyun.sen.es.kr/104922/subMenu.do",
-        "https://unhyun.sen.es.kr/crosseditor/binary/images/006055/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%9A%B4%ED%98%84%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95001_1.jpg"
+        "https://unhyun.sen.es.kr/crosseditor/binary/images/006055/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%9A%B4%ED%98%84%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95001_1.jpg",
+        "https://unhyun.sen.es.kr/crosseditor/binary/images/006055/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%9A%B4%ED%98%84%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95002_1.jpg"
       ]
     },
     {
@@ -291,7 +344,11 @@
       "slug": "yale",
       "urls": [
         "https://yale.sen.es.kr/189272/subMenu.do",
-        "https://yale.sen.es.kr/crosseditor/binary/images/006031/(%EC%98%88%EC%9D%BC%EC%B4%88)2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95_(%EC%88%98%EC%A0%95_10.23)_2.png"
+        "https://yale.sen.es.kr/crosseditor/binary/images/006031/(%EC%98%88%EC%9D%BC%EC%B4%88)2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95_(%EC%88%98%EC%A0%95_10.23)_2.png",
+        "https://yale.sen.es.kr/crosseditor/binary/build_images_new/images/003032/KakaoTalk_20251001_155705952_04.jpg",
+        "https://yale.sen.es.kr/crosseditor/binary/images/006059/(%EC%98%88%EC%9D%BC%EC%B4%88)2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95_(%EC%88%98%EC%A0%95_10.28)_3.png",
+        "https://yale.sen.es.kr/crosseditor/binary/build_images_new/images/003033/(%EC%98%88%EC%9D%BC%EC%B4%88)2026%ED%95%99%EB%85%84%EB%8F%84_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91_%EC%A0%84%ED%98%95%EC%9A%94%EA%B0%95_4.jpg",
+        "https://yale.sen.es.kr/crosseditor/binary/build_images_new/images/003032/KakaoTalk_20251001_155705952_03.jpg"
       ]
     },
     {
@@ -299,7 +356,9 @@
       "slug": "yooseok",
       "urls": [
         "https://yooseok.sen.es.kr/120146/subMenu.do",
-        "https://yooseok.sen.es.kr/crosseditor/binary/images/006133/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%9C%A0%EC%84%9D%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95001.jpg"
+        "https://yooseok.sen.es.kr/crosseditor/binary/images/006133/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%9C%A0%EC%84%9D%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95001.jpg",
+        "https://yooseok.sen.es.kr/crosseditor/binary/images/006133/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%9C%A0%EC%84%9D%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95002.jpg",
+        "https://yooseok.sen.es.kr/crosseditor/binary/images/006132/2026%ED%95%99%EB%85%84%EB%8F%84_%EC%9C%A0%EC%84%9D%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90_%EC%8B%A0%EC%9E%85%EC%83%9D_%EB%AA%A8%EC%A7%91%EC%9A%94%EA%B0%95003.jpg"
       ]
     },
     {

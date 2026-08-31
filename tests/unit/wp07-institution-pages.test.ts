@@ -229,6 +229,28 @@ it("shows the separate 10:00 and 14:00 session clocks and the result announcemen
   expect(markup).toContain("<dt>결과 발표</dt>");
 });
 
+it("labels a qualified admission-session card as provisional instead of a confirmed schedule", () => {
+  const admission = detail.reviewedAdmissions[0]!;
+  const markup = renderToStaticMarkup(
+    createElement(InstitutionDetailView, {
+      data: {
+        ...detail,
+        reviewedAdmissions: [
+          {
+            ...admission,
+            title: "2027학년도 입학설명회 2 (예정)",
+            kind: "INFORMATION_SESSION",
+            summary: "공식 입학 안내입니다.",
+          },
+        ],
+      },
+    }),
+  );
+
+  expect(markup).toContain("예정 안내 · 변경 가능");
+  expect(markup).not.toContain("공식 일정 확인됨");
+});
+
 describe("WP-07 Institution pages", () => {
   it("normalizes only scalar allowlisted GET filters and fixes public page size", () => {
     // Mutation caught: forwarding Next's array/unknown values, accepting invalid filters, or exposing a caller-controlled page size.

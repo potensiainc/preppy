@@ -16,6 +16,68 @@ function extract(html: string) {
 }
 
 describe("five-school live admission extraction", () => {
+  it("retains a planned guide's quotas, fees, lottery, registration and historical fee caveats", () => {
+    const result = extract(`
+      <nav><a>입학 안내</a><p>로그인</p></nav>
+      <p>2027학년도 리라초등학교 신입생 모집 요강(예정)</p>
+      <ul>
+        <li><p>모집 학급 및 인원</p><h5>모집 학급</h5><p>3학급</p><h5>모집 인원</h5><p>84명 (남자 42명, 여자 42명)</p></li>
+        <li><p>입학 원서 접수</p><p>접수 기간: 2026. 11. 6. 09:00 ~ 2026. 11. 11. 16:30</p><p>온라인 접수, 최대 3개 학교. 전형료 30,000원, 반환 불가</p></li>
+        <li><p>추첨</p><p>2026. 11. 16. 11:00, 서울특별시교육청 전산추첨</p></li>
+        <li><p>당첨자 등록</p><p>2026. 11. 17. 09:00 ~ 11. 19. 16:30, 중복 등록 시 취소</p></li>
+        <li><p>제출 서류</p><p>주민등록등본, 입학원서 접수증</p></li>
+        <li><p>기타 사항</p><p>입학금 1,000,000원. 수업료 2,312,100원 (2025학년도 1기분 3개월 기준). 2027학년도 변동 가능, 학교버스비 별도.</p></li>
+      </ul><footer>메뉴 개인정보처리방침</footer>
+    `);
+    expect(result.title).toContain("모집 요강(예정)");
+    for (const fact of [
+      "84명",
+      "3학급",
+      "30,000원",
+      "전산추첨",
+      "중복 등록",
+      "주민등록등본",
+      "2,312,100원",
+      "2025학년도",
+      "변동 가능",
+      "학교버스비 별도",
+    ]) {
+      expect(result.summary).toContain(fact);
+    }
+    expect(result.summary).toContain("예정");
+    expect(result.summary).not.toContain("로그인");
+    expect(result.summary).not.toContain("개인정보처리방침");
+    expect(result.summary?.match(/84명/g)).toHaveLength(1);
+    expect(result.applicationOpenAt?.toISOString()).toBe(
+      "2026-11-06T00:00:00.000Z",
+    );
+    expect(result.applicationCloseAt?.toISOString()).toBe(
+      "2026-11-11T07:30:00.000Z",
+    );
+  });
+
+  it("keeps useful planned guidance even before exact dates are published", () => {
+    const result = extract(`<h1>2027학년도 신입생 모집요강(안)</h1>
+      <h4>모집 인원</h4><p>80명 (4학급)</p>
+      <p>원서접수 일정은 추후 공지합니다.</p><p>전형료 30,000원</p>`);
+    expect(result.knowledgeState).toBe("NOT_ANNOUNCED");
+    expect(result.summary).toContain("80명 (4학급)");
+    expect(result.summary).toContain("30,000원");
+    expect(result.summary).toContain("모집요강(안)");
+    expect(result.applicationOpenAt).toBeNull();
+  });
+
+  it("distinguishes a guide without dates from information not found", () => {
+    const result = extract(
+      "<h1>2027학년도 신입생 모집요강(예정)</h1><p>모집 인원 84명</p><p>전형료 30,000원</p>",
+    );
+    expect(result.knowledgeState).toBe("GUIDANCE_FOUND");
+    expect(result.title).toContain("모집요강(예정)");
+    expect(result.summary).toContain("84명");
+    expect(result.businessState).toBe("UNKNOWN");
+    expect(result.applicationOpenAt).toBeNull();
+  });
+
   it.each([
     "<p>2025학년도 원서접수 기간: 2024년 11월 1일 ~ 2024년 11월 5일</p><p>2025학년도 입학설명회: 2024년 10월 1일</p><p>2025학년도 지원 대상: 2018년 출생 아동</p>",
     "<h2>2025학년도 신입생 모집</h2><p>원서접수 기간: 2024년 11월 1일 ~ 2024년 11월 5일</p><p>입학설명회: 2024년 10월 1일</p><p>지원 대상: 2018년 출생 아동</p>",

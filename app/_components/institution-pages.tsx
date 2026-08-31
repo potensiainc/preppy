@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { isProvisionalAdmissionGuidance } from "@/src/modules/live-admissions/guidance";
 
 import type {
   InstitutionDetailDTO,
@@ -27,7 +28,7 @@ import {
 import {
   categoryLabel,
   factLabel,
-  formatPublicDate,
+  formatPublicDateTime,
   opportunityStateLabel,
 } from "@/app/_lib/presentation";
 
@@ -35,6 +36,7 @@ function admissionKnowledgeLabel(
   state: ReviewedAdmissionDTO["knowledgeState"],
 ): string {
   if (state === "SCHEDULE_FOUND") return "공식 일정 확인됨";
+  if (state === "GUIDANCE_FOUND") return "모집 안내 확인 · 날짜 미확인";
   if (state === "NOT_ANNOUNCED") return "일정 미발표";
   return "관련 일정·지원 정보 미발견";
 }
@@ -54,27 +56,11 @@ function AdmissionDate({
       <dd>
         {start ? (
           <>
-            <time dateTime={start}>
-              {formatPublicDate(start)}{" "}
-              {new Intl.DateTimeFormat("ko-KR", {
-                timeZone: "Asia/Seoul",
-                hour: "2-digit",
-                minute: "2-digit",
-                hourCycle: "h23",
-              }).format(new Date(start))}
-            </time>
+            <time dateTime={start}>{formatPublicDateTime(start)}</time>
             {end ? (
               <>
                 {" ~ "}
-                <time dateTime={end}>
-                  {formatPublicDate(end)}{" "}
-                  {new Intl.DateTimeFormat("ko-KR", {
-                    timeZone: "Asia/Seoul",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hourCycle: "h23",
-                  }).format(new Date(end))}
-                </time>
+                <time dateTime={end}>{formatPublicDateTime(end)}</time>
               </>
             ) : null}
           </>
@@ -103,10 +89,25 @@ function ReviewedAdmissions({
           <article className="public-card opportunity-card" key={admission.id}>
             <div className="card-kicker">
               <span>{admission.academicYearLabel ?? "학년도 미확인"}</span>
-              <span>{admissionKnowledgeLabel(admission.knowledgeState)}</span>
+              <span>
+                {isProvisionalAdmissionGuidance(
+                  `${admission.title} ${admission.summary ?? ""}`,
+                )
+                  ? "예정 안내 · 변경 가능"
+                  : admissionKnowledgeLabel(admission.knowledgeState)}
+              </span>
             </div>
-            <h3>{admission.title}</h3>
-            {admission.summary ? <p>{admission.summary}</p> : null}
+            <h3>
+              <Link href={`/opportunities/${admission.slug}`}>
+                {admission.title}
+              </Link>
+            </h3>
+            {admission.summary
+              ?.split(/\n\s*\n/u)
+              .filter(Boolean)
+              .map((paragraph, index) => (
+                <p key={index}>{paragraph}</p>
+              ))}
             <dl className="institution-facts">
               {admission.kind === "RECRUITMENT" ? (
                 <AdmissionDate

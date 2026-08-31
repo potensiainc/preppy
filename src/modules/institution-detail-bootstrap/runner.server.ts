@@ -118,7 +118,11 @@ export type PrivateElementaryBootstrapSchoolRecord = Readonly<{
   registryBootstrap: "SUCCESS" | "FAILED" | null;
   websiteCollection: "SUCCESS" | "PARTIAL" | "FETCH_FAILED";
   admissionKnowledge:
-    "SCHEDULE_FOUND" | "NOT_ANNOUNCED" | "NOT_FOUND" | "FETCH_FAILED";
+    | "SCHEDULE_FOUND"
+    | "GUIDANCE_FOUND"
+    | "NOT_ANNOUNCED"
+    | "NOT_FOUND"
+    | "FETCH_FAILED";
   admissionPublicationEligible: boolean;
   pagesFetched: number;
   pagesScheduled: number;
@@ -126,7 +130,11 @@ export type PrivateElementaryBootstrapSchoolRecord = Readonly<{
   selectedAdmissionUrl: string | null;
   academicYear: string | null;
   knowledgeState:
-    "SCHEDULE_FOUND" | "NOT_ANNOUNCED" | "NOT_FOUND" | "FETCH_FAILED";
+    | "SCHEDULE_FOUND"
+    | "GUIDANCE_FOUND"
+    | "NOT_ANNOUNCED"
+    | "NOT_FOUND"
+    | "FETCH_FAILED";
   factsExtracted: readonly Readonly<{
     factType: string;
     displayText: string;
@@ -181,6 +189,7 @@ export type PrivateElementaryBootstrapReport = Readonly<{
   factCounts: Readonly<Record<string, number>>;
   admissions: Readonly<{
     SCHEDULE_FOUND: number;
+    GUIDANCE_FOUND: number;
     NOT_ANNOUNCED: number;
     NOT_FOUND: number;
     FETCH_FAILED: number;
@@ -506,6 +515,7 @@ export async function runPrivateElementaryBootstrap(
   const factCounts: Record<string, number> = {};
   const admissions = {
     SCHEDULE_FOUND: 0,
+    GUIDANCE_FOUND: 0,
     NOT_ANNOUNCED: 0,
     NOT_FOUND: 0,
     FETCH_FAILED: 0,

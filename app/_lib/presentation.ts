@@ -70,6 +70,16 @@ const publicDateFormatter = new Intl.DateTimeFormat("ko-KR", {
   day: "numeric",
 });
 
+const publicDateTimeFormatter = new Intl.DateTimeFormat("ko-KR", {
+  timeZone: "Asia/Seoul",
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+  hourCycle: "h23",
+});
+
 const localCalendarDatePattern =
   /^(\d{4})-(\d{2})-(\d{2})(?:T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,9})?)?)?$/;
 
@@ -123,6 +133,26 @@ export function formatPublicDate(value: string): string {
   if (localCalendarDate) return localCalendarDate;
 
   return publicDateFormatter.format(new Date(value));
+}
+
+/**
+ * Shows an instant in Korea Standard Time while retaining a source's
+ * date-only precision. A zone-less legacy local time is displayed as entered,
+ * rather than being converted through an invented offset.
+ */
+export function formatPublicDateTime(value: string): string {
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return formatPublicDate(value);
+
+  const local =
+    /^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2})(?::\d{2}(?:\.\d{1,9})?)?$/.exec(
+      value,
+    );
+  if (local) return `${formatPublicDate(local[1]!)} ${local[2]}:${local[3]}`;
+
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime())
+    ? formatPublicDate(value)
+    : publicDateTimeFormatter.format(parsed);
 }
 
 export function safeExternalHref(value: string): string | null {

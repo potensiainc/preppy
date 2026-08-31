@@ -1,6 +1,10 @@
 import { load } from "cheerio";
 
 import { normalizeVisibleText } from "@/src/modules/http-collector/html";
+import {
+  isProvisionalAdmissionGuidance,
+  PROVISIONAL_ADMISSION_NOTICE,
+} from "./guidance";
 
 import type {
   LiveAdmissionExtractionInput,
@@ -9,6 +13,9 @@ import type {
 } from "./contracts";
 
 const MAX_EVIDENCE_EXCERPT = 2_000;
+const MAX_GUIDANCE_LENGTH = 8_000;
+const DETAIL_WORD =
+  /모집|원서|접수|지원|추첨|당첨|등록|서류|전형료|입학금|수업료|납부|교육비|반환|환불|쌍둥이|쌍\(다\)둥이|결원|예비|통학|학교버스|문의|연락처|유의\s*사항|기타\s*사항|변동|변경|eligib|tuition|fees?|lottery|documents?/iu;
 const ACADEMIC_YEAR = /(20\d{2})\s*학년도/gu;
 const ADMISSION_WORD =
   /입학|신입생|모집|원서|admission|application|open\s*house/iu;
@@ -38,14 +45,28 @@ function sourceBlocks(html: string): Readonly<{
   visibleText: string;
 }> {
   const $ = load(html);
-  $("script, style, noscript, template").remove();
+  $(
+    "script, style, noscript, template, nav, footer, aside, [hidden], [aria-hidden='true']",
+  ).remove();
+  $("br").replaceWith(" ");
+  $("td, th").append(" ");
   const title = normalizeVisibleText($("title").first().text());
-  const headings = $("h1, h2, h3")
+  const headings = $("h1, h2, h3, h4, h5, h6")
     .toArray()
     .map((element) => normalizeVisibleText($(element).text()))
     .filter(Boolean);
-  const candidates = $("h1, h2, h3, p, li, tr, a")
+  const candidates = $("h1, h2, h3, h4, h5, h6, p, li, tr, dt, dd, a, div")
     .toArray()
+    .filter((element) => {
+      // A list item/table row already contains its label and values. Keeping
+      // all descendants duplicates evidence and exhausts the summary budget.
+      if ($(element).parents("li, tr").length > 0) return false;
+      return (
+        element.tagName !== "div" ||
+        $(element).find("div, p, li, table, h1, h2, h3, h4, h5, h6, dt, dd")
+          .length === 0
+      );
+    })
     .map((element) => normalizeVisibleText($(element).text()))
     .filter(Boolean);
   const blocks = [...new Set([title, ...candidates].filter(Boolean))];
@@ -169,15 +190,21 @@ function blocksForSelectedAdmissionYear(
         [...block.matchAll(ACADEMIC_YEAR)].map((match) => `${match[1]}학년도`),
       ),
     ];
+    // A historical tuition basis inside the selected guide is not a different
+    // admission cycle. Keep the basis year and the change caveat together.
+    const feeReference =
+      /수업료|교육비|통학버스비|tuition/iu.test(block) &&
+      /기준|변동|변경|basis/iu.test(block);
     if (
       years.length === 1 &&
+      !feeReference &&
       (headings.has(block) || ADMISSION_WORD.test(block))
     ) {
       sectionYear = years[0]!;
     }
     return (
       (sectionYear === null || sectionYear === academicYearLabel) &&
-      years.every((year) => year === academicYearLabel)
+      (feeReference || years.every((year) => year === academicYearLabel))
     );
   });
 }
@@ -302,13 +329,25 @@ export function extractLiveAdmissionProposal(
     ? "SCHEDULE_FOUND"
     : explicitNotAnnounced
       ? "NOT_ANNOUNCED"
-      : "NOT_FOUND";
+      : academicYearLabel !== null &&
+          cycleBlocks.some(
+            (block) =>
+              /(?:모집\s*인원|전형료|입학금|수업료|제출\s*서류)/u.test(block) &&
+              /\d|등본|증명서|접수증/u.test(block),
+          )
+        ? "GUIDANCE_FOUND"
+        : "NOT_FOUND";
   const relevantBlocks = cycleBlocks.filter(
-    (block) =>
+    (block, index) =>
       ADMISSION_WORD.test(block) ||
       APPLICATION_WORD.test(block) ||
       EVENT_WORD.test(block) ||
-      AUDIENCE_WORD.test(block),
+      AUDIENCE_WORD.test(block) ||
+      DETAIL_WORD.test(block) ||
+      (index > 0 &&
+        cycleBlocks[index - 1]!.length < 50 &&
+        DETAIL_WORD.test(cycleBlocks[index - 1]!) &&
+        /\d|서울|거주/iu.test(block)),
   );
   const evidenceExcerpt = bounded(
     (relevantBlocks.length > 0 ? relevantBlocks : [document.visibleText]).join(
@@ -316,8 +355,15 @@ export function extractLiveAdmissionProposal(
     ),
   );
   const title =
-    knowledgeState === "SCHEDULE_FOUND"
-      ? scheduleTitle(document.title, document.headings, academicYearLabel)
+    knowledgeState === "SCHEDULE_FOUND" || knowledgeState === "GUIDANCE_FOUND"
+      ? scheduleTitle(
+          document.title,
+          [
+            ...document.headings,
+            ...cycleBlocks.filter((block) => block.length < 200),
+          ],
+          academicYearLabel,
+        )
       : knowledgeState === "NOT_ANNOUNCED"
         ? `${academicYearLabel ? `${academicYearLabel} ` : ""}입학 일정 미발표`
         : "입학 관련 정보 미발견";
@@ -329,15 +375,22 @@ export function extractLiveAdmissionProposal(
           ? "OPEN_HOUSE"
           : "INFORMATION_SESSION"
         : "OTHER";
+  const guidanceBlocks = relevantBlocks.filter(
+    (block) =>
+      !relevantBlocks.some((other) => other !== block && other.includes(block)),
+  );
+  const summaryParts: string[] = [];
+  if (guidanceBlocks.some(isProvisionalAdmissionGuidance))
+    summaryParts.push(PROVISIONAL_ADMISSION_NOTICE);
+  for (const block of guidanceBlocks) {
+    if ([...summaryParts, block].join("\n\n").length > MAX_GUIDANCE_LENGTH) {
+      warnings.push("GUIDANCE_TRUNCATED_SEE_OFFICIAL_SOURCE");
+      break; // Never truncate a fact before its qualification or exception.
+    }
+    summaryParts.push(block);
+  }
   const summary =
-    knowledgeState === "NOT_FOUND"
-      ? null
-      : bounded(
-          [applicationBlock, eventBlock, explicitNotAnnounced]
-            .filter((value): value is string => value !== null)
-            .filter((value, index, values) => values.indexOf(value) === index)
-            .join(" | "),
-        ) || null;
+    knowledgeState === "NOT_FOUND" ? null : summaryParts.join("\n\n") || null;
   return Object.freeze({
     academicYearLabel,
     knowledgeState,
