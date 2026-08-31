@@ -160,24 +160,6 @@
   margin: 20px 0 0;
   font-weight: 600;
 }
-.sectionNav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 24px;
-  border-block: 1px solid #dce3db;
-  padding: 10px 0;
-}
-.sectionNav a {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  color: #285747;
-  font-size: 13px;
-  text-decoration: none;
-}
-.sectionNav a:hover {
-  text-decoration: underline;
-}
 .bodyGrid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 290px;
@@ -424,9 +406,6 @@
     flex-direction: column;
     gap: 14px;
   }
-  .sectionNav {
-    gap: 0 18px;
-  }
   .datePanel {
     padding: 22px;
   }
@@ -449,9 +428,6 @@
   }
   .sessions {
     grid-template-columns: 1fr;
-  }
-  .sectionNav a {
-    font-size: 12px;
   }
   .essentials {
     padding: 18px;
