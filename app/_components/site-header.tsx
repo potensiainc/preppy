@@ -33,7 +33,7 @@ export function SiteHeader() {
         <div className="site-header__actions">
           <AuthControl />
           <details className="mobile-navigation">
-            <summary aria-label="메뉴 열기">메뉴</summary>
+            <summary aria-label="메뉴 열고 닫기">메뉴</summary>
             <nav aria-label="모바일 주요 메뉴">
               <NavigationLinks />
             </nav>

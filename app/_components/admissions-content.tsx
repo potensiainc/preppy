@@ -37,6 +37,7 @@ import {
 } from "@/app/_lib/admission-navigation";
 import styles from "./admissions.module.css";
 import { publicAdmissionText } from "@/src/modules/public/admission-copy";
+import { publicProse } from "@/src/modules/public/ux-writing";
 
 export function AdmissionNotice({
   text = PROVISIONAL_ADMISSION_NOTICE,
@@ -46,7 +47,7 @@ export function AdmissionNotice({
   return (
     <p className={styles.notice}>
       <strong>
-        {publicAdmissionText(text) ?? PROVISIONAL_ADMISSION_NOTICE}
+        {publicProse(publicAdmissionText(text) ?? PROVISIONAL_ADMISSION_NOTICE)}
       </strong>
     </p>
   );
@@ -183,7 +184,7 @@ export function AdmissionSections({
                 aria-label="금액 기준·변동 안내"
               >
                 {group.context.map((text, i) => (
-                  <p key={i}>{text}</p>
+                  <p key={i}>{publicProse(text)}</p>
                 ))}
               </aside>
             ) : null}
@@ -196,7 +197,7 @@ export function AdmissionSections({
 
 function ReadingItems({ items }: { items: string[] }) {
   const content = (text: string) =>
-    text
+    publicProse(text)
       .split(
         /(https?:\/\/\S+|20\d{2}학년도|\d[\d,]*\s*원|\d+\s*(?:명|학급)|\d{1,2}:\d{2}|\d{1,2}월\s*\d{1,2}일)/gu,
       )
@@ -228,7 +229,7 @@ export function AdmissionAudience({ value }: { value: string | null }) {
         rows.map((row, index) => (
           <div key={index}>
             <dt>{row.label}</dt>
-            <dd>{row.value}</dd>
+            <dd>{publicProse(row.value)}</dd>
           </div>
         ))
       ) : (
@@ -257,9 +258,11 @@ export function AdmissionSources({
     return null;
   return (
     <div className={styles.sourceCard}>
-      <p className={styles.kicker}>OFFICIAL SOURCES</p>
+      <p className={styles.kicker}>공식 출처</p>
       <h2>학교 공식 안내</h2>
-      <p className={styles.helper}>지원 전 학교의 최신 공지를 확인하세요.</p>
+      <p className={styles.helper}>
+        지원 전 학교에서 새로 알린 내용이 있는지 확인해 주세요.
+      </p>
       {sources.map((source, index) => {
         const href = safeExternalHref(source.url);
         const content = (
@@ -294,14 +297,14 @@ export function AdmissionSources({
           target="_blank"
           rel="noopener noreferrer"
         >
-          지원 페이지 확인 ↗
+          공식 지원 페이지로 이동 ↗
         </a>
       ) : null}
       {collectedAt || verifiedAt ? (
         <dl className={styles.timestamps}>
           {collectedAt ? (
             <div>
-              <dt>자료 수집 · Last Collected</dt>
+              <dt>자료 수집</dt>
               <dd>
                 <time dateTime={collectedAt}>
                   {admissionTimestamp(collectedAt)}
@@ -311,7 +314,7 @@ export function AdmissionSources({
           ) : null}
           {verifiedAt ? (
             <div>
-              <dt>내용 검수 · Last Verified</dt>
+              <dt>내용 확인</dt>
               <dd>
                 <time dateTime={verifiedAt}>
                   {admissionTimestamp(verifiedAt)}
@@ -364,7 +367,7 @@ export function AdmissionSessions({
         <span>{items.length}개 일정</span>
       </div>
       <p className={styles.helper}>
-        날짜와 참석 대상, 접수 조건을 이 페이지에서 비교하세요.
+        날짜별 참석 대상과 접수 조건을 한곳에서 비교해 보세요.
       </p>
       <div className={styles.sessions}>
         {ordered.map((item, index) => {
@@ -474,14 +477,14 @@ export function AdmissionSessions({
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      예약·접수 페이지 확인 ↗
+                      공식 예약·접수 페이지로 이동 ↗
                     </a>
                   ) : null}
                   {item.officialSources?.length ||
                   item.lastCollectedAt ||
                   item.lastVerifiedAt ? (
                     <details className={styles.sessionSources}>
-                      <summary>이 일정의 공식 출처·확인 정보</summary>
+                      <summary>이 일정의 출처와 확인일 보기</summary>
                       <AdmissionSources
                         sources={item.officialSources ?? []}
                         collectedAt={item.lastCollectedAt}
@@ -500,10 +503,10 @@ export function AdmissionSessions({
 }
 
 function knowledgeLabel(state: ReviewedAdmissionDTO["knowledgeState"]): string {
-  if (state === "SCHEDULE_FOUND") return "공식 일정 확인됨";
-  if (state === "GUIDANCE_FOUND") return "모집 안내 확인 · 날짜 미확인";
+  if (state === "SCHEDULE_FOUND") return "공식 일정 확인";
+  if (state === "GUIDANCE_FOUND") return "모집 안내 확인 · 일정 미확인";
   if (state === "NOT_ANNOUNCED") return "일정 미발표";
-  return "관련 일정·지원 정보 미발견";
+  return "확인한 안내에서 일정·지원 정보를 찾지 못했어요";
 }
 
 export function ReviewedAdmissions({
@@ -517,7 +520,7 @@ export function ReviewedAdmissions({
     <section className="institution-detail__section" aria-label="입학정보">
       <h2>입학정보</h2>
       <p className={styles.helper}>
-        지원에 필요한 일정과 입학 조건을 확인하세요.
+        지원 일정과 입학 조건을 함께 확인해 보세요.
       </p>
       <div className={styles.reviewedList}>
         {groups.map(({ guide: admission, sessions }, index) => {

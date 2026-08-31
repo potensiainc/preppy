@@ -45,29 +45,29 @@ export function AdminShell({
   return (
     <div className="preppy-admin">
       <a className="admin-skip-link" href="#admin-main">
-        Skip to operational content
+        운영 본문으로 이동
       </a>
 
-      <aside className="admin-rail" aria-label="Admin workspace">
+      <aside className="admin-rail" aria-label="관리자 작업 공간">
         <div className="admin-rail__brand">
           <span>PREPPY</span>
-          <strong>OPERATIONS</strong>
+          <strong>운영</strong>
         </div>
 
         <div className="admin-desktop-nav">
-          <AdminNav label="Admin sections" />
+          <AdminNav label="관리자 메뉴" />
         </div>
         <details className="admin-mobile-nav">
-          <summary>Admin sections</summary>
-          <AdminNav label="Compact Admin sections" />
+          <summary>관리자 메뉴</summary>
+          <AdminNav label="모바일 관리자 메뉴" />
         </details>
 
         <div className="admin-identity">
-          <p>Active operator</p>
+          <p>로그인한 운영자</p>
           <strong>{adminName}</strong>
           <form action="/api/admin/auth/logout" method="post" onSubmit={logout}>
             <button disabled={logoutState === "pending"} type="submit">
-              {logoutState === "pending" ? "Signing out…" : "Sign out"}
+              {logoutState === "pending" ? "로그아웃 중…" : "로그아웃"}
             </button>
           </form>
           <p
@@ -76,7 +76,7 @@ export function AdminShell({
             aria-live="polite"
           >
             {logoutState === "error"
-              ? "Sign-out was not completed. Your session remains active."
+              ? "로그아웃 완료 여부를 확인하지 못했어요. 다시 시도해 주세요."
               : ""}
           </p>
         </div>

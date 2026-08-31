@@ -132,6 +132,47 @@ const detail: InstitutionDetailDTO = {
   indexability: "INDEX",
 };
 
+it("does not show an empty second current-admission section when all current records are already in the guide", () => {
+  const $ = load(
+    renderToStaticMarkup(
+      createElement(InstitutionDetailView, { data: detail }),
+    ),
+  );
+  expect($("[aria-label='입학정보']").text()).toContain("2027학년도");
+  expect($("[aria-label='현재 모집·입학정보']")).toHaveLength(0);
+  expect($("[aria-label='예정된 모집·입학정보']")).toHaveLength(1);
+});
+
+it("separates institution fact prose without dropping fee years or exceptions", () => {
+  const $ = load(
+    renderToStaticMarkup(
+      createElement(InstitutionDetailView, {
+        data: {
+          ...detail,
+          verifiedFacts: [
+            {
+              ...detail.verifiedFacts[0]!,
+              displayValue:
+                "2025학년도 분기 수업료는 2,312,100원이다;2027학년도에는 변동될 수 있다.",
+            },
+          ],
+        },
+      }),
+    ),
+  );
+  expect(
+    $(".institution-facts li")
+      .map((_, el) => $(el).text())
+      .get(),
+  ).toEqual([
+    "2025학년도 분기 수업료는 2,312,100원이에요",
+    "2027학년도에는 변동될 수 있어요.",
+  ]);
+  expect($(".institution-facts time").attr("datetime")).toBe(
+    "2026-08-22T03:30:00.000Z",
+  );
+});
+
 it("filters document narration from institution facts and source labels while preserving conditions and links", () => {
   const $ = load(
     renderToStaticMarkup(
@@ -156,7 +197,7 @@ it("filters document narration from institution facts and source labels while pr
   );
   expect($("body").text()).not.toContain("PDF");
   expect($(".institution-facts").text()).toContain(
-    "특수교육대상자는 일반(추첨)전형이 아닌 별도 전형이다.",
+    "특수교육대상자는 일반(추첨)전형이 아닌 별도 전형이에요.",
   );
   expect($("a[href='https://school.test/guide.pdf']")).toHaveLength(1);
 });
@@ -238,7 +279,7 @@ it("keeps Soongeui's separated caution and early-admission caveat visible while 
   const reviewed = $("[aria-label='입학정보']");
   const closed = reviewed.find("details:not([open])");
   const caution =
-    "조기입학 희망자는 학습능력뿐 아니라 교우관계와 정서적 적응도 신중하게 고려하라고 안내한다.";
+    "조기입학 희망자는 학습능력뿐 아니라 교우관계와 정서적 적응도 신중하게 고려하라고 안내해요.";
   expect(closed.text()).not.toContain("교육비·유의사항·문의");
   expect(closed.text()).not.toContain(caution);
   expect(reviewed.find("[data-admission-topic='유의사항']").text()).toContain(
@@ -553,7 +594,7 @@ describe("WP-07 Institution pages", () => {
         filters: { page: 1, pageSize: 12 },
       }),
     );
-    expect(emptyMarkup).toContain("표시할 기관이 없습니다.");
+    expect(emptyMarkup).toContain("조건에 맞는 기관을 찾지 못했어요");
   });
 
   it("renders only DTO-backed institution hero, grouped records, fact-level trust, sources, articles, and the local Follow CTA", () => {
@@ -565,16 +606,16 @@ describe("WP-07 Institution pages", () => {
     expect(markup).toContain("서울국제학교");
     expect(markup).toContain("국제학교");
     expect(markup).toContain("서울");
-    expect(markup).toContain("현재 모집·입학정보");
+    expect(markup).not.toContain("현재 모집·입학정보");
     expect(markup).toContain("예정된 모집·입학정보");
     expect(markup).toContain("최근 모집·입학정보");
     expect(markup).toContain("입학정보");
     expect(markup).toContain("2027학년도");
-    expect(markup).toContain("공식 일정 확인됨");
+    expect(markup).toContain("공식 일정 확인");
     expect(markup).toContain("2020년 출생 아동");
-    expect(markup).toContain("Last Collected");
+    expect(markup).toContain("자료 수집");
     expect(markup).toContain("2026년 8월 21일");
-    expect(markup).toContain("Last Verified");
+    expect(markup).toContain("내용 확인");
     expect(markup).toContain("2026년 8월 23일");
     expect(markup).toContain("교육비");
     expect(markup).toContain("연간 1,000만 원");
@@ -584,9 +625,7 @@ describe("WP-07 Institution pages", () => {
     expect(markup).toContain("국제학교 방문 전 확인할 점");
     expect(markup).toContain('href="/articles/school-visit-guide"');
     expect(markup).toContain("관심기관 상태 확인 중");
-    expect(markup).toContain(
-      "현재 관심기관 상태를 안전하게 확인하고 있습니다.",
-    );
+    expect(markup).toContain("관심기관 등록 여부를 확인하고 있어요.");
     expect(markup).not.toContain("페이지 최종 확인");
   });
 
@@ -605,7 +644,7 @@ describe("WP-07 Institution pages", () => {
       }),
     );
 
-    expect(markup).toContain("현재 모집·입학정보");
+    expect(markup).not.toContain("현재 모집·입학정보");
     expect(markup).not.toContain("예정된 모집·입학정보");
     expect(markup).not.toContain("최근 모집·입학정보");
     expect(markup.match(/학교 공식 입학처/g)).toHaveLength(2);

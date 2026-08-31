@@ -162,7 +162,7 @@ describe("WP-07 Opportunity and Article detail pages", () => {
     );
     expect($("body").text().split("예정 안내 · 변경 가능:").length - 1).toBe(1);
     expect($("header").text()).toContain(
-      "일정과 지원 조건이 변경될 수 있습니다.",
+      "일정과 지원 조건이 변경될 수 있어요.",
     );
     expect($("header").text()).not.toContain("원문");
     expect($("body").text()).toContain("학교별 예외.");
@@ -488,14 +488,14 @@ describe("WP-07 Opportunity and Article detail pages", () => {
       "초등 과정 신입생 84명",
     );
     expect(guide.find("h3").text()).toContain("지원 방법");
-    expect(markup).toContain("<p>온라인으로 지원합니다.</p>");
+    expect(markup).toContain("<p>온라인으로 지원해요.</p>");
     expect(markup).toContain("&lt;img src=x onerror=alert(1)&gt;");
     expect(markup).not.toContain("<img src=x onerror=alert(1)>");
     expect(markup).toContain("2027 모집요강");
     expect(load(markup)("body").text()).not.toContain("PDF");
     expect(markup).toContain("입학처 공지");
-    expect(markup).toContain("Last Collected");
-    expect(markup).toContain("Last Verified");
+    expect(markup).toContain("자료 수집");
+    expect(markup).toContain("내용 확인");
   });
 
   it("renders every supported opportunity-detail value with truthful freshness and safe official links", () => {
@@ -514,25 +514,23 @@ describe("WP-07 Opportunity and Article detail pages", () => {
     expect(markup).toContain("2026년 10월 30일");
     expect(markup).toContain("2027학년도 초등 입학을 준비하는 가정");
     expect(markup).toContain(
-      "공식 모집 안내를 바탕으로 주요 일정을 정리했습니다.",
+      "공식 모집 안내를 바탕으로 주요 일정을 정리했어요.",
     );
-    expect(markup).toContain("Last Collected");
-    expect(markup).toContain("Last Verified");
+    expect(markup).toContain("자료 수집");
+    expect(markup).toContain("내용 확인");
     expect(markup).toContain("2026년 8월 23일");
-    expect(markup).toContain("지원 페이지 확인");
+    expect(markup).toContain("공식 지원 페이지로 이동");
     expect(markup).toContain('href="https://apply.example.test/2027"');
     expect(markup).toContain("서울국제학교 입학처");
     expect(markup).toContain('href="https://admissions.example.test/2027"');
     expect(markup).toContain('target="_blank"');
     expect(markup).toContain('rel="noopener noreferrer"');
     expect(markup).toContain("최근 변경 사항");
-    expect(markup).toContain("원서 접수 마감 시간이 반영되었습니다.");
+    expect(markup).toContain("원서 접수 마감 시간이 반영됐어요.");
     expect(markup).toContain("입학설명회 전 확인할 체크리스트");
     expect(markup).toContain('href="/articles/admissions-visit-checklist"');
     expect(markup).toContain("관심기관 상태 확인 중");
-    expect(markup).toContain(
-      "현재 관심기관 상태를 안전하게 확인하고 있습니다.",
-    );
+    expect(markup).toContain("관심기관 등록 여부를 확인하고 있어요.");
     expect(markup).not.toContain("INDEX");
   });
 
@@ -552,7 +550,7 @@ describe("WP-07 Opportunity and Article detail pages", () => {
     );
     expect(article).not.toHaveProperty("unsafeStoredContentHtml");
     expect(markup).toContain("국제학교 입학 준비 가이드");
-    expect(markup).toContain("지원 전 확인할 공개 정보를 정리했습니다.");
+    expect(markup).toContain("지원 전 확인할 공개 정보를 정리했어요.");
     expect(markup).toContain("가이드");
     expect(markup).toContain("국제학교");
     expect(markup).toContain("2026년 8월 21일");
@@ -587,8 +585,8 @@ describe("WP-07 Opportunity and Article detail pages", () => {
       }),
     );
 
-    expect(markup).not.toContain("Last Collected");
-    expect(markup).not.toContain("Last Verified");
+    expect(markup).not.toContain("자료 수집");
+    expect(markup).not.toContain("내용 확인");
     expect(markup).not.toContain("모집 안내");
     expect(markup).not.toContain("공식 안내");
     expect(markup).not.toContain("최근 변경 사항");
@@ -611,7 +609,7 @@ describe("WP-07 Opportunity and Article detail pages", () => {
     );
 
     expect(markup).toContain("검증할 수 없는 공식 출처");
-    expect(markup).not.toContain("지원 페이지 확인");
+    expect(markup).not.toContain("공식 지원 페이지로 이동");
     expect(markup).not.toContain('href="data:text/html,unsafe-action"');
     expect(markup).not.toContain('href="javascript:alert(1)"');
   });

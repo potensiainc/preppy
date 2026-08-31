@@ -41,14 +41,12 @@ describe("WP-09 My Preppy UI and private route", () => {
     expect(source).not.toMatch(/searchParams|userId=/);
   });
 
-  it("renders the exact empty state and accessible institution browse CTA", () => {
+  it("renders the no-follow state and accessible institution browse CTA", () => {
     const markup = renderToStaticMarkup(
       createElement(MyPreppyView, { data: emptyData() }),
     );
-    expect(markup).toContain("아직 관심기관이 없어요.");
-    expect(markup).toContain(
-      "기관을 둘러보고 업데이트 받을 곳을 등록해보세요.",
-    );
+    expect(markup).toContain("아직 관심기관이 없어요");
+    expect(markup).toContain("입학정보를 모아 보고 싶은 기관을 등록해 주세요.");
     expect(markup).toContain('href="/institutions"');
     expect(markup).toContain("기관 둘러보기");
   });
@@ -119,8 +117,8 @@ describe("WP-09 My Preppy UI and private route", () => {
     expect(markup).toContain("모집 중");
     expect(markup).toContain("2027 원아 모집");
     expect(markup).toContain("입학 설명회");
-    expect(markup).toContain("접수 마감일이 변경되었습니다.");
-    expect(markup).toContain("마지막 확인");
+    expect(markup).toContain("접수 마감일이 변경됐어요.");
+    expect(markup).toContain("내용 확인");
     expect(markup).toContain("이메일 업데이트 준비됨");
     expect(markup).not.toMatch(/실시간|발송 중|전송 완료/);
   });
@@ -143,7 +141,7 @@ describe("WP-09 My Preppy UI and private route", () => {
         onLogout: () => undefined,
       }),
     );
-    expect(anonymous).toContain("카카오로 시작하기");
+    expect(anonymous).toContain("카카오로 로그인");
     expect(anonymous).toContain('href="/auth/kakao/start"');
   });
 
@@ -158,7 +156,7 @@ describe("WP-09 My Preppy UI and private route", () => {
         onRetry: () => undefined,
       }),
     );
-    expect(initial).toContain("업데이트 받기 해제");
+    expect(initial).toContain("관심기관 해제");
     const confirming = renderToStaticMarkup(
       createElement(UnfollowPresentation, {
         state: "confirming",
@@ -169,9 +167,9 @@ describe("WP-09 My Preppy UI and private route", () => {
         onRetry: () => undefined,
       }),
     );
-    expect(confirming).toContain("정말 해제할까요?");
-    expect(confirming).toContain("해제 확인");
-    expect(confirming).toContain("취소");
+    expect(confirming).toContain("관심기관에서 해제할까요?");
+    expect(confirming).toContain("관심기관 해제");
+    expect(confirming).toContain("관심기관 유지");
 
     const committed = vi.fn();
     const fetcher = vi

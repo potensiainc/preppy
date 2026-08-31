@@ -26,44 +26,44 @@ export function AdminOperationsHealthView({
   return (
     <div className="admin-page admin-operations-page">
       <AdminPageHeader
-        kicker="Operations / Health"
-        title="Runtime health & data quality"
-        description="Inspection only. These readings report real database, queue, and canonical integrity state; this page performs no repair."
+        kicker="운영 / 시스템 상태"
+        title="시스템 상태와 데이터 품질"
+        description="조회 전용 화면이에요. 실제 데이터베이스와 대기열, 기준 데이터의 무결성 상태를 보여주며 자동 복구 작업은 수행하지 않아요."
       />
       <section aria-labelledby="runtime-health-heading">
         <div className="admin-section-heading">
-          <h2 id="runtime-health-heading">Runtime health</h2>
+          <h2 id="runtime-health-heading">시스템 상태</h2>
           <AdminStateChip>{health.status}</AdminStateChip>
         </div>
         <div className="admin-metric-grid">
           <article>
-            <p>Database</p>
+            <p>데이터베이스</p>
             <strong>{health.database.status}</strong>
           </article>
           <article>
-            <p>Pending</p>
-            <strong>{health.outbox.pending ?? "Unavailable"}</strong>
+            <p>대기</p>
+            <strong>{health.outbox.pending ?? "확인 불가"}</strong>
           </article>
           <article>
-            <p>Processing</p>
-            <strong>{health.outbox.processing ?? "Unavailable"}</strong>
+            <p>처리 중</p>
+            <strong>{health.outbox.processing ?? "확인 불가"}</strong>
           </article>
           <article>
-            <p>Failed</p>
-            <strong>{health.outbox.failed ?? "Unavailable"}</strong>
+            <p>실패</p>
+            <strong>{health.outbox.failed ?? "확인 불가"}</strong>
           </article>
           <article>
-            <p>Dead letter</p>
-            <strong>{health.outbox.deadLetter ?? "Unavailable"}</strong>
+            <p>최종 실패(Dead letter)</p>
+            <strong>{health.outbox.deadLetter ?? "확인 불가"}</strong>
           </article>
         </div>
         <p className="admin-cell-note">
-          Checked {formatAdminDate(health.checkedAt)}
+          점검 시각 {formatAdminDate(health.checkedAt)}
         </p>
       </section>
       <section aria-labelledby="operational-signals-heading">
         <div className="admin-section-heading">
-          <h2 id="operational-signals-heading">Operational signals</h2>
+          <h2 id="operational-signals-heading">운영 지표</h2>
           <AdminStateChip>
             {operational === null || operational === undefined
               ? "UNAVAILABLE"
@@ -72,21 +72,21 @@ export function AdminOperationsHealthView({
         </div>
         {operational === null || operational === undefined ? (
           <p className="admin-cell-note">
-            The read-only operational snapshot could not be evaluated safely.
+            운영 현황을 평가하지 못했어요. 잠시 후 새로고침해 주세요.
           </p>
         ) : (
           <>
             <div className="admin-metric-grid">
               <article>
-                <p>Worker lag</p>
+                <p>워커 지연</p>
                 <strong>
                   {operational.outbox.workerLagSeconds === null
-                    ? "No due work"
+                    ? "처리 예정 작업 없음"
                     : `${operational.outbox.workerLagSeconds}s`}
                 </strong>
               </article>
               <article>
-                <p>Stale processing</p>
+                <p>장시간 처리 중</p>
                 <strong>{operational.outbox.staleProcessing}</strong>
               </article>
               <article>
@@ -94,52 +94,52 @@ export function AdminOperationsHealthView({
                 <strong>{operational.notification.resultUnknown}</strong>
               </article>
               <article>
-                <p>Monitoring overdue</p>
+                <p>점검 기한 초과</p>
                 <strong>{operational.monitoring.overdue}</strong>
               </article>
               <article>
-                <p>Provider event failures</p>
+                <p>발송 업체 이벤트 실패</p>
                 <strong>{operational.providerEvents.failed}</strong>
               </article>
               <article>
-                <p>Provider event orphans</p>
+                <p>발송 기록과 연결되지 않은 업체 이벤트</p>
                 <strong>{operational.providerEvents.orphan}</strong>
               </article>
               <article>
-                <p>Cache failures</p>
+                <p>캐시 실패</p>
                 <strong>{operational.cacheRevalidation.failed}</strong>
               </article>
               <article>
-                <p>Cache dead letter</p>
+                <p>캐시 최종 실패</p>
                 <strong>{operational.cacheRevalidation.deadLetter}</strong>
               </article>
               <article>
-                <p>Unavailable Sources</p>
+                <p>확인 불가 출처</p>
                 <strong>{operational.monitoring.sourceUnavailable}</strong>
               </article>
             </div>
             <p className="admin-cell-note">
-              Point-in-time per query · analytics failures are best-effort and
-              not persisted.
+              각 지표는 쿼리 실행 시점의 값이에요. 분석 전송은 성공이 보장되지
+              않으며 실패 기록은 저장하지 않아요.
             </p>
           </>
         )}
       </section>
       <section aria-labelledby="data-quality-heading">
         <div className="admin-section-heading">
-          <h2 id="data-quality-heading">Data quality</h2>
+          <h2 id="data-quality-heading">데이터 품질</h2>
           <AdminStateChip>
-            {health.dataQuality.affectedRecordCount} confirmed affected ·{" "}
-            {health.dataQuality.unavailableCheckCount} unavailable checks
+            {health.dataQuality.affectedRecordCount} 건 영향 확인 ·{" "}
+            {health.dataQuality.unavailableCheckCount} 건 평가 불가
           </AdminStateChip>
         </div>
-        <AdminDataTable caption="Read-only canonical integrity warnings">
+        <AdminDataTable caption="조회 전용 기준 데이터 무결성 경고">
           <thead>
             <tr>
-              <th scope="col">Warning</th>
-              <th scope="col">Severity</th>
-              <th scope="col">Count</th>
-              <th scope="col">Bounded examples</th>
+              <th scope="col">경고</th>
+              <th scope="col">심각도</th>
+              <th scope="col">건수</th>
+              <th scope="col">일부 사례</th>
             </tr>
           </thead>
           <tbody>
@@ -150,13 +150,13 @@ export function AdminOperationsHealthView({
                 <td>
                   {warning.evaluationStatus === "AVAILABLE"
                     ? warning.count
-                    : "Evaluation unavailable"}
+                    : "평가 불가"}
                 </td>
                 <td>
                   {warning.evaluationStatus === "UNAVAILABLE"
-                    ? "This check could not be evaluated safely."
+                    ? "이 항목을 평가하지 못했어요."
                     : warning.details.length === 0
-                      ? "No affected records"
+                      ? "영향받은 기록 없음"
                       : warning.details
                           .map(
                             (item) =>

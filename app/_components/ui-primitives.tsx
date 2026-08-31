@@ -34,8 +34,8 @@ export function SectionHeader({
 }
 
 export function EmptyState({
-  title = "아직 공개된 정보가 없습니다.",
-  description = "공식 정보를 확인해 차분히 정리하고 있습니다.",
+  title = "PREPPY에 공개된 정보가 없어요",
+  description = "해당 기관의 공식 안내에서 필요한 정보를 확인해 주세요.",
 }: {
   title?: string;
   description?: string;
@@ -61,15 +61,15 @@ export function Pagination({
   return (
     <nav className="pagination" aria-label="페이지 이동">
       {pagination.page > 1 ? (
-        <Link href={hrefForPage(pagination.page - 1)}>이전</Link>
+        <Link href={hrefForPage(pagination.page - 1)}>이전 페이지</Link>
       ) : (
-        <span aria-disabled="true">이전</span>
+        <span aria-disabled="true">이전 페이지</span>
       )}
       <span aria-current="page">{pagination.page}페이지</span>
       {pagination.hasNext ? (
-        <Link href={hrefForPage(pagination.page + 1)}>다음</Link>
+        <Link href={hrefForPage(pagination.page + 1)}>다음 페이지</Link>
       ) : (
-        <span aria-disabled="true">다음</span>
+        <span aria-disabled="true">다음 페이지</span>
       )}
     </nav>
   );

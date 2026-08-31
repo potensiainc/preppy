@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 type FollowContext = "INSTITUTION" | "ARTICLE" | "OPPORTUNITY";
@@ -150,28 +151,33 @@ export function FollowCtaPresentation({
     return (
       <>
         <p className="follow-cta__committed" role="status">
-          업데이트 받는 중
+          관심기관 등록됨
         </p>
-        <p className="follow-cta__hint">
-          이 기관이 관심기관으로 등록되어 있습니다.
-        </p>
-        <a href="/my-preppy">My Preppy에서 관리하기</a>
+        <p className="follow-cta__hint">이 기관을 관심기관으로 등록했어요.</p>
+        <a href="/my-preppy">내 프레피에서 관리하기</a>
       </>
     );
   }
 
   if (state === "unavailable") {
-    return null;
+    return (
+      <>
+        <p className="follow-cta__error" role="alert">
+          지금은 이 기관을 관심기관으로 등록할 수 없어요.
+        </p>
+        <Link href="/institutions">다른 기관 찾기</Link>
+      </>
+    );
   }
 
   if (state === "error") {
     return (
       <>
         <p className="follow-cta__error" role="alert">
-          관심기관 상태를 확인하거나 요청을 완료하지 못했습니다.
+          관심기관 상태나 등록 결과를 확인하지 못했어요. 다시 확인해 주세요.
         </p>
         <button type="button" onClick={onRetry}>
-          다시 시도
+          관심기관 상태 다시 확인
         </button>
       </>
     );
@@ -184,17 +190,19 @@ export function FollowCtaPresentation({
         {state === "loading"
           ? "관심기관 상태 확인 중…"
           : state === "submitting"
-            ? "처리 중…"
-            : label}
+            ? "등록 요청 중…"
+            : state === "anonymous"
+              ? "로그인 후 관심기관 등록"
+              : label}
       </button>
       <p className="follow-cta__hint" aria-live="polite">
         {state === "loading"
-          ? "현재 관심기관 상태를 안전하게 확인하고 있습니다."
+          ? "관심기관 등록 여부를 확인하고 있어요."
           : state === "anonymous"
-            ? "카카오 로그인 후 알림 설정을 이어갈 수 있습니다."
+            ? "카카오 로그인 후 관심기관 등록을 이어갈 수 있어요."
             : state === "available"
-              ? "관심기관으로 등록한 뒤 My Preppy에서 관리할 수 있습니다."
-              : "요청 결과를 확인하고 있습니다."}
+              ? "등록하면 내 프레피에서 이 기관의 입학정보를 모아 볼 수 있어요."
+              : "등록 결과를 확인하고 있어요."}
       </p>
     </>
   );
@@ -207,7 +215,7 @@ export function FollowCta({
   articleId,
   opportunityId,
   followable = true,
-  label = "업데이트 받기",
+  label = "관심기관 등록",
   onAnalyticsAction,
 }: FollowCtaTarget & { label?: string; onAnalyticsAction?: () => void }) {
   const targetKey = JSON.stringify([
@@ -287,7 +295,7 @@ export function FollowCta({
     setReloadKey((key) => key + 1);
   }
 
-  if (state === "unavailable") return null;
+  if (!followable) return null;
 
   return (
     <div

@@ -13,7 +13,7 @@ export function ArticleEditorToolbar({ editor }: Readonly<{ editor: Editor }>) {
   const link = () => {
     const previous = editor.getAttributes("link").href as string | undefined;
     const href = window.prompt(
-      "HTTP(S) or approved PREPPY path",
+      "HTTP(S) 주소나 허용된 PREPPY 경로를 입력해 주세요.",
       previous ?? "",
     );
     if (href === null) return;
@@ -22,7 +22,7 @@ export function ArticleEditorToolbar({ editor }: Readonly<{ editor: Editor }>) {
   };
   const actions: readonly ToolbarAction[] = [
     {
-      label: "Paragraph",
+      label: "문단",
       active: editor.isActive("paragraph"),
       run: () => void editor.chain().focus().setParagraph().run(),
     },
@@ -32,67 +32,67 @@ export function ArticleEditorToolbar({ editor }: Readonly<{ editor: Editor }>) {
       run: () => void editor.chain().focus().toggleHeading({ level }).run(),
     })),
     {
-      label: "Bold",
+      label: "굵게",
       active: editor.isActive("bold"),
       run: () => void editor.chain().focus().toggleBold().run(),
     },
     {
-      label: "Italic",
+      label: "기울임",
       active: editor.isActive("italic"),
       run: () => void editor.chain().focus().toggleItalic().run(),
     },
     {
-      label: "Underline",
+      label: "밑줄",
       active: editor.isActive("underline"),
       run: () => void editor.chain().focus().toggleUnderline().run(),
     },
     {
-      label: "Strike",
+      label: "취소선",
       active: editor.isActive("strike"),
       run: () => void editor.chain().focus().toggleStrike().run(),
     },
     {
-      label: "Bullets",
+      label: "글머리 기호",
       active: editor.isActive("bulletList"),
       run: () => void editor.chain().focus().toggleBulletList().run(),
     },
     {
-      label: "Numbers",
+      label: "번호 목록",
       active: editor.isActive("orderedList"),
       run: () => void editor.chain().focus().toggleOrderedList().run(),
     },
     {
-      label: "Quote",
+      label: "인용문",
       active: editor.isActive("blockquote"),
       run: () => void editor.chain().focus().toggleBlockquote().run(),
     },
     {
-      label: "Code",
+      label: "코드",
       active: editor.isActive("code"),
       run: () => void editor.chain().focus().toggleCode().run(),
     },
     {
-      label: "Code block",
+      label: "코드 블록",
       active: editor.isActive("codeBlock"),
       run: () => void editor.chain().focus().toggleCodeBlock().run(),
     },
     {
-      label: "Rule",
+      label: "구분선",
       run: () => void editor.chain().focus().setHorizontalRule().run(),
     },
-    { label: "Link", active: editor.isActive("link"), run: link },
+    { label: "링크 추가", active: editor.isActive("link"), run: link },
     {
-      label: "Unlink",
+      label: "링크 제거",
       disabled: !editor.isActive("link"),
       run: () => void editor.chain().focus().unsetLink().run(),
     },
     {
-      label: "Undo",
+      label: "실행 취소",
       disabled: !editor.can().chain().focus().undo().run(),
       run: () => void editor.chain().focus().undo().run(),
     },
     {
-      label: "Redo",
+      label: "다시 실행",
       disabled: !editor.can().chain().focus().redo().run(),
       run: () => void editor.chain().focus().redo().run(),
     },
@@ -102,7 +102,7 @@ export function ArticleEditorToolbar({ editor }: Readonly<{ editor: Editor }>) {
     <div
       className="admin-article-toolbar"
       role="toolbar"
-      aria-label="Article formatting"
+      aria-label="아티클 서식"
     >
       {actions.map((action) => (
         <button

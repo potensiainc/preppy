@@ -314,7 +314,7 @@ describe("WP-11 Admin Monitoring UI", () => {
       }),
     );
 
-    expect(markup).toContain("Monitoring queue");
+    expect(markup).toContain("모니터링 대기열");
     expect(markup).toContain("OVERDUE");
     expect(markup).toContain("P0 ACTIVE");
     expect(markup).toContain(`href="${queueRow.detailHref}"`);
@@ -322,16 +322,16 @@ describe("WP-11 Admin Monitoring UI", () => {
     expect(markup).toContain('target="_blank"');
     expect(markup).toContain('rel="noopener noreferrer"');
     for (const label of [
-      "Due state",
-      "Priority",
-      "Target type",
-      "Binding role",
-      "Source lifecycle",
+      "점검 기한 상태",
+      "우선순위",
+      "대상 유형",
+      "연결 역할",
+      "출처 상태 관리",
     ]) {
       expect(markup).toContain(label);
     }
     expect(markup).not.toContain("truthMode filter");
-    expect(markup).toContain("Next queue page");
+    expect(markup).toContain("다음 대기열 페이지");
     expect(markup).toContain("dueState=OVERDUE");
     expect(markup).toContain("cursor=eyJ2IjoxfQ");
   });
@@ -346,27 +346,25 @@ describe("WP-11 Admin Monitoring UI", () => {
       createElement(detail.MonitoringDetail, { detail: nativeDetail }),
     );
 
-    expect(markup).toContain("Current truth");
-    expect(markup).toContain("Latest outcome");
+    expect(markup).toContain("현재 기준 정보");
+    expect(markup).toContain("최근 수집 결과");
     expect(markup).toContain("CHANGED");
-    expect(markup).toContain("No change");
-    expect(markup).toContain("Confirm no change");
+    expect(markup).toContain("변경 없음");
+    expect(markup).toContain("변경 없음 기록");
     expect(markup).toMatch(
       /<textarea(?=[^>]*name="note")(?=[^>]*maxLength="500")[^>]*>/,
     );
-    expect(markup).toContain("Change found");
+    expect(markup).toContain("변경 내용 등록");
     expect(markup).toMatch(/<option value="OPEN" selected="">OPEN<\/option>/);
     expect(markup).toContain('name="targetAudience"');
     expect(markup).toContain('value="Families"');
-    expect(markup).toContain("Source unavailable");
-    expect(markup).toContain("Bind source");
-    expect(markup).toContain("Unbind source");
-    expect(markup).toContain("URL correction");
-    expect(markup).toContain("Source replacement");
-    expect(markup).toContain("same official provenance");
-    expect(markup).toContain(
-      "Historical Evidence remains attached to the old Source",
-    );
+    expect(markup).toContain("출처 확인 실패");
+    expect(markup).toContain("출처 연결");
+    expect(markup).toContain("출처 연결 해제");
+    expect(markup).toContain("URL 수정");
+    expect(markup).toContain("출처 교체");
+    expect(markup).toContain("같은 공식 출처");
+    expect(markup).toContain("기존 근거 자료는 이전 출처에 그대로 남아요");
     expect(markup).toContain('value="CREATE"');
     expect(markup).toContain('value="REUSE"');
     for (const confirmationName of [
@@ -415,7 +413,7 @@ describe("WP-11 Admin Monitoring UI", () => {
         invalidFilter: true,
       }),
     );
-    expect(markup).toContain("Filters could not be applied");
+    expect(markup).toContain("필터를 적용하지 못했어요");
     expect(markup).toContain('href="/admin/monitoring"');
     expect(markup).not.toContain("VALIDATION_ERROR");
     expect(markup).not.toContain("<table");

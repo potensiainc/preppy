@@ -64,12 +64,12 @@ describe("WP-16A Admin Operations observability", () => {
       }),
     );
     for (const label of [
-      "Worker lag",
-      "Stale processing",
+      "워커 지연",
+      "장시간 처리 중",
       "RESULT UNKNOWN",
-      "Monitoring overdue",
-      "Provider event failures",
-      "Cache failures",
+      "점검 기한 초과",
+      "발송 업체 이벤트 실패",
+      "캐시 실패",
     ]) {
       expect(markup).toContain(label);
     }

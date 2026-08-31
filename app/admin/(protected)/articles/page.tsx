@@ -30,30 +30,30 @@ export function AdminArticleListView({
   return (
     <div className="admin-page admin-catalog-page">
       <AdminPageHeader
-        kicker="Inspection / Articles"
-        title="Article ledger"
-        description="Publication identity and relation coverage. Body content and editorial controls stay outside this operational surface."
+        kicker="조회 / 아티클"
+        title="아티클 목록"
+        description="발행 상태와 연결 정보를 확인할 수 있어요. 본문 편집은 각 아티클의 편집 화면에서 진행해 주세요."
       />
       <p>
-        <Link href="/admin/articles/new">New Article</Link>
+        <Link href="/admin/articles/new">새 아티클</Link>
       </p>
       <section aria-labelledby="article-catalog-heading">
         <div className="admin-section-heading">
-          <h2 id="article-catalog-heading">Publication records</h2>
-          <AdminStateChip>{data.pagination.total} records</AdminStateChip>
+          <h2 id="article-catalog-heading">발행 기록</h2>
+          <AdminStateChip>{data.pagination.total} 건</AdminStateChip>
         </div>
         {data.items.length === 0 ? (
-          <AdminEmptyState>No Articles match these filters.</AdminEmptyState>
+          <AdminEmptyState>조건에 맞는 아티클이 없어요.</AdminEmptyState>
         ) : (
-          <AdminDataTable caption="Article publication registry">
+          <AdminDataTable caption="아티클 발행 목록">
             <thead>
               <tr>
-                <th scope="col">Article</th>
-                <th scope="col">Type</th>
-                <th scope="col">Category</th>
-                <th scope="col">Status</th>
-                <th scope="col">Published</th>
-                <th scope="col">Relations</th>
+                <th scope="col">아티클</th>
+                <th scope="col">유형</th>
+                <th scope="col">분류</th>
+                <th scope="col">상태</th>
+                <th scope="col">발행</th>
+                <th scope="col">연결</th>
               </tr>
             </thead>
             <tbody>
@@ -70,8 +70,8 @@ export function AdminArticleListView({
                   <td>{formatAdminCode(item.status)}</td>
                   <td>{formatAdminDate(item.publishedAt)}</td>
                   <td>
-                    {item.institutionRelationCount} institutions ·{" "}
-                    {item.opportunityRelationCount} opportunities
+                    {item.institutionRelationCount} 기관 ·{" "}
+                    {item.opportunityRelationCount} 입학정보
                   </td>
                 </tr>
               ))}

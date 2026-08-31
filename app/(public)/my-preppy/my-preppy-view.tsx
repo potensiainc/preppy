@@ -9,6 +9,7 @@ import type {
   MyPreppyData,
   MyPreppyOpportunitySummary,
 } from "@/src/modules/my-preppy/query.server";
+import { publicProse } from "@/src/modules/public/ux-writing";
 
 const categoryLabels = {
   ENGLISH_KINDERGARTEN: "영어유치원",
@@ -17,7 +18,7 @@ const categoryLabels = {
 } as const;
 
 function regionLabel(region: string | null): string {
-  if (region === null) return "지역 정보 확인 중";
+  if (region === null) return "지역 미확인";
   if (region === "SEOUL" || region === "KR-11") return "서울";
   return region;
 }
@@ -57,16 +58,17 @@ export function MyPreppyView({ data }: { data: MyPreppyData }) {
     <div className="page-container my-preppy-page">
       <header className="my-preppy-page__intro">
         <div>
-          <p className="eyebrow">My PREPPY</p>
+          <p className="eyebrow">관심기관</p>
           <h1>내 프레피</h1>
           <p>
-            관심기관의 현재 입학정보와 업데이트 준비 상태를 한곳에서 확인하세요.
+            관심기관의 입학정보와 이메일 수신 준비 상태를 한곳에서 확인할 수
+            있어요.
           </p>
         </div>
         <div
           className={`my-preppy-readiness my-preppy-readiness--${data.readiness.ready ? "ready" : "attention"}`}
         >
-          <span>이메일 업데이트 상태</span>
+          <span>이메일 수신 준비 상태</span>
           <strong>{data.readiness.label}</strong>
         </div>
       </header>
@@ -76,8 +78,8 @@ export function MyPreppyView({ data }: { data: MyPreppyData }) {
           className="empty-state"
           aria-labelledby="my-preppy-empty-title"
         >
-          <h2 id="my-preppy-empty-title">아직 관심기관이 없어요.</h2>
-          <p>기관을 둘러보고 업데이트 받을 곳을 등록해보세요.</p>
+          <h2 id="my-preppy-empty-title">아직 관심기관이 없어요</h2>
+          <p>입학정보를 모아 보고 싶은 기관을 등록해 주세요.</p>
           <Link
             className="button-link button-link--primary"
             href="/institutions"
@@ -103,7 +105,7 @@ export function MyPreppyView({ data }: { data: MyPreppyData }) {
                   현재 입학 상태 ·{" "}
                   {card.currentAdmissionsState
                     ? opportunityStateLabel(card.currentAdmissionsState)
-                    : "확인 중"}
+                    : "미확인"}
                 </p>
                 <p
                   className={`my-preppy-card__readiness my-preppy-card__readiness--${card.readiness.ready ? "ready" : "attention"}`}
@@ -132,7 +134,7 @@ export function MyPreppyView({ data }: { data: MyPreppyData }) {
                         <li
                           key={`${change.opportunityId}-${change.publishedAt}`}
                         >
-                          <span>{change.summary}</span>
+                          <span>{publicProse(change.summary)}</span>
                           <time dateTime={change.publishedAt}>
                             {formatPublicDate(change.publishedAt)}
                           </time>
@@ -143,14 +145,14 @@ export function MyPreppyView({ data }: { data: MyPreppyData }) {
                 ) : null}
                 {card.lastVerifiedAt ? (
                   <p className="verified-at">
-                    마지막 확인{" "}
+                    내용 확인{" "}
                     <time dateTime={card.lastVerifiedAt}>
                       {formatPublicDate(card.lastVerifiedAt)}
                     </time>
                   </p>
                 ) : (
                   <p className="verified-at">
-                    공개된 최신 입학정보를 확인 중입니다.
+                    입학정보의 내용 확인 시점이 등록되지 않았어요.
                   </p>
                 )}
               </div>

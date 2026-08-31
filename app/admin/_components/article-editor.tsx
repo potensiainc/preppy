@@ -14,7 +14,7 @@ import type {
 } from "@/src/modules/admin/read-model/contracts";
 
 const staleMessage =
-  "다른 운영자가 먼저 변경했을 수 있습니다. 최신 데이터를 다시 확인한 뒤 변경 여부를 판단해주세요.";
+  "다른 운영자가 먼저 변경했을 수 있어요. 최신 데이터를 다시 불러와 확인한 뒤 수정해 주세요.";
 
 type Candidate = Readonly<{
   title: string;
@@ -57,7 +57,9 @@ export function AdminNewArticleEditor() {
           }),
         });
         if (!response.ok) {
-          setMessage("Draft creation was rejected.");
+          setMessage(
+            "초안을 만들지 못했어요. 입력 내용을 확인한 뒤 다시 시도해 주세요.",
+          );
           return;
         }
         const payload = (await response.json()) as {
@@ -67,15 +69,15 @@ export function AdminNewArticleEditor() {
       }}
     >
       <label>
-        Slug
+        주소 이름(slug)
         <input name="slug" required pattern="[a-z0-9]+(?:-[a-z0-9]+)*" />
       </label>
       <label>
-        Title
+        제목
         <input name="title" required maxLength={160} />
       </label>
       <label>
-        Type
+        유형
         <select name="type" defaultValue="GUIDE">
           <option>GUIDE</option>
           <option>UPDATE</option>
@@ -83,7 +85,7 @@ export function AdminNewArticleEditor() {
         </select>
       </label>
       <label>
-        Category
+        분류
         <select name="category" defaultValue="ADMISSIONS_GENERAL">
           <option>ADMISSIONS_GENERAL</option>
           <option>ENGLISH_KINDERGARTEN</option>
@@ -91,7 +93,7 @@ export function AdminNewArticleEditor() {
           <option>INTERNATIONAL_SCHOOL</option>
         </select>
       </label>
-      <button type="submit">Create Draft</button>
+      <button type="submit">초안 만들기</button>
       <p className="admin-form-status" role="status">
         {message}
       </p>
@@ -190,13 +192,13 @@ export function AdminArticleEditor({
     }
     if (!response.ok) {
       setMessage(
-        "The server rejected this candidate. Review the marked fields and current lifecycle state.",
+        "입력 내용을 저장하지 못했어요. 입력값과 현재 발행 상태를 확인해 주세요.",
       );
       return;
     }
     const payload = (await response.json()) as { data: { updatedAt: string } };
     setUpdatedAt(payload.data.updatedAt);
-    setMessage("Persisted through the Article command boundary.");
+    setMessage("입력 내용을 저장했어요.");
     router.refresh();
   };
   const set = <K extends keyof typeof fields>(
@@ -208,14 +210,14 @@ export function AdminArticleEditor({
     <div className="admin-article-workbench">
       <div className="admin-article-form-grid">
         <label>
-          Title
+          제목
           <input
             value={fields.title}
             onChange={(event) => set("title", event.target.value)}
           />
         </label>
         <label>
-          Type
+          유형
           <select
             value={fields.type}
             onChange={(event) =>
@@ -228,7 +230,7 @@ export function AdminArticleEditor({
           </select>
         </label>
         <label>
-          Category
+          분류
           <select
             value={fields.category}
             onChange={(event) =>
@@ -242,28 +244,28 @@ export function AdminArticleEditor({
           </select>
         </label>
         <label>
-          Excerpt
+          요약
           <textarea
             value={fields.excerpt}
             onChange={(event) => set("excerpt", event.target.value)}
           />
         </label>
         <label>
-          SEO title
+          검색 제목
           <input
             value={fields.seoTitle}
             onChange={(event) => set("seoTitle", event.target.value)}
           />
         </label>
         <label>
-          SEO description
+          검색 설명
           <textarea
             value={fields.seoDescription}
             onChange={(event) => set("seoDescription", event.target.value)}
           />
         </label>
         <label>
-          Canonical URL
+          대표 URL
           <input
             type="url"
             value={fields.canonicalUrl}
@@ -271,7 +273,7 @@ export function AdminArticleEditor({
           />
         </label>
         <label>
-          Featured image URL
+          대표 이미지 URL
           <input
             type="url"
             value={fields.featuredImageUrl}
@@ -279,7 +281,7 @@ export function AdminArticleEditor({
           />
         </label>
         <label>
-          Featured image alt
+          대표 이미지 대체 텍스트
           <input
             value={fields.featuredImageAlt}
             onChange={(event) => set("featuredImageAlt", event.target.value)}
@@ -291,7 +293,7 @@ export function AdminArticleEditor({
             checked={fields.robotsIndex}
             onChange={(event) => set("robotsIndex", event.target.checked)}
           />
-          Index
+          검색 색인 허용
         </label>
         <label className="admin-article-check">
           <input
@@ -299,7 +301,7 @@ export function AdminArticleEditor({
             checked={fields.robotsFollow}
             onChange={(event) => set("robotsFollow", event.target.checked)}
           />
-          Follow
+          검색 로봇 링크 추적 허용
         </label>
       </div>
       <section
@@ -307,21 +309,21 @@ export function AdminArticleEditor({
         aria-labelledby="article-body-heading"
       >
         <div className="admin-section-heading">
-          <h2 id="article-body-heading">Body candidate</h2>
+          <h2 id="article-body-heading">본문 편집</h2>
           <div className="admin-article-mode">
             <button
               type="button"
               aria-pressed={mode === "visual"}
               onClick={() => switchMode("visual")}
             >
-              Visual
+              화면 편집
             </button>
             <button
               type="button"
               aria-pressed={mode === "source"}
               onClick={() => switchMode("source")}
             >
-              Source
+              HTML 편집
             </button>
           </div>
         </div>
@@ -333,23 +335,20 @@ export function AdminArticleEditor({
         )}
         {mode === "source" && (
           <label>
-            Sanitized-compatible HTML
+            본문 HTML
             <textarea
               className="admin-article-source"
               value={sourceHtml}
               onChange={(event) => setSourceHtml(event.target.value)}
             />
-            <small>
-              The server may remove unsafe markup when this candidate is
-              persisted.
-            </small>
+            <small>저장할 때 안전하지 않은 HTML 요소가 제거될 수 있어요.</small>
           </label>
         )}
       </section>
       <div className="admin-article-submit-actions">
         {article.status !== "PUBLISHED" && article.status !== "ARCHIVED" ? (
           <button type="button" onClick={() => void submit("SAVE_DRAFT")}>
-            Save Draft
+            초안 저장
           </button>
         ) : null}
         {article.status !== "ARCHIVED" ? (
@@ -358,9 +357,7 @@ export function AdminArticleEditor({
             type="button"
             onClick={() => void submit("PUBLISH")}
           >
-            {article.status === "PUBLISHED"
-              ? "Publish Changes"
-              : "Publish Article"}
+            {article.status === "PUBLISHED" ? "변경 내용 발행" : "아티클 발행"}
           </button>
         ) : null}
       </div>
@@ -369,7 +366,7 @@ export function AdminArticleEditor({
       </p>
       {isStale ? (
         <button type="button" onClick={() => window.location.reload()}>
-          Reload latest data
+          최신 데이터 다시 불러오기
         </button>
       ) : null}
       <ArticleRelations

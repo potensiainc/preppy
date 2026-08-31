@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const staleMessage =
-  "다른 운영자가 먼저 변경했을 수 있습니다. 최신 데이터를 다시 확인한 뒤 변경 여부를 판단해주세요.";
+  "다른 운영자가 먼저 변경했을 수 있어요. 최신 데이터를 다시 불러와 확인한 뒤 수정해 주세요.";
 
 export function ArticleLifecycleActions({
   articleId,
@@ -37,13 +37,13 @@ export function ArticleLifecycleActions({
       return;
     }
     if (!response.ok) {
-      setMessage("The lifecycle command was rejected. Review current state.");
+      setMessage("상태를 변경하지 못했어요. 현재 발행 상태를 확인해 주세요.");
       return;
     }
     const payload = (await response.json()) as { data: { updatedAt: string } };
     onUpdated(payload.data.updatedAt);
     setIsStale(false);
-    setMessage("Command completed.");
+    setMessage("요청을 반영했어요.");
     router.refresh();
   };
 
@@ -52,11 +52,11 @@ export function ArticleLifecycleActions({
       className="admin-article-lifecycle"
       aria-labelledby="article-lifecycle-heading"
     >
-      <h2 id="article-lifecycle-heading">Lifecycle controls</h2>
+      <h2 id="article-lifecycle-heading">발행 상태 관리</h2>
       <div className="admin-article-lifecycle__actions">
         {status === "PUBLISHED" && (
           <button type="button" onClick={() => void command("unpublish", {})}>
-            Unpublish
+            발행 취소
           </button>
         )}
         {status !== "ARCHIVED" && (
@@ -65,13 +65,13 @@ export function ArticleLifecycleActions({
             onClick={() => {
               if (
                 window.confirm(
-                  "Archive this Article? This is an explicit lifecycle action.",
+                  "이 아티클을 보관 처리할까요? 보관 상태로 변경돼요.",
                 )
               )
                 void command("archive", {});
             }}
           >
-            Archive
+            보관 처리
           </button>
         )}
       </div>
@@ -82,7 +82,7 @@ export function ArticleLifecycleActions({
             void command("change-slug", { newSlug });
           }}
         >
-          <label htmlFor="article-new-slug">Change slug</label>
+          <label htmlFor="article-new-slug">주소 이름 변경</label>
           <input
             id="article-new-slug"
             value={newSlug}
@@ -91,10 +91,10 @@ export function ArticleLifecycleActions({
             pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
           />
           <p className="admin-warning">
-            A published history change creates a permanent redirect registry
-            entry.
+            발행 이력이 있는 아티클의 주소 이름을 바꾸면 영구 리디렉션이
+            등록돼요.
           </p>
-          <button type="submit">Change slug</button>
+          <button type="submit">주소 이름 변경</button>
         </form>
       )}
       <p className="admin-form-status" role="status" aria-live="polite">
@@ -102,7 +102,7 @@ export function ArticleLifecycleActions({
       </p>
       {isStale ? (
         <button type="button" onClick={() => window.location.reload()}>
-          Reload latest data
+          최신 데이터 다시 불러오기
         </button>
       ) : null}
     </section>

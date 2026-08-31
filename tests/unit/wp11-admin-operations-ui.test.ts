@@ -190,9 +190,9 @@ describe("WP-11/WP-12B Operations UI", () => {
       ),
     ];
     const combined = markups.join("\n");
-    expect(combined).toContain("Inspection only");
+    expect(combined).toContain("조회 전용");
     expect(combined).toContain("DEAD LETTER");
-    expect(combined).toContain("Data quality");
+    expect(combined).toContain("데이터 품질");
     expect(combined).not.toMatch(/<button|<form|action=|method=/i);
     expect(combined).not.toMatch(
       /recipient@example|recipientHash|providerMessageId|payload|body context|SELECT secret|stack trace/i,
@@ -222,8 +222,8 @@ describe("WP-11/WP-12B Operations UI", () => {
       }),
     );
     expect(markup).toContain("UNAVAILABLE");
-    expect(markup).toContain("Evaluation unavailable");
-    expect(markup).toContain("could not be evaluated safely");
+    expect(markup).toContain("평가 불가");
+    expect(markup).toContain("평가하지 못했어요");
     expect(markup).not.toMatch(/<button|<form|secret|sql|stack/i);
   });
 

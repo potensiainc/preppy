@@ -42,6 +42,15 @@ function guide(summary: string, collapsible = false) {
 }
 
 describe("admissions readable topic sections", () => {
+  it("keeps Donggwang's three-percent follow-up under twins, not the ordinary cohort quota", () => {
+    const $ = guide(main("donggwang").summary);
+    expect($("[data-admission-topic='쌍둥이 지원']").text()).toContain(
+      "3%를 초과하면 추가추첨으로 정원 외 입학자 3명을 선정해요.",
+    );
+    expect($("[data-admission-topic='모집 인원']").text()).not.toContain(
+      "3%를 초과하면",
+    );
+  });
   it("separates Maewon quota, documents, application, lottery and registration instead of leaving combined headings", () => {
     const $ = guide(main("maewon").summary);
     for (const heading of [
@@ -70,7 +79,7 @@ describe("admissions readable topic sections", () => {
       "2025년 11월 7일 09:00부터 12일 16:30까지",
     );
     expect($("[data-admission-topic='등록']").text()).toContain(
-      "중복등록은 모두 취소된다",
+      "중복등록은 모두 취소돼요",
     );
     expect($("[data-admission-topic='대기자·결원 충원']").text()).toContain(
       "500%",
@@ -93,17 +102,17 @@ describe("admissions readable topic sections", () => {
       "2025학년도 기준 1분기 수업료는 2,520,000원",
     );
     expect($("[data-admission-topic='교육비']").text()).toContain(
-      "2026학년도 금액은 변동될 수 있다",
+      "2026학년도 금액은 변동될 수 있어요",
     );
     expect($("[data-admission-topic='통학']").text()).toContain(
-      "따로 받지 않는다고 안내한다",
+      "따로 받지 않는다고 안내해요",
     );
     expect($("[data-admission-topic='납부 금액·방법']").text()).toContain(
       "학교 지정 금융기관",
     );
     expect($("details:not([open])").text()).not.toContain("허위 사실");
     expect($("[data-admission-topic='유의사항']").text()).toContain(
-      "입학허가가 취소된다",
+      "입학허가가 취소돼요",
     );
     expect($("li").length).toBeGreaterThan(10);
   });
@@ -160,7 +169,7 @@ describe("admissions readable topic sections", () => {
     expect($("body").text()).not.toContain(";");
     expect($("body").text()).not.toContain("지원 대상 / 자격");
     expect($("body").text()).toContain(
-      "취학유예 및 조기입학자는 증빙이 필요합니다.",
+      "취학유예 및 조기입학자는 증빙이 필요해요.",
     );
   });
 
@@ -175,7 +184,7 @@ describe("admissions readable topic sections", () => {
     expect($("body").text()).toContain("https://school.test/guide?a=1;b=2");
     expect($("body").text()).toContain("3.5km");
     expect($("[data-admission-topic='교육비']").text()).toContain(
-      "2026학년도에는 변동될 수 있다.",
+      "2026학년도에는 변동될 수 있어요.",
     );
   });
 
@@ -185,7 +194,7 @@ describe("admissions readable topic sections", () => {
       "2019년 출생 적령아동",
     );
     expect($("[data-admission-topic='지원 자격']").text()).toContain(
-      "취학의무 유예·전년도 미취학·조기입학 희망 아동이 대상이다.",
+      "취학의무 유예·전년도 미취학·조기입학 희망 아동이 대상이에요.",
     );
     expect($("[data-admission-topic='지원 대상']").text()).not.toContain(
       "취학의무 유예",
@@ -210,10 +219,10 @@ describe("admissions readable topic sections", () => {
   it("does not make a general undersubscription rule exclusive to twins after resetting paragraph context", () => {
     const $ = guide(main("maewon").summary);
     expect($("[data-admission-topic='쌍둥이 지원']").text()).not.toContain(
-      "미달이면 전원 당첨 후 학교장 방식으로 추가모집한다.",
+      "미달이면 전원 당첨 후 학교장 방식으로 추가모집해요.",
     );
     expect($("[data-admission-topic='추첨']").text()).toContain(
-      "미달이면 전원 당첨 후 학교장 방식으로 추가모집한다.",
+      "미달이면 전원 당첨 후 학교장 방식으로 추가모집해요.",
     );
   });
 
@@ -280,7 +289,7 @@ describe("admissions readable topic sections", () => {
   it("keeps Choongam's waitlist response deadline with the offer, not general registration", () => {
     const $ = guide(main("choongam").summary);
     expect($("[data-admission-topic='대기자·결원 충원']").text()).toContain(
-      "다음 날 17시까지 미등록하면 포기로 간주한다.",
+      "다음 날 17시까지 미등록하면 포기로 간주해요.",
     );
     expect($("[data-admission-topic='등록']").text()).not.toContain(
       "다음 날 17시까지",
@@ -293,7 +302,7 @@ describe("admissions readable topic sections", () => {
       "724,000원으로 2025년 기준",
     );
     expect($("[data-admission-topic='교육비']").text()).toContain(
-      "2026학년도에는 변동 가능하다.",
+      "2026학년도에는 변동 가능해요.",
     );
     expect($("[data-admission-topic='등록']").text()).not.toContain(
       "724,000원",
@@ -311,7 +320,7 @@ describe("admissions readable topic sections", () => {
     ]);
     const $ = guide(main("yooseok").summary);
     expect($("[data-admission-topic='결과 발표']").text()).toContain(
-      "개별 문자와 학교 홈페이지로 결과를 알린다.",
+      "개별 문자와 학교 홈페이지로 결과를 알려요.",
     );
   });
 
@@ -323,8 +332,8 @@ describe("admissions readable topic sections", () => {
       );
       expect($("[data-admission-topic='등록']").text(), slug).toContain(
         slug === "yale"
-          ? "등록한 모든 학교의 입학이 취소된다."
-          : "중복등록은 모두 취소된다.",
+          ? "등록한 모든 학교의 입학이 취소돼요."
+          : "중복등록은 모두 취소돼요.",
       );
     }
     const $ = guide(main("cheongwon").summary);
@@ -332,7 +341,7 @@ describe("admissions readable topic sections", () => {
       "2025학년도 기준 입학금 100만원, 분기 수업료 178만원",
     );
     expect($("[data-admission-topic='교육비']").text()).toContain(
-      "2026학년도에는 변동될 수 있다.",
+      "2026학년도에는 변동될 수 있어요.",
     );
   });
 });

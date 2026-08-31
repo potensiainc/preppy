@@ -28,29 +28,27 @@ export function AdminNotificationListView({
   return (
     <div className="admin-page admin-catalog-page">
       <AdminPageHeader
-        kicker="Inspection / Notifications"
-        title="Notification ledger"
-        description="Signal identity and aggregate delivery pressure without recipient, provider, payload, or error-body disclosure."
+        kicker="조회 / 알림"
+        title="알림 기록"
+        description="알림 식별 정보와 발송 집계를 보여줘요. 수신자, 발송 업체, 페이로드, 오류 본문은 노출하지 않아요."
       />
       <section aria-labelledby="notification-catalog-heading">
         <div className="admin-section-heading">
-          <h2 id="notification-catalog-heading">Signal records</h2>
-          <AdminStateChip>{data.pagination.total} records</AdminStateChip>
+          <h2 id="notification-catalog-heading">알림 이벤트 기록</h2>
+          <AdminStateChip>{data.pagination.total} 건</AdminStateChip>
         </div>
         {data.items.length === 0 ? (
-          <AdminEmptyState>
-            No Notifications match these filters.
-          </AdminEmptyState>
+          <AdminEmptyState>조건에 맞는 알림이 없어요.</AdminEmptyState>
         ) : (
-          <AdminDataTable caption="Notification aggregate registry">
+          <AdminDataTable caption="알림 발송 집계 목록">
             <thead>
               <tr>
-                <th scope="col">Notification</th>
-                <th scope="col">Status</th>
-                <th scope="col">Signal</th>
-                <th scope="col">Opportunity</th>
-                <th scope="col">Published</th>
-                <th scope="col">Delivery pressure</th>
+                <th scope="col">알림</th>
+                <th scope="col">상태</th>
+                <th scope="col">알림 이벤트</th>
+                <th scope="col">입학정보</th>
+                <th scope="col">발행</th>
+                <th scope="col">발송 현황</th>
               </tr>
             </thead>
             <tbody>
@@ -63,14 +61,13 @@ export function AdminNotificationListView({
                     {item.opportunityId}
                     {item.opportunityChangeId === null ? null : (
                       <span className="admin-cell-note">
-                        Change {item.opportunityChangeId}
+                        변경 {item.opportunityChangeId}
                       </span>
                     )}
                   </td>
                   <td>{formatAdminDate(item.signalPublishedAt)}</td>
                   <td>
-                    {item.deliveryCount} deliveries · {item.attemptCount}{" "}
-                    attempts
+                    {item.deliveryCount} 건 발송 · {item.attemptCount} 회 시도
                   </td>
                 </tr>
               ))}

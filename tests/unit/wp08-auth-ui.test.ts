@@ -193,7 +193,7 @@ describe("WP-08 auth-aware public UI", () => {
       /cookies\(|next\/headers|drizzle|getCurrentUser/,
     );
     expect(controlSource).toContain('"use client"');
-    expect(controlSource).toContain('fetch("/api/auth/session"');
+    expect(controlSource).toContain('fetcher("/api/auth/session"');
     expect(controlSource).toContain('cache: "no-store"');
     expect(controlSource).toContain('fetcher("/api/auth/logout"');
     expect(controlSource).toContain('method: "POST"');
@@ -201,7 +201,7 @@ describe("WP-08 auth-aware public UI", () => {
     expect(controlSource).toContain("new URL(path, window.location.origin)");
     expect(controlSource).toContain('href="/my-preppy"');
     expect(controlSource).toContain("내 프레피");
-    expect(controlSource).toContain("카카오로 시작하기");
+    expect(controlSource).toContain("카카오로 로그인");
     expect(controlSource).not.toMatch(/userEmail|emailAddress|@example/);
   });
 
@@ -243,10 +243,10 @@ describe("WP-08 auth-aware public UI", () => {
     expect(markup).toContain("선택");
     expect(markup).toContain("서울국제학교");
     expect(markup).toContain(
-      "정상적으로 완료되면 이 기관도 함께 관심 등록됩니다",
+      "기본 설정을 완료하면 이 기관도 관심기관으로 등록돼요",
     );
     expect(markup).toContain(
-      "제출이 완료되기 전에는 관심기관 등록과 알림 설정이 확정되지 않습니다",
+      "저장을 완료해야 관심기관 등록과 이메일 수신 설정이 반영돼요",
     );
     expect(markup).not.toMatch(/팔로우 완료|관심기관 등록이 완료/);
   });
@@ -265,7 +265,9 @@ describe("WP-08 auth-aware public UI", () => {
     expect(source).toContain('accept: "application/json"');
     expect(source).toContain('fetch("/api/me/onboarding/complete"');
     expect(source).toContain("response.status === 409");
-    expect(source).toContain("페이지를 새로고침한 뒤 다시 동의해 주세요");
+    expect(source).toContain(
+      "페이지를 새로고침한 뒤 내용을 확인하고 다시 동의해 주세요",
+    );
     expect(source).toContain('role="status"');
     expect(source).toContain('aria-live="polite"');
   });

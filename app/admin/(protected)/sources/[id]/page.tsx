@@ -18,25 +18,25 @@ export function AdminSourceDetailView({ data }: { data: AdminSourceDTO }) {
   return (
     <div className="admin-page admin-detail-page">
       <AdminPageHeader
-        kicker="Source / Read only"
+        kicker="출처 / 조회 전용"
         title={data.sourceName}
-        description="Canonical identity, Monitoring configuration, binding coverage, and the latest safe observation projection."
+        description="출처의 기준 ID와 모니터링 설정을 확인해요. 연결 정보와 허용 범위의 최근 수집 기록도 보여줘요."
       />
       <section aria-labelledby="source-detail-heading">
         <div className="admin-section-heading">
-          <h2 id="source-detail-heading">Registry state</h2>
+          <h2 id="source-detail-heading">등록 상태</h2>
           <AdminStateChip>
             {formatAdminCode(data.lifecycleStatus)}
           </AdminStateChip>
         </div>
-        <AdminDataTable caption="Source registry state">
+        <AdminDataTable caption="출처 등록 상태">
           <tbody>
             <tr>
-              <th scope="row">Canonical ID</th>
+              <th scope="row">기준 ID</th>
               <td>{data.id}</td>
             </tr>
             <tr>
-              <th scope="row">Canonical URL</th>
+              <th scope="row">대표 URL</th>
               <td>
                 <AdminSourceUrl
                   displayUrl={data.canonicalUrl}
@@ -45,15 +45,12 @@ export function AdminSourceDetailView({ data }: { data: AdminSourceDTO }) {
               </td>
             </tr>
             {[
-              ["Type", formatAdminCode(data.sourceType)],
-              ["Authority", formatAdminCode(data.authorityLevel)],
-              ["Lifecycle", formatAdminCode(data.lifecycleStatus)],
+              ["유형", formatAdminCode(data.sourceType)],
+              ["출처 권한", formatAdminCode(data.authorityLevel)],
+              ["운영 상태", formatAdminCode(data.lifecycleStatus)],
+              ["활성 기관 연결", String(data.activeInstitutionBindingCount)],
               [
-                "Active Institution bindings",
-                String(data.activeInstitutionBindingCount),
-              ],
-              [
-                "Active Opportunity bindings",
+                "활성 입학정보 연결",
                 String(data.activeOpportunityBindingCount),
               ],
             ].map(([label, value]) => (
@@ -67,37 +64,38 @@ export function AdminSourceDetailView({ data }: { data: AdminSourceDTO }) {
       </section>
       <section aria-labelledby="source-monitor-heading">
         <div className="admin-section-heading">
-          <h2 id="source-monitor-heading">Monitoring policy</h2>
+          <h2 id="source-monitor-heading">모니터링 정책</h2>
         </div>
         {data.monitorConfig === null ? (
-          <AdminEmptyState>
-            No Monitoring configuration is registered.
-          </AdminEmptyState>
+          <AdminEmptyState>등록된 모니터링 설정이 없어요.</AdminEmptyState>
         ) : (
-          <AdminDataTable caption="Source Monitoring configuration">
+          <AdminDataTable caption="출처 모니터링 설정">
             <tbody>
               {[
                 [
-                  "Collection strategy",
+                  "수집 방식",
                   formatAdminCode(data.monitorConfig.collectionStrategy),
                 ],
                 [
-                  "Monitoring profile",
+                  "모니터링 프로필",
                   formatAdminCode(data.monitorConfig.monitoringProfile),
                 ],
                 [
-                  "Custom interval",
+                  "사용자 지정 주기",
                   data.monitorConfig.customIntervalMinutes === null
-                    ? "Default"
-                    : `${data.monitorConfig.customIntervalMinutes} minutes`,
+                    ? "기본값"
+                    : `${data.monitorConfig.customIntervalMinutes}분`,
                 ],
-                ["Seasonal", data.monitorConfig.seasonalEnabled ? "Yes" : "No"],
                 [
-                  "Browser required",
-                  data.monitorConfig.browserRequired ? "Yes" : "No",
+                  "계절별 설정",
+                  data.monitorConfig.seasonalEnabled ? "예" : "아니요",
                 ],
-                ["Maximum attempts", String(data.monitorConfig.maxAttempts)],
-                ["Enabled", data.monitorConfig.isEnabled ? "Yes" : "No"],
+                [
+                  "브라우저 필요 여부",
+                  data.monitorConfig.browserRequired ? "예" : "아니요",
+                ],
+                ["최대 시도 횟수", String(data.monitorConfig.maxAttempts)],
+                ["사용 여부", data.monitorConfig.isEnabled ? "예" : "아니요"],
               ].map(([label, value]) => (
                 <tr key={label}>
                   <th scope="row">{label}</th>
@@ -110,32 +108,32 @@ export function AdminSourceDetailView({ data }: { data: AdminSourceDTO }) {
       </section>
       <section aria-labelledby="source-observation-heading">
         <div className="admin-section-heading">
-          <h2 id="source-observation-heading">Latest observation</h2>
+          <h2 id="source-observation-heading">최근 수집 기록</h2>
         </div>
         {data.latestObservation === null ? (
-          <AdminEmptyState>No observation is available.</AdminEmptyState>
+          <AdminEmptyState>수집 기록이 없어요.</AdminEmptyState>
         ) : (
-          <AdminDataTable caption="Latest safe Source observation">
+          <AdminDataTable caption="최근 출처 수집 기록">
             <tbody>
               {[
-                ["Outcome", formatAdminCode(data.latestObservation.outcome)],
+                ["수집 결과", formatAdminCode(data.latestObservation.outcome)],
                 [
-                  "Observed",
+                  "자료 수집",
                   formatAdminDate(data.latestObservation.observedAt),
                 ],
                 [
-                  "HTTP status",
+                  "HTTP 상태",
                   data.latestObservation.httpStatus === null
-                    ? "Not available"
+                    ? "확인할 수 없음"
                     : String(data.latestObservation.httpStatus),
                 ],
                 [
-                  "Duration",
+                  "소요 시간",
                   data.latestObservation.durationMs === null
-                    ? "Not available"
+                    ? "확인할 수 없음"
                     : `${data.latestObservation.durationMs} ms`,
                 ],
-                ["Error code", data.latestObservation.errorCode ?? "None"],
+                ["오류 코드", data.latestObservation.errorCode ?? "없음"],
               ].map(([label, value]) => (
                 <tr key={label}>
                   <th scope="row">{label}</th>

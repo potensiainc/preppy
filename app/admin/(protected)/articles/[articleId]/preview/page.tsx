@@ -19,9 +19,9 @@ export function AdminArticlePreviewView({
   return (
     <article className="admin-page admin-article-preview">
       <AdminPageHeader
-        kicker="Editorial / Preview"
+        kicker="편집 / 미리보기"
         title={data.title}
-        description="Preview of the persisted sanitized Article body."
+        description="저장된 아티클 본문을 미리 보여줘요. 안전하지 않은 HTML 요소는 저장 시 제거돼요."
       />
       <ArticleProse sanitizedContentHtml={data.sanitizedContentHtml} />
     </article>

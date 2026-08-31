@@ -30,29 +30,27 @@ export function AdminOpportunityListView({
   return (
     <div className="admin-page admin-catalog-page">
       <AdminPageHeader
-        kicker="Catalog / Opportunities"
-        title="Opportunity truth index"
-        description="Server-owned truth mode, current canonical version, Source coverage, and latest verified change."
+        kicker="목록 / 입학정보"
+        title="입학정보 기준 목록"
+        description="서버가 관리하는 기준 정보 방식과 현재 버전을 확인해요. 연결된 출처와 최근 검수한 변경도 보여줘요."
       />
       <section aria-labelledby="opportunity-catalog-heading">
         <div className="admin-section-heading">
-          <h2 id="opportunity-catalog-heading">Truth index</h2>
-          <AdminStateChip>{data.pagination.total} records</AdminStateChip>
+          <h2 id="opportunity-catalog-heading">기준 정보 목록</h2>
+          <AdminStateChip>{data.pagination.total} 건</AdminStateChip>
         </div>
         {data.items.length === 0 ? (
-          <AdminEmptyState>
-            No Opportunities match these filters.
-          </AdminEmptyState>
+          <AdminEmptyState>조건에 맞는 입학정보가 없어요.</AdminEmptyState>
         ) : (
-          <AdminDataTable caption="Canonical Opportunity truth index">
+          <AdminDataTable caption="입학정보 기준 목록">
             <thead>
               <tr>
-                <th scope="col">Opportunity</th>
-                <th scope="col">Institution</th>
-                <th scope="col">Truth mode</th>
-                <th scope="col">Publication / business</th>
-                <th scope="col">Bindings</th>
-                <th scope="col">Recent change</th>
+                <th scope="col">입학정보</th>
+                <th scope="col">기관</th>
+                <th scope="col">기준 정보 방식</th>
+                <th scope="col">공개 / 진행 상태</th>
+                <th scope="col">연결</th>
+                <th scope="col">최근 변경</th>
               </tr>
             </thead>
             <tbody>
@@ -70,14 +68,14 @@ export function AdminOpportunityListView({
                     {formatAdminCode(item.publicationState)}
                     <span className="admin-cell-note">
                       {item.currentVersion === null
-                        ? "No current version"
+                        ? "현재 버전 없음"
                         : formatAdminCode(item.currentVersion.businessState)}
                     </span>
                   </td>
                   <td>{item.activeSourceBindingCount}</td>
                   <td>
                     {item.recentChange === null ? (
-                      "None"
+                      "없음"
                     ) : (
                       <>
                         {formatAdminCode(item.recentChange.changeType)}

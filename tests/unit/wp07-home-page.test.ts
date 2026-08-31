@@ -89,10 +89,9 @@ describe("WP-07 Home page", () => {
       createElement(HomePageView, { data: homePage }),
     );
 
-    expect(markup).toContain("입학정보, 아직도 일일이 찾아보고 계신가요?");
-    expect(markup).toContain(
-      "영유·사립초·국제학교 정보를 한곳에서 확인하고, 관심기관의 새로운 모집·입학정보가 생기면 프레피가 알려드려요.",
-    );
+    expect(markup).toContain('id="home-title"');
+    expect(markup).toContain("공식 출처");
+    expect(markup).not.toMatch(/프레피가 알려드려요|놓치지 않도록/);
     expect(markup).toContain('href="/institutions"');
     expect(markup).toContain("기관 둘러보기");
     expect(markup).toContain('href="/#current-opportunities"');
@@ -106,8 +105,8 @@ describe("WP-07 Home page", () => {
     expect(markup).toContain(
       'href="/institutions?category=INTERNATIONAL_SCHOOL"',
     );
-    expect(markup).toContain("영유");
-    expect(markup).toContain("사립초");
+    expect(markup).toContain("영어유치원");
+    expect(markup).toContain("사립초등학교");
     expect(markup).toContain("국제학교");
     expect(markup).not.toContain("English Kindergartens");
     expect(markup).not.toContain("Private Elementary Schools");
@@ -119,9 +118,7 @@ describe("WP-07 Home page", () => {
     expect(markup).toContain('aria-label="현재 모집·입학정보"');
     expect(markup).toContain('aria-label="살펴볼 기관"');
     expect(markup).toContain('aria-label="입학 준비 아티클"');
-    expect(markup).toContain(
-      "관심기관의 새로운 모집·입학정보를 놓치지 않도록 알려드릴 준비를 하고 있습니다.",
-    );
+    expect(markup).toContain("관심기관을 등록하면 내 프레피에서");
     expect(markup).not.toContain("실시간");
     expect(markup).not.toMatch(/(?:1위|순위|랭킹|추천)/);
   });
@@ -139,9 +136,9 @@ describe("WP-07 Home page", () => {
       }),
     );
 
-    expect(markup).toContain("현재 공개된 모집·입학정보가 없습니다.");
-    expect(markup).toContain("현재 살펴볼 공개 기관이 없습니다.");
-    expect(markup).toContain("현재 공개된 아티클이 없습니다.");
+    expect(markup).toContain("PREPPY에 공개된 모집·입학정보가 없어요");
+    expect(markup).toContain("PREPPY에 공개된 기관 정보가 없어요");
+    expect(markup).toContain("PREPPY에 공개된 아티클이 없어요");
   });
 
   it("keeps the Home route server-only and calls the canonical query directly", async () => {

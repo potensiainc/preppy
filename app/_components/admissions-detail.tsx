@@ -23,6 +23,7 @@ import {
 } from "./admissions-content";
 import styles from "./admissions.module.css";
 import { publicAdmissionText } from "@/src/modules/public/admission-copy";
+import { publicProse } from "@/src/modules/public/ux-writing";
 
 export function OpportunityDetailView({
   opportunity,
@@ -177,7 +178,7 @@ export function OpportunityDetailView({
                       <time dateTime={change.occurredAt}>
                         {formatPublicDate(change.occurredAt)}
                       </time>
-                      <p>{publicAdmissionText(change.summary)}</p>
+                      <p>{publicProse(publicAdmissionText(change.summary))}</p>
                     </li>
                   ))}
                 </ol>
@@ -194,7 +195,7 @@ export function OpportunityDetailView({
               </section>
             ) : null}
             {opportunity.institution.followable ? (
-              <section className={styles.section} aria-label="관심기관 알림">
+              <section className={styles.section} aria-label="관심기관 등록">
                 <FollowCta
                   context="OPPORTUNITY"
                   followable={opportunity.institution.followable}

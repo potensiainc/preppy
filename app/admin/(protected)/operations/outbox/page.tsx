@@ -29,31 +29,29 @@ export function AdminOutboxView({
   return (
     <div className="admin-page admin-operations-page">
       <AdminPageHeader
-        kicker="Operations / Outbox"
-        title="Outbox event ledger"
-        description="Inspect safe operational fields. Retry, Cancel, and Resend reconciliation appear only when the server projection proves that exact action eligible."
+        kicker="운영 / Outbox"
+        title="Outbox 이벤트 기록"
+        description="허용된 운영 정보를 확인해요. 재시도, 취소, Resend 결과 대조는 서버가 해당 작업을 허용한 상태에서만 표시돼요."
       />
       <section aria-labelledby="outbox-ledger-heading">
         <div className="admin-section-heading">
-          <h2 id="outbox-ledger-heading">Events</h2>
-          <AdminStateChip>{data.pagination.total} records</AdminStateChip>
+          <h2 id="outbox-ledger-heading">이벤트</h2>
+          <AdminStateChip>{data.pagination.total} 건</AdminStateChip>
         </div>
         {data.items.length === 0 ? (
-          <AdminEmptyState>
-            No Outbox events match these filters.
-          </AdminEmptyState>
+          <AdminEmptyState>조건에 맞는 Outbox 이벤트가 없어요.</AdminEmptyState>
         ) : (
-          <AdminDataTable caption="Read-only Outbox event registry">
+          <AdminDataTable caption="조회 전용 Outbox 이벤트 목록">
             <thead>
               <tr>
-                <th scope="col">Event</th>
-                <th scope="col">Aggregate</th>
-                <th scope="col">Status</th>
-                <th scope="col">Attempts</th>
-                <th scope="col">Provider attempt</th>
-                <th scope="col">Safe failure</th>
-                <th scope="col">Timing</th>
-                <th scope="col">Safe actions</th>
+                <th scope="col">이벤트</th>
+                <th scope="col">집계 대상</th>
+                <th scope="col">상태</th>
+                <th scope="col">시도 횟수</th>
+                <th scope="col">발송 업체 처리 시도</th>
+                <th scope="col">오류 코드</th>
+                <th scope="col">시각</th>
+                <th scope="col">실행 가능한 작업</th>
               </tr>
             </thead>
             <tbody>
@@ -73,26 +71,27 @@ export function AdminOutboxView({
                   </td>
                   <td>
                     {item.latestAttempt === null ? (
-                      "None"
+                      "없음"
                     ) : (
                       <>
                         {formatAdminCode(item.latestAttempt.provider)} ·{" "}
                         {formatAdminCode(item.latestAttempt.status)}
                         <span className="admin-cell-note">
-                          Attempt {item.latestAttempt.id}
+                          시도 {item.latestAttempt.id}
                         </span>
                         <span className="admin-cell-note">
-                          Provider message{" "}
-                          {item.latestAttempt.providerMessageId ?? "None"}
+                          발송 업체 메시지{" "}
+                          {item.latestAttempt.providerMessageId ?? "없음"}
                         </span>
                       </>
                     )}
                   </td>
-                  <td>{item.errorCode ?? "None"}</td>
+                  <td>{item.errorCode ?? "없음"}</td>
                   <td>
-                    Available {formatAdminDate(item.availableAt)}
+                    처리 가능 {formatAdminDate(item.availableAt)}
                     <span className="admin-cell-note">
-                      Dead letter {formatAdminDate(item.deadLetteredAt)}
+                      최종 실패(Dead letter){" "}
+                      {formatAdminDate(item.deadLetteredAt)}
                     </span>
                   </td>
                   <td>

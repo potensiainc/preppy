@@ -5,7 +5,7 @@ import { useState } from "react";
 import type { ArticleRelationOptionDTO } from "@/src/modules/admin/read-model/contracts";
 
 const staleMessage =
-  "다른 운영자가 먼저 변경했을 수 있습니다. 최신 데이터를 다시 확인한 뒤 변경 여부를 판단해주세요.";
+  "다른 운영자가 먼저 변경했을 수 있어요. 최신 데이터를 다시 불러와 확인한 뒤 수정해 주세요.";
 
 type RelationProps = Readonly<{
   articleId: string;
@@ -56,13 +56,15 @@ export function ArticleRelations(props: RelationProps) {
       return;
     }
     if (!response.ok) {
-      setMessage("Could not save Article relations.");
+      setMessage(
+        "연결 정보를 저장하지 못했어요. 현재 발행 상태와 선택한 항목을 확인해 주세요.",
+      );
       return;
     }
     const payload = (await response.json()) as { data: { updatedAt: string } };
     props.onUpdated(payload.data.updatedAt);
     setIsStale(false);
-    setMessage("Relations saved.");
+    setMessage("연결 정보를 저장했어요.");
   };
 
   return (
@@ -70,10 +72,10 @@ export function ArticleRelations(props: RelationProps) {
       className="admin-article-relations"
       aria-labelledby="article-relations-heading"
     >
-      <h2 id="article-relations-heading">Canonical relations</h2>
+      <h2 id="article-relations-heading">연결 정보</h2>
       <p>
-        Selections are complete replacement sets. Published changes are
-        committed with Publish Changes.
+        선택한 항목으로 연결 정보 전체를 교체해요. 발행된 아티클은 ‘변경 내용
+        발행’을 눌러 반영해 주세요.
       </p>
       <div className="admin-article-relation-grid">
         {(["Institution", "Opportunity"] as const).map((label) => {
@@ -89,9 +91,7 @@ export function ArticleRelations(props: RelationProps) {
             label === "Institution" ? "institutionIds" : "opportunityIds";
           return (
             <fieldset key={label}>
-              <legend>
-                {label === "Opportunity" ? "Opportunities" : "Institutions"}
-              </legend>
+              <legend>{label === "Opportunity" ? "입학정보" : "기관"}</legend>
               {options.map((option) => (
                 <label key={option.id}>
                   <input
@@ -111,11 +111,11 @@ export function ArticleRelations(props: RelationProps) {
       </div>
       {props.editable ? (
         <button type="button" onClick={() => void save()}>
-          Save Relations
+          연결 정보 저장
         </button>
       ) : (
         <p className="admin-warning">
-          Unpublish before saving relations separately.
+          연결 정보만 따로 저장하려면 먼저 발행을 취소해 주세요.
         </p>
       )}
       <p className="admin-form-status" role="status" aria-live="polite">
@@ -123,7 +123,7 @@ export function ArticleRelations(props: RelationProps) {
       </p>
       {isStale ? (
         <button type="button" onClick={() => window.location.reload()}>
-          Reload latest data
+          최신 데이터 다시 불러오기
         </button>
       ) : null}
     </section>
