@@ -15,6 +15,7 @@ import { ArticleCard, StateBadge } from "./public-cards";
 import { PageContainer } from "./ui-primitives";
 import {
   AdmissionDates,
+  AdmissionAudience,
   AdmissionNotice,
   AdmissionSections,
   AdmissionSessions,
@@ -92,20 +93,19 @@ export function OpportunityDetailView({
               provisional={provisional}
             />
             {opportunity.targetAudience || opportunity.institution.region ? (
-              <dl className={styles.essentials}>
+              <div className={styles.essentials}>
                 {opportunity.targetAudience ? (
-                  <div>
-                    <dt>지원 대상 / 자격</dt>
-                    <dd>{opportunity.targetAudience}</dd>
-                  </div>
+                  <AdmissionAudience value={opportunity.targetAudience} />
                 ) : null}
                 {opportunity.institution.region ? (
-                  <div>
-                    <dt>기관 소재 지역</dt>
-                    <dd>{opportunity.institution.region}</dd>
-                  </div>
+                  <dl className={styles.audienceRows}>
+                    <div>
+                      <dt>기관 소재 지역</dt>
+                      <dd>{opportunity.institution.region}</dd>
+                    </div>
+                  </dl>
                 ) : null}
-              </dl>
+              </div>
             ) : null}
           </div>
           {guide ? (
