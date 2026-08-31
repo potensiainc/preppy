@@ -49,9 +49,6 @@ export function OpportunityDetailView({
   const sources =
     opportunity.officialSources ??
     (opportunity.officialSource ? [opportunity.officialSource] : []);
-  const caveat = [...sections, ...guideSections].find((section) =>
-    /유의|주의|확인 필요|확인 범위|경고|충돌/u.test(section.heading ?? ""),
-  );
   return (
     <PageContainer>
       <article className={styles.admissions}>
@@ -116,17 +113,6 @@ export function OpportunityDetailView({
             </p>
           ) : null}
         </header>
-        <nav className={styles.sectionNav} aria-label="이 페이지 안내">
-          {related.length ? (
-            <a href="#admission-sessions">같은 학년도 일정</a>
-          ) : null}
-          {sections.length ? (
-            <a href="#current-admission-guide">모집 안내</a>
-          ) : null}
-          {guide ? <a href="#full-admission-guide">전체 모집요강</a> : null}
-          {caveat ? <a href={`#${caveat.id}`}>확인·유의사항</a> : null}
-          <a href="#admission-sources">공식 원문</a>
-        </nav>
         <div className={styles.bodyGrid}>
           <div className={styles.content}>
             <AdmissionSessions items={related} currentSlug={opportunity.slug} />

@@ -250,6 +250,7 @@ describe("WP-07 Opportunity and Article detail pages", () => {
       ).text(),
     ).toContain("오전 10:00");
     expect($("[aria-current='page']").text()).toContain("오후 2:00");
+    expect($("nav[aria-label='이 페이지 안내']")).toHaveLength(0);
     expect($("header").text()).toContain("종료 일정 미확인");
     expect($("body").text()).not.toContain("2026년 10월 1일 00:00");
   });
@@ -276,12 +277,9 @@ describe("WP-07 Opportunity and Article detail pages", () => {
       ),
     );
     expect($("h3").text()).toContain("학교별 추가 조건");
-    expect($("nav[aria-label='이 페이지 안내'] a").length).toBeLessThanOrEqual(
-      6,
-    );
-    $("nav[aria-label='이 페이지 안내'] a").each((_, element) => {
-      expect($($(element).attr("href")!).length).toBe(1);
-    });
+    expect($("nav[aria-label='이 페이지 안내']")).toHaveLength(0);
+    expect($("#current-admission-guide")).toHaveLength(1);
+    expect($("#admission-sources")).toHaveLength(1);
     const caveat = $("section").filter(
       (_, el) => $(el).children("h3").text() === "원문 확인 필요",
     );
