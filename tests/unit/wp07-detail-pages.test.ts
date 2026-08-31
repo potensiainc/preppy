@@ -139,7 +139,7 @@ const unsafeArticle: UnsafeStoredArticleDetailDTO = {
 };
 
 describe("WP-07 Opportunity and Article detail pages", () => {
-  it("renders the exact stored provisional notice once even when it is also attached to the parent guide", () => {
+  it("renders a parent-facing provisional notice once even when it is also attached to the parent guide", () => {
     const notice =
       "예정 안내 · 변경 가능: 공식 원문이 예정 또는 초안임을 명시합니다. 지원 전 최종 공지를 확인해 주세요.";
     const $ = load(
@@ -161,14 +161,17 @@ describe("WP-07 Opportunity and Article detail pages", () => {
       ),
     );
     expect($("body").text().split("예정 안내 · 변경 가능:").length - 1).toBe(1);
-    expect($("header").text()).toContain(notice);
+    expect($("header").text()).toContain(
+      "일정과 지원 조건이 변경될 수 있습니다.",
+    );
+    expect($("header").text()).not.toContain("원문");
     expect($("body").text()).toContain("학교별 예외.");
   });
 
   it("does not invent midnight, KST for zone-less local dates, quota, tuition or region", () => {
     for (const [value, expected, absent] of [
       ["2026-10-31", "2026년 10월 31일", "오전"],
-      ["2026-10-31T14:15", "오후 2:15 · 원문 현지 시각", "KST"],
+      ["2026-10-31T14:15", "오후 2:15 · 현지 시각", "KST"],
     ]) {
       const $ = load(
         renderToStaticMarkup(
@@ -244,18 +247,16 @@ describe("WP-07 Opportunity and Article detail pages", () => {
     );
     expect($("header [aria-label='주요 일정']").text()).toContain("오후 2:00");
     expect($("header").text()).toContain("2027학년도");
-    expect(
-      $(
-        "[aria-label='같은 학년도 일정'] a[href='/opportunities/morning-session']",
-      ).text(),
-    ).toContain("오전 10:00");
-    expect($("[aria-current='page']").text()).toContain("오후 2:00");
+    expect($("[data-admission-session='morning-session']").text()).toContain(
+      "오전 10:00",
+    );
+    expect($("[data-current-session]").text()).toContain("오후 2:00");
     expect($("nav[aria-label='이 페이지 안내']")).toHaveLength(0);
     expect($("header").text()).toContain("종료 일정 미확인");
     expect($("body").text()).not.toContain("2026년 10월 1일 00:00");
   });
 
-  it("preserves every paragraph and unknown heading, exposing caveats and distinct source times without collapsed warnings", () => {
+  it("preserves actionable paragraphs, unknown headings and distinct source times while hiding audit commentary", () => {
     const $ = load(
       renderToStaticMarkup(
         createElement(OpportunityDetailView, {
@@ -283,15 +284,15 @@ describe("WP-07 Opportunity and Article detail pages", () => {
     const caveat = $("section").filter(
       (_, el) => $(el).children("h3").text() === "원문 확인 필요",
     );
-    expect(caveat.text()).toContain("11월 23–25일과 11월 17–19일");
-    expect(caveat.parents("details:not([open])")).toHaveLength(0);
+    expect(caveat).toHaveLength(0);
+    expect($("body").text()).not.toContain("원문 확인 필요");
     expect($("body").text()).toContain("둘째 문단: 중복등록 시 모두 취소.");
     expect($("body").text()).toContain("2025학년도 1기 2,312,100원.");
     expect($("body").text()).toContain("07:53:18 KST");
     expect($("body").text()).toContain("08:51:03 KST");
     expect(
       $("a[href='https://school.test/guide.PNG?download=1']").text(),
-    ).toContain("원본 이미지");
+    ).toContain("학교 공식 안내");
     expect($("img")).toHaveLength(0);
   });
   it("renders planned guidance in separate paragraphs and labels dates as provisional", () => {
@@ -480,9 +481,9 @@ describe("WP-07 Opportunity and Article detail pages", () => {
     expect(markup).toContain("2026년 9월 1일 14:00");
     expect(markup).toContain("2026년 8월 20일");
     expect(markup).not.toContain("2026년 8월 20일 00:00");
-    expect(markup).toContain("공식 모집요강");
+    expect(markup).toContain("모집·입학 안내");
     expect(markup).toContain("예정 안내 · 변경 가능");
-    const guide = load(markup)("#full-admission-guide");
+    const guide = load(markup)("#current-admission-guide");
     expect(guide.find("[data-admission-topic='모집 인원']").text()).toContain(
       "초등 과정 신입생 84명",
     );
@@ -490,7 +491,8 @@ describe("WP-07 Opportunity and Article detail pages", () => {
     expect(markup).toContain("<p>온라인으로 지원합니다.</p>");
     expect(markup).toContain("&lt;img src=x onerror=alert(1)&gt;");
     expect(markup).not.toContain("<img src=x onerror=alert(1)>");
-    expect(markup).toContain("2027 모집요강 PDF");
+    expect(markup).toContain("2027 모집요강");
+    expect(load(markup)("body").text()).not.toContain("PDF");
     expect(markup).toContain("입학처 공지");
     expect(markup).toContain("Last Collected");
     expect(markup).toContain("Last Verified");

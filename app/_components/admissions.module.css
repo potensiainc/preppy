@@ -252,37 +252,110 @@
 }
 .sessions {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 22px;
+}
+.sessionHeading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
   gap: 12px;
+}
+.sessionHeading h2 {
+  margin-bottom: 8px;
+}
+.sessionHeading > span {
+  flex-shrink: 0;
+  font-size: 13px;
+  color: #596963;
+}
+.pastHeading {
+  margin: 18px 0 0;
+  padding-top: 22px;
+  border-top: 1px solid #dce3db;
+  color: #596963;
 }
 .session {
   display: grid;
-  gap: 8px;
+  grid-template-columns: minmax(150px, 0.8fr) minmax(0, 2fr);
   background: white;
   border: 1px solid #dce3db;
   border-radius: 10px;
-  padding: 18px;
-  text-decoration: none;
+  scroll-margin-top: 96px;
+  overflow: hidden;
 }
-.session[aria-current="page"] {
-  background: #eaf0e8;
+.session:target {
   border: 2px solid #285747;
-  padding: 17px;
 }
-.session > span {
+.sessionWhen {
+  background: #eff4ee;
+  padding: 22px 18px;
+}
+.sessionWhen > p:first-child {
+  font-size: 13px;
+  color: #285747;
+  margin: 0 0 12px;
+}
+.session .date {
+  font-size: 20px;
+}
+.session .clock {
+  font-size: 24px;
+  margin-top: 5px;
+}
+.sessionEnd {
+  font-size: 13px;
+  color: #596963;
+  margin: 10px 0 14px;
+}
+.sessionBody {
+  padding: 22px;
+  min-width: 0;
+}
+.sessionBody h3 {
+  font-size: 17px;
+  margin: 0 0 16px;
+}
+.sessionBody .guideSection {
+  margin: 18px 0 0;
+}
+.sessionBody .guideSection p {
+  font-size: 15px;
+}
+.sessionRegistration {
+  font-size: 14px;
+  margin: 18px 0 0;
+  padding-top: 16px;
+  border-top: 1px solid #dce3db;
+}
+.sessionRegistration > div + div {
+  margin-top: 10px;
+}
+.sessionRegistration dt {
   color: #596963;
   font-size: 12px;
 }
-.session > strong {
-  font-size: 15px;
-  line-height: 1.6;
+.sessionRegistration dd {
+  margin: 3px 0 0;
 }
-.session .date {
-  font-size: 16px;
-  font-weight: 400;
+.sessionSources {
+  margin-top: 20px;
+  border-top: 1px solid #dce3db;
+  font-size: 13px;
 }
-.session .clock {
-  font-size: 23px;
+.sessionSources > summary {
+  cursor: pointer;
+  min-height: 44px;
+  padding: 12px 0;
+  color: #285747;
+}
+.sessionSources .sourceCard {
+  border: 0;
+  padding: 0;
+  margin-top: 0;
+}
+.reviewedCard > .section {
+  margin-top: 30px;
 }
 .sourceAside {
   align-self: start;
@@ -386,6 +459,45 @@
   margin-top: 24px;
 }
 @media (max-width: 900px) {
+  .session {
+    grid-template-columns: 1fr;
+  }
+  .sessionWhen {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 18px;
+    border-bottom: 1px solid #dce3db;
+  }
+  .sessionWhen > p:first-child {
+    margin: 0;
+  }
+  .sessionWhen > :last-child {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .sessionWhen > time,
+  .sessionWhen > strong,
+  .sessionEnd {
+    grid-column: 1 / -1;
+  }
+  .sessionWhen > time {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 12px;
+  }
+  .session .date {
+    font-size: 18px;
+  }
+  .session .clock {
+    font-size: 22px;
+    margin-top: 0;
+  }
+  .sessionEnd {
+    margin: 0;
+  }
   .bodyGrid {
     grid-template-columns: minmax(0, 1fr) 250px;
     gap: 26px;
@@ -414,6 +526,9 @@
   }
 }
 @media (max-width: 460px) {
+  .sessionBody {
+    padding: 18px;
+  }
   .dateWindow {
     grid-template-columns: 1fr;
     gap: 20px;

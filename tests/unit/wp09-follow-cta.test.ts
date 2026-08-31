@@ -254,7 +254,7 @@ describe("WP-09 authoritative Follow CTA island", () => {
       } as never),
     );
 
-    expect(markup).toContain("현재 업데이트를 신청할 수 없습니다");
+    expect(markup).toBe("");
     expect(markup).not.toContain("다시 시도");
     expect(markup).not.toContain("관심기관 상태 확인 중");
   });
@@ -281,7 +281,7 @@ describe("WP-09 authoritative Follow CTA island", () => {
     expect(error).toContain('role="alert"');
     expect(error).toContain("다시 시도");
     const unavailable = render("unavailable");
-    expect(unavailable).toContain("현재 업데이트를 신청할 수 없습니다");
+    expect(unavailable).toBe("");
     expect(unavailable).not.toContain("다시 시도");
   });
 

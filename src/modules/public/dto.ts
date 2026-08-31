@@ -92,6 +92,12 @@ export type PublicOpportunityDTO = OpportunityCardDTO & {
     kind: OpportunityKind;
     businessState: OpportunityBusinessState;
     keyDates: OpportunityKeyDatesDTO;
+    summary?: string | null;
+    targetAudience?: string | null;
+    actionUrl?: string | null;
+    officialSources?: OfficialSourceDTO[];
+    lastCollectedAt?: string | null;
+    lastVerifiedAt?: string | null;
   }>;
   keyDates: OpportunityKeyDatesDTO;
   targetAudience: string | null;

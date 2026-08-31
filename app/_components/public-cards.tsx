@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { publicAdmissionText } from "@/src/modules/public/admission-copy";
 
 import { AnalyticsLink } from "@/app/_components/analytics-link";
 import type { CapturedAnalyticsEvent } from "@/src/analytics/events";
@@ -48,16 +49,17 @@ export function VerifiedAt({
 
 export function TrustSource({ source }: { source: OfficialSourceDTO }) {
   const href = safeExternalHref(source.url);
+  const name = publicAdmissionText(source.name) || "학교 공식 안내";
 
   return (
     <p className="trust-source">
       <span>공식 출처</span>
       {href ? (
         <a href={href} target="_blank" rel="noopener noreferrer">
-          {source.name}
+          {name}
         </a>
       ) : (
-        <span>{source.name}</span>
+        <span>{name}</span>
       )}
     </p>
   );

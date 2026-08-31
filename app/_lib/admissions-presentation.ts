@@ -1,4 +1,5 @@
 import { PROVISIONAL_ADMISSION_NOTICE } from "@/src/modules/live-admissions/guidance";
+import { publicAdmissionText } from "@/src/modules/public/admission-copy";
 import { safeExternalHref } from "./presentation";
 
 export type AdmissionSection = {
@@ -9,7 +10,7 @@ export type AdmissionSection = {
 
 export function admissionNoticeText(summary: string | null): string {
   return (
-    (summary ?? "")
+    (publicAdmissionText(summary) ?? "")
       .split(/\n\s*\n/u)
       .map((block) => block.trim())
       .find((block) => /^예정 안내 · 변경 가능:[^\n]+$/u.test(block)) ??
@@ -17,8 +18,7 @@ export function admissionNoticeText(summary: string | null): string {
   );
 }
 
-/** Only existing standalone bracket headings and paragraph boundaries are parsed.
- * Unknown text remains intact; this is presentation, never schedule extraction. */
+/** Parse parent-facing copy, keeping stored source evidence unchanged. */
 export function admissionSections(
   summary: string | null,
   prefix: string,
@@ -39,9 +39,9 @@ export function admissionSections(
   };
   const flushSection = () => {
     flushParagraph();
-    if (section.heading || section.paragraphs.length) sections.push(section);
+    if (section.paragraphs.length) sections.push(section);
   };
-  for (const line of (summary ?? "").replace(/\r\n?/gu, "\n").split("\n")) {
+  for (const line of (publicAdmissionText(summary) ?? "").split("\n")) {
     const heading = /^\s*\[([^\]]+)\]\s*$/u.exec(line);
     if (heading) {
       flushSection();
@@ -78,7 +78,7 @@ export function admissionClock(value: string): string | null {
   if (/^\d{4}-\d{2}-\d{2}$/u.test(value)) return null;
   if (local) {
     const hour = Number(local[1]);
-    return `${hour < 12 ? "오전" : "오후"} ${hour % 12 || 12}:${local[2]} · 원문 현지 시각`;
+    return `${hour < 12 ? "오전" : "오후"} ${hour % 12 || 12}:${local[2]} · 현지 시각`;
   }
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return null;
@@ -88,10 +88,7 @@ export function admissionClock(value: string): string | null {
 export function admissionSourceType(url: string): string {
   const safe = safeExternalHref(url);
   if (!safe) return "공식 자료";
-  const path = new URL(safe).pathname;
-  if (/\.(?:png|jpe?g|gif|webp|tiff?|bmp)$/iu.test(path)) return "원본 이미지";
-  if (/\.(?:pdf|hwp|hwpx|docx?|xlsx?|pptx?)$/iu.test(path)) return "원본 문서";
-  return "학교 공식 안내 페이지";
+  return "학교 공식 안내";
 }
 
 export function admissionTimestamp(value: string): string {

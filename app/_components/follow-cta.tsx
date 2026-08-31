@@ -161,11 +161,7 @@ export function FollowCtaPresentation({
   }
 
   if (state === "unavailable") {
-    return (
-      <p className="follow-cta__unavailable" role="status">
-        현재 업데이트를 신청할 수 없습니다.
-      </p>
-    );
+    return null;
   }
 
   if (state === "error") {
@@ -290,6 +286,8 @@ export function FollowCta({
     setTargetState(targetKey, "loading");
     setReloadKey((key) => key + 1);
   }
+
+  if (state === "unavailable") return null;
 
   return (
     <div

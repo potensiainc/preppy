@@ -170,7 +170,7 @@ describe("admissions readable topic sections", () => {
     const $ = guide(summary);
     expect($("h3").text()).toContain("학교별 추가 조건");
     expect($("body").text()).toContain(
-      "“등록하지 않으면 취소된다. 단, 학교 확인 필요.”라고 명시한다.",
+      "“등록하지 않으면 취소된다. 단, 학교 확인 필요.”",
     );
     expect($("body").text()).toContain("https://school.test/guide?a=1;b=2");
     expect($("body").text()).toContain("3.5km");

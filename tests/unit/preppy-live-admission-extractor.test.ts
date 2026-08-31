@@ -16,6 +16,18 @@ function extract(html: string) {
 }
 
 describe("five-school live admission extraction", () => {
+  it("cleans newly extracted public copy without changing the evidence or admission rules", () => {
+    const result = extract(`<h1>2027학년도 신입생 모집</h1>
+      <p>지원 자격: 특수교육대상자는 별도 전형이며 전형별 상세 자격은 공식 PDF 참조.</p>
+      <p>모집 인원: 84명</p><p>제출 서류는 원본만 가능합니다.</p>
+      <p>수업료 금액은 이 PDF에 없다.</p>`);
+    expect(result.summary).not.toContain("PDF");
+    expect(result.targetAudience).toContain("특수교육대상자는 별도 전형이다.");
+    expect(result.targetAudience).not.toContain("PDF");
+    expect(result.summary).toContain("제출 서류는 원본만 가능합니다.");
+    expect(result.evidenceExcerpt).toContain("PDF");
+  });
+
   it("retains a planned guide's quotas, fees, lottery, registration and historical fee caveats", () => {
     const result = extract(`
       <nav><a>입학 안내</a><p>로그인</p></nav>

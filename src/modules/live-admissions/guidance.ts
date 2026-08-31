@@ -7,4 +7,4 @@ export function isProvisionalAdmissionGuidance(value: string): boolean {
 }
 
 export const PROVISIONAL_ADMISSION_NOTICE =
-  "예정 안내 · 변경 가능: 공식 원문의 예정·초안 정보입니다. 지원 전 최종 공지를 확인해 주세요.";
+  "예정 안내 · 변경 가능: 일정과 지원 조건이 변경될 수 있습니다. 지원 전 최종 공지를 확인해 주세요.";

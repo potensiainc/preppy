@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { publicAdmissionText } from "@/src/modules/public/admission-copy";
 import { ReviewedAdmissions } from "./admissions-content";
 
 import type {
@@ -283,7 +284,8 @@ export function InstitutionDetailView({
                 <div key={fact.factType}>
                   <dt>{factLabel(fact.factType)}</dt>
                   <dd>
-                    {fact.displayValue ?? "표시 가능한 정보가 없습니다."}
+                    {publicAdmissionText(fact.displayValue) ??
+                      "학교에 문의해 주세요."}
                     <VerifiedAt verifiedAt={fact.verifiedAt} label="확인일" />
                   </dd>
                 </div>

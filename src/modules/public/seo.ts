@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { Metadata } from "next";
+import { publicAdmissionText } from "./admission-copy";
 
 import { sanitizeArticleHtmlV1 } from "@/src/modules/editorial/sanitizer.server";
 import type {
@@ -127,7 +128,8 @@ export function buildOpportunityMetadata(
   return {
     title: `${dto.title} | PREPPY`,
     description:
-      dto.summary ?? `${dto.institution.name}의 검증된 입학정보입니다.`,
+      publicAdmissionText(dto.summary) ??
+      `${dto.institution.name}의 입학정보입니다.`,
     alternates: {
       canonical: canonical(appBaseUrl, `/opportunities/${dto.slug}`),
     },

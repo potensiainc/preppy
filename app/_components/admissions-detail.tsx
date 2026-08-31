@@ -22,6 +22,7 @@ import {
   AdmissionSources,
 } from "./admissions-content";
 import styles from "./admissions.module.css";
+import { publicAdmissionText } from "@/src/modules/public/admission-copy";
 
 export function OpportunityDetailView({
   opportunity,
@@ -115,43 +116,56 @@ export function OpportunityDetailView({
         </header>
         <div className={styles.bodyGrid}>
           <div className={styles.content}>
-            <AdmissionSessions items={related} currentSlug={opportunity.slug} />
-            {sections.length ? (
+            <AdmissionSessions
+              items={related}
+              currentSlug={opportunity.slug}
+              commonSummary={guide?.summary ?? opportunity.summary}
+              commonAudience={guide ? undefined : opportunity.targetAudience}
+              commonActionUrl={guide ? undefined : opportunity.actionUrl}
+            />
+            {sections.length || guideSections.length ? (
               <section
                 id="current-admission-guide"
                 className={styles.section}
-                aria-label="모집 안내"
+                aria-label="모집·입학 안내"
               >
-                <p className={styles.kicker}>ADMISSION GUIDE</p>
-                <h2>모집 안내</h2>
-                <AdmissionSections sections={sections} />
-              </section>
-            ) : null}
-            {guide ? (
-              <section
-                id="full-admission-guide"
-                className={styles.section}
-                aria-label="공식 모집요강"
-              >
-                <p className={styles.kicker}>FULL ADMISSION GUIDE</p>
-                <h2>공식 모집요강</h2>
-                <p>
-                  <Link href={`/opportunities/${guide.slug}`}>
-                    {guide.title}
-                  </Link>
-                </p>
-                {guideProvisional &&
+                <h2>모집·입학 안내</h2>
+                {guide &&
+                guideProvisional &&
                 (!provisional ||
                   admissionNoticeText(guide.summary) !==
                     admissionNoticeText(opportunity.summary)) ? (
                   <AdmissionNotice text={admissionNoticeText(guide.summary)} />
                 ) : null}
-                <AdmissionSections sections={guideSections} />
-                <AdmissionSources
-                  sources={guide.officialSources}
-                  collectedAt={guide.lastCollectedAt}
-                  verifiedAt={guide.lastVerifiedAt}
+                <AdmissionSections
+                  sections={guide ? guideSections : sections}
                 />
+                {guide ? (
+                  <>
+                    {!related.some((item) => item.slug === opportunity.slug) ? (
+                      <AdmissionSections
+                        sections={sections
+                          .map((section) => ({
+                            ...section,
+                            paragraphs: section.paragraphs.filter(
+                              (text) =>
+                                !guideSections.some(
+                                  (shared) =>
+                                    shared.heading === section.heading &&
+                                    shared.paragraphs.includes(text),
+                                ),
+                            ),
+                          }))
+                          .filter((section) => section.paragraphs.length)}
+                      />
+                    ) : null}
+                    <AdmissionSources
+                      sources={guide.officialSources}
+                      collectedAt={guide.lastCollectedAt}
+                      verifiedAt={guide.lastVerifiedAt}
+                    />
+                  </>
+                ) : null}
               </section>
             ) : null}
             {opportunity.recentMeaningfulChanges.length ? (
@@ -163,7 +177,7 @@ export function OpportunityDetailView({
                       <time dateTime={change.occurredAt}>
                         {formatPublicDate(change.occurredAt)}
                       </time>
-                      <p>{change.summary}</p>
+                      <p>{publicAdmissionText(change.summary)}</p>
                     </li>
                   ))}
                 </ol>
@@ -179,15 +193,17 @@ export function OpportunityDetailView({
                 </div>
               </section>
             ) : null}
-            <section className={styles.section} aria-label="관심기관 알림">
-              <FollowCta
-                context="OPPORTUNITY"
-                followable={opportunity.institution.followable}
-                institutionId={opportunity.institution.id}
-                opportunityId={opportunity.id}
-                returnPath={`/opportunities/${opportunity.slug}`}
-              />
-            </section>
+            {opportunity.institution.followable ? (
+              <section className={styles.section} aria-label="관심기관 알림">
+                <FollowCta
+                  context="OPPORTUNITY"
+                  followable={opportunity.institution.followable}
+                  institutionId={opportunity.institution.id}
+                  opportunityId={opportunity.id}
+                  returnPath={`/opportunities/${opportunity.slug}`}
+                />
+              </section>
+            ) : null}
           </div>
           <aside
             id="admission-sources"

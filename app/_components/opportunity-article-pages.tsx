@@ -106,7 +106,7 @@ export function ArticleDetailView({ article }: { article: PublicArticleDTO }) {
           </section>
         ) : null}
 
-        {followTarget ? (
+        {followTarget?.followable ? (
           <section
             className="article-detail__section article-follow"
             aria-label="관심기관 알림"

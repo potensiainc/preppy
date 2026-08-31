@@ -74,7 +74,8 @@ describe("WP-08 auth-aware public UI", () => {
         },
       } as never),
     );
-    expect(closedMarkup).toContain("현재 업데이트를 신청할 수 없습니다");
+    expect(closedMarkup).not.toContain("현재 업데이트를 신청할 수 없습니다");
+    expect(closedMarkup).not.toContain('class="follow-cta"');
     expect(closedMarkup).not.toContain("관심기관 상태 확인 중");
   });
 
@@ -107,6 +108,15 @@ describe("WP-08 auth-aware public UI", () => {
     );
     expect(oneTarget).toContain(institutionId);
     expect(oneTarget).toContain("관심기관 상태 확인 중");
+    const unavailable = renderToStaticMarkup(
+      createElement(ArticleDetailView, {
+        article: {
+          ...article,
+          relatedInstitutions: [{ ...baseInstitution, followable: false }],
+        },
+      }),
+    );
+    expect(unavailable).not.toContain('aria-label="관심기관 알림"');
 
     const ambiguous = renderToStaticMarkup(
       createElement(ArticleDetailView, {
