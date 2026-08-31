@@ -309,9 +309,13 @@ describe("WP-07 Opportunity and Article detail pages", () => {
     );
     expect(markup).toContain("예정 안내 · 변경 가능");
     expect(markup).toContain("지원 시작 (예정)");
-    expect(markup).toContain("<p>모집 인원: 84명</p>");
-    expect(markup).toContain("<p>전형료: 30,000원</p>");
-    expect(markup).toContain("수업료: 2025학년도 기준, 변동 가능");
+    const $ = load(markup);
+    const paragraphs = $("#current-admission-guide p")
+      .toArray()
+      .map((el) => $(el).text());
+    expect(paragraphs).toContain("모집 인원: 84명");
+    expect(paragraphs).toContain("전형료: 30,000원");
+    expect(paragraphs).toContain("수업료: 2025학년도 기준, 변동 가능");
   });
 
   it("does not label an eligible child's expected enrolment as a provisional guide", () => {
@@ -480,9 +484,11 @@ describe("WP-07 Opportunity and Article detail pages", () => {
     expect(markup).not.toContain("2026년 8월 20일 00:00");
     expect(markup).toContain("공식 모집요강");
     expect(markup).toContain("예정 안내 · 변경 가능");
-    expect(markup).toContain("<h3>지원 대상 및 모집인원</h3>");
-    expect(markup).toContain("<p>초등 과정 신입생 84명</p>");
-    expect(markup).toContain("<h3>지원 방법</h3>");
+    const guide = load(markup)("#full-admission-guide");
+    expect(guide.find("[data-admission-topic='모집 인원']").text()).toContain(
+      "초등 과정 신입생 84명",
+    );
+    expect(guide.find("h3").text()).toContain("지원 방법");
     expect(markup).toContain("<p>온라인으로 지원합니다.</p>");
     expect(markup).toContain("&lt;img src=x onerror=alert(1)&gt;");
     expect(markup).not.toContain("<img src=x onerror=alert(1)>");

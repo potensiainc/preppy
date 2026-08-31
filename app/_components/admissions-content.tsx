@@ -25,6 +25,10 @@ import {
   safeExternalHref,
 } from "@/app/_lib/presentation";
 import { StateBadge } from "./public-cards";
+import {
+  admissionAudienceRows,
+  admissionReadingGroups,
+} from "@/app/_lib/admissions-readability";
 import styles from "./admissions.module.css";
 
 export function AdmissionNotice({
@@ -137,23 +141,95 @@ export function AdmissionSections({
   collapsible?: boolean;
 }) {
   return sections.map((section) => {
-    const paragraphs = section.paragraphs.map((paragraph, index) => (
-      <p key={index}>{paragraph}</p>
-    ));
-    if (collapsible && canCollapseAdmissionSection(section))
+    const groups = admissionReadingGroups(section);
+    if (
+      groups.length === 1 &&
+      collapsible &&
+      canCollapseAdmissionSection(section)
+    )
       return (
         <details className={styles.guideDetails} key={section.id}>
           <summary>{section.heading}</summary>
-          {paragraphs}
+          <ReadingItems items={groups[0]!.paragraphs} />
         </details>
       );
     return (
       <section className={styles.guideSection} id={section.id} key={section.id}>
-        {section.heading ? <h3>{section.heading}</h3> : null}
-        {paragraphs}
+        {groups.map((group, index) => (
+          <section
+            className={styles.readingGroup}
+            data-admission-topic={group.heading ?? undefined}
+            aria-labelledby={
+              group.heading ? `${section.id}-topic-${index}` : undefined
+            }
+            key={index}
+          >
+            {group.heading ? (
+              <h3 id={`${section.id}-topic-${index}`}>{group.heading}</h3>
+            ) : null}
+            <ReadingItems items={group.paragraphs} />
+            {group.context.length ? (
+              <aside
+                className={styles.readingContext}
+                aria-label="금액 기준·변동 안내"
+              >
+                {group.context.map((text, i) => (
+                  <p key={i}>{text}</p>
+                ))}
+              </aside>
+            ) : null}
+          </section>
+        ))}
       </section>
     );
   });
+}
+
+function ReadingItems({ items }: { items: string[] }) {
+  const content = (text: string) =>
+    text
+      .split(
+        /(https?:\/\/\S+|20\d{2}학년도|\d[\d,]*\s*원|\d+\s*(?:명|학급)|\d{1,2}:\d{2}|\d{1,2}월\s*\d{1,2}일)/gu,
+      )
+      .map((part, index) =>
+        index % 2 && !/^https?:\/\//u.test(part) ? (
+          <strong key={index}>{part}</strong>
+        ) : (
+          part
+        ),
+      );
+  if (items.length < 2)
+    return items.map((text, index) => <p key={index}>{content(text)}</p>);
+  return (
+    <ul className={styles.readingList}>
+      {items.map((text, index) => (
+        <li key={index}>
+          <p>{content(text)}</p>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+export function AdmissionAudience({ value }: { value: string | null }) {
+  const rows = admissionAudienceRows(value);
+  return (
+    <dl className={styles.audienceRows}>
+      {rows.length ? (
+        rows.map((row, index) => (
+          <div key={index}>
+            <dt>{row.label}</dt>
+            <dd>{row.value}</dd>
+          </div>
+        ))
+      ) : (
+        <div>
+          <dt>지원 대상</dt>
+          <dd>공식 자료에서 확인된 값 없음</dd>
+        </div>
+      )}
+    </dl>
+  );
 }
 
 export function AdmissionSources({
@@ -374,10 +450,7 @@ export function ReviewedAdmissions({
                   provisional={provisional}
                 />
                 <div className={styles.essentials}>
-                  <span>지원 대상 / 자격</span>
-                  <p>
-                    {admission.targetAudience ?? "공식 자료에서 확인된 값 없음"}
-                  </p>
+                  <AdmissionAudience value={admission.targetAudience} />
                   <Link
                     className={styles.action}
                     href={`/opportunities/${admission.slug}`}
