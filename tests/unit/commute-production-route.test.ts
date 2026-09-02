@@ -28,6 +28,7 @@ describe("commute production route", () => {
   it("ships a self-contained entry point with its required local assets", async () => {
     const html = await readFile(resolve(commuteRoot, "index.html"), "utf8");
     const app = await readFile(resolve(commuteRoot, "app.js"), "utf8");
+    const map = await readFile(resolve(commuteRoot, "map.js"), "utf8");
     const styles = await readFile(resolve(commuteRoot, "styles.css"), "utf8");
 
     expect(html).toContain('href="./styles.css"');
@@ -38,6 +39,7 @@ describe("commute production route", () => {
     expect(html).not.toContain("운영 서비스와 연결되어 있지 않습니다");
     expect(app).toContain("fetch('./data.json')");
     expect(app).not.toContain("이 컴퓨터에서만 열 수 있습니다");
+    expect(`${html}\n${app}\n${map}`).not.toMatch(/[가-힣]+니다/u);
     expect(styles).toContain("url('./vendor/SUIT-Variable.woff2')");
 
     await Promise.all(
