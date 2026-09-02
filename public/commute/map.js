@@ -52,7 +52,7 @@ export function createCommuteMap(container,data,callbacks) {
         }
       }
       ready=false;map.setStyle(style,{diff:false});
-    }).catch(()=>{message.hidden=false;message.textContent='배경지도 연결이 없어 지역 경계와 통학 데이터만 표시합니다.';});
+    }).catch(()=>{message.hidden=false;message.textContent='배경지도 연결이 없어 지역 경계와 통학 데이터만 표시해요.';});
   function marker(coords,html,className,label,onClick){
     const wrapper=document.createElement('div'),button=document.createElement('button');
     button.className=className;button.innerHTML=html;button.setAttribute('aria-label',label);
