@@ -4,6 +4,7 @@ import { AuthControl } from "@/app/_components/auth-control";
 
 const navigation = [
   { href: "/institutions", label: "기관 찾기" },
+  { href: "/commute", label: "통학지도" },
   { href: "/#current-opportunities", label: "입학정보" },
   { href: "/#articles", label: "아티클" },
 ];
