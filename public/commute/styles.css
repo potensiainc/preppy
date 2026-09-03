@@ -107,3 +107,9 @@ dialog{padding:0;border:1px solid #e5ebdf;border-radius:22px;background:#fff;col
 @media(max-width:760px){.wordmark,.site-header nav>button,.preview-badge{white-space:nowrap}.wordmark,.header-actions{flex-shrink:0}.selected-route-summary>button,.overview-return{min-height:44px}}
 @media(max-width:400px){.site-header{padding-inline:16px;gap:10px}.site-header nav{gap:9px}.site-header nav>button{font-size:10px;padding:0 2px}.wordmark{font-size:29px}.site-header nav>button>span:not(.nav-dot){margin-left:3px}.preview-badge{font-size:7px;letter-spacing:.3px;padding:6px}}
 .map-stop-label.morning{background:#318874;color:#fff}.map-stop-label.afternoon{background:#c7674a;color:#fff}.map-stop-label.selected{background:var(--ink)}
+
+/* Match the shared public PREPPY wordmark while keeping the map header layout. */
+@font-face{font-family:'DM Sans';src:url('./vendor/DM-Sans-Latin.woff2') format('woff2');font-style:normal;font-weight:400 600;font-display:swap}
+@font-face{font-family:'DM Sans Fallback';src:local(Arial);ascent-override:94.9%;descent-override:29.66%;line-gap-override:0%;size-adjust:104.53%}
+.wordmark{color:#315c50;font-family:'DM Sans','DM Sans Fallback','IBM Plex Sans KR','IBM Plex Sans KR Fallback','Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:1.05rem;font-weight:600;letter-spacing:.11em;line-height:1;text-decoration:none}
+@media(max-width:400px){.wordmark{font-size:.98rem}}
