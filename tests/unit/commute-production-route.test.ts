@@ -5,14 +5,24 @@ import {
   getRedirectUrl,
   unstable_getResponseFromNextConfig,
 } from "next/experimental/testing/server";
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
+import { SiteHeader } from "@/app/_components/site-header";
 import nextConfig from "@/next.config";
 
 const repositoryRoot = resolve(import.meta.dirname, "../..");
 const commuteRoot = resolve(repositoryRoot, "public/commute");
 
 describe("commute production route", () => {
+  it("offers the commute map from both desktop and mobile public navigation", () => {
+    const markup = renderToStaticMarkup(createElement(SiteHeader));
+
+    expect(markup.match(/href="\/commute"/g)).toHaveLength(2);
+    expect(markup.match(/>통학지도<\/a>/g)).toHaveLength(2);
+  });
+
   it("redirects the clean public URL to the static entry point and preserves filters", async () => {
     const response = await unstable_getResponseFromNextConfig({
       url: "https://preppy-web-production.up.railway.app/commute?area=서초구",
