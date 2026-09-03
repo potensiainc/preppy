@@ -23,6 +23,15 @@ describe("commute production route", () => {
     expect(markup.match(/>통학지도<\/a>/g)).toHaveLength(2);
   });
 
+  it("uses the public PREPPY wordmark as a real home link", async () => {
+    const html = await readFile(resolve(commuteRoot, "index.html"), "utf8");
+
+    expect(html).toMatch(
+      /<a\s+class="wordmark"\s+href="\/"\s+aria-label="PREPPY 홈">\s*PREPPY\s*<\/a>/u,
+    );
+    expect(html).not.toMatch(/class="wordmark"[^>]*data-action="home"/u);
+  });
+
   it("redirects the clean public URL to the static entry point and preserves filters", async () => {
     const response = await unstable_getResponseFromNextConfig({
       url: "https://preppy-web-production.up.railway.app/commute?area=서초구",
@@ -61,6 +70,7 @@ describe("commute production route", () => {
         "model.js",
         "route-view.js",
         "styles.css",
+        "vendor/DM-Sans-Latin.woff2",
         "vendor/maplibre-gl.css",
         "vendor/maplibre-gl.js",
         "vendor/SUIT-Variable.woff2",
