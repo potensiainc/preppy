@@ -823,7 +823,7 @@ Run a Railway production query through the `preppy-web` service and record count
 Run:
 
 ```powershell
-railway run --service preppy-web --environment production -- npm run db:preflight:production
+railway ssh --service preppy-web --environment production 'npm run db:preflight:production'
 ```
 
 Expected: migration inventory is valid and no production-safety blocker is reported.
@@ -833,7 +833,7 @@ Expected: migration inventory is valid and no production-safety blocker is repor
 Run:
 
 ```powershell
-railway run --service preppy-web --environment production -- npm run data:import-english-kindergarten-mvp -- --package data/snapshots/preppy/english-kindergarten/sg-ek-20260901-r01 --dry-run
+railway ssh --service preppy-web --environment production './node_modules/.bin/tsx --tsconfig scripts/db/tsconfig.json scripts/data/import-english-kindergarten-mvp.ts --package=data/snapshots/preppy/english-kindergarten/sg-ek-20260901-r01 --dry-run'
 ```
 
 Expected: checksum matches the reviewed manifest; no rejects; target roots plan as DRAFT; no write count changes after rerunning the baseline query.
@@ -843,7 +843,7 @@ Expected: checksum matches the reviewed manifest; no rejects; target roots plan 
 Run:
 
 ```powershell
-railway run --service preppy-web --environment production -- npm run db:migrate
+railway ssh --service preppy-web --environment production 'npm run db:migrate'
 ```
 
 Expected: migration `0013_english_kindergarten_profiles` is applied once; existing schema invariant checks remain valid.
@@ -853,9 +853,7 @@ Expected: migration `0013_english_kindergarten_profiles` is applied once; existi
 Read `preppyImportChecksum` from the committed `manifest.json`, set it as a PowerShell variable named `$englishKindergartenChecksum`, then run:
 
 ```powershell
-$env:ALLOW_PRODUCTION_ENGLISH_KINDERGARTEN_IMPORT='1'
-railway run --service preppy-web --environment production -- npm run data:import-english-kindergarten-mvp -- --package data/snapshots/preppy/english-kindergarten/sg-ek-20260901-r01 --apply --expected-checksum $englishKindergartenChecksum
-Remove-Item Env:ALLOW_PRODUCTION_ENGLISH_KINDERGARTEN_IMPORT
+railway ssh --service preppy-web --environment production "ALLOW_PRODUCTION_ENGLISH_KINDERGARTEN_IMPORT=1 ./node_modules/.bin/tsx --tsconfig scripts/db/tsconfig.json scripts/data/import-english-kindergarten-mvp.ts --package=data/snapshots/preppy/english-kindergarten/sg-ek-20260901-r01 --apply --expected-checksum=$englishKindergartenChecksum"
 ```
 
 Expected: transaction commits with no rejects and zero notification/outbox/change side effects.
