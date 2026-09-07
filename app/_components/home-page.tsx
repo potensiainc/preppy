@@ -81,7 +81,7 @@ function InstitutionSection({
       <SectionHeader
         eyebrow="기관"
         title="살펴볼 기관"
-        description="기관 유형별로 나누어 살펴보세요. 전체 목록에서 더 많은 기관을 찾을 수 있어요."
+        description="기관 유형별로 나누어 살펴보세요."
         action={
           <Link className="text-link" href="/institutions">
             기관 전체 보기

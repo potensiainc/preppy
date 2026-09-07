@@ -12,6 +12,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--base-url", default="http://127.0.0.1:3315")
 parser.add_argument("--output", default="test-results/home-institution-types")
 parser.add_argument("--engine", choices=["chromium", "webkit"], default="chromium")
+parser.add_argument("--width", type=int, help="Run one viewport for diagnostics")
 args = parser.parse_args()
 base_url = args.base_url.rstrip("/")
 output = Path(args.output)
@@ -25,11 +26,14 @@ def no_overflow(page):
 
 with sync_playwright() as playwright:
     browser = getattr(playwright, args.engine).launch(headless=True)
-    for width in (320, 390, 768, 1440):
+    for width in (args.width,) if args.width else (320, 390, 768, 1440):
         context = browser.new_context(viewport={"width": width, "height": 1000 if width > 640 else 844}, reduced_motion="reduce")
         page = context.new_page()
         errors = []
-        page.on("pageerror", lambda error: errors.append(str(error)))
+        stage = "initial"
+        page.on("pageerror", lambda error: errors.append({"stage": stage, "message": str(error), "stack": error.stack}))
+        failed_requests = []
+        page.on("requestfailed", lambda request: failed_requests.append({"stage": stage, "url": request.url, "failure": request.failure}))
         response = page.goto(base_url)
         assert response and response.status == 200
         section = page.get_by_role("region", name="살펴볼 기관", exact=True)
@@ -54,6 +58,7 @@ with sync_playwright() as playwright:
         no_overflow(page)
 
         # A parent can skip the first category without a tab hiding content.
+        stage = "jump"
         jump = page.get_by_role("navigation", name="살펴볼 기관 유형별 이동").get_by_role("link", name="사립초등학교", exact=True)
         jump.focus()
         expect(jump).to_be_focused()
@@ -70,6 +75,7 @@ with sync_playwright() as playwright:
         page.screenshot(path=str(output / f"{args.engine}-{width}-private.png"))
 
         # Continue to one institution and return to the same type section.
+        stage = "detail"
         card_link = target.locator("h4 a").first
         institution_name = card_link.inner_text()
         institution_href = card_link.get_attribute("href")
@@ -77,28 +83,38 @@ with sync_playwright() as playwright:
         page.wait_for_url(f"{base_url}{institution_href}")
         expect(page.get_by_role("heading", level=1, name=institution_name, exact=True)).to_be_visible()
         no_overflow(page)
+        stage = "back"
         page.go_back()
         expect(page.locator("#home-private-elementary")).to_be_visible()
 
         # Each full-list action carries its category through to the destination.
-        for group_id in ids[:2]:
-            page.goto(f"{base_url}/#{group_id}")
+        for group_id in ids:
             group = page.locator(f"#{group_id}")
+            stage = f"jump-{group_id}"
+            title = group.get_by_role("heading", level=3).inner_text()
+            page.get_by_role("navigation", name="살펴볼 기관 유형별 이동").get_by_role("link", name=title, exact=True).click()
+            page.wait_for_url(f"**/#{group_id}")
             category = group.get_attribute("data-category")
+            stage = f"list-{group_id}"
             group.locator(".home-institution-group__all").click()
             page.wait_for_url("**/institutions?category=*")
             assert parse_qs(urlparse(page.url).query)["category"] == [category]
             expect(page.get_by_role("heading", level=1)).to_be_visible()
             no_overflow(page)
+            stage = f"back-{group_id}"
+            page.go_back()
+            page.wait_for_url(f"**/#{group_id}")
+            expect(group).to_be_visible()
 
-        page.goto(f"{base_url}/#featured-institutions")
+        stage = "overview"
+        section.evaluate("node => node.scrollIntoView({block: 'start'})")
         expect(section).to_be_visible()
         page.wait_for_load_state("networkidle")
         page.evaluate("document.fonts.ready")
         page.screenshot(path=str(output / f"{args.engine}-{width}-overview.png"))
         if width == 1440:
             section.screenshot(path=str(output / f"{args.engine}-desktop-groups.png"))
-        assert not errors, errors
+        assert not errors, {"errors": errors, "failed_requests": failed_requests}
         report.append({"engine": args.engine, "width": width, "groups": names, "journeys": "passed"})
         context.close()
 

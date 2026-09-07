@@ -166,6 +166,9 @@ describe("WP-07 Home page", () => {
     expect(markup).not.toContain("International Schools");
     expect(markup).toContain("2027학년도 입학 전형");
     expect(markup).toContain("서울국제학교");
+    expect(markup).toContain('id="home-international-schools"');
+    expect(markup).toContain("국제학교 전체 보기");
+    expect(markup).not.toContain("더 많은 기관");
     expect(markup).toContain("국제학교 방문 전 확인할 점");
     expect(markup).toContain("살펴볼 기관");
     expect(markup).toContain('aria-label="현재 모집·입학정보"');
@@ -191,6 +194,7 @@ describe("WP-07 Home page", () => {
 
     expect(markup).toContain("PREPPY에 공개된 모집·입학정보가 없어요");
     expect(markup).toContain("PREPPY에 공개된 기관 정보가 없어요");
+    expect(markup).not.toContain("더 많은 기관");
     expect(markup).toContain("PREPPY에 공개된 아티클이 없어요");
   });
 
