@@ -80,7 +80,7 @@ export function InstitutionCard({
     institution.district ||
     (institution.region === "KR-11" ? "서울" : institution.region);
   return (
-    <article className="public-card institution-card">
+    <article className="public-card institution-card public-card--linked">
       <div className="card-kicker">
         <span>{categoryLabel(institution.category)}</span>
         {institution.currentAdmissionsState ? (
@@ -90,13 +90,17 @@ export function InstitutionCard({
       <Heading>
         {analyticsEvent ? (
           <AnalyticsLink
+            className="card-primary-link"
             event={analyticsEvent}
             href={`/institutions/${institution.slug}`}
           >
             {institution.name}
           </AnalyticsLink>
         ) : (
-          <Link href={`/institutions/${institution.slug}`}>
+          <Link
+            className="card-primary-link"
+            href={`/institutions/${institution.slug}`}
+          >
             {institution.name}
           </Link>
         )}
@@ -104,7 +108,10 @@ export function InstitutionCard({
       {region ? <p className="card-region">{region}</p> : null}
       {institution.currentOpportunity ? (
         <p className="card-opportunity">
-          <Link href={`/opportunities/${institution.currentOpportunity.slug}`}>
+          <Link
+            className="card-secondary-link"
+            href={`/opportunities/${institution.currentOpportunity.slug}`}
+          >
             {institution.currentOpportunity.title}
           </Link>
         </p>
@@ -120,18 +127,24 @@ export function OpportunityCard({
   opportunity: OpportunityCardDTO;
 }) {
   return (
-    <article className="public-card opportunity-card">
+    <article className="public-card opportunity-card public-card--linked">
       <div className="card-kicker">
         <span>{opportunityKindLabel(opportunity.kind)}</span>
         <StateBadge state={opportunity.businessState} />
       </div>
       <p className="card-parent">
-        <Link href={`/institutions/${opportunity.institution.slug}`}>
+        <Link
+          className="card-secondary-link"
+          href={`/institutions/${opportunity.institution.slug}`}
+        >
           {opportunity.institution.name}
         </Link>
       </p>
       <h3>
-        <Link href={`/opportunities/${opportunity.slug}`}>
+        <Link
+          className="card-primary-link"
+          href={`/opportunities/${opportunity.slug}`}
+        >
           {opportunity.title}
         </Link>
       </h3>

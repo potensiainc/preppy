@@ -2743,6 +2743,34 @@ h3 {
   }
 }
 
+/* Extend the real title link; secondary links remain independent above it. */
+.public-card--linked {
+  position: relative;
+  isolation: isolate;
+}
+
+.public-card--linked .card-primary-link::after {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: 12px;
+  content: "";
+}
+
+.public-card--linked .card-secondary-link {
+  position: relative;
+  z-index: 2;
+}
+
+.public-card--linked .card-primary-link:focus-visible {
+  outline: none;
+}
+
+.public-card--linked .card-primary-link:focus-visible::after {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
 /* Home discovery: clear category boundaries and direct paths to full lists. */
 .home-institution-jumps {
   display: flex;
