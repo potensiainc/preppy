@@ -30,6 +30,7 @@ export type InstitutionListQuery = {
   region?: string;
   recruitmentState?: OpportunityBusinessState;
   query?: string;
+  hasConfirmedTuition?: boolean;
   minAge?: number;
   transport?: TransportFilter;
   hasUpcomingInfoSession?: boolean;

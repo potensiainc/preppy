@@ -3,6 +3,10 @@ import { publicAdmissionText } from "@/src/modules/public/admission-copy";
 import { publicProse } from "@/src/modules/public/ux-writing";
 import { admissionReadingItems } from "@/app/_lib/admissions-readability";
 import { ReviewedAdmissions } from "./admissions-content";
+import {
+  EnglishKindergartenDetailView,
+  EnglishKindergartenListView,
+} from "./english-kindergarten-pages";
 
 import type {
   InstitutionDetailDTO,
@@ -110,6 +114,10 @@ export function InstitutionListView({
   data: InstitutionListDTO;
   filters: InstitutionListQuery;
 }) {
+  if (filters.category === "ENGLISH_KINDERGARTEN") {
+    return <EnglishKindergartenListView data={data} filters={filters} />;
+  }
+
   return (
     <PageContainer>
       <div className="institution-list">
@@ -206,6 +214,13 @@ export function InstitutionDetailView({
 }: {
   data: InstitutionDetailDTO;
 }) {
+  if (
+    data.institution.category === "ENGLISH_KINDERGARTEN" &&
+    data.englishKindergarten
+  ) {
+    return <EnglishKindergartenDetailView data={data} />;
+  }
+
   const { institution } = data;
   const officialSources = collectOfficialSources(data);
   const reviewedIds = new Set(

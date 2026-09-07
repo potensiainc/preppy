@@ -334,6 +334,12 @@ describe("English-kindergarten public query", () => {
     });
     await addFact({
       institutionId: matching.id,
+      factType: "TUITION",
+      value: tuitionValue(1_850_000),
+      displayText: "2026학년도 월 185만원이에요.",
+    });
+    await addFact({
+      institutionId: matching.id,
       factType: "TARGET_AGE_GRADE",
       value: ageValue(4, 6),
       displayText: "만 4~6세 반을 운영해요.",
@@ -360,6 +366,7 @@ describe("English-kindergarten public query", () => {
     const result = await listInstitutions(runtime.executor, {
       category: "ENGLISH_KINDERGARTEN",
       query: prefix,
+      hasConfirmedTuition: true,
       minAge: 4,
       transport: "AVAILABLE",
       sort: "NAME_ASC",

@@ -60,6 +60,10 @@ export function toInstitutionListInput(
   const region = normalizedText(scalar(searchParams.region), MAX_REGION_LENGTH);
   const query = normalizedText(scalar(searchParams.query), MAX_QUERY_LENGTH);
   const isEnglishKindergarten = category === "ENGLISH_KINDERGARTEN";
+  const hasConfirmedTuition =
+    isEnglishKindergarten && scalar(searchParams.hasConfirmedTuition) === "true"
+      ? true
+      : undefined;
   const minAgeInput = scalar(searchParams.minAge);
   const minAge =
     isEnglishKindergarten &&
@@ -98,6 +102,7 @@ export function toInstitutionListInput(
       ? { recruitmentState: recruitmentState as OpportunityBusinessState }
       : {}),
     ...(query === undefined ? {} : { query }),
+    ...(hasConfirmedTuition === undefined ? {} : { hasConfirmedTuition }),
     ...(minAge === undefined ? {} : { minAge }),
     ...(transport === undefined ? {} : { transport }),
     ...(hasUpcomingInfoSession === undefined ? {} : { hasUpcomingInfoSession }),

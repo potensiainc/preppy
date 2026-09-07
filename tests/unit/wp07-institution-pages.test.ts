@@ -548,6 +548,26 @@ describe("WP-07 Institution pages", () => {
       page: 1,
       pageSize: 12,
     });
+    expect(
+      toInstitutionListInput({
+        category: "ENGLISH_KINDERGARTEN",
+        hasConfirmedTuition: "true",
+        minAge: "4",
+        transport: "AVAILABLE",
+        hasUpcomingInfoSession: "true",
+        sort: "TUITION_ASC",
+        page: "1",
+      }),
+    ).toEqual({
+      category: "ENGLISH_KINDERGARTEN",
+      hasConfirmedTuition: true,
+      minAge: 4,
+      transport: "AVAILABLE",
+      hasUpcomingInfoSession: true,
+      sort: "TUITION_ASC",
+      page: 1,
+      pageSize: 12,
+    });
   });
 
   it("renders a semantic GET discovery form, query-preserving pagination, and an intentional empty state", () => {

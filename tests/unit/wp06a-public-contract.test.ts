@@ -225,6 +225,7 @@ describe("WP-06A institution list input", () => {
     expect(
       parseInstitutionListQuery({
         category: "ENGLISH_KINDERGARTEN",
+        hasConfirmedTuition: true,
         minAge: "4",
         transport: "AVAILABLE",
         hasUpcomingInfoSession: true,
@@ -232,6 +233,7 @@ describe("WP-06A institution list input", () => {
       }),
     ).toEqual({
       category: "ENGLISH_KINDERGARTEN",
+      hasConfirmedTuition: true,
       minAge: 4,
       transport: "AVAILABLE",
       hasUpcomingInfoSession: true,

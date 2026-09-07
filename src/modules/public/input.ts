@@ -48,6 +48,7 @@ const institutionListQuerySchema = z
     region: normalizedRequiredText(MAX_REGION_LENGTH).optional(),
     recruitmentState: z.enum(opportunityBusinessStateValues).optional(),
     query: normalizedRequiredText(MAX_QUERY_LENGTH).optional(),
+    hasConfirmedTuition: z.boolean().optional(),
     minAge: positiveInteger(MAX_CHILD_AGE).optional(),
     transport: z.literal("AVAILABLE").optional(),
     hasUpcomingInfoSession: z.boolean().optional(),
@@ -58,6 +59,7 @@ const institutionListQuerySchema = z
   .strict()
   .superRefine((value, context) => {
     const hasEnglishKindergartenFilter =
+      value.hasConfirmedTuition !== undefined ||
       value.minAge !== undefined ||
       value.transport !== undefined ||
       value.hasUpcomingInfoSession !== undefined ||
@@ -96,6 +98,9 @@ export function parseInstitutionListQuery(
       ? {}
       : { recruitmentState: parsed.data.recruitmentState }),
     ...(parsed.data.query === undefined ? {} : { query: parsed.data.query }),
+    ...(parsed.data.hasConfirmedTuition === undefined
+      ? {}
+      : { hasConfirmedTuition: parsed.data.hasConfirmedTuition }),
     ...(parsed.data.minAge === undefined ? {} : { minAge: parsed.data.minAge }),
     ...(parsed.data.transport === undefined
       ? {}

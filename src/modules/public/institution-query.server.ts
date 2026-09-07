@@ -604,6 +604,19 @@ function listConditions(query: InstitutionListQuery) {
       ? undefined
       : ilike(institutions.displayName, `%${query.query}%`),
     recruitmentExists(query.recruitmentState),
+    query.hasConfirmedTuition === true
+      ? sql`exists (
+          select 1
+          from institution_facts ek_tuition_fact
+          join institution_fact_versions ek_tuition_version
+            on ek_tuition_version.institution_fact_id = ek_tuition_fact.id
+            and ek_tuition_version.is_current = true
+            and ek_tuition_version.verification_state = 'VERIFIED'
+            and ek_tuition_version.verified_at is not null
+          where ek_tuition_fact.institution_id = ${institutions.id}
+            and ek_tuition_fact.fact_type = 'TUITION'
+        )`
+      : undefined,
     query.minAge === undefined
       ? undefined
       : sql`exists (
