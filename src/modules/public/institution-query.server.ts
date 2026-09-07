@@ -293,9 +293,12 @@ async function getOpportunityTruths(
       : projection === "HOME"
         ? HOME_OPPORTUNITY_LIMIT
         : 1;
+  const rankLimit = projection === "HOME" ? 1 : limit;
+  const overallLimit =
+    projection === "HOME" ? sql`limit ${HOME_OPPORTUNITY_LIMIT}` : sql``;
   const partition =
     projection === "HOME"
-      ? sql`section`
+      ? sql`"institutionId", section`
       : "opportunityIds" in target
         ? sql`id, section`
         : sql`"institutionId", section`;
@@ -319,7 +322,7 @@ async function getOpportunityTruths(
       from opportunities o join institutions i on i.id=o.institution_id and i.publication_state='PUBLISHED' join opportunity_admission_event_links l on l.opportunity_id=o.id join admission_events e on e.id=l.admission_event_id and e.is_public=true join admission_event_versions v on v.admission_event_id=e.id and v.is_current=true and v.verification_status='VERIFIED'
       where ${targetCondition} and o.publication_state='PUBLISHED' and o.truth_mode='LEGACY_BACKED' and v.verified_at is not null
     ), sectioned as (select *, ${section} as section from candidates), ranked as (select *, row_number() over (partition by ${partition} order by case state when 'OPEN' then 0 when 'UPCOMING' then 1 when 'CLOSED' then 2 when 'COMPLETED' then 3 when 'CANCELLED' then 4 else 5 end, "sortKey", title, id) rn from sectioned)
-    select * from ranked where section is not null and rn <= ${limit} order by case state when 'OPEN' then 0 when 'UPCOMING' then 1 when 'CLOSED' then 2 when 'COMPLETED' then 3 when 'CANCELLED' then 4 else 5 end, "sortKey", title, id
+    select * from ranked where section is not null and rn <= ${rankLimit} order by case state when 'OPEN' then 0 when 'UPCOMING' then 1 when 'CLOSED' then 2 when 'COMPLETED' then 3 when 'CANCELLED' then 4 else 5 end, "sortKey", title, id ${overallLimit}
   `)) as unknown as Array<{
     id: string;
     institutionId: string;
@@ -500,9 +503,17 @@ export async function getHomeCurrentOpportunityCards(
   ]);
   return truths.flatMap((truth) => {
     const institution = institutionsById.get(truth.institutionId);
-    return institution === undefined
-      ? []
-      : [opportunityCard(truth, institution)];
+    if (institution === undefined) return [];
+    const card = opportunityCard(truth, institution);
+    return [
+      {
+        ...card,
+        title:
+          card.kind === "INFORMATION_SESSION"
+            ? card.title.replace(/(입학설명회)\s+\d+(?:\s*\(예정\))?$/u, "$1")
+            : card.title,
+      },
+    ];
   });
 }
 

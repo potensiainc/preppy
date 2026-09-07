@@ -109,14 +109,14 @@ export type InstitutionAction = Readonly<{
     category: "ENGLISH_KINDERGARTEN";
     internationalSubtype: null;
     operationalState: "ACTIVE" | "UNKNOWN";
-    publicationState: "DRAFT";
+    publicationState: "DRAFT" | "PUBLISHED";
     regionCode: "KR-11";
     city: "서울특별시";
     district: "강남구" | "서초구";
     addressLine: string;
     websiteUrl: string | null;
     shortDescription: null;
-    publishedAt: null;
+    publishedAt: Date | null;
     archivedAt: null;
   };
 }>;
@@ -452,6 +452,7 @@ export async function planEnglishKindergartenImport(
     const websiteUrl =
       campus.officialChannels.find((channel) => channel.kind === "WEBSITE")
         ?.value ?? null;
+    const preservePublishedState = existing?.publicationState === "PUBLISHED";
     const desired = {
       id: existing?.id ?? generatedId,
       slug: campus.slug,
@@ -459,14 +460,16 @@ export async function planEnglishKindergartenImport(
       category: "ENGLISH_KINDERGARTEN" as const,
       internationalSubtype: null,
       operationalState: campus.operationalState,
-      publicationState: "DRAFT" as const,
+      publicationState: preservePublishedState
+        ? ("PUBLISHED" as const)
+        : ("DRAFT" as const),
       regionCode: "KR-11" as const,
       city: "서울특별시" as const,
       district: campus.district,
       addressLine: campus.addressLine,
       websiteUrl,
       shortDescription: null,
-      publishedAt: null,
+      publishedAt: preservePublishedState ? existing.publishedAt : null,
       archivedAt: null,
     };
     if (existing) {
@@ -481,13 +484,16 @@ export async function planEnglishKindergartenImport(
       const exact =
         existing.displayName === desired.displayName &&
         existing.operationalState === desired.operationalState &&
-        existing.publicationState === "DRAFT" &&
+        (existing.publicationState === "DRAFT" ||
+          existing.publicationState === "PUBLISHED") &&
         existing.regionCode === desired.regionCode &&
         existing.city === desired.city &&
         existing.district === desired.district &&
         existing.addressLine === desired.addressLine &&
         existing.websiteUrl === desired.websiteUrl &&
-        existing.publishedAt === null;
+        (existing.publicationState === "DRAFT"
+          ? existing.publishedAt === null
+          : existing.publishedAt !== null);
       if (!exact) {
         rejects.push({
           code: "SLUG_COLLISION",

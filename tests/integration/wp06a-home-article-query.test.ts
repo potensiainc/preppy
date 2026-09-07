@@ -68,6 +68,11 @@ async function createNativeOpportunity(
   institutionId: string,
   state: "OPEN" | "UPCOMING" | "CLOSED" | "UNKNOWN" = "OPEN",
   published = true,
+  options: Readonly<{
+    kind?: "APPLICATION" | "INFORMATION_SESSION";
+    title?: string;
+    applicationCloseAt?: string;
+  }> = {},
 ) {
   const id = randomUUID();
   const versionId = randomUUID();
@@ -84,13 +89,13 @@ async function createNativeOpportunity(
     `;
     await transaction`
       insert into opportunities (id, institution_id, slug, kind, truth_mode, publication_state, published_at)
-      values (${id}, ${institutionId}, ${slug}, 'APPLICATION', 'NATIVE', ${published ? "PUBLISHED" : "DRAFT"},
+      values (${id}, ${institutionId}, ${slug}, ${options.kind ?? "APPLICATION"}, 'NATIVE', ${published ? "PUBLISHED" : "DRAFT"},
         ${published ? "2026-08-01T00:00:00.000Z" : null})
     `;
     await transaction`
       insert into opportunity_versions (id, opportunity_id, truth_mode, version_number, verification_state, business_state, is_current, title, summary, application_close_at, action_url, verified_at)
-      values (${versionId}, ${id}, 'NATIVE', 1, 'VERIFIED', ${state}, true, ${`Opportunity ${state}`},
-        'Verified summary.', '2026-09-01T00:00:00.000Z', 'https://apply.example.test', '2026-08-11T02:03:04.000Z')
+      values (${versionId}, ${id}, 'NATIVE', 1, 'VERIFIED', ${state}, true, ${options.title ?? `Opportunity ${state}`},
+        'Verified summary.', ${options.applicationCloseAt ?? "2026-09-01T00:00:00.000Z"}, 'https://apply.example.test', '2026-08-11T02:03:04.000Z')
     `;
     await transaction`
       insert into opportunity_version_evidence (opportunity_version_id, source_id, evidence_role)
@@ -336,7 +341,16 @@ describe("WP-06A Article and Home public queries", () => {
     const alpha = await createInstitution("Home Alpha");
     const beta = await createInstitution("Home Beta");
     const hidden = await createInstitution("Home Hidden", "HIDDEN");
-    const open = await createNativeOpportunity(alpha.id, "OPEN");
+    const open = await createNativeOpportunity(alpha.id, "OPEN", true, {
+      kind: "INFORMATION_SESSION",
+      title: "2027학년도 Home Alpha 입학설명회 1",
+      applicationCloseAt: "2026-09-01T00:00:00.000Z",
+    });
+    await createNativeOpportunity(alpha.id, "UPCOMING", true, {
+      kind: "INFORMATION_SESSION",
+      title: "2027학년도 Home Alpha 입학설명회 2",
+      applicationCloseAt: "2026-09-02T00:00:00.000Z",
+    });
     await createNativeOpportunity(beta.id, "UPCOMING");
     await createNativeOpportunity(hidden.id, "OPEN");
     const publishedArticle = await createArticle("PUBLISHED");
@@ -348,6 +362,16 @@ describe("WP-06A Article and Home public queries", () => {
     expect(first.currentOpportunities.map((item) => item.id)).toContain(
       open.id,
     );
+    expect(
+      first.currentOpportunities.filter(
+        (item) => item.institution.id === alpha.id,
+      ),
+    ).toHaveLength(1);
+    expect(
+      first.currentOpportunities.find(
+        (item) => item.institution.id === alpha.id,
+      )?.title,
+    ).toBe("2027학년도 Home Alpha 입학설명회");
     expect(
       first.currentOpportunities.every((item) =>
         ["OPEN", "UPCOMING"].includes(item.businessState),

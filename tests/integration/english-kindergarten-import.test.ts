@@ -293,6 +293,33 @@ describe("English-kindergarten snapshot import", () => {
     expect(second.plan.rejects).toEqual([]);
   });
 
+  it("preserves exact published roots so later detail snapshots remain importable", async () => {
+    await applyEnglishKindergartenImport(
+      {
+        packageValue,
+        expectedChecksum: validation.packageChecksum,
+        occurredAt: new Date("2026-09-07T02:00:00.000Z"),
+      },
+      { transactionManager: runtime.transactionManager },
+    );
+    await runtime.client`
+      update institutions
+      set publication_state='PUBLISHED',
+        published_at='2026-09-07T03:00:00.000Z'
+      where slug in ${runtime.client(slugs)}
+    `;
+
+    const replay = await dryRunEnglishKindergartenImport(
+      { packageValue },
+      { transactionManager: runtime.transactionManager },
+    );
+
+    expect(replay.plan.rejects).toEqual([]);
+    expect(replay.plan.unchanged.institutions).toBe(25);
+    expect(replay.plan.created.total).toBe(0);
+    expect(replay.plan.updated.total).toBe(0);
+  });
+
   it("imports a future review insight with evidence and remains idempotent", async () => {
     const reviewPackage = withReviewInsight();
     const reviewValidation = validateEnglishKindergartenPackage(reviewPackage);
