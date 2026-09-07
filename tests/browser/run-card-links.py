@@ -62,6 +62,10 @@ with sync_playwright() as p:
             }""", title_selector)
             assert all(hits), {"selector": selector, "corners": hits}
             primary.focus()
+            # Enter keyboard modality: programmatic focus after touch correctly
+            # does not necessarily match :focus-visible in a hydrated app.
+            primary.press("Tab")
+            page.keyboard.press("Shift+Tab")
             expect(primary).to_be_focused()
             assert primary.evaluate("node => getComputedStyle(node, '::after').outlineStyle") != "none", "Missing full-card focus outline"
             if index == 1:

@@ -29,7 +29,19 @@
 - 증거: `test-results/card-links-before`, `test-results/card-links-local/report.json`, `test-results/card-links-local/390-focus.png`.
 - 재현: `npx tsx tests/browser/card-links-fixture.tsx` 실행 후 `python tests/browser/run-card-links.py --base-url http://127.0.0.1:3317 --fixture`.
 
-## UX Writing: PASS — 구현·로컬 검수 범위
+## 프로덕션 검증
+
+- 배포 코드 `be2ca68`, Railway `preppy-web` / `production`, 배포 ID `4e66d496-d75f-4adc-810c-4f0f1cc102c4`의 `SUCCESS` 확인.
+- 업로드 경로를 작업 폴더로 명시하고 `--path-as-root`를 사용했다. 운영 빌드도 통과했다.
+- Chromium 320·390·1440px × 영유·사립초·모집 안내의 9개 시나리오 통과. 실제 운영 기관 상세와 모집 안내 상세로 이동하는 것을 확인했다.
+- 빈 공간 클릭/터치, 네 모서리의 클릭 영역, 별도 링크, Tab·Shift+Tab·Enter, 카드 전체 포커스, Ctrl+클릭 새 탭, JavaScript 비활성 모바일 터치를 확인했다.
+- 처음에는 터치 직후 자동으로 포커스를 준 상태에서 테두리를 요구해 검사가 실패했다. 운영에서 `:focus-visible`이 자동 포커스에는 false, 실제 Tab 이동에는 true임을 대조했다. CSS를 바꾸거나 검사를 무시하지 않고 실제 키보드 입력을 사용하는 검사로 바로잡아 통과했다.
+- 운영 390px 포커스 캡처를 직접 열어 테두리·카드 정보·기존 별도 링크의 배치를 검수했다.
+- 독립 코드 리뷰: 수정 필요 사항 없음, `Ready`, `UX Writing: PASS`.
+- 증거: `test-results/card-links-production/report.json`, `test-results/card-links-production/390-focus.png`.
+- 로컬 전용 테스트 서버는 검수 후 종료했다.
+
+## UX Writing: PASS — 구현·로컬·운영 검수 범위
 
 - `docs/PREPPY_UX_WRITING_POLICY.md` 전체를 적용했다.
 - 사용자 노출 문구를 새로 만들거나 고치지 않았다. 기관명, 모집 제목, 학년도, 예정·마감 상태, 일정, 내용 확인 시각을 유지한다.
