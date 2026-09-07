@@ -40,6 +40,11 @@ import type {
 } from "./dto";
 import { parseInstitutionListQuery } from "./input";
 import { getIndexability } from "./indexability";
+import {
+  SEOUL_REGION_CODE,
+  seoulDistrictSet,
+  seoulDistrictValues,
+} from "./location";
 import { getRelatedArticles } from "./opportunity-query.server";
 
 const DETAIL_OPPORTUNITY_LIMIT = 12;
@@ -80,6 +85,7 @@ type InstitutionRow = {
   name: string;
   category: InstitutionCardDTO["category"];
   region: string | null;
+  district: string | null;
   address: string | null;
   shortDescription: string | null;
   operationalState: "ACTIVE" | "INACTIVE" | "CLOSED" | "UNKNOWN";
@@ -414,6 +420,7 @@ async function getInstitutionsByIds(
       name: institutions.displayName,
       category: institutions.category,
       region: institutions.regionCode,
+      district: institutions.district,
       address: institutions.addressLine,
       shortDescription: institutions.shortDescription,
       operationalState: institutions.operationalState,
@@ -567,6 +574,7 @@ function cardFromInstitution(
     name: institution.name,
     category: institution.category,
     region: institution.region,
+    district: institution.district,
     ...(institution.category === "ENGLISH_KINDERGARTEN"
       ? { address: institution.address }
       : {}),
@@ -617,6 +625,12 @@ function listConditions(query: InstitutionListQuery) {
     query.region === undefined
       ? undefined
       : eq(institutions.regionCode, query.region),
+    query.district === undefined
+      ? undefined
+      : and(
+          eq(institutions.regionCode, SEOUL_REGION_CODE),
+          eq(institutions.district, query.district),
+        ),
     query.query === undefined
       ? undefined
       : ilike(institutions.displayName, `%${query.query}%`),
@@ -683,6 +697,42 @@ function listConditions(query: InstitutionListQuery) {
         )`
       : undefined,
   );
+}
+
+async function listEnglishKindergartenDistrictFacets(
+  executor: DatabaseExecutor,
+  query: InstitutionListQuery,
+): Promise<InstitutionListDTO["districtFacets"]> {
+  if (
+    query.category !== "ENGLISH_KINDERGARTEN" ||
+    query.region !== SEOUL_REGION_CODE
+  ) {
+    return [];
+  }
+
+  const facetQuery = { ...query };
+  delete facetQuery.district;
+  const rows = await executor.drizzle
+    .select({
+      district: institutions.district,
+      count: sql<number>`count(*)::int`,
+    })
+    .from(institutions)
+    .where(listConditions(facetQuery))
+    .groupBy(institutions.district);
+  const countByDistrict = new Map(
+    rows
+      .filter(
+        (row): row is { district: string; count: number } =>
+          row.district !== null && seoulDistrictSet.has(row.district),
+      )
+      .map((row) => [row.district, row.count]),
+  );
+
+  return seoulDistrictValues.map((district) => ({
+    district,
+    count: countByDistrict.get(district) ?? 0,
+  }));
 }
 
 function tuitionAmountOrder() {
@@ -771,7 +821,7 @@ export async function listInstitutions(
 ): Promise<InstitutionListDTO> {
   const query = parseInstitutionListQuery(input);
   const where = listConditions(query);
-  const [countRow, rows] = await Promise.all([
+  const [countRow, rows, districtFacets] = await Promise.all([
     executor.drizzle
       .select({ total: sql<number>`count(*)::int` })
       .from(institutions)
@@ -783,6 +833,7 @@ export async function listInstitutions(
         name: institutions.displayName,
         category: institutions.category,
         region: institutions.regionCode,
+        district: institutions.district,
         address: institutions.addressLine,
         shortDescription: institutions.shortDescription,
         operationalState: institutions.operationalState,
@@ -792,6 +843,7 @@ export async function listInstitutions(
       .orderBy(...listOrder(query))
       .limit(query.pageSize)
       .offset((query.page - 1) * query.pageSize),
+    listEnglishKindergartenDistrictFacets(executor, query),
   ]);
   const covered = await getMonitorableInstitutionIds(
     executor,
@@ -803,6 +855,7 @@ export async function listInstitutions(
     name: row.name,
     category: row.category,
     region: row.region,
+    district: row.district,
     address: row.address,
     shortDescription: row.shortDescription,
     operationalState: row.operationalState,
@@ -833,6 +886,7 @@ export async function listInstitutions(
         englishKindergartenSummaries.get(row.id),
       ),
     ),
+    districtFacets,
     pagination: {
       page: query.page,
       pageSize: query.pageSize,
@@ -1110,6 +1164,7 @@ export async function getInstitutionBySlug(
       name: institutions.displayName,
       category: institutions.category,
       region: institutions.regionCode,
+      district: institutions.district,
       address: institutions.addressLine,
       shortDescription: institutions.shortDescription,
       operationalState: institutions.operationalState,

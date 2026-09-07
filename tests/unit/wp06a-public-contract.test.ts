@@ -252,6 +252,34 @@ describe("WP-06A institution list input", () => {
       ValidationError,
     );
   });
+
+  it("accepts only Seoul districts for English-kindergarten discovery", () => {
+    expect(
+      parseInstitutionListQuery({
+        category: "ENGLISH_KINDERGARTEN",
+        region: "KR-11",
+        district: "강남구",
+      }),
+    ).toEqual({
+      category: "ENGLISH_KINDERGARTEN",
+      region: "KR-11",
+      district: "강남구",
+      page: 1,
+      pageSize: DEFAULT_INSTITUTION_PAGE_SIZE,
+    });
+
+    for (const input of [
+      { category: "ENGLISH_KINDERGARTEN", district: "서울시" },
+      { category: "PRIVATE_ELEMENTARY", district: "강남구" },
+      {
+        category: "ENGLISH_KINDERGARTEN",
+        region: "BUSAN",
+        district: "강남구",
+      },
+    ]) {
+      expect(() => parseInstitutionListQuery(input)).toThrow(ValidationError);
+    }
+  });
 });
 
 describe("WP-06A public DTO contract", () => {

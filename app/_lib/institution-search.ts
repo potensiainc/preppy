@@ -3,6 +3,10 @@ import type {
   OpportunityBusinessState,
 } from "@/src/db/schema";
 import type { InstitutionListQuery } from "@/src/modules/public/dto";
+import {
+  SEOUL_REGION_CODE,
+  seoulDistrictSet,
+} from "@/src/modules/public/location";
 
 export type NextSearchParams = Record<string, string | string[] | undefined>;
 
@@ -60,6 +64,14 @@ export function toInstitutionListInput(
   const region = normalizedText(scalar(searchParams.region), MAX_REGION_LENGTH);
   const query = normalizedText(scalar(searchParams.query), MAX_QUERY_LENGTH);
   const isEnglishKindergarten = category === "ENGLISH_KINDERGARTEN";
+  const districtInput = scalar(searchParams.district);
+  const district =
+    isEnglishKindergarten &&
+    districtInput !== undefined &&
+    seoulDistrictSet.has(districtInput)
+      ? districtInput
+      : undefined;
+  const effectiveRegion = isEnglishKindergarten ? SEOUL_REGION_CODE : region;
   const hasConfirmedTuition =
     isEnglishKindergarten && scalar(searchParams.hasConfirmedTuition) === "true"
       ? true
@@ -96,7 +108,8 @@ export function toInstitutionListInput(
     categories.has(category as InstitutionCategory)
       ? { category: category as InstitutionCategory }
       : {}),
-    ...(region === undefined ? {} : { region }),
+    ...(effectiveRegion === undefined ? {} : { region: effectiveRegion }),
+    ...(district === undefined ? {} : { district }),
     ...(recruitmentState !== undefined &&
     recruitmentStates.has(recruitmentState as OpportunityBusinessState)
       ? { recruitmentState: recruitmentState as OpportunityBusinessState }

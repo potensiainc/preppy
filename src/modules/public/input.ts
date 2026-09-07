@@ -7,6 +7,7 @@ import {
 } from "@/src/db/schema";
 
 import type { InstitutionListQuery } from "./dto";
+import { SEOUL_REGION_CODE, seoulDistrictValues } from "./location";
 
 export const DEFAULT_INSTITUTION_PAGE_SIZE = 20;
 export const MAX_INSTITUTION_PAGE_SIZE = 50;
@@ -46,6 +47,7 @@ const institutionListQuerySchema = z
   .object({
     category: z.enum(institutionCategoryValues).optional(),
     region: normalizedRequiredText(MAX_REGION_LENGTH).optional(),
+    district: z.enum(seoulDistrictValues).optional(),
     recruitmentState: z.enum(opportunityBusinessStateValues).optional(),
     query: normalizedRequiredText(MAX_QUERY_LENGTH).optional(),
     hasConfirmedTuition: z.boolean().optional(),
@@ -60,6 +62,7 @@ const institutionListQuerySchema = z
   .superRefine((value, context) => {
     const hasEnglishKindergartenFilter =
       value.hasConfirmedTuition !== undefined ||
+      value.district !== undefined ||
       value.minAge !== undefined ||
       value.transport !== undefined ||
       value.hasUpcomingInfoSession !== undefined ||
@@ -73,6 +76,17 @@ const institutionListQuerySchema = z
         message:
           "영어유치원 비교 조건은 영어유치원 카테고리에서만 사용할 수 있습니다.",
         path: ["category"],
+      });
+    }
+    if (
+      value.district !== undefined &&
+      value.region !== undefined &&
+      value.region !== SEOUL_REGION_CODE
+    ) {
+      context.addIssue({
+        code: "custom",
+        message: "서울 자치구는 서울 지역에서만 사용할 수 있습니다.",
+        path: ["region"],
       });
     }
   });
@@ -94,6 +108,9 @@ export function parseInstitutionListQuery(
       ? {}
       : { category: parsed.data.category }),
     ...(parsed.data.region === undefined ? {} : { region: parsed.data.region }),
+    ...(parsed.data.district === undefined
+      ? {}
+      : { district: parsed.data.district }),
     ...(parsed.data.recruitmentState === undefined
       ? {}
       : { recruitmentState: parsed.data.recruitmentState }),

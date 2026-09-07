@@ -17,6 +17,7 @@ import type {
   InstitutionListQuery,
   OfficialSourceDTO,
 } from "@/src/modules/public/dto";
+import { SEOUL_REGION_CODE } from "@/src/modules/public/location";
 
 const detailAnchors = [
   ["tuition", "원비"],
@@ -82,6 +83,7 @@ function findFact<T extends EnglishKindergartenFactDTO["factType"]>(
 function institutionListHref(filters: InstitutionListQuery, page: number) {
   const params = new URLSearchParams({ category: "ENGLISH_KINDERGARTEN" });
   if (filters.region) params.set("region", filters.region);
+  if (filters.district) params.set("district", filters.district);
   if (filters.query) params.set("query", filters.query);
   if (filters.hasConfirmedTuition) params.set("hasConfirmedTuition", "true");
   if (filters.minAge) params.set("minAge", String(filters.minAge));
@@ -91,6 +93,92 @@ function institutionListHref(filters: InstitutionListQuery, page: number) {
   if (filters.sort) params.set("sort", filters.sort);
   params.set("page", String(page));
   return `/institutions?${params.toString()}`;
+}
+
+function districtListHref(
+  filters: InstitutionListQuery,
+  district: string | null,
+) {
+  const params = new URLSearchParams({
+    category: "ENGLISH_KINDERGARTEN",
+    region: filters.region ?? SEOUL_REGION_CODE,
+  });
+  if (district) params.set("district", district);
+  if (filters.query) params.set("query", filters.query);
+  if (filters.hasConfirmedTuition) params.set("hasConfirmedTuition", "true");
+  if (filters.minAge) params.set("minAge", String(filters.minAge));
+  if (filters.transport) params.set("transport", filters.transport);
+  if (filters.hasUpcomingInfoSession)
+    params.set("hasUpcomingInfoSession", "true");
+  if (filters.sort) params.set("sort", filters.sort);
+  params.set("page", "1");
+  return `/institutions?${params.toString()}`;
+}
+
+function resetComparisonHref(filters: InstitutionListQuery) {
+  const params = new URLSearchParams({
+    category: "ENGLISH_KINDERGARTEN",
+    region: filters.region ?? SEOUL_REGION_CODE,
+  });
+  if (filters.district) params.set("district", filters.district);
+  params.set("page", "1");
+  return `/institutions?${params.toString()}`;
+}
+
+function DistrictPicker({
+  data,
+  filters,
+}: {
+  data: InstitutionListDTO;
+  filters: InstitutionListQuery;
+}) {
+  const total = data.districtFacets.reduce(
+    (sum, facet) => sum + facet.count,
+    0,
+  );
+  const selectedCount = filters.district
+    ? (data.districtFacets.find((facet) => facet.district === filters.district)
+        ?.count ?? 0)
+    : total;
+  const summary = filters.district
+    ? `${filters.district} · ${selectedCount}곳`
+    : `서울 전체 · ${total}곳`;
+
+  return (
+    <section className="ek-district-picker" aria-labelledby="ek-district-title">
+      <div className="ek-district-picker__intro">
+        <div>
+          <p className="eyebrow">통학 범위부터 선택</p>
+          <h2 id="ek-district-title">서울 자치구</h2>
+        </div>
+        <p>집에서 다니기 편한 자치구를 먼저 살펴보세요.</p>
+      </div>
+      <details aria-label="서울 자치구 선택">
+        <summary>{summary}</summary>
+        <nav aria-label="서울 자치구" className="ek-district-grid">
+          <Link
+            aria-current={filters.district ? undefined : "page"}
+            href={districtListHref(filters, null)}
+          >
+            <span>서울 전체</span>
+            <span>{total}곳</span>
+          </Link>
+          {data.districtFacets.map((facet) => (
+            <Link
+              aria-current={
+                filters.district === facet.district ? "page" : undefined
+              }
+              href={districtListHref(filters, facet.district)}
+              key={facet.district}
+            >
+              <span>{facet.district}</span>
+              <span>{facet.count}곳</span>
+            </Link>
+          ))}
+        </nav>
+      </details>
+    </section>
+  );
 }
 
 function SummaryValue({
@@ -201,7 +289,7 @@ function EnglishKindergartenCard({
       <header className="ek-card__header">
         <div>
           <p className="ek-card__region">
-            {institution.region ?? "지역 확인 중"}
+            {institution.district ?? institution.region ?? "지역 확인 중"}
           </p>
           <h2>
             <Link href={`/institutions/${institution.slug}`}>
@@ -236,6 +324,17 @@ export function EnglishKindergartenListView({
   data: InstitutionListDTO;
   filters: InstitutionListQuery;
 }) {
+  const hasNarrowingCondition = Boolean(
+    filters.query ||
+    filters.hasConfirmedTuition ||
+    filters.minAge ||
+    filters.transport ||
+    filters.hasUpcomingInfoSession,
+  );
+  const hasUncoveredDistrict = Boolean(
+    filters.district && !hasNarrowingCondition && data.pagination.total === 0,
+  );
+
   return (
     <PageContainer>
       <main className="ek-list">
@@ -248,8 +347,18 @@ export function EnglishKindergartenListView({
           </p>
         </header>
 
+        <DistrictPicker data={data} filters={filters} />
+
         <form action="/institutions" method="get" className="ek-filters">
           <input type="hidden" name="category" value="ENGLISH_KINDERGARTEN" />
+          <input
+            type="hidden"
+            name="region"
+            value={filters.region ?? "KR-11"}
+          />
+          {filters.district ? (
+            <input type="hidden" name="district" value={filters.district} />
+          ) : null}
           <div className="ek-filter ek-filter--search">
             <label htmlFor="ek-query">기관명</label>
             <input
@@ -259,17 +368,6 @@ export function EnglishKindergartenListView({
               defaultValue={filters.query ?? ""}
               placeholder="기관명을 입력해 주세요"
             />
-          </div>
-          <div className="ek-filter">
-            <label htmlFor="ek-region">지역</label>
-            <select
-              id="ek-region"
-              name="region"
-              defaultValue={filters.region ?? ""}
-            >
-              <option value="">전체 지역</option>
-              <option value="KR-11">서울</option>
-            </select>
           </div>
           <div className="ek-filter">
             <label htmlFor="ek-age">자녀 나이</label>
@@ -335,7 +433,11 @@ export function EnglishKindergartenListView({
           <div className="ek-result-heading">
             <div>
               <p className="eyebrow">검색 결과</p>
-              <h2 id="ek-result-title">영어유치원 {data.pagination.total}곳</h2>
+              <h2 id="ek-result-title">
+                {filters.district
+                  ? `${filters.district} 영어유치원 ${data.pagination.total}곳`
+                  : `서울 영어유치원 ${data.pagination.total}곳`}
+              </h2>
             </div>
             <p>확인된 정보만 비교 항목에 표시해요.</p>
           </div>
@@ -346,10 +448,30 @@ export function EnglishKindergartenListView({
               ))}
             </div>
           ) : (
-            <EmptyState
-              title="조건에 맞는 영어유치원을 찾지 못했어요"
-              description="검색 조건을 줄이거나 지역 범위를 넓혀 보세요."
-            />
+            <div className="ek-empty-result">
+              <EmptyState
+                title={
+                  hasUncoveredDistrict
+                    ? `현재 ${filters.district}에 공개된 영어유치원이 없어요`
+                    : "선택한 조건에 맞는 영어유치원을 찾지 못했어요"
+                }
+                description={
+                  hasUncoveredDistrict
+                    ? "서울 전체 목록에서 다른 자치구를 살펴보세요."
+                    : "연령이나 비교 조건을 조정해 보세요."
+                }
+              />
+              <Link
+                className="button-link button-link--secondary"
+                href={
+                  hasUncoveredDistrict
+                    ? districtListHref(filters, null)
+                    : resetComparisonHref(filters)
+                }
+              >
+                {hasUncoveredDistrict ? "서울 전체 보기" : "비교 조건 초기화"}
+              </Link>
+            </div>
           )}
           <Pagination
             pagination={data.pagination}

@@ -15,6 +15,7 @@ import type {
   EnglishKindergartenFactValue,
 } from "@/src/modules/english-kindergarten/fact-values";
 import type { ReviewInsightValue } from "@/src/modules/english-kindergarten/review-insight";
+import type { SeoulDistrict } from "@/src/modules/public/location";
 
 /** A public SEO rendering decision, distinct from whether an object is retrievable. */
 export type Indexability = "INDEX" | "NOINDEX" | "NOT_PUBLIC";
@@ -28,6 +29,7 @@ export type Indexability = "INDEX" | "NOINDEX" | "NOT_PUBLIC";
 export type InstitutionListQuery = {
   category?: InstitutionCategory;
   region?: string;
+  district?: string;
   recruitmentState?: OpportunityBusinessState;
   query?: string;
   hasConfirmedTuition?: boolean;
@@ -150,6 +152,7 @@ export type InstitutionCardDTO = {
   name: string;
   category: InstitutionCategory;
   region: string | null;
+  district?: string | null;
   address?: string | null;
   /** Public Institution eligibility only; never personalized Follow state. */
   followable: boolean;
@@ -168,6 +171,10 @@ export type InstitutionCardDTO = {
 
 export type InstitutionListDTO = {
   items: InstitutionCardDTO[];
+  districtFacets: Array<{
+    district: SeoulDistrict;
+    count: number;
+  }>;
   pagination: PaginationDTO;
 };
 

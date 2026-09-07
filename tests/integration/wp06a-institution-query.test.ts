@@ -58,6 +58,7 @@ async function createInstitution({
   state = "PUBLISHED",
   description = "A meaningful public profile.",
   operationalState = "ACTIVE",
+  district = null,
 }: {
   name?: string;
   category?:
@@ -66,12 +67,13 @@ async function createInstitution({
   state?: "DRAFT" | "PUBLISHED" | "HIDDEN" | "ARCHIVED";
   description?: string | null;
   operationalState?: "ACTIVE" | "INACTIVE" | "CLOSED" | "UNKNOWN";
+  district?: string | null;
 } = {}) {
   const id = randomUUID();
   const slug = `${prefix}-institution-${id}`;
   await runtime.client`
-    insert into institutions (id, slug, display_name, category, publication_state, operational_state, region_code, short_description, published_at)
-    values (${id}, ${slug}, ${name}, ${category}, ${state}, ${operationalState}, ${region}, ${description},
+    insert into institutions (id, slug, display_name, category, publication_state, operational_state, region_code, district, short_description, published_at)
+    values (${id}, ${slug}, ${name}, ${category}, ${state}, ${operationalState}, ${region}, ${district}, ${description},
       ${state === "PUBLISHED" ? "2026-08-01T00:00:00.000Z" : null})
   `;
   return { id, slug };
@@ -348,6 +350,70 @@ describe("WP-06A Institution public query", () => {
     await expect(
       listInstitutions(runtime.executor, { unknown: "nope" }),
     ).rejects.toBeInstanceOf(ValidationError);
+  });
+
+  it("filters English kindergartens by Seoul district and returns dynamic district counts", async () => {
+    const gangnamA = await createInstitution({
+      name: `${prefix} Seoul district Gangnam A`,
+      category: "ENGLISH_KINDERGARTEN",
+      region: "KR-11",
+      district: "강남구",
+    });
+    const gangnamB = await createInstitution({
+      name: `${prefix} Seoul district Gangnam B`,
+      category: "ENGLISH_KINDERGARTEN",
+      region: "KR-11",
+      district: "강남구",
+    });
+    await createInstitution({
+      name: `${prefix} Seoul district Seocho`,
+      category: "ENGLISH_KINDERGARTEN",
+      region: "KR-11",
+      district: "서초구",
+    });
+    await createInstitution({
+      name: `${prefix} Seoul district Outside Seoul`,
+      category: "ENGLISH_KINDERGARTEN",
+      region: "BUSAN",
+      district: "강남구",
+    });
+
+    const result = await listInstitutions(runtime.executor, {
+      category: "ENGLISH_KINDERGARTEN",
+      region: "KR-11",
+      district: "강남구",
+      query: `${prefix} Seoul district`,
+      page: 1,
+      pageSize: 12,
+    });
+    const districtFacets = (
+      result as unknown as {
+        districtFacets: Array<{ district: string; count: number }>;
+      }
+    ).districtFacets;
+
+    expect(result.pagination.total).toBe(2);
+    expect(result.items.map((item) => item.id)).toEqual([
+      gangnamA.id,
+      gangnamB.id,
+    ]);
+    expect(result.items.map((item) => item.district)).toEqual([
+      "강남구",
+      "강남구",
+    ]);
+    expect(districtFacets).toHaveLength(25);
+    expect(districtFacets.find((item) => item.district === "강남구")).toEqual({
+      district: "강남구",
+      count: 2,
+    });
+    expect(districtFacets.find((item) => item.district === "서초구")).toEqual({
+      district: "서초구",
+      count: 1,
+    });
+    expect(districtFacets.find((item) => item.district === "송파구")).toEqual({
+      district: "송파구",
+      count: 0,
+    });
   });
 
   it("orders matching Institution pages by name then id with bounded pagination", async () => {

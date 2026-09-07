@@ -104,7 +104,8 @@ const institution = {
   slug: "example-english-academy",
   name: "예시 영어유치원",
   category: "ENGLISH_KINDERGARTEN" as const,
-  region: "서울 서초구",
+  region: "KR-11",
+  district: "서초구",
   address: "서울특별시 서초구 예시로 12",
   followable: true,
   currentAdmissionsState: null,
@@ -113,6 +114,11 @@ const institution = {
 
 const list: InstitutionListDTO = {
   items: [institution],
+  districtFacets: [
+    { district: "강남구", count: 13 },
+    { district: "서초구", count: 1 },
+    { district: "송파구", count: 0 },
+  ],
   pagination: { page: 1, pageSize: 12, total: 1, hasNext: false },
 };
 
@@ -260,6 +266,8 @@ describe("English-kindergarten public experience", () => {
           data: list,
           filters: {
             category: "ENGLISH_KINDERGARTEN",
+            region: "KR-11",
+            district: "서초구",
             hasConfirmedTuition: true,
             minAge: 4,
             transport: "AVAILABLE",
@@ -276,6 +284,7 @@ describe("English-kindergarten public experience", () => {
     for (const name of [
       "query",
       "region",
+      "district",
       "hasConfirmedTuition",
       "minAge",
       "transport",
@@ -285,9 +294,22 @@ describe("English-kindergarten public experience", () => {
       expect($(`[name='${name}']`)).toHaveLength(1);
     }
     expect($("[name='category']").attr("value")).toBe("ENGLISH_KINDERGARTEN");
-    expect($("select[name='region'] option[value='KR-11']").text()).toBe(
-      "서울",
+    expect($("input[name='region']").attr("value")).toBe("KR-11");
+    expect($("input[name='district']").attr("value")).toBe("서초구");
+    expect($("details[aria-label='서울 자치구 선택'] summary").text()).toBe(
+      "서초구 · 1곳",
     );
+    expect($("nav[aria-label='서울 자치구'] a")).toHaveLength(4);
+    expect(
+      $(
+        "nav[aria-label='서울 자치구'] a[href*='district=%EA%B0%95%EB%82%A8%EA%B5%AC']",
+      )
+        .first()
+        .text(),
+    ).toContain("강남구13곳");
+    expect($(".ek-card__region").text()).toBe("서초구");
+    expect($("body").text()).not.toContain("KR-11");
+    expect($("#ek-result-title").text()).toBe("서초구 영어유치원 1곳");
     expect($("[name='sort'] option:selected").attr("value")).toBe("NAME_ASC");
     expect($("main, body").text()).toContain("월 원비");
     expect($("main, body").text()).toContain("2026학년도 월 185만 원이에요.");
@@ -296,6 +318,67 @@ describe("English-kindergarten public experience", () => {
     expect($("main, body").text()).toContain("셔틀");
     expect($("main, body").text()).toContain("다음 설명회");
     expect($("main, body").text()).toContain("2026년 10월 15일");
+  });
+
+  it("distinguishes an uncovered district from filters with no matches", () => {
+    const districtEmpty = load(
+      renderToStaticMarkup(
+        createElement(EnglishKindergartenListView, {
+          data: {
+            ...list,
+            items: [],
+            districtFacets: list.districtFacets.map((facet) => ({
+              ...facet,
+              count: 0,
+            })),
+            pagination: { ...list.pagination, total: 0 },
+          },
+          filters: {
+            category: "ENGLISH_KINDERGARTEN",
+            region: "KR-11",
+            district: "송파구",
+            page: 1,
+            pageSize: 12,
+          },
+        }),
+      ),
+    );
+    expect(districtEmpty("body").text()).toContain(
+      "현재 송파구에 공개된 영어유치원이 없어요",
+    );
+    expect(
+      districtEmpty("a").filter(
+        (_, link) => districtEmpty(link).text() === "서울 전체 보기",
+      ),
+    ).toHaveLength(1);
+
+    const filteredEmpty = load(
+      renderToStaticMarkup(
+        createElement(EnglishKindergartenListView, {
+          data: {
+            ...list,
+            items: [],
+            pagination: { ...list.pagination, total: 0 },
+          },
+          filters: {
+            category: "ENGLISH_KINDERGARTEN",
+            region: "KR-11",
+            district: "서초구",
+            hasConfirmedTuition: true,
+            page: 1,
+            pageSize: 12,
+          },
+        }),
+      ),
+    );
+    expect(filteredEmpty("body").text()).toContain(
+      "선택한 조건에 맞는 영어유치원을 찾지 못했어요",
+    );
+    expect(
+      filteredEmpty("a").filter(
+        (_, link) => filteredEmpty(link).text() === "비교 조건 초기화",
+      ),
+    ).toHaveLength(1);
   });
 
   it("renders structured values when optional display text is absent", () => {
