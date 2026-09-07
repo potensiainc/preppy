@@ -53,12 +53,16 @@ function assertNoForbiddenKeys(value: unknown): void {
 async function createInstitution(
   name: string,
   state: "DRAFT" | "PUBLISHED" | "HIDDEN" | "ARCHIVED" = "PUBLISHED",
+  category:
+    | "ENGLISH_KINDERGARTEN"
+    | "PRIVATE_ELEMENTARY"
+    | "INTERNATIONAL_SCHOOL" = "INTERNATIONAL_SCHOOL",
 ) {
   const id = randomUUID();
   const slug = `${prefix}-institution-${id}`;
   await runtime.client`
     insert into institutions (id, slug, display_name, category, publication_state, region_code, short_description, published_at)
-    values (${id}, ${slug}, ${name}, 'INTERNATIONAL_SCHOOL', ${state}, 'SEOUL', 'A public profile.',
+    values (${id}, ${slug}, ${name}, ${category}, ${state}, 'SEOUL', 'A public profile.',
       ${state === "PUBLISHED" ? "2026-08-01T00:00:00.000Z" : null})
   `;
   return { id, slug, name };
@@ -335,6 +339,37 @@ describe("WP-06A Article and Home public queries", () => {
       native.id,
       legacy.id,
     ]);
+  });
+
+  it("keeps four published institutions per category when one category grows", async () => {
+    const categories = [
+      "ENGLISH_KINDERGARTEN",
+      "PRIVATE_ELEMENTARY",
+      "INTERNATIONAL_SCHOOL",
+    ] as const;
+    const expectedIds: string[] = [];
+    for (const category of categories) {
+      await createInstitution("000 hidden", "HIDDEN", category);
+      for (let index = 0; index < 8; index += 1) {
+        const row = await createInstitution(
+          `000 ${category} ${index}`,
+          "PUBLISHED",
+          category,
+        );
+        if (index < 4) expectedIds.push(row.id);
+      }
+    }
+    const result = await getHomePage(runtime.executor);
+    expect(result.featuredInstitutions.map((item) => item.id)).toEqual(
+      expectedIds,
+    );
+    for (const category of categories) {
+      expect(
+        result.featuredInstitutions.filter(
+          (item) => item.category === category,
+        ),
+      ).toHaveLength(4);
+    }
   });
 
   it("builds deterministic globally cache-safe Home sections from published canonical records only", async () => {

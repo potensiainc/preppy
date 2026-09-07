@@ -1,6 +1,6 @@
 import "server-only";
 
-import { asc, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq } from "drizzle-orm";
 
 import { articles, institutions } from "@/src/db/schema";
 import type { DatabaseExecutor } from "@/src/infrastructure/db/runtime.server";
@@ -13,6 +13,7 @@ import {
 } from "./institution-query.server";
 
 const HOME_SECTION_LIMIT = 12;
+const HOME_INSTITUTIONS_PER_CATEGORY = 4;
 
 const categories: HomePageDTO["categories"] = [
   {
@@ -35,12 +36,23 @@ const categories: HomePageDTO["categories"] = [
 async function getFeaturedInstitutions(
   executor: DatabaseExecutor,
 ): Promise<InstitutionCardDTO[]> {
-  const rows = await executor.drizzle
-    .select({ id: institutions.id })
-    .from(institutions)
-    .where(eq(institutions.publicationState, "PUBLISHED"))
-    .orderBy(asc(institutions.displayName), asc(institutions.id))
-    .limit(HOME_SECTION_LIMIT);
+  // Cap each category before hydrating one bounded batch of public cards.
+  const categoryRows = await Promise.all(
+    categories.map(({ category }) =>
+      executor.drizzle
+        .select({ id: institutions.id })
+        .from(institutions)
+        .where(
+          and(
+            eq(institutions.publicationState, "PUBLISHED"),
+            eq(institutions.category, category),
+          ),
+        )
+        .orderBy(asc(institutions.displayName), asc(institutions.id))
+        .limit(HOME_INSTITUTIONS_PER_CATEGORY),
+    ),
+  );
+  const rows = categoryRows.flat();
   const cards = await getPublicInstitutionCardsByIds(
     executor,
     rows.map((row) => row.id),

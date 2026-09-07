@@ -69,10 +69,16 @@ export function TrustSource({ source }: { source: OfficialSourceDTO }) {
 export function InstitutionCard({
   institution,
   analyticsEvent,
+  headingLevel = 3,
 }: {
   institution: InstitutionCardDTO;
   analyticsEvent?: CapturedAnalyticsEvent;
+  headingLevel?: 3 | 4;
 }) {
+  const Heading = headingLevel === 4 ? "h4" : "h3";
+  const region =
+    institution.district ||
+    (institution.region === "KR-11" ? "서울" : institution.region);
   return (
     <article className="public-card institution-card">
       <div className="card-kicker">
@@ -81,7 +87,7 @@ export function InstitutionCard({
           <StateBadge state={institution.currentAdmissionsState} />
         ) : null}
       </div>
-      <h3>
+      <Heading>
         {analyticsEvent ? (
           <AnalyticsLink
             event={analyticsEvent}
@@ -94,10 +100,8 @@ export function InstitutionCard({
             {institution.name}
           </Link>
         )}
-      </h3>
-      {institution.region ? (
-        <p className="card-region">{institution.region}</p>
-      ) : null}
+      </Heading>
+      {region ? <p className="card-region">{region}</p> : null}
       {institution.currentOpportunity ? (
         <p className="card-opportunity">
           <Link href={`/opportunities/${institution.currentOpportunity.slug}`}>
