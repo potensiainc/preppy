@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "packageId": "sg-ek-20260901-r01",
+  "files": {
+    "campuses.ndjson": "def7580ccf0c20888d62c1d90963705edac31d1a90d284713adb2d4793b62dcb",
+    "evidence.ndjson": "789189ae640084baa6e7889bbfa7e067b496445594fe76228ff03dffafda9db7",
+    "progress.json": "f615add80aef6413c0bcb57618db37cc3d7f1d40a26b5705de65c8a48c3fd744",
+    "preppy-import.snapshot.json": "63fc95873992647086620ff1a68f2417e90b6ced9d256b0ce2b63fa395e05b09"
+  },
+  "preppyImportChecksum": "3203469eb3dcb15d0ce211858e29fcb7fd940a854e2262896b5f0160b259091f"
+}
