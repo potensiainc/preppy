@@ -1,11 +1,11 @@
-# PREPPY 영어유치원 MVP 프로덕션 DRAFT 반입 보고서
+# PREPPY 영어유치원 MVP 프로덕션 반입·공개 보고서
 
 - 실행일: 2026-09-07 KST
 - Railway: `preppy-production` / `production` / `preppy-web`
 - 패키지: `sg-ek-20260901-r01`
 - 패키지 체크섬: `aa40844a7b36985dacb623704846a1f9f3b452dd3bda3eef1d55512e5fa32643`
 - 검증 보고서 체크섬: `f35c5d98a5dc9180cc1f0883638c88eb02afe9081f7256d9d541e7556beb8790`
-- 최종 상태: **25곳을 프로덕션 DB에 DRAFT로 반입 완료**
+- 최종 상태: **25곳을 프로덕션 DB에 반입하고 PUBLISHED로 공개 완료**
 
 ## 보관 산출물
 
@@ -62,7 +62,7 @@ npx tsx --tsconfig scripts/db/tsconfig.json scripts/data/import-english-kinderga
 
 - 최초 읽기 전용 기준값: 사립초 `PUBLISHED/ACTIVE` 41곳, 대상 slug 0곳
 - 기준 부수 효과: outbox 0, notifications 0, deliveries 0, meaningful changes 0, opportunity changes 0
-- 최종 배포: Railway deployment `08f8e36f-e56a-4587-ade7-d4ea8f5f5047` — SUCCESS
+- 초기 DRAFT 반입 배포: Railway deployment `08f8e36f-e56a-4587-ade7-d4ea8f5f5047` — SUCCESS
 - 배포 전 최신 `origin/main`을 병합해 기존 통근 지도 기능을 보존했다.
 - `/api/health`: HTTP 200
 - `/commute/`: redirect 후 HTTP 200
@@ -99,7 +99,7 @@ npx tsx --tsconfig scripts/db/tsconfig.json scripts/data/import-english-kinderga
 - rejects: 0
 - outbox, notification, delivery, meaningful change, opportunity change delta: 모두 0
 
-### 반입 후 읽기 전용 감사
+### 초기 DRAFT 반입 후 읽기 전용 감사
 
 - 영어유치원: `DRAFT/ACTIVE` 25곳, `published_at IS NULL` 25곳
 - 사립초: `PUBLISHED/ACTIVE` 41곳 유지
@@ -113,12 +113,12 @@ npx tsx --tsconfig scripts/db/tsconfig.json scripts/data/import-english-kinderga
 - 나머지 7개 섹션: 각각 NOT_RESEARCHED 25
 - outbox, notification, delivery, meaningful change, opportunity change: 모두 기준값 0 유지
 
-### 프로덕션 멱등성과 공개 격리
+### 초기 DRAFT 반입의 멱등성과 공개 격리
 
 - 두 번째 production dry-run: create 0, update 0, unchanged 325, rejects 0
 - 영어유치원 목록 요청: HTTP 200, DRAFT 대상 노출 0
 - DRAFT 상세 `/institutions/psa-apgujeong`: HTTP 404
-- 이번 작업은 공개 발행을 수행하지 않았다.
+- 이 초기 단계에서는 공개 발행을 수행하지 않았다. 이후 Owner 승인에 따른 공개 결과는 아래에 이어서 기록한다.
 
 ## UI/UX와 이후 데이터 채움 구조
 
@@ -127,7 +127,25 @@ npx tsx --tsconfig scripts/db/tsconfig.json scripts/data/import-english-kinderga
 - 구조화 값은 `displayText`가 없어도 원비·연령·셔틀 핵심값을 표시한다.
 - 빈 상태는 `NOT_RESEARCHED`, `CHECKED_NOT_FOUND`, `ACCESS_FAILED`, `NEEDS_REVIEW`를 구분한다.
 - 후기 요약은 기간, 양수 표본 수, 중립적 주제, 한계, 근거를 버전형으로 저장한다.
-- browser/mobile/보조공학 실제 화면 검사는 수행하지 않았다. SSR 정적 마크업 및 문구·상태 계약 테스트는 수행했다.
+- 390px 모바일 Chromium에서 목록의 필터, `영어유치원 25곳` 결과, 기관 카드를 실제 렌더링으로 확인했다.
+- 보조공학 실제 검사는 수행하지 않았다. SSR 정적 마크업 및 문구·상태 계약 테스트는 수행했다.
+
+## 후속 공개 배포
+
+- Owner 승인: 2026-09-07 KST
+- 최종 Railway deployment: `1634e475-554d-4d12-a145-3821cf1be575` — SUCCESS
+- 공개 시각: `2026-09-07T04:38:31.547Z`
+- 대상: 패키지의 정확한 25개 slug
+- 전환: `DRAFT/ACTIVE` 25곳 → `PUBLISHED/ACTIVE` 25곳
+- 사전 조건: 패키지 파일 SHA-256 일치, 기관 신원 25건 일치, 기관별 Coverage 8건·총 200건 일치
+- 부수 효과: outbox, notification, delivery, meaningful change, opportunity change 모두 전후 0건
+- 공개 후 패키지 dry-run: create 0, update 0, unchanged 325, reject 0
+- 공개 목록: `/institutions?category=ENGLISH_KINDERGARTEN` HTTP 200, `영어유치원 25곳`
+- 공개 상세: `/institutions/psa-apgujeong` HTTP 200, 미수집 항목별 상태 문구 표시
+- 홈 설명회: 기관별 가장 가까운 일정 1건만 표시하고 단순 회차 번호 `1·2·3`은 요약 카드에서 제거
+- 홈 검증: 현재 일정 카드 5건, 서로 다른 기관 5곳, 번호형 설명회 제목 0건
+- 상세 페이지에서는 각 설명회 회차의 날짜·시간과 근거를 삭제하지 않는다.
+- 상세 정보가 아직 충분하지 않은 영어유치원 페이지는 `noindex, follow`로 유지한다.
 
 ## UX Writing 검토
 
@@ -137,5 +155,5 @@ npx tsx --tsconfig scripts/db/tsconfig.json scripts/data/import-english-kinderga
 - 원비 학년도·납부 주기, 설명회 시각·마감, 셔틀 비용·확인 필요 조건, 후기 표본·기간·한계를 구조화 값과 함께 보존한다.
 - 미수집, 공식 안내에서 미발견, 접근 실패, 추가 검수 필요를 서로 다른 상태로 표시한다.
 - 제3자 후기는 `공개 후기 요약 · 공식 정보 아님`으로 표시하고 평점·순위를 생성하지 않는다.
-- DRAFT 자료는 공개 목록·상세에서 노출하지 않는 것을 실제 프로덕션 HTTP 요청으로 확인했다.
-
+- 미수집 항목은 항목별로 `정보를 준비하고 있어요`라고 표시하며, 확인 실패나 공식 안내에서 미발견한 상태와 구분한다.
+- 설명회 회차의 실제 일정과 상세 근거는 유지하면서 홈·기관 요약 카드의 번호 중심 중복만 제거했다.
