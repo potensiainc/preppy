@@ -56,4 +56,8 @@ export const EXPECTED_REPOSITORY_MIGRATIONS = [
     identifier: "0012_loving_trauma",
     hash: "86763907ea81b534fb3fbfd9e7af09a1f8f65e1b7314fbf1f105215f0cf674cd",
   },
+  {
+    identifier: "0013_english_kindergarten_profiles",
+    hash: "d1c9c1b17e71c813db4dccedbf0054051df6895fb68c2d78d3bcc4ac4c70d47c",
+  },
 ] as const satisfies readonly RepositoryMigration[];

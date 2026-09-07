@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import { factLabel } from "@/app/_lib/presentation";
 import { parseEnglishKindergartenFactValue } from "@/src/modules/english-kindergarten/fact-values";
 
 describe("English-kindergarten fact values", () => {
@@ -134,5 +135,9 @@ describe("English-kindergarten fact values", () => {
         rating: 5,
       }),
     ).toThrow();
+  });
+
+  it("shows the meals fact with a concise Korean label", () => {
+    expect(factLabel("MEALS")).toBe("급식");
   });
 });

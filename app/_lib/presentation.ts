@@ -53,6 +53,7 @@ const factLabels: Record<InstitutionFactType, string> = {
   CURRICULUM: "교육과정",
   ELIGIBILITY: "지원 자격",
   TRANSPORT: "통학",
+  MEALS: "급식",
   ADMISSION_PROCESS: "입학 절차",
   OPERATING_INFO: "운영 정보",
 };
