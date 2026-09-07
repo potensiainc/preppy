@@ -112,7 +112,7 @@ export async function loadEnglishKindergartenPackage(
     HASHED_FILES.map((filename) => [filename, sha256(contents[filename])]),
   ) as Record<keyof EnglishKindergartenManifest["files"], string>;
 
-  return {
+  return deepFreeze({
     directory: resolve(directory),
     campuses: parseNdjson(
       contents["campuses.ndjson"],
@@ -130,7 +130,7 @@ export async function loadEnglishKindergartenPackage(
     ),
     manifest: manifestSchema.parse(JSON.parse(contents["manifest.json"])),
     actualFileHashes,
-  };
+  });
 }
 
 function duplicates(values: readonly string[]) {
@@ -170,6 +170,7 @@ export type ValidationReport = Readonly<{
   duplicateEvidenceIds: readonly string[];
   unknownEvidenceCampusIds: readonly string[];
   missingEvidenceCampusIds: readonly string[];
+  sourceTextHashMismatches: readonly string[];
   snapshotCampusMismatches: readonly string[];
   progressMatches: boolean;
   checksumsValid: boolean;
@@ -215,6 +216,13 @@ export function validateEnglishKindergartenPackage(
     const claims = evidenceByCampus.get(campusId);
     return requiredClaims.some((claim) => !claims?.has(claim));
   });
+  const sourceTextHashMismatches = packageValue.evidence
+    .filter(
+      (evidence) =>
+        sha256(evidence.sourceTextExcerpt) !== evidence.sourceContentSha256,
+    )
+    .map((evidence) => evidence.evidenceId)
+    .sort();
   const snapshotCampusIds = packageValue.snapshot.institutions.map(
     (item) => item.campusId,
   );
@@ -233,18 +241,39 @@ export function validateEnglishKindergartenPackage(
   );
   const progressMatches =
     packageValue.progress.confirmed === packageValue.campuses.length &&
+    packageValue.progress.excluded === 0 &&
+    packageValue.progress.held === 0 &&
     packageValue.progress.recordsReviewed === packageValue.campuses.length &&
     canonicalJson(packageValue.progress.districts) ===
       canonicalJson(districtCounts) &&
     canonicalJson(packageValue.progress.legalDongs) ===
-      canonicalJson(legalDongCounts);
-  const packageChecksum = canonicalJsonSha256(packageValue.snapshot);
+      canonicalJson(legalDongCounts) &&
+    canonicalJson(packageValue.progress.sourceFetches) ===
+      canonicalJson({
+        success: packageValue.evidence.filter(
+          (evidence) =>
+            evidence.claimType === "IDENTITY" &&
+            evidence.fetchOutcome === "SUCCESS",
+        ).length,
+        accessFailed: packageValue.evidence.filter(
+          (evidence) =>
+            evidence.claimType === "IDENTITY" &&
+            evidence.fetchOutcome === "ACCESS_FAILED",
+        ).length,
+        checkedNotFound: packageValue.evidence.filter(
+          (evidence) =>
+            evidence.claimType === "IDENTITY" &&
+            evidence.fetchOutcome === "CHECKED_NOT_FOUND",
+        ).length,
+      });
+  const packageChecksum = canonicalJsonSha256(packageValue.manifest);
+  const snapshotChecksum = canonicalJsonSha256(packageValue.snapshot);
   const checksumsValid =
     HASHED_FILES.every(
       (filename) =>
         packageValue.manifest.files[filename] ===
         packageValue.actualFileHashes[filename],
-    ) && packageValue.manifest.preppyImportChecksum === packageChecksum;
+    ) && packageValue.manifest.preppyImportChecksum === snapshotChecksum;
 
   const evidenceById = new Map(
     packageValue.evidence.map((evidence) => [evidence.evidenceId, evidence]),
@@ -263,12 +292,54 @@ export function validateEnglishKindergartenPackage(
       ),
       ...item.facts.flatMap((fact) => fact.evidenceIds),
       ...item.opportunities.flatMap((opportunity) => opportunity.evidenceIds),
+      ...(item.reviewInsight?.evidenceIds ?? []),
     ];
     for (const evidenceId of references) {
       const evidence = evidenceById.get(evidenceId);
       if (!evidence || evidence.campusId !== item.campusId) {
         crossFileErrors.push(
           `${item.campusId}: 근거 ${evidenceId} 참조가 올바르지 않습니다.`,
+        );
+      }
+    }
+    for (const coverage of item.coverages) {
+      if (
+        coverage.status !== "CONFIRMED" &&
+        coverage.status !== "CHECKED_NOT_FOUND"
+      ) {
+        continue;
+      }
+      const evidence = coverage.evidenceId
+        ? evidenceById.get(coverage.evidenceId)
+        : undefined;
+      if (!evidence || evidence.authorityLevel === "THIRD_PARTY") {
+        crossFileErrors.push(
+          `${item.campusId}: ${coverage.status} 상태에는 공식 근거가 필요합니다.`,
+        );
+      } else if (
+        (coverage.status === "CONFIRMED" &&
+          evidence.fetchOutcome !== "SUCCESS") ||
+        (coverage.status === "CHECKED_NOT_FOUND" &&
+          evidence.fetchOutcome !== "CHECKED_NOT_FOUND")
+      ) {
+        crossFileErrors.push(
+          `${item.campusId}: ${coverage.status} 상태와 수집 결과가 일치하지 않습니다.`,
+        );
+      }
+    }
+    for (const verifiedItem of [...item.facts, ...item.opportunities]) {
+      const hasAuthoritativeEvidence = verifiedItem.evidenceIds.some(
+        (evidenceId) => {
+          const evidence = evidenceById.get(evidenceId);
+          return (
+            evidence?.authorityLevel !== "THIRD_PARTY" &&
+            evidence?.fetchOutcome === "SUCCESS"
+          );
+        },
+      );
+      if (!hasAuthoritativeEvidence) {
+        crossFileErrors.push(
+          `${item.campusId}: 검증된 정보에는 수집에 성공한 공식 근거가 필요합니다.`,
         );
       }
     }
@@ -293,11 +364,18 @@ export function validateEnglishKindergartenPackage(
     ...(missingEvidenceCampusIds.length
       ? ["필수 신원·운영·분류 근거가 누락됐습니다."]
       : []),
+    ...(sourceTextHashMismatches.length
+      ? ["근거 캡처 텍스트 해시가 일치하지 않습니다."]
+      : []),
     ...(snapshotCampusMismatches.length
       ? ["반입 스냅샷의 기관 집합이 다릅니다."]
       : []),
     ...(progressMatches ? [] : ["progress.json 합계가 원장과 다릅니다."]),
     ...(checksumsValid ? [] : ["파일 또는 반입 스냅샷 체크섬이 다릅니다."]),
+    ...(packageValue.progress.packageId === packageValue.manifest.packageId &&
+    packageValue.snapshot.packageId === packageValue.manifest.packageId
+      ? []
+      : ["패키지 ID가 파일 사이에서 일치하지 않습니다."]),
     ...crossFileErrors,
   ];
   const withoutReportChecksum = {
@@ -315,6 +393,7 @@ export function validateEnglishKindergartenPackage(
     duplicateEvidenceIds,
     unknownEvidenceCampusIds,
     missingEvidenceCampusIds,
+    sourceTextHashMismatches,
     snapshotCampusMismatches,
     progressMatches,
     checksumsValid,

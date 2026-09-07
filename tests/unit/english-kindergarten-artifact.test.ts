@@ -43,17 +43,24 @@ function fixtureRecords() {
     };
   });
   const evidence: EvidenceRecord[] = campuses.flatMap((campus) =>
-    (["IDENTITY", "OPERATION", "CLASSIFICATION"] as const).map((claimType) => ({
-      evidenceId: `${campus.campusId}-${claimType.toLowerCase()}`,
-      campusId: campus.campusId,
-      claimType,
-      sourceUrl: `https://evidence.example.test/${campus.campusId}/${claimType.toLowerCase()}`,
-      sourceType: "OFFICIAL_SCHOOL_PAGE" as const,
-      authorityLevel: "PRIMARY" as const,
-      boundedExcerpt: `${campus.displayName}의 ${claimType} 근거를 확인했어요.`,
-      collectedAt,
-      sourceContentSha256: sha(`${campus.campusId}:${claimType}`),
-    })),
+    (["IDENTITY", "OPERATION", "CLASSIFICATION"] as const).map((claimType) => {
+      const sourceTextExcerpt = `${campus.displayName}의 ${claimType} 공개 안내예요.`;
+      const sourceUrl = `https://evidence.example.test/${campus.campusId}/${claimType.toLowerCase()}`;
+      return {
+        evidenceId: `${campus.campusId}-${claimType.toLowerCase()}`,
+        campusId: campus.campusId,
+        claimType,
+        sourceUrl,
+        finalUrl: sourceUrl,
+        sourceType: "OFFICIAL_SCHOOL_PAGE" as const,
+        authorityLevel: "PRIMARY" as const,
+        fetchOutcome: "SUCCESS" as const,
+        sourceTextExcerpt,
+        boundedExcerpt: `${campus.displayName}의 ${claimType} 근거를 확인했어요.`,
+        collectedAt,
+        sourceContentSha256: sha(sourceTextExcerpt),
+      };
+    }),
   );
   const snapshot = {
     schemaVersion: 1 as const,
@@ -74,6 +81,7 @@ function fixtureRecords() {
       })),
       facts: [],
       opportunities: [],
+      reviewInsight: null,
     })),
   };
   const progress = {
@@ -84,7 +92,7 @@ function fixtureRecords() {
     recordsReviewed: 25,
     districts: { 강남구: 13, 서초구: 12 },
     legalDongs: { 신사동: 13, 잠원동: 1, 반포동: 11 },
-    sourceFetches: { success: 75, accessFailed: 0, checkedNotFound: 0 },
+    sourceFetches: { success: 25, accessFailed: 0, checkedNotFound: 0 },
   };
   return { campuses, evidence, snapshot, progress };
 }
@@ -183,8 +191,22 @@ describe("English-kindergarten snapshot contracts", () => {
     expect(report.status).toBe("PASS");
     expect(report.duplicateSlugs).toEqual([]);
     expect(report.missingEvidenceCampusIds).toEqual([]);
+    expect(report.sourceTextHashMismatches).toEqual([]);
     expect(report.checksumsValid).toBe(true);
     expect(Object.isFrozen(report)).toBe(true);
+    const changedManifest = {
+      ...fixture,
+      manifest: {
+        ...fixture.manifest,
+        files: {
+          ...fixture.manifest.files,
+          "campuses.ndjson": "1".repeat(64),
+        },
+      },
+    };
+    expect(
+      validateEnglishKindergartenPackage(changedManifest).packageChecksum,
+    ).not.toBe(report.packageChecksum);
   });
 
   it("reports duplicate identity, unknown references, missing evidence, progress, and checksum failures", () => {
@@ -228,6 +250,8 @@ describe("English-kindergarten snapshot contracts", () => {
   it("loads valid NDJSON and rejects malformed rows, unsafe/full-document evidence, and mismatched hashes", async () => {
     const valid = await loadEnglishKindergartenPackage(await writePackage());
     expect(validateEnglishKindergartenPackage(valid).status).toBe("PASS");
+    expect(Object.isFrozen(valid)).toBe(true);
+    expect(Object.isFrozen(valid.campuses[0])).toBe(true);
 
     await expect(
       loadEnglishKindergartenPackage(
@@ -240,6 +264,7 @@ describe("English-kindergarten snapshot contracts", () => {
       {
         ...evidence[0]!,
         sourceUrl: "http://unsafe.example.test",
+        finalUrl: "http://unsafe.example.test",
         boundedExcerpt: "<!doctype html><html><body>full</body></html>",
       },
       ...evidence.slice(1),

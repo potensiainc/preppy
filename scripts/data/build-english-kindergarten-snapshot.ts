@@ -469,8 +469,11 @@ const evidence: EvidenceRecord[] = campuses.flatMap((campus, index) => {
   ].map((item) => ({
     ...item,
     sourceUrl: seed.source.url,
+    finalUrl: seed.source.url,
     sourceType: seed.source.sourceType,
     authorityLevel: seed.source.authorityLevel,
+    fetchOutcome: seed.source.fetchStatus,
+    sourceTextExcerpt: seed.source.sourceCapture,
     collectedAt,
     sourceContentSha256,
   }));
@@ -489,19 +492,27 @@ const snapshot = {
         const operatingEvidenceId = `${campus.campusId}-operation`;
         if (section === "OPERATING_INFO") {
           const succeeded = seed.source.fetchStatus === "SUCCESS";
+          const officiallyConfirmed =
+            succeeded && seed.source.authorityLevel !== "THIRD_PARTY";
           return {
             section,
-            status: succeeded
+            status: officiallyConfirmed
               ? ("CONFIRMED" as const)
-              : ("ACCESS_FAILED" as const),
+              : succeeded
+                ? ("NEEDS_REVIEW" as const)
+                : ("ACCESS_FAILED" as const),
             evidenceId: operatingEvidenceId,
             academicYearLabel: null,
-            publicNote: succeeded
+            publicNote: officiallyConfirmed
               ? `${campus.displayName}의 운영 신호를 확인했어요.`
-              : "기관 페이지를 불러오지 못해 최신 운영 정보를 다시 확인하지 못했어요.",
-            internalNote: succeeded
-              ? "기관 신원·운영·분류 근거를 재확인했어요."
-              : "2026-09-01 운영 근거는 보존했지만 2026-09-07 재접근에 실패했어요.",
+              : succeeded
+                ? "제3자 공개 자료에서 운영 신호를 확인했으며, 공식 안내를 추가로 확인하고 있어요."
+                : "기관 페이지를 불러오지 못해 최신 운영 정보를 다시 확인하지 못했어요.",
+            internalNote: officiallyConfirmed
+              ? "공식 기관 페이지에서 신원·운영·분류 근거를 재확인했어요."
+              : succeeded
+                ? "제3자 공개 자료의 신원·운영·분류 근거를 재확인했으며 공식 근거 검수가 필요해요."
+                : "2026-09-01 운영 근거는 보존했지만 2026-09-07 재접근에 실패했어요.",
             lastCollectedAt: succeeded ? recheckedAt : historicalCollectedAt,
             lastCheckedAt: recheckedAt,
           };
@@ -520,6 +531,7 @@ const snapshot = {
       }),
       facts: [],
       opportunities: [],
+      reviewInsight: null,
     };
   }),
 };

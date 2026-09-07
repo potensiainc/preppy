@@ -7,7 +7,7 @@ const reviewInsightSchema = z
   .object({
     periodStart: isoDate.nullable(),
     periodEnd: isoDate.nullable(),
-    reviewCount: z.number().int().nonnegative(),
+    reviewCount: z.number().int().positive(),
     themes: z
       .array(
         z

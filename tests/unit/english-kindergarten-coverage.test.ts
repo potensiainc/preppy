@@ -70,4 +70,16 @@ describe("English-kindergarten review insights", () => {
       }),
     ).toThrow();
   });
+
+  it("rejects a zero-sized review sample", () => {
+    expect(() =>
+      parseReviewInsightValue({
+        periodStart: null,
+        periodEnd: null,
+        reviewCount: 0,
+        themes: [{ summary: "표본이 없는 요약이에요." }],
+        limitations: null,
+      }),
+    ).toThrow();
+  });
 });

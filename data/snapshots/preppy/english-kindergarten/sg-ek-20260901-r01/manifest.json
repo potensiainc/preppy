@@ -3,9 +3,9 @@
   "packageId": "sg-ek-20260901-r01",
   "files": {
     "campuses.ndjson": "def7580ccf0c20888d62c1d90963705edac31d1a90d284713adb2d4793b62dcb",
-    "evidence.ndjson": "789189ae640084baa6e7889bbfa7e067b496445594fe76228ff03dffafda9db7",
+    "evidence.ndjson": "4a738e4f101e5d333c581a57a2152bae1972ae86bd558ddcb80c2df0c7b43fe6",
     "progress.json": "f615add80aef6413c0bcb57618db37cc3d7f1d40a26b5705de65c8a48c3fd744",
-    "preppy-import.snapshot.json": "63fc95873992647086620ff1a68f2417e90b6ced9d256b0ce2b63fa395e05b09"
+    "preppy-import.snapshot.json": "580b22cc69e1485172c00bc64f32c946d51698704464a3961edfaa737c6f58e4"
   },
-  "preppyImportChecksum": "3203469eb3dcb15d0ce211858e29fcb7fd940a854e2262896b5f0160b259091f"
+  "preppyImportChecksum": "3b9686ac7267325b81f3623443c58f47a4275bb95977ad943e3dce1f24d1e04e"
 }

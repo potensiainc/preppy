@@ -79,17 +79,18 @@
         },
         {
           "section": "OPERATING_INFO",
-          "status": "CONFIRMED",
+          "status": "NEEDS_REVIEW",
           "evidenceId": "sg-ek-001-operation",
           "academicYearLabel": null,
-          "publicNote": "GEA 강남잉글리쉬아카데미의 운영 신호를 확인했어요.",
-          "internalNote": "기관 신원·운영·분류 근거를 재확인했어요.",
+          "publicNote": "제3자 공개 자료에서 운영 신호를 확인했으며, 공식 안내를 추가로 확인하고 있어요.",
+          "internalNote": "제3자 공개 자료의 신원·운영·분류 근거를 재확인했으며 공식 근거 검수가 필요해요.",
           "lastCollectedAt": "2026-09-07T01:30:00.000Z",
           "lastCheckedAt": "2026-09-07T01:30:00.000Z"
         }
       ],
       "facts": [],
-      "opportunities": []
+      "opportunities": [],
+      "reviewInsight": null
     },
     {
       "campusId": "sg-ek-002",
@@ -168,17 +169,18 @@
         },
         {
           "section": "OPERATING_INFO",
-          "status": "CONFIRMED",
+          "status": "NEEDS_REVIEW",
           "evidenceId": "sg-ek-002-operation",
           "academicYearLabel": null,
-          "publicNote": "몬테키즈의 운영 신호를 확인했어요.",
-          "internalNote": "기관 신원·운영·분류 근거를 재확인했어요.",
+          "publicNote": "제3자 공개 자료에서 운영 신호를 확인했으며, 공식 안내를 추가로 확인하고 있어요.",
+          "internalNote": "제3자 공개 자료의 신원·운영·분류 근거를 재확인했으며 공식 근거 검수가 필요해요.",
           "lastCollectedAt": "2026-09-07T01:30:00.000Z",
           "lastCheckedAt": "2026-09-07T01:30:00.000Z"
         }
       ],
       "facts": [],
-      "opportunities": []
+      "opportunities": [],
+      "reviewInsight": null
     },
     {
       "campusId": "sg-ek-003",
@@ -257,17 +259,18 @@
         },
         {
           "section": "OPERATING_INFO",
-          "status": "CONFIRMED",
+          "status": "NEEDS_REVIEW",
           "evidenceId": "sg-ek-003-operation",
           "academicYearLabel": null,
-          "publicNote": "LS 압구정의 운영 신호를 확인했어요.",
-          "internalNote": "기관 신원·운영·분류 근거를 재확인했어요.",
+          "publicNote": "제3자 공개 자료에서 운영 신호를 확인했으며, 공식 안내를 추가로 확인하고 있어요.",
+          "internalNote": "제3자 공개 자료의 신원·운영·분류 근거를 재확인했으며 공식 근거 검수가 필요해요.",
           "lastCollectedAt": "2026-09-07T01:30:00.000Z",
           "lastCheckedAt": "2026-09-07T01:30:00.000Z"
         }
       ],
       "facts": [],
-      "opportunities": []
+      "opportunities": [],
+      "reviewInsight": null
     },
     {
       "campusId": "sg-ek-004",
@@ -346,17 +349,18 @@
         },
         {
           "section": "OPERATING_INFO",
-          "status": "CONFIRMED",
+          "status": "NEEDS_REVIEW",
           "evidenceId": "sg-ek-004-operation",
           "academicYearLabel": null,
-          "publicNote": "Gate 압구정의 운영 신호를 확인했어요.",
-          "internalNote": "기관 신원·운영·분류 근거를 재확인했어요.",
+          "publicNote": "제3자 공개 자료에서 운영 신호를 확인했으며, 공식 안내를 추가로 확인하고 있어요.",
+          "internalNote": "제3자 공개 자료의 신원·운영·분류 근거를 재확인했으며 공식 근거 검수가 필요해요.",
           "lastCollectedAt": "2026-09-07T01:30:00.000Z",
           "lastCheckedAt": "2026-09-07T01:30:00.000Z"
         }
       ],
       "facts": [],
-      "opportunities": []
+      "opportunities": [],
+      "reviewInsight": null
     },
     {
       "campusId": "sg-ek-005",
@@ -435,17 +439,18 @@
         },
         {
           "section": "OPERATING_INFO",
-          "status": "CONFIRMED",
+          "status": "NEEDS_REVIEW",
           "evidenceId": "sg-ek-005-operation",
           "academicYearLabel": null,
-          "publicNote": "AppleTree 압구정의 운영 신호를 확인했어요.",
-          "internalNote": "기관 신원·운영·분류 근거를 재확인했어요.",
+          "publicNote": "제3자 공개 자료에서 운영 신호를 확인했으며, 공식 안내를 추가로 확인하고 있어요.",
+          "internalNote": "제3자 공개 자료의 신원·운영·분류 근거를 재확인했으며 공식 근거 검수가 필요해요.",
           "lastCollectedAt": "2026-09-07T01:30:00.000Z",
           "lastCheckedAt": "2026-09-07T01:30:00.000Z"
         }
       ],
       "facts": [],
-      "opportunities": []
+      "opportunities": [],
+      "reviewInsight": null
     },
     {
       "campusId": "sg-ek-006",
@@ -524,17 +529,18 @@
         },
         {
           "section": "OPERATING_INFO",
-          "status": "CONFIRMED",
+          "status": "NEEDS_REVIEW",
           "evidenceId": "sg-ek-006-operation",
           "academicYearLabel": null,
-          "publicNote": "DEP 도산·대치잉글리쉬파크 압구정의 운영 신호를 확인했어요.",
-          "internalNote": "기관 신원·운영·분류 근거를 재확인했어요.",
+          "publicNote": "제3자 공개 자료에서 운영 신호를 확인했으며, 공식 안내를 추가로 확인하고 있어요.",
+          "internalNote": "제3자 공개 자료의 신원·운영·분류 근거를 재확인했으며 공식 근거 검수가 필요해요.",
           "lastCollectedAt": "2026-09-07T01:30:00.000Z",
           "lastCheckedAt": "2026-09-07T01:30:00.000Z"
         }
       ],
       "facts": [],
-      "opportunities": []
+      "opportunities": [],
+      "reviewInsight": null
     },
     {
       "campusId": "sg-ek-007",
@@ -623,7 +629,8 @@
         }
       ],
       "facts": [],
-      "opportunities": []
+      "opportunities": [],
+      "reviewInsight": null
     },
     {
       "campusId": "sg-ek-008",
@@ -702,17 +709,18 @@
         },
         {
           "section": "OPERATING_INFO",
-          "status": "CONFIRMED",
+          "status": "NEEDS_REVIEW",
           "evidenceId": "sg-ek-008-operation",
           "academicYearLabel": null,
-          "publicNote": "설리번 프렙·SPS의 운영 신호를 확인했어요.",
-          "internalNote": "기관 신원·운영·분류 근거를 재확인했어요.",
+          "publicNote": "제3자 공개 자료에서 운영 신호를 확인했으며, 공식 안내를 추가로 확인하고 있어요.",
+          "internalNote": "제3자 공개 자료의 신원·운영·분류 근거를 재확인했으며 공식 근거 검수가 필요해요.",
           "lastCollectedAt": "2026-09-07T01:30:00.000Z",
           "lastCheckedAt": "2026-09-07T01:30:00.000Z"
         }
       ],
       "facts": [],
-      "opportunities": []
+      "opportunities": [],
+      "reviewInsight": null
     },
     {
       "campusId": "sg-ek-009",
@@ -791,17 +799,18 @@
         },
         {
           "section": "OPERATING_INFO",
-          "status": "CONFIRMED",
+          "status": "NEEDS_REVIEW",
           "evidenceId": "sg-ek-009-operation",
           "academicYearLabel": null,
-          "publicNote": "ANKids의 운영 신호를 확인했어요.",
-          "internalNote": "기관 신원·운영·분류 근거를 재확인했어요.",
+          "publicNote": "제3자 공개 자료에서 운영 신호를 확인했으며, 공식 안내를 추가로 확인하고 있어요.",
+          "internalNote": "제3자 공개 자료의 신원·운영·분류 근거를 재확인했으며 공식 근거 검수가 필요해요.",
           "lastCollectedAt": "2026-09-07T01:30:00.000Z",
           "lastCheckedAt": "2026-09-07T01:30:00.000Z"
         }
       ],
       "facts": [],
-      "opportunities": []
+      "opportunities": [],
+      "reviewInsight": null
     },
     {
       "campusId": "sg-ek-010",
@@ -880,17 +889,18 @@
         },
         {
           "section": "OPERATING_INFO",
-          "status": "CONFIRMED",
+          "status": "NEEDS_REVIEW",
           "evidenceId": "sg-ek-010-operation",
           "academicYearLabel": null,
-          "publicNote": "Revere의 운영 신호를 확인했어요.",
-          "internalNote": "기관 신원·운영·분류 근거를 재확인했어요.",
+          "publicNote": "제3자 공개 자료에서 운영 신호를 확인했으며, 공식 안내를 추가로 확인하고 있어요.",
+          "internalNote": "제3자 공개 자료의 신원·운영·분류 근거를 재확인했으며 공식 근거 검수가 필요해요.",
           "lastCollectedAt": "2026-09-07T01:30:00.000Z",
           "lastCheckedAt": "2026-09-07T01:30:00.000Z"
         }
       ],
       "facts": [],
-      "opportunities": []
+      "opportunities": [],
+      "reviewInsight": null
     },
     {
       "campusId": "sg-ek-011",
@@ -969,17 +979,18 @@
         },
         {
           "section": "OPERATING_INFO",
-          "status": "CONFIRMED",
+          "status": "NEEDS_REVIEW",
           "evidenceId": "sg-ek-011-operation",
           "academicYearLabel": null,
-          "publicNote": "C-Gate의 운영 신호를 확인했어요.",
-          "internalNote": "기관 신원·운영·분류 근거를 재확인했어요.",
+          "publicNote": "제3자 공개 자료에서 운영 신호를 확인했으며, 공식 안내를 추가로 확인하고 있어요.",
+          "internalNote": "제3자 공개 자료의 신원·운영·분류 근거를 재확인했으며 공식 근거 검수가 필요해요.",
           "lastCollectedAt": "2026-09-07T01:30:00.000Z",
           "lastCheckedAt": "2026-09-07T01:30:00.000Z"
         }
       ],
       "facts": [],
-      "opportunities": []
+      "opportunities": [],
+      "reviewInsight": null
     },
     {
       "campusId": "sg-ek-012",
@@ -1062,13 +1073,14 @@
           "evidenceId": "sg-ek-012-operation",
           "academicYearLabel": null,
           "publicNote": "PSA 압구정의 운영 신호를 확인했어요.",
-          "internalNote": "기관 신원·운영·분류 근거를 재확인했어요.",
+          "internalNote": "공식 기관 페이지에서 신원·운영·분류 근거를 재확인했어요.",
           "lastCollectedAt": "2026-09-07T01:30:00.000Z",
           "lastCheckedAt": "2026-09-07T01:30:00.000Z"
         }
       ],
       "facts": [],
-      "opportunities": []
+      "opportunities": [],
+      "reviewInsight": null
     },
     {
       "campusId": "sg-ek-013",
@@ -1147,17 +1159,18 @@
         },
         {
           "section": "OPERATING_INFO",
-          "status": "CONFIRMED",
+          "status": "NEEDS_REVIEW",
           "evidenceId": "sg-ek-013-operation",
           "academicYearLabel": null,
-          "publicNote": "PODO Club의 운영 신호를 확인했어요.",
-          "internalNote": "기관 신원·운영·분류 근거를 재확인했어요.",
+          "publicNote": "제3자 공개 자료에서 운영 신호를 확인했으며, 공식 안내를 추가로 확인하고 있어요.",
+          "internalNote": "제3자 공개 자료의 신원·운영·분류 근거를 재확인했으며 공식 근거 검수가 필요해요.",
           "lastCollectedAt": "2026-09-07T01:30:00.000Z",
           "lastCheckedAt": "2026-09-07T01:30:00.000Z"
         }
       ],
       "facts": [],
-      "opportunities": []
+      "opportunities": [],
+      "reviewInsight": null
     },
     {
       "campusId": "sg-ek-014",
@@ -1236,17 +1249,18 @@
         },
         {
           "section": "OPERATING_INFO",
-          "status": "CONFIRMED",
+          "status": "NEEDS_REVIEW",
           "evidenceId": "sg-ek-014-operation",
           "academicYearLabel": null,
-          "publicNote": "플럼어학원의 운영 신호를 확인했어요.",
-          "internalNote": "기관 신원·운영·분류 근거를 재확인했어요.",
+          "publicNote": "제3자 공개 자료에서 운영 신호를 확인했으며, 공식 안내를 추가로 확인하고 있어요.",
+          "internalNote": "제3자 공개 자료의 신원·운영·분류 근거를 재확인했으며 공식 근거 검수가 필요해요.",
           "lastCollectedAt": "2026-09-07T01:30:00.000Z",
           "lastCheckedAt": "2026-09-07T01:30:00.000Z"
         }
       ],
       "facts": [],
-      "opportunities": []
+      "opportunities": [],
+      "reviewInsight": null
     },
     {
       "campusId": "sg-ek-015",
@@ -1325,17 +1339,18 @@
         },
         {
           "section": "OPERATING_INFO",
-          "status": "CONFIRMED",
+          "status": "NEEDS_REVIEW",
           "evidenceId": "sg-ek-015-operation",
           "academicYearLabel": null,
-          "publicNote": "RISE 서초의 운영 신호를 확인했어요.",
-          "internalNote": "기관 신원·운영·분류 근거를 재확인했어요.",
+          "publicNote": "제3자 공개 자료에서 운영 신호를 확인했으며, 공식 안내를 추가로 확인하고 있어요.",
+          "internalNote": "제3자 공개 자료의 신원·운영·분류 근거를 재확인했으며 공식 근거 검수가 필요해요.",
           "lastCollectedAt": "2026-09-07T01:30:00.000Z",
           "lastCheckedAt": "2026-09-07T01:30:00.000Z"
         }
       ],
       "facts": [],
-      "opportunities": []
+      "opportunities": [],
+      "reviewInsight": null
     },
     {
       "campusId": "sg-ek-016",
@@ -1418,13 +1433,14 @@
           "evidenceId": "sg-ek-016-operation",
           "academicYearLabel": null,
           "publicNote": "i-Garten 반포의 운영 신호를 확인했어요.",
-          "internalNote": "기관 신원·운영·분류 근거를 재확인했어요.",
+          "internalNote": "공식 기관 페이지에서 신원·운영·분류 근거를 재확인했어요.",
           "lastCollectedAt": "2026-09-07T01:30:00.000Z",
           "lastCheckedAt": "2026-09-07T01:30:00.000Z"
         }
       ],
       "facts": [],
-      "opportunities": []
+      "opportunities": [],
+      "reviewInsight": null
     },
     {
       "campusId": "sg-ek-017",
@@ -1503,17 +1519,18 @@
         },
         {
           "section": "OPERATING_INFO",
-          "status": "CONFIRMED",
+          "status": "NEEDS_REVIEW",
           "evidenceId": "sg-ek-017-operation",
           "academicYearLabel": null,
-          "publicNote": "서강SLP 서초의 운영 신호를 확인했어요.",
-          "internalNote": "기관 신원·운영·분류 근거를 재확인했어요.",
+          "publicNote": "제3자 공개 자료에서 운영 신호를 확인했으며, 공식 안내를 추가로 확인하고 있어요.",
+          "internalNote": "제3자 공개 자료의 신원·운영·분류 근거를 재확인했으며 공식 근거 검수가 필요해요.",
           "lastCollectedAt": "2026-09-07T01:30:00.000Z",
           "lastCheckedAt": "2026-09-07T01:30:00.000Z"
         }
       ],
       "facts": [],
-      "opportunities": []
+      "opportunities": [],
+      "reviewInsight": null
     },
     {
       "campusId": "sg-ek-018",
@@ -1592,17 +1609,18 @@
         },
         {
           "section": "OPERATING_INFO",
-          "status": "CONFIRMED",
+          "status": "NEEDS_REVIEW",
           "evidenceId": "sg-ek-018-operation",
           "academicYearLabel": null,
-          "publicNote": "서초SCE의 운영 신호를 확인했어요.",
-          "internalNote": "기관 신원·운영·분류 근거를 재확인했어요.",
+          "publicNote": "제3자 공개 자료에서 운영 신호를 확인했으며, 공식 안내를 추가로 확인하고 있어요.",
+          "internalNote": "제3자 공개 자료의 신원·운영·분류 근거를 재확인했으며 공식 근거 검수가 필요해요.",
           "lastCollectedAt": "2026-09-07T01:30:00.000Z",
           "lastCheckedAt": "2026-09-07T01:30:00.000Z"
         }
       ],
       "facts": [],
-      "opportunities": []
+      "opportunities": [],
+      "reviewInsight": null
     },
     {
       "campusId": "sg-ek-019",
@@ -1681,17 +1699,18 @@
         },
         {
           "section": "OPERATING_INFO",
-          "status": "CONFIRMED",
+          "status": "NEEDS_REVIEW",
           "evidenceId": "sg-ek-019-operation",
           "academicYearLabel": null,
-          "publicNote": "BIS의 운영 신호를 확인했어요.",
-          "internalNote": "기관 신원·운영·분류 근거를 재확인했어요.",
+          "publicNote": "제3자 공개 자료에서 운영 신호를 확인했으며, 공식 안내를 추가로 확인하고 있어요.",
+          "internalNote": "제3자 공개 자료의 신원·운영·분류 근거를 재확인했으며 공식 근거 검수가 필요해요.",
           "lastCollectedAt": "2026-09-07T01:30:00.000Z",
           "lastCheckedAt": "2026-09-07T01:30:00.000Z"
         }
       ],
       "facts": [],
-      "opportunities": []
+      "opportunities": [],
+      "reviewInsight": null
     },
     {
       "campusId": "sg-ek-020",
@@ -1770,17 +1789,18 @@
         },
         {
           "section": "OPERATING_INFO",
-          "status": "CONFIRMED",
+          "status": "NEEDS_REVIEW",
           "evidenceId": "sg-ek-020-operation",
           "academicYearLabel": null,
-          "publicNote": "SOT의 운영 신호를 확인했어요.",
-          "internalNote": "기관 신원·운영·분류 근거를 재확인했어요.",
+          "publicNote": "제3자 공개 자료에서 운영 신호를 확인했으며, 공식 안내를 추가로 확인하고 있어요.",
+          "internalNote": "제3자 공개 자료의 신원·운영·분류 근거를 재확인했으며 공식 근거 검수가 필요해요.",
           "lastCollectedAt": "2026-09-07T01:30:00.000Z",
           "lastCheckedAt": "2026-09-07T01:30:00.000Z"
         }
       ],
       "facts": [],
-      "opportunities": []
+      "opportunities": [],
+      "reviewInsight": null
     },
     {
       "campusId": "sg-ek-021",
@@ -1869,7 +1889,8 @@
         }
       ],
       "facts": [],
-      "opportunities": []
+      "opportunities": [],
+      "reviewInsight": null
     },
     {
       "campusId": "sg-ek-022",
@@ -1948,17 +1969,18 @@
         },
         {
           "section": "OPERATING_INFO",
-          "status": "CONFIRMED",
+          "status": "NEEDS_REVIEW",
           "evidenceId": "sg-ek-022-operation",
           "academicYearLabel": null,
-          "publicNote": "EELC Kinder의 운영 신호를 확인했어요.",
-          "internalNote": "기관 신원·운영·분류 근거를 재확인했어요.",
+          "publicNote": "제3자 공개 자료에서 운영 신호를 확인했으며, 공식 안내를 추가로 확인하고 있어요.",
+          "internalNote": "제3자 공개 자료의 신원·운영·분류 근거를 재확인했으며 공식 근거 검수가 필요해요.",
           "lastCollectedAt": "2026-09-07T01:30:00.000Z",
           "lastCheckedAt": "2026-09-07T01:30:00.000Z"
         }
       ],
       "facts": [],
-      "opportunities": []
+      "opportunities": [],
+      "reviewInsight": null
     },
     {
       "campusId": "sg-ek-023",
@@ -2037,17 +2059,18 @@
         },
         {
           "section": "OPERATING_INFO",
-          "status": "CONFIRMED",
+          "status": "NEEDS_REVIEW",
           "evidenceId": "sg-ek-023-operation",
           "academicYearLabel": null,
-          "publicNote": "Little Learners의 운영 신호를 확인했어요.",
-          "internalNote": "기관 신원·운영·분류 근거를 재확인했어요.",
+          "publicNote": "제3자 공개 자료에서 운영 신호를 확인했으며, 공식 안내를 추가로 확인하고 있어요.",
+          "internalNote": "제3자 공개 자료의 신원·운영·분류 근거를 재확인했으며 공식 근거 검수가 필요해요.",
           "lastCollectedAt": "2026-09-07T01:30:00.000Z",
           "lastCheckedAt": "2026-09-07T01:30:00.000Z"
         }
       ],
       "facts": [],
-      "opportunities": []
+      "opportunities": [],
+      "reviewInsight": null
     },
     {
       "campusId": "sg-ek-024",
@@ -2130,13 +2153,14 @@
           "evidenceId": "sg-ek-024-operation",
           "academicYearLabel": null,
           "publicNote": "Stella K 서초의 운영 신호를 확인했어요.",
-          "internalNote": "기관 신원·운영·분류 근거를 재확인했어요.",
+          "internalNote": "공식 기관 페이지에서 신원·운영·분류 근거를 재확인했어요.",
           "lastCollectedAt": "2026-09-07T01:30:00.000Z",
           "lastCheckedAt": "2026-09-07T01:30:00.000Z"
         }
       ],
       "facts": [],
-      "opportunities": []
+      "opportunities": [],
+      "reviewInsight": null
     },
     {
       "campusId": "sg-ek-025",
@@ -2215,17 +2239,18 @@
         },
         {
           "section": "OPERATING_INFO",
-          "status": "CONFIRMED",
+          "status": "NEEDS_REVIEW",
           "evidenceId": "sg-ek-025-operation",
           "academicYearLabel": null,
-          "publicNote": "비탑키즈학원의 운영 신호를 확인했어요.",
-          "internalNote": "기관 신원·운영·분류 근거를 재확인했어요.",
+          "publicNote": "제3자 공개 자료에서 운영 신호를 확인했으며, 공식 안내를 추가로 확인하고 있어요.",
+          "internalNote": "제3자 공개 자료의 신원·운영·분류 근거를 재확인했으며 공식 근거 검수가 필요해요.",
           "lastCollectedAt": "2026-09-07T01:30:00.000Z",
           "lastCheckedAt": "2026-09-07T01:30:00.000Z"
         }
       ],
       "facts": [],
-      "opportunities": []
+      "opportunities": [],
+      "reviewInsight": null
     }
   ]
 }

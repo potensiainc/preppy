@@ -1,7 +1,7 @@
 {
   "status": "PASS",
   "packageId": "sg-ek-20260901-r01",
-  "packageChecksum": "3203469eb3dcb15d0ce211858e29fcb7fd940a854e2262896b5f0160b259091f",
+  "packageChecksum": "aa40844a7b36985dacb623704846a1f9f3b452dd3bda3eef1d55512e5fa32643",
   "counts": {
     "campuses": 25,
     "evidence": 75,
@@ -20,9 +20,10 @@
   "duplicateEvidenceIds": [],
   "unknownEvidenceCampusIds": [],
   "missingEvidenceCampusIds": [],
+  "sourceTextHashMismatches": [],
   "snapshotCampusMismatches": [],
   "progressMatches": true,
   "checksumsValid": true,
   "errors": [],
-  "reportChecksum": "5571ed3f13906b2c271bad99401c38f1dd2fb9f36b231c0e8de38ac754b9be86"
+  "reportChecksum": "f35c5d98a5dc9180cc1f0883638c88eb02afe9081f7256d9d541e7556beb8790"
 }

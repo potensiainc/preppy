@@ -159,6 +159,7 @@ export async function runEnglishKindergartenImportCli(
     notifications: 0,
     deliveries: 0,
     meaningfulChanges: 0,
+    opportunityChanges: 0,
   };
   if (options.mode === "validate-only" || report.status === "FAIL") {
     return {

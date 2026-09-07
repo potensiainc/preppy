@@ -285,6 +285,9 @@ describe("English-kindergarten public experience", () => {
       expect($(`[name='${name}']`)).toHaveLength(1);
     }
     expect($("[name='category']").attr("value")).toBe("ENGLISH_KINDERGARTEN");
+    expect($("select[name='region'] option[value='KR-11']").text()).toBe(
+      "서울",
+    );
     expect($("[name='sort'] option:selected").attr("value")).toBe("NAME_ASC");
     expect($("main, body").text()).toContain("월 원비");
     expect($("main, body").text()).toContain("2026학년도 월 185만 원이에요.");
@@ -293,6 +296,57 @@ describe("English-kindergarten public experience", () => {
     expect($("main, body").text()).toContain("셔틀");
     expect($("main, body").text()).toContain("다음 설명회");
     expect($("main, body").text()).toContain("2026년 10월 15일");
+  });
+
+  it("renders structured values when optional display text is absent", () => {
+    const structuredList = {
+      ...list,
+      items: [
+        {
+          ...institution,
+          englishKindergarten: {
+            ...summary,
+            tuition: { ...summary.tuition, displayText: null },
+            ageRange: { ...summary.ageRange, displayText: null },
+            transport: { ...summary.transport, displayText: null },
+          },
+        },
+      ],
+    } satisfies InstitutionListDTO;
+    const structuredDetail = {
+      ...detail,
+      institution: structuredList.items[0]!,
+      englishKindergarten: {
+        ...detail.englishKindergarten!,
+        facts: detail.englishKindergarten!.facts.map((fact) => ({
+          ...fact,
+          displayText: null,
+        })),
+      },
+    } satisfies InstitutionDetailDTO;
+
+    const listText = load(
+      renderToStaticMarkup(
+        createElement(EnglishKindergartenListView, {
+          data: structuredList,
+          filters: { category: "ENGLISH_KINDERGARTEN", page: 1, pageSize: 12 },
+        }),
+      ),
+    )("body").text();
+    expect(listText).toContain("2026학년도 · 월 1,850,000원");
+    expect(listText).toContain("만 4~7세");
+    expect(listText).toContain("운영 · 서초구, 강남구");
+
+    const detailText = load(
+      renderToStaticMarkup(
+        createElement(EnglishKindergartenDetailView, {
+          data: structuredDetail,
+        }),
+      ),
+    )("body").text();
+    expect(detailText).toContain("2026학년도 · 월 1,850,000원");
+    expect(detailText).toContain("2026학년도 · 만 4~7세");
+    expect(detailText).toContain("운영 · 서초구, 강남구");
   });
 
   it("renders an answer-first detail with exact coverage states and trust labels", () => {

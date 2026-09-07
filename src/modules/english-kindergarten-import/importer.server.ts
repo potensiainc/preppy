@@ -6,6 +6,9 @@ import {
   institutionFacts,
   institutionFactVersions,
   institutionFactVersionEvidence,
+  institutionReviewInsights,
+  institutionReviewInsightVersions,
+  institutionReviewInsightVersionEvidence,
   institutions,
   institutionSectionCoverages,
   institutionSourceBindings,
@@ -53,6 +56,7 @@ export type EnglishKindergartenImportReport = Readonly<{
     notifications: number;
     deliveries: number;
     meaningfulChanges: number;
+    opportunityChanges: number;
   }>;
 }>;
 
@@ -72,7 +76,8 @@ async function observeSideEffects(
       (select count(*)::int from outbox_events) as "outboxEvents",
       (select count(*)::int from notifications) as "notifications",
       (select count(*)::int from notification_deliveries) as "deliveries",
-      (select count(*)::int from meaningful_changes) as "meaningfulChanges"
+      (select count(*)::int from meaningful_changes) as "meaningfulChanges",
+      (select count(*)::int from opportunity_changes) as "opportunityChanges"
   `)) as unknown as SideEffectCounts[];
   if (!row) throw new Error("반입 부수 효과 합계를 확인하지 못했어요.");
   return row;
@@ -84,6 +89,7 @@ function sideEffectDelta(before: SideEffectCounts, after: SideEffectCounts) {
     notifications: after.notifications - before.notifications,
     deliveries: after.deliveries - before.deliveries,
     meaningfulChanges: after.meaningfulChanges - before.meaningfulChanges,
+    opportunityChanges: after.opportunityChanges - before.opportunityChanges,
   };
 }
 
@@ -195,6 +201,43 @@ async function persistPlan(
       evidenceRole: action.evidenceRole,
       createdAt: occurredAt,
     });
+  }
+  for (const action of plan.actions.reviewInsights) {
+    if (action.operation !== "CREATE") continue;
+    await executor.drizzle.insert(institutionReviewInsights).values({
+      ...action.desired,
+      createdAt: occurredAt,
+      updatedAt: occurredAt,
+    });
+  }
+  for (const action of plan.actions.reviewInsightVersions) {
+    if (action.operation !== "CREATE") continue;
+    if (action.previousCurrentId) {
+      await executor.drizzle
+        .update(institutionReviewInsightVersions)
+        .set({ isCurrent: false, verificationState: "SUPERSEDED" })
+        .where(
+          eq(institutionReviewInsightVersions.id, action.previousCurrentId),
+        );
+    }
+    await executor.drizzle.insert(institutionReviewInsightVersions).values({
+      ...action.desired,
+      createdAt: occurredAt,
+    });
+  }
+  for (const action of plan.actions.reviewInsightEvidence) {
+    if (action.operation !== "CREATE") continue;
+    await executor.drizzle
+      .insert(institutionReviewInsightVersionEvidence)
+      .values({
+        id: action.id,
+        institutionReviewInsightVersionId: action.versionId,
+        sourceId: action.sourceId,
+        sourceObservationId: null,
+        sourceSnapshotId: action.sourceSnapshotId,
+        evidenceRole: action.evidenceRole,
+        createdAt: occurredAt,
+      });
   }
   for (const action of plan.actions.opportunities) {
     if (action.operation !== "CREATE") continue;

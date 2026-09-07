@@ -120,13 +120,23 @@ function SummaryGrid({
 }) {
   const tuition =
     summary.tuition?.displayText ??
-    coverageText(summary, "TUITION", "원비 내용을 확인하고 있어요.");
+    (summary.tuition
+      ? formatTuitionValue(summary.tuition)
+      : coverageText(summary, "TUITION", "원비 내용을 확인하고 있어요."));
   const age =
     summary.ageRange?.displayText ??
-    coverageText(summary, "TARGET_AGE_GRADE", "운영 연령을 확인하고 있어요.");
+    (summary.ageRange
+      ? formatAgeRange(summary.ageRange)
+      : coverageText(
+          summary,
+          "TARGET_AGE_GRADE",
+          "운영 연령을 확인하고 있어요.",
+        ));
   const transport =
     summary.transport.displayText ??
-    coverageText(summary, "TRANSPORT", "셔틀 내용을 확인하고 있어요.");
+    (summary.transport.verifiedAt
+      ? formatTransport(summary.transport)
+      : coverageText(summary, "TRANSPORT", "셔틀 내용을 확인하고 있어요."));
   const session = summary.nextInformationSession;
 
   return (
@@ -252,12 +262,14 @@ export function EnglishKindergartenListView({
           </div>
           <div className="ek-filter">
             <label htmlFor="ek-region">지역</label>
-            <input
+            <select
               id="ek-region"
               name="region"
               defaultValue={filters.region ?? ""}
-              placeholder="예: 서울"
-            />
+            >
+              <option value="">전체 지역</option>
+              <option value="KR-11">서울</option>
+            </select>
           </div>
           <div className="ek-filter">
             <label htmlFor="ek-age">자녀 나이</label>
@@ -416,7 +428,9 @@ function TuitionSection({ data }: { data: EnglishKindergartenDetailDTO }) {
   const value = fact.value;
   return (
     <div className="ek-fact-panel">
-      <p className="ek-fact-panel__lead">{fact.displayText}</p>
+      <p className="ek-fact-panel__lead">
+        {fact.displayText ?? formatTuitionValue(value)}
+      </p>
       {value.programFees.length > 0 ? (
         <dl className="ek-detail-list">
           {value.programFees.map((fee) => (
@@ -472,6 +486,53 @@ function formatMoneyRange(
         ? `${min.toLocaleString("ko-KR")}~${max.toLocaleString("ko-KR")}원`
         : `${min.toLocaleString("ko-KR")}원`;
   return cadence ? `${cadenceLabels[cadence]} ${amount}` : amount;
+}
+
+function formatTuitionValue(value: {
+  academicYearLabel: string | null;
+  validityNote?: string | null;
+  billingCadence: keyof typeof cadenceLabels | null;
+  amountMin: number | null;
+  amountMax: number | null;
+}) {
+  const basis = value.academicYearLabel ?? value.validityNote ?? null;
+  const amount = formatMoneyRange(
+    value.amountMin,
+    value.amountMax,
+    value.billingCadence,
+  );
+  return basis ? `${basis} · ${amount}` : amount;
+}
+
+function formatAgeRange(value: {
+  min: number;
+  max: number;
+  basis: keyof typeof ageBasisLabels;
+  academicYearLabel: string | null;
+}) {
+  const prefix =
+    value.basis === "INTERNATIONAL_AGE"
+      ? "만"
+      : value.basis === "KOREAN_AGE"
+        ? "한국식 나이"
+        : "기관 기준";
+  const range =
+    value.min === value.max ? `${value.min}` : `${value.min}~${value.max}`;
+  const label = `${prefix} ${range}세`;
+  return value.academicYearLabel
+    ? `${value.academicYearLabel} · ${label}`
+    : label;
+}
+
+function formatTransport(value: {
+  state: "AVAILABLE" | "NOT_AVAILABLE" | "UNKNOWN";
+  serviceAreas: string[];
+}) {
+  if (value.state === "NOT_AVAILABLE") return "운영하지 않아요.";
+  if (value.state === "UNKNOWN") return "운영 여부를 확인하고 있어요.";
+  return value.serviceAreas.length > 0
+    ? `운영 · ${value.serviceAreas.join(", ")}`
+    : "운영해요.";
 }
 
 function InformationSessionSection({
@@ -575,7 +636,15 @@ function AgeCurriculumSection({
       {age ? (
         <div className="ek-fact-panel">
           <h3>운영 연령</h3>
-          <p className="ek-fact-panel__lead">{age.displayText}</p>
+          <p className="ek-fact-panel__lead">
+            {age.displayText ??
+              formatAgeRange({
+                min: age.value.minAge,
+                max: age.value.maxAge,
+                basis: age.value.ageBasis,
+                academicYearLabel: age.value.academicYearLabel,
+              })}
+          </p>
           <p>{ageBasisLabels[age.value.ageBasis]}</p>
           {age.value.classes.length > 0 ? (
             <ul>
@@ -652,7 +721,13 @@ function TransportSection({ data }: { data: EnglishKindergartenDetailDTO }) {
   }
   return (
     <div className="ek-fact-panel">
-      <p className="ek-fact-panel__lead">{fact.displayText}</p>
+      <p className="ek-fact-panel__lead">
+        {fact.displayText ??
+          formatTransport({
+            state: fact.value.isAvailable ? "AVAILABLE" : "NOT_AVAILABLE",
+            serviceAreas: fact.value.serviceAreas,
+          })}
+      </p>
       {fact.value.serviceAreas.length > 0 ? (
         <p>운행 지역: {fact.value.serviceAreas.join(", ")}</p>
       ) : null}

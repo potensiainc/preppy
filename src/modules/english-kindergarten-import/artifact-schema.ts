@@ -11,6 +11,7 @@ import {
   type EnglishKindergartenFactType,
   type EnglishKindergartenFactValue,
 } from "@/src/modules/english-kindergarten/fact-values";
+import { parseReviewInsightValue } from "@/src/modules/english-kindergarten/review-insight";
 
 const nonEmpty = z.string().trim().min(1);
 const httpsUrl = z
@@ -59,8 +60,11 @@ export const evidenceRecordSchema = z
       "FACT",
     ]),
     sourceUrl: httpsUrl,
+    finalUrl: httpsUrl,
     sourceType: z.enum(sourceTypeValues),
     authorityLevel: z.enum(["PRIMARY", "SECONDARY_OFFICIAL", "THIRD_PARTY"]),
+    fetchOutcome: z.enum(["SUCCESS", "ACCESS_FAILED", "CHECKED_NOT_FOUND"]),
+    sourceTextExcerpt: nonEmpty.max(2_000),
     boundedExcerpt: nonEmpty.max(2_000),
     collectedAt: isoDateTime,
     sourceContentSha256: sha256,
@@ -68,7 +72,9 @@ export const evidenceRecordSchema = z
   .strict()
   .superRefine((value, context) => {
     if (
-      /<(?:!doctype|html|head|body|script|style)\b/iu.test(value.boundedExcerpt)
+      /<(?:!doctype|html|head|body|script|style)\b/iu.test(
+        `${value.sourceTextExcerpt}\n${value.boundedExcerpt}`,
+      )
     ) {
       context.addIssue({
         code: "custom",
@@ -131,6 +137,35 @@ const opportunityImportSchema = z
   })
   .strict();
 
+const reviewInsightImportSchema = z
+  .object({
+    periodStart: z.iso.date().nullable(),
+    periodEnd: z.iso.date().nullable(),
+    sampleSize: z.number().int().positive(),
+    themes: z.unknown(),
+    limitations: nonEmpty.nullable(),
+    evidenceIds: z.array(identifier).min(1),
+    verifiedAt: isoDateTime,
+  })
+  .strict()
+  .transform((value) => {
+    const parsed = parseReviewInsightValue({
+      periodStart: value.periodStart,
+      periodEnd: value.periodEnd,
+      reviewCount: value.sampleSize,
+      themes: value.themes,
+      limitations: value.limitations,
+    });
+    return {
+      ...value,
+      periodStart: parsed.periodStart,
+      periodEnd: parsed.periodEnd,
+      sampleSize: parsed.reviewCount,
+      themes: parsed.themes,
+      limitations: parsed.limitations,
+    };
+  });
+
 export const importInstitutionSchema = z
   .object({
     campusId: identifier,
@@ -141,6 +176,7 @@ export const importInstitutionSchema = z
       .length(englishKindergartenSectionValues.length),
     facts: z.array(factImportSchema),
     opportunities: z.array(opportunityImportSchema),
+    reviewInsight: reviewInsightImportSchema.nullable(),
   })
   .strict();
 

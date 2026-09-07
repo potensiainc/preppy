@@ -7,6 +7,8 @@ import { inArray } from "drizzle-orm";
 import {
   institutionFacts,
   institutionFactVersions,
+  institutionReviewInsights,
+  institutionReviewInsightVersions,
   institutions,
   institutionSectionCoverages,
   institutionSourceBindings,
@@ -38,6 +40,9 @@ export type ImportCountSet = {
   facts: number;
   factVersions: number;
   factEvidence: number;
+  reviewInsights: number;
+  reviewInsightVersions: number;
+  reviewInsightEvidence: number;
   opportunities: number;
   opportunityVersions: number;
   opportunityEvidence: number;
@@ -72,6 +77,7 @@ export type EnglishKindergartenImportPlan = Readonly<{
     notifications: 0;
     deliveries: 0;
     meaningfulChanges: 0;
+    opportunityChanges: 0;
   }>;
   actions: Readonly<{
     institutions: readonly InstitutionAction[];
@@ -83,6 +89,9 @@ export type EnglishKindergartenImportPlan = Readonly<{
     facts: readonly FactAction[];
     factVersions: readonly FactVersionAction[];
     factEvidence: readonly VersionEvidenceAction[];
+    reviewInsights: readonly ReviewInsightAction[];
+    reviewInsightVersions: readonly ReviewInsightVersionAction[];
+    reviewInsightEvidence: readonly VersionEvidenceAction[];
     opportunities: readonly OpportunityAction[];
     opportunityVersions: readonly OpportunityVersionAction[];
     opportunityEvidence: readonly VersionEvidenceAction[];
@@ -140,6 +149,8 @@ export type SnapshotAction = Readonly<{
     capturedAt: Date;
     contentHash: string;
     textHash: string;
+    normalizedText: string;
+    mimeType: "text/plain";
     metadata: Record<string, unknown>;
   };
 }>;
@@ -151,7 +162,7 @@ export type ObservationAction = Readonly<{
   desired: {
     sourceId: string;
     observedAt: Date;
-    outcome: "SUCCESS" | "ACCESS_ERROR";
+    outcome: "SUCCESS" | "ACCESS_ERROR" | "NOT_FOUND";
     finalUrl: string;
     contentHash: string | null;
     textHash: string | null;
@@ -212,6 +223,32 @@ export type FactVersionAction = Readonly<{
     isCurrent: true;
     valueJson: Record<string, unknown>;
     displayText: string | null;
+    verifiedAt: Date;
+  };
+}>;
+
+export type ReviewInsightAction = Readonly<{
+  operation: Exclude<Operation, "UPDATE">;
+  reviewInsightId: string;
+  desired: { id: string; institutionId: string };
+}>;
+
+export type ReviewInsightVersionAction = Readonly<{
+  operation: Exclude<Operation, "UPDATE">;
+  reviewInsightVersionId: string;
+  previousCurrentId: string | null;
+  desired: {
+    id: string;
+    institutionReviewInsightId: string;
+    versionNumber: number;
+    supersedesVersionId: string | null;
+    verificationState: "VERIFIED";
+    isCurrent: true;
+    periodStart: string | null;
+    periodEnd: string | null;
+    sampleSize: number;
+    themes: Array<{ summary: string; mentionCount?: number }>;
+    limitations: string | null;
     verifiedAt: Date;
   };
 }>;
@@ -289,6 +326,9 @@ function emptyCounts(): ImportCountSet {
     facts: 0,
     factVersions: 0,
     factEvidence: 0,
+    reviewInsights: 0,
+    reviewInsightVersions: 0,
+    reviewInsightEvidence: 0,
     opportunities: 0,
     opportunityVersions: 0,
     opportunityEvidence: 0,
@@ -317,19 +357,6 @@ function sourceAuthority(
   value: EvidenceRecord["authorityLevel"],
 ): "PRIMARY" | "SECONDARY_OFFICIAL" | "DISCOVERY_ONLY" {
   return value === "THIRD_PARTY" ? "DISCOVERY_ONLY" : value;
-}
-
-function isAccessFailed(
-  packageValue: EnglishKindergartenImportPackage,
-  campusId: string,
-) {
-  return packageValue.snapshot.institutions
-    .find((item) => item.campusId === campusId)
-    ?.coverages.some(
-      (coverage) =>
-        coverage.section === "OPERATING_INFO" &&
-        coverage.status === "ACCESS_FAILED",
-    );
 }
 
 function countOperation(
@@ -368,6 +395,9 @@ export async function planEnglishKindergartenImport(
     facts: [] as FactAction[],
     factVersions: [] as FactVersionAction[],
     factEvidence: [] as VersionEvidenceAction[],
+    reviewInsights: [] as ReviewInsightAction[],
+    reviewInsightVersions: [] as ReviewInsightVersionAction[],
+    reviewInsightEvidence: [] as VersionEvidenceAction[],
     opportunities: [] as OpportunityAction[],
     opportunityVersions: [] as OpportunityVersionAction[],
     opportunityEvidence: [] as VersionEvidenceAction[],
@@ -390,6 +420,7 @@ export async function planEnglishKindergartenImport(
         notifications: 0,
         deliveries: 0,
         meaningfulChanges: 0,
+        opportunityChanges: 0,
       },
       actions,
     };
@@ -538,6 +569,7 @@ export async function planEnglishKindergartenImport(
         notifications: 0,
         deliveries: 0,
         meaningfulChanges: 0,
+        opportunityChanges: 0,
       },
       actions,
     };
@@ -606,6 +638,8 @@ export async function planEnglishKindergartenImport(
         capturedAt: new Date(evidence.collectedAt),
         contentHash: evidence.sourceContentSha256,
         textHash: evidence.sourceContentSha256,
+        normalizedText: evidence.sourceTextExcerpt,
+        mimeType: "text/plain" as const,
         metadata: {
           importPackageId: packageValue.snapshot.packageId,
           evidenceIds: relatedEvidenceIds,
@@ -620,7 +654,13 @@ export async function planEnglishKindergartenImport(
   for (const [url, evidenceItems] of evidenceByUrl) {
     const first = evidenceItems[0]!;
     const sourceId = resolvedSourceIds.get(url)!;
-    const failed = isAccessFailed(packageValue, first.campusId) === true;
+    const failed = first.fetchOutcome === "ACCESS_FAILED";
+    const notFound = first.fetchOutcome === "CHECKED_NOT_FOUND";
+    const outcome = failed
+      ? "ACCESS_ERROR"
+      : notFound
+        ? "NOT_FOUND"
+        : "SUCCESS";
     const checkedAt = packageValue.snapshot.institutions
       .find((item) => item.campusId === first.campusId)!
       .coverages.reduce(
@@ -629,11 +669,11 @@ export async function planEnglishKindergartenImport(
         "",
       );
     const observedAt = new Date(checkedAt);
-    const desiredHash = failed ? null : first.sourceContentSha256;
+    const desiredHash = failed || notFound ? null : first.sourceContentSha256;
     const existing = existingObservations.find(
       (row) =>
         row.sourceId === sourceId &&
-        row.outcome === (failed ? "ACCESS_ERROR" : "SUCCESS") &&
+        row.outcome === outcome &&
         row.observedAt.toISOString() === observedAt.toISOString() &&
         row.contentHash === desiredHash,
     );
@@ -645,13 +685,14 @@ export async function planEnglishKindergartenImport(
       desired: {
         sourceId,
         observedAt,
-        outcome: failed ? "ACCESS_ERROR" : "SUCCESS",
-        finalUrl: url,
+        outcome,
+        finalUrl: first.finalUrl,
         contentHash: desiredHash,
         textHash: desiredHash,
-        snapshotId: failed
-          ? null
-          : resolvedSnapshotIds.get(evidenceKey(first))!,
+        snapshotId:
+          failed || notFound
+            ? null
+            : resolvedSnapshotIds.get(evidenceKey(first))!,
         errorCode: failed ? "SNAPSHOT_RECHECK_ACCESS_FAILED" : null,
         errorMessage: failed
           ? "2026-09-07 재확인에서 페이지에 접근하지 못했어요."
@@ -667,8 +708,15 @@ export async function planEnglishKindergartenImport(
       (row) => `${row.institutionId}\u0000${row.sourceId}\u0000${row.role}`,
     ),
   );
-  for (const [url, evidenceItems] of evidenceByUrl) {
-    const first = evidenceItems[0]!;
+  const bindingEvidence = new Map<string, EvidenceRecord>();
+  for (const evidence of packageValue.evidence) {
+    bindingEvidence.set(
+      `${evidence.campusId}\u0000${evidence.sourceUrl}`,
+      evidence,
+    );
+  }
+  for (const first of bindingEvidence.values()) {
+    const url = first.sourceUrl;
     const institutionId = resolvedInstitutionIds.get(first.campusId)!;
     const sourceId = resolvedSourceIds.get(url)!;
     const role: "OFFICIAL_MAIN" | "OTHER" =
@@ -780,34 +828,38 @@ export async function planEnglishKindergartenImport(
       });
       countOperation(rootOperation, "facts", created, updated, unchanged);
       const current = currentFactVersionByRoot.get(factId);
-      const valueJson = fact.value as Record<string, unknown>;
-      const exact =
+      const valueJson = Object.fromEntries(
+        Object.entries(fact.value).filter(([key]) => key !== "factType"),
+      );
+      const exactCurrent =
         current &&
         canonicalJson(current.valueJson) === canonicalJson(valueJson) &&
         current.displayText === fact.displayText;
-      const versionId = exact
-        ? current.id
-        : deterministicUuid(
-            `fact-version:${factId}:${canonicalJsonSha(valueJson)}:${fact.displayText ?? ""}`,
-          );
-      const versionOperation = exact ? "NONE" : "CREATE";
+      const deterministicVersionId = deterministicUuid(
+        `fact-version:${factId}:${canonicalJsonSha(valueJson)}:${fact.displayText ?? ""}`,
+      );
+      const existingVersion = exactCurrent
+        ? current
+        : existingFactVersions.find((row) => row.id === deterministicVersionId);
+      const versionId = existingVersion?.id ?? deterministicVersionId;
+      const versionOperation = existingVersion ? "NONE" : "CREATE";
       actions.factVersions.push({
         operation: versionOperation,
         factVersionId: versionId,
-        previousCurrentId: exact ? null : (current?.id ?? null),
+        previousCurrentId: existingVersion ? null : (current?.id ?? null),
         desired: {
           id: versionId,
           institutionFactId: factId,
-          versionNumber: exact
-            ? current.versionNumber
+          versionNumber: existingVersion
+            ? existingVersion.versionNumber
             : Math.max(
                 0,
                 ...existingFactVersions
                   .filter((row) => row.institutionFactId === factId)
                   .map((row) => row.versionNumber),
               ) + 1,
-          supersedesVersionId: exact
-            ? current.supersedesVersionId
+          supersedesVersionId: existingVersion
+            ? existingVersion.supersedesVersionId
             : (current?.id ?? null),
           verificationState: "VERIFIED",
           isCurrent: true,
@@ -823,7 +875,7 @@ export async function planEnglishKindergartenImport(
         updated,
         unchanged,
       );
-      if (!exact) {
+      if (!existingVersion) {
         for (const [evidenceIndex, evidenceId] of fact.evidenceIds.entries()) {
           const evidence = evidenceById.get(evidenceId)!;
           actions.factEvidence.push({
@@ -836,6 +888,135 @@ export async function planEnglishKindergartenImport(
           });
           countOperation("CREATE", "factEvidence", created, updated, unchanged);
         }
+      }
+    }
+  }
+
+  const existingReviewInsights = await executor.drizzle
+    .select()
+    .from(institutionReviewInsights)
+    .where(inArray(institutionReviewInsights.institutionId, institutionIds));
+  const existingReviewInsightIds = existingReviewInsights.map((row) => row.id);
+  const existingReviewInsightVersions = existingReviewInsightIds.length
+    ? await executor.drizzle
+        .select()
+        .from(institutionReviewInsightVersions)
+        .where(
+          inArray(
+            institutionReviewInsightVersions.institutionReviewInsightId,
+            existingReviewInsightIds,
+          ),
+        )
+    : [];
+  for (const item of packageValue.snapshot.institutions) {
+    if (!item.reviewInsight) continue;
+    const institutionId = resolvedInstitutionIds.get(item.campusId)!;
+    const existingRoot = existingReviewInsights.find(
+      (row) => row.institutionId === institutionId,
+    );
+    const reviewInsightId =
+      existingRoot?.id ?? deterministicUuid(`review-insight:${institutionId}`);
+    const rootOperation = existingRoot ? "NONE" : "CREATE";
+    actions.reviewInsights.push({
+      operation: rootOperation,
+      reviewInsightId,
+      desired: { id: reviewInsightId, institutionId },
+    });
+    countOperation(
+      rootOperation,
+      "reviewInsights",
+      created,
+      updated,
+      unchanged,
+    );
+
+    const desiredValue = {
+      periodStart: item.reviewInsight.periodStart,
+      periodEnd: item.reviewInsight.periodEnd,
+      sampleSize: item.reviewInsight.sampleSize,
+      themes: item.reviewInsight.themes,
+      limitations: item.reviewInsight.limitations,
+    };
+    const current = existingReviewInsightVersions.find(
+      (row) =>
+        row.institutionReviewInsightId === reviewInsightId && row.isCurrent,
+    );
+    const exactCurrent =
+      current &&
+      canonicalJson({
+        periodStart: current.periodStart,
+        periodEnd: current.periodEnd,
+        sampleSize: current.sampleSize,
+        themes: current.themes,
+        limitations: current.limitations,
+      }) === canonicalJson(desiredValue);
+    const deterministicVersionId = deterministicUuid(
+      `review-insight-version:${reviewInsightId}:${canonicalJsonSha(desiredValue)}`,
+    );
+    const existingVersion = exactCurrent
+      ? current
+      : existingReviewInsightVersions.find(
+          (row) => row.id === deterministicVersionId,
+        );
+    const reviewInsightVersionId =
+      existingVersion?.id ?? deterministicVersionId;
+    const versionOperation = existingVersion ? "NONE" : "CREATE";
+    actions.reviewInsightVersions.push({
+      operation: versionOperation,
+      reviewInsightVersionId,
+      previousCurrentId: existingVersion ? null : (current?.id ?? null),
+      desired: {
+        id: reviewInsightVersionId,
+        institutionReviewInsightId: reviewInsightId,
+        versionNumber: existingVersion
+          ? existingVersion.versionNumber
+          : Math.max(
+              0,
+              ...existingReviewInsightVersions
+                .filter(
+                  (row) => row.institutionReviewInsightId === reviewInsightId,
+                )
+                .map((row) => row.versionNumber),
+            ) + 1,
+        supersedesVersionId: existingVersion
+          ? existingVersion.supersedesVersionId
+          : (current?.id ?? null),
+        verificationState: "VERIFIED",
+        isCurrent: true,
+        ...desiredValue,
+        verifiedAt: new Date(item.reviewInsight.verifiedAt),
+      },
+    });
+    countOperation(
+      versionOperation,
+      "reviewInsightVersions",
+      created,
+      updated,
+      unchanged,
+    );
+    if (!existingVersion) {
+      for (const [
+        evidenceIndex,
+        evidenceId,
+      ] of item.reviewInsight.evidenceIds.entries()) {
+        const evidence = evidenceById.get(evidenceId)!;
+        actions.reviewInsightEvidence.push({
+          operation: "CREATE",
+          id: deterministicUuid(
+            `review-insight-evidence:${reviewInsightVersionId}:${evidenceId}`,
+          ),
+          versionId: reviewInsightVersionId,
+          sourceId: resolvedSourceIds.get(evidence.sourceUrl)!,
+          sourceSnapshotId: resolvedSnapshotIds.get(evidenceKey(evidence))!,
+          evidenceRole: evidenceIndex === 0 ? "PRIMARY" : "SUPPORTING",
+        });
+        countOperation(
+          "CREATE",
+          "reviewInsightEvidence",
+          created,
+          updated,
+          unchanged,
+        );
       }
     }
   }
@@ -913,31 +1094,35 @@ export async function planEnglishKindergartenImport(
         applicationClosesAt: opportunity.applicationClosesAt,
         actionUrl: opportunity.actionUrl,
       });
-      const exact = current?.contentFingerprint === fingerprint;
-      const versionId = exact
-        ? current.id
-        : deterministicUuid(
-            `opportunity-version:${opportunityId}:${fingerprint}`,
-          );
-      const versionOperation = exact ? "NONE" : "CREATE";
+      const deterministicVersionId = deterministicUuid(
+        `opportunity-version:${opportunityId}:${fingerprint}`,
+      );
+      const existingVersion =
+        current?.contentFingerprint === fingerprint
+          ? current
+          : existingOpportunityVersions.find(
+              (row) => row.id === deterministicVersionId,
+            );
+      const versionId = existingVersion?.id ?? deterministicVersionId;
+      const versionOperation = existingVersion ? "NONE" : "CREATE";
       actions.opportunityVersions.push({
         operation: versionOperation,
         opportunityVersionId: versionId,
-        previousCurrentId: exact ? null : (current?.id ?? null),
+        previousCurrentId: existingVersion ? null : (current?.id ?? null),
         desired: {
           id: versionId,
           opportunityId,
           truthMode: "NATIVE",
-          versionNumber: exact
-            ? current.versionNumber
+          versionNumber: existingVersion
+            ? existingVersion.versionNumber
             : Math.max(
                 0,
                 ...existingOpportunityVersions
                   .filter((row) => row.opportunityId === opportunityId)
                   .map((row) => row.versionNumber),
               ) + 1,
-          supersedesVersionId: exact
-            ? current.supersedesVersionId
+          supersedesVersionId: existingVersion
+            ? existingVersion.supersedesVersionId
             : (current?.id ?? null),
           verificationState: "VERIFIED",
           businessState: opportunity.businessState,
@@ -959,7 +1144,7 @@ export async function planEnglishKindergartenImport(
         updated,
         unchanged,
       );
-      if (!exact) {
+      if (!existingVersion) {
         for (const [
           evidenceIndex,
           evidenceId,
@@ -1000,6 +1185,7 @@ export async function planEnglishKindergartenImport(
       notifications: 0,
       deliveries: 0,
       meaningfulChanges: 0,
+      opportunityChanges: 0,
     },
     actions,
   };
