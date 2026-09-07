@@ -508,13 +508,19 @@ export async function getHomeCurrentOpportunityCards(
     return [
       {
         ...card,
-        title:
-          card.kind === "INFORMATION_SESSION"
-            ? card.title.replace(/(입학설명회)\s+\d+(?:\s*\(예정\))?$/u, "$1")
-            : card.title,
+        title: compactOpportunityTitle(card.title, card.kind),
       },
     ];
   });
+}
+
+function compactOpportunityTitle(
+  title: string,
+  kind: OpportunityCardDTO["kind"],
+): string {
+  return kind === "INFORMATION_SESSION"
+    ? title.replace(/(입학설명회)\s+\d+(?:\s*\(예정\))?$/u, "$1")
+    : title;
 }
 
 function opportunityCard(
@@ -572,7 +578,7 @@ function cardFromInstitution(
         : {
             id: selected.id,
             slug: selected.slug,
-            title: selected.title,
+            title: compactOpportunityTitle(selected.title, selected.kind),
             kind: selected.kind,
             state: selected.businessState,
             keyDate: opportunityKeyDate(selected.keyDates),

@@ -382,6 +382,10 @@ describe("WP-06A Article and Home public queries", () => {
     expect(first.featuredInstitutions.map((item) => item.id)).toEqual(
       expect.arrayContaining([alpha.id, beta.id]),
     );
+    expect(
+      first.featuredInstitutions.find((item) => item.id === alpha.id)
+        ?.currentOpportunity?.title,
+    ).toBe("2027학년도 Home Alpha 입학설명회");
     expect(first.latestArticles.map((item) => item.id)).toEqual(
       expect.arrayContaining([publishedArticle.id]),
     );
