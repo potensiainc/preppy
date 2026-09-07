@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, eq, ilike, inArray, or, sql } from "drizzle-orm";
+import { and, asc, desc, eq, ilike, inArray, or, sql } from "drizzle-orm";
 
 import { NotFoundError } from "@/src/application/errors";
 import {
@@ -21,10 +21,15 @@ import {
   getMonitorableInstitutionIds,
   isInstitutionFollowable,
 } from "@/src/modules/follow/followability-policy.server";
+import {
+  loadEnglishKindergartenCardSummaries,
+  loadEnglishKindergartenDetail,
+} from "@/src/modules/english-kindergarten/public-query.server";
 
 import type {
   InstitutionCardDTO,
   InstitutionDetailDTO,
+  EnglishKindergartenCardSummaryDTO,
   InstitutionFactDTO,
   InstitutionListDTO,
   InstitutionListQuery,
@@ -75,6 +80,7 @@ type InstitutionRow = {
   name: string;
   category: InstitutionCardDTO["category"];
   region: string | null;
+  address: string | null;
   shortDescription: string | null;
   operationalState: "ACTIVE" | "INACTIVE" | "CLOSED" | "UNKNOWN";
   hasMonitorableSourceCoverage: boolean;
@@ -405,6 +411,7 @@ async function getInstitutionsByIds(
       name: institutions.displayName,
       category: institutions.category,
       region: institutions.regionCode,
+      address: institutions.addressLine,
       shortDescription: institutions.shortDescription,
       operationalState: institutions.operationalState,
     })
@@ -469,10 +476,16 @@ export async function getPublicInstitutionCardsByIds(
   const truthsByInstitution = new Map<string, OpportunityTruth[]>();
   for (const truth of truths)
     truthsByInstitution.set(truth.institutionId, [truth]);
+  const englishKindergartenSummaries =
+    await loadEnglishKindergartenCardSummaries(
+      executor,
+      rows.map((row) => row.id),
+    );
   return rows.map((institution) =>
     cardFromInstitution(
       institution,
       truthsByInstitution.get(institution.id) ?? [],
+      englishKindergartenSummaries.get(institution.id),
     ),
   );
 }
@@ -528,6 +541,7 @@ function opportunityCard(
 function cardFromInstitution(
   institution: InstitutionRow,
   truths: OpportunityTruth[],
+  englishKindergarten?: EnglishKindergartenCardSummaryDTO,
 ): InstitutionCardDTO {
   const selected = [...truths].sort(compareOpportunities)[0];
   return {
@@ -536,6 +550,9 @@ function cardFromInstitution(
     name: institution.name,
     category: institution.category,
     region: institution.region,
+    ...(institution.category === "ENGLISH_KINDERGARTEN"
+      ? { address: institution.address }
+      : {}),
     followable: publicFollowable(institution),
     currentAdmissionsState: selected?.businessState ?? null,
     currentOpportunity:
@@ -550,6 +567,7 @@ function cardFromInstitution(
             keyDate: opportunityKeyDate(selected.keyDates),
           },
     lastVerifiedAt: selected?.lastVerifiedAt ?? null,
+    ...(englishKindergarten === undefined ? {} : { englishKindergarten }),
   };
 }
 
@@ -586,7 +604,135 @@ function listConditions(query: InstitutionListQuery) {
       ? undefined
       : ilike(institutions.displayName, `%${query.query}%`),
     recruitmentExists(query.recruitmentState),
+    query.minAge === undefined
+      ? undefined
+      : sql`exists (
+          select 1
+          from institution_facts ek_age_fact
+          join institution_fact_versions ek_age_version
+            on ek_age_version.institution_fact_id = ek_age_fact.id
+            and ek_age_version.is_current = true
+            and ek_age_version.verification_state = 'VERIFIED'
+            and ek_age_version.verified_at is not null
+          where ek_age_fact.institution_id = ${institutions.id}
+            and ek_age_fact.fact_type = 'TARGET_AGE_GRADE'
+            and jsonb_typeof(ek_age_version.value_json -> 'minAge') = 'number'
+            and jsonb_typeof(ek_age_version.value_json -> 'maxAge') = 'number'
+            and (ek_age_version.value_json ->> 'minAge')::int <= ${query.minAge}
+            and (ek_age_version.value_json ->> 'maxAge')::int >= ${query.minAge}
+        )`,
+    query.transport === undefined
+      ? undefined
+      : sql`exists (
+          select 1
+          from institution_facts ek_transport_fact
+          join institution_fact_versions ek_transport_version
+            on ek_transport_version.institution_fact_id = ek_transport_fact.id
+            and ek_transport_version.is_current = true
+            and ek_transport_version.verification_state = 'VERIFIED'
+            and ek_transport_version.verified_at is not null
+          where ek_transport_fact.institution_id = ${institutions.id}
+            and ek_transport_fact.fact_type = 'TRANSPORT'
+            and ek_transport_version.value_json ->> 'isAvailable' = 'true'
+        )`,
+    query.hasUpcomingInfoSession === true
+      ? sql`exists (
+          select 1
+          from opportunities ek_session
+          join opportunity_versions ek_session_version
+            on ek_session_version.opportunity_id = ek_session.id
+            and ek_session_version.is_current = true
+            and ek_session_version.verification_state = 'VERIFIED'
+            and ek_session_version.verified_at is not null
+          where ek_session.institution_id = ${institutions.id}
+            and ek_session.kind = 'INFORMATION_SESSION'
+            and ek_session.truth_mode = 'NATIVE'
+            and ek_session.publication_state = 'PUBLISHED'
+            and ek_session_version.business_state <> 'CANCELLED'
+            and ek_session_version.event_start_at >= now()
+        )`
+      : undefined,
   );
+}
+
+function tuitionAmountOrder() {
+  return sql<number | null>`(
+    select case
+      when v.value_json ->> 'billingCadence' = 'MONTHLY'
+        and nullif(btrim(v.value_json ->> 'academicYearLabel'), '') is not null
+        and jsonb_typeof(v.value_json -> 'amountMin') = 'number'
+      then (v.value_json ->> 'amountMin')::numeric
+      else null
+    end
+    from institution_facts f
+    join institution_fact_versions v on v.institution_fact_id = f.id
+      and v.is_current = true and v.verification_state = 'VERIFIED'
+      and v.verified_at is not null
+    where f.institution_id = ${institutions.id} and f.fact_type = 'TUITION'
+    limit 1
+  )`;
+}
+
+function tuitionYearOrder() {
+  return sql<string | null>`(
+    select case
+      when v.value_json ->> 'billingCadence' = 'MONTHLY'
+      then nullif(btrim(v.value_json ->> 'academicYearLabel'), '')
+      else null
+    end
+    from institution_facts f
+    join institution_fact_versions v on v.institution_fact_id = f.id
+      and v.is_current = true and v.verification_state = 'VERIFIED'
+      and v.verified_at is not null
+    where f.institution_id = ${institutions.id} and f.fact_type = 'TUITION'
+    limit 1
+  )`;
+}
+
+function informationSessionOrder() {
+  return sql<Date | null>`(
+    select min(v.event_start_at)
+    from opportunities o
+    join opportunity_versions v on v.opportunity_id = o.id
+      and v.is_current = true and v.verification_state = 'VERIFIED'
+      and v.verified_at is not null
+    where o.institution_id = ${institutions.id}
+      and o.kind = 'INFORMATION_SESSION'
+      and o.truth_mode = 'NATIVE'
+      and o.publication_state = 'PUBLISHED'
+      and v.business_state <> 'CANCELLED'
+      and v.event_start_at >= now()
+  )`;
+}
+
+function listOrder(query: InstitutionListQuery) {
+  if (
+    query.category === "ENGLISH_KINDERGARTEN" &&
+    query.sort === "TUITION_ASC"
+  ) {
+    const amount = tuitionAmountOrder();
+    const year = tuitionYearOrder();
+    return [
+      asc(sql`case when ${amount} is null then 1 else 0 end`),
+      desc(year),
+      asc(amount),
+      asc(institutions.displayName),
+      asc(institutions.id),
+    ];
+  }
+  if (
+    query.category === "ENGLISH_KINDERGARTEN" &&
+    query.sort === "INFO_SESSION_ASC"
+  ) {
+    const session = informationSessionOrder();
+    return [
+      asc(sql`case when ${session} is null then 1 else 0 end`),
+      asc(session),
+      asc(institutions.displayName),
+      asc(institutions.id),
+    ];
+  }
+  return [asc(institutions.displayName), asc(institutions.id)];
 }
 
 export async function listInstitutions(
@@ -607,12 +753,13 @@ export async function listInstitutions(
         name: institutions.displayName,
         category: institutions.category,
         region: institutions.regionCode,
+        address: institutions.addressLine,
         shortDescription: institutions.shortDescription,
         operationalState: institutions.operationalState,
       })
       .from(institutions)
       .where(where)
-      .orderBy(asc(institutions.displayName), asc(institutions.id))
+      .orderBy(...listOrder(query))
       .limit(query.pageSize)
       .offset((query.page - 1) * query.pageSize),
   ]);
@@ -626,6 +773,7 @@ export async function listInstitutions(
     name: row.name,
     category: row.category,
     region: row.region,
+    address: row.address,
     shortDescription: row.shortDescription,
     operationalState: row.operationalState,
     hasMonitorableSourceCoverage: covered.has(row.id),
@@ -641,10 +789,19 @@ export async function listInstitutions(
       ...(byInstitution.get(truth.institutionId) ?? []),
       truth,
     ]);
+  const englishKindergartenSummaries =
+    await loadEnglishKindergartenCardSummaries(
+      executor,
+      items.map((row) => row.id),
+    );
   const total = countRow[0]?.total ?? 0;
   return {
     items: items.map((row) =>
-      cardFromInstitution(row, byInstitution.get(row.id) ?? []),
+      cardFromInstitution(
+        row,
+        byInstitution.get(row.id) ?? [],
+        englishKindergartenSummaries.get(row.id),
+      ),
     ),
     pagination: {
       page: query.page,
@@ -923,6 +1080,7 @@ export async function getInstitutionBySlug(
       name: institutions.displayName,
       category: institutions.category,
       region: institutions.regionCode,
+      address: institutions.addressLine,
       shortDescription: institutions.shortDescription,
       operationalState: institutions.operationalState,
     })
@@ -942,6 +1100,7 @@ export async function getInstitutionBySlug(
     legacySources,
     relatedArticles,
     covered,
+    englishKindergarten,
   ] = await Promise.all([
     getOpportunityTruths(executor, { institutionIds: [row.id] }, "DETAIL"),
     getReviewedAdmissions(executor, row.id),
@@ -949,6 +1108,9 @@ export async function getInstitutionBySlug(
     getLegacyInstitutionSources(executor, row.id),
     getRelatedArticles(executor, { institutionId: row.id }),
     getMonitorableInstitutionIds(executor, [row.id]),
+    row.category === "ENGLISH_KINDERGARTEN"
+      ? loadEnglishKindergartenDetail(executor, row.id)
+      : Promise.resolve(null),
   ]);
   const institution: InstitutionRow = {
     ...row,
@@ -987,6 +1149,7 @@ export async function getInstitutionBySlug(
     verifiedFacts: factsResult.facts,
     officialSources,
     relatedArticles,
+    ...(englishKindergarten === null ? {} : { englishKindergarten }),
     indexability: getIndexability({
       entity: "INSTITUTION",
       publicationState: "PUBLISHED",

@@ -2,6 +2,8 @@ import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { ValidationError } from "@/src/application/errors";
 import type {
+  EnglishKindergartenCardSummaryDTO,
+  EnglishKindergartenDetailDTO,
   InstitutionCardDTO,
   InstitutionDetailDTO,
   InstitutionFactDTO,
@@ -218,6 +220,36 @@ describe("WP-06A institution list input", () => {
       pageSize: 10,
     });
   });
+
+  it("accepts English-kindergarten comparison filters only for that category", () => {
+    expect(
+      parseInstitutionListQuery({
+        category: "ENGLISH_KINDERGARTEN",
+        minAge: "4",
+        transport: "AVAILABLE",
+        hasUpcomingInfoSession: true,
+        sort: "TUITION_ASC",
+      }),
+    ).toEqual({
+      category: "ENGLISH_KINDERGARTEN",
+      minAge: 4,
+      transport: "AVAILABLE",
+      hasUpcomingInfoSession: true,
+      sort: "TUITION_ASC",
+      page: 1,
+      pageSize: DEFAULT_INSTITUTION_PAGE_SIZE,
+    });
+
+    expect(() =>
+      parseInstitutionListQuery({
+        category: "PRIVATE_ELEMENTARY",
+        minAge: 4,
+      }),
+    ).toThrow(ValidationError);
+    expect(() => parseInstitutionListQuery({ minAge: 4 })).toThrow(
+      ValidationError,
+    );
+  });
 });
 
 describe("WP-06A public DTO contract", () => {
@@ -282,6 +314,20 @@ describe("WP-06A public DTO contract", () => {
     expectTypeOf<UnsafeStoredArticleDetailDTO>().toHaveProperty("updatedAt");
     expectTypeOf<UnsafeStoredArticleDetailDTO>().not.toHaveProperty(
       "dateModified",
+    );
+  });
+
+  it("keeps English-kindergarten comparison data explicit and internal notes private", () => {
+    expectTypeOf<InstitutionCardDTO>().toHaveProperty("englishKindergarten");
+    expectTypeOf<InstitutionDetailDTO>().toHaveProperty("englishKindergarten");
+    expectTypeOf<EnglishKindergartenCardSummaryDTO>().toHaveProperty(
+      "nextInformationSession",
+    );
+    expectTypeOf<EnglishKindergartenDetailDTO>().toHaveProperty(
+      "reviewInsight",
+    );
+    expectTypeOf<EnglishKindergartenDetailDTO>().not.toHaveProperty(
+      "internalNote",
     );
   });
 });

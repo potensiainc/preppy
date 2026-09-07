@@ -6,6 +6,15 @@ import type {
   OpportunityBusinessState,
   OpportunityKind,
 } from "@/src/db/schema";
+import type {
+  CoverageStatus,
+  EnglishKindergartenSection,
+} from "@/src/modules/english-kindergarten/coverage";
+import type {
+  EnglishKindergartenFactType,
+  EnglishKindergartenFactValue,
+} from "@/src/modules/english-kindergarten/fact-values";
+import type { ReviewInsightValue } from "@/src/modules/english-kindergarten/review-insight";
 
 /** A public SEO rendering decision, distinct from whether an object is retrievable. */
 export type Indexability = "INDEX" | "NOINDEX" | "NOT_PUBLIC";
@@ -21,9 +30,18 @@ export type InstitutionListQuery = {
   region?: string;
   recruitmentState?: OpportunityBusinessState;
   query?: string;
+  minAge?: number;
+  transport?: TransportFilter;
+  hasUpcomingInfoSession?: boolean;
+  sort?: EnglishKindergartenSort;
   page: number;
   pageSize: number;
 };
+
+export type EnglishKindergartenSort =
+  "NAME_ASC" | "INFO_SESSION_ASC" | "TUITION_ASC";
+
+export type TransportFilter = "AVAILABLE";
 
 export type PaginationDTO = {
   page: number;
@@ -38,12 +56,100 @@ export type OfficialSourceDTO = {
   authorityLevel: "PRIMARY" | "SECONDARY_OFFICIAL";
 };
 
+export type EnglishKindergartenSourceDTO = {
+  name: string;
+  url: string;
+  sourceType: string;
+  authorityLevel: "PRIMARY" | "SECONDARY_OFFICIAL" | "DISCOVERY_ONLY";
+};
+
+export type EnglishKindergartenSectionDTO = {
+  section: EnglishKindergartenSection;
+  status: CoverageStatus;
+  message: string | null;
+  academicYearLabel: string | null;
+  publicNote: string | null;
+  lastCollectedAt: string | null;
+  lastCheckedAt: string | null;
+  source: EnglishKindergartenSourceDTO | null;
+};
+
+export type EnglishKindergartenInformationSessionDTO = {
+  id: string;
+  slug: string;
+  title: string;
+  businessState: OpportunityBusinessState;
+  eventStartsAt: string;
+  applicationClosesAt: string | null;
+  actionUrl: string | null;
+  lastCollectedAt: string | null;
+  verifiedAt: string;
+  officialSource: OfficialSourceDTO | null;
+};
+
+export type EnglishKindergartenFactDTO = {
+  factType: EnglishKindergartenFactType;
+  value: EnglishKindergartenFactValue;
+  displayText: string | null;
+  lastCollectedAt: string | null;
+  verifiedAt: string;
+  officialSources: OfficialSourceDTO[];
+};
+
+export type EnglishKindergartenCardSummaryDTO = {
+  tuition: {
+    academicYearLabel: string | null;
+    billingCadence:
+      "MONTHLY" | "QUARTERLY" | "SEMESTER" | "ANNUAL" | "ONE_TIME" | null;
+    amountMin: number | null;
+    amountMax: number | null;
+    displayText: string | null;
+    verifiedAt: string;
+  } | null;
+  ageRange: {
+    min: number;
+    max: number;
+    basis: "KOREAN_AGE" | "INTERNATIONAL_AGE" | "INSTITUTION_DEFINED";
+    academicYearLabel: string | null;
+    displayText: string | null;
+    verifiedAt: string;
+  } | null;
+  transport: {
+    state: "AVAILABLE" | "NOT_AVAILABLE" | "UNKNOWN";
+    serviceAreas: string[];
+    inquiryRequired: boolean;
+    displayText: string | null;
+    verifiedAt: string | null;
+  };
+  nextInformationSession: EnglishKindergartenInformationSessionDTO | null;
+  coverage: EnglishKindergartenSectionDTO[];
+  lastContentCheckedAt: string | null;
+};
+
+export type EnglishKindergartenReviewInsightDTO = {
+  periodStart: string | null;
+  periodEnd: string | null;
+  sampleSize: number;
+  themes: ReviewInsightValue["themes"];
+  limitations: string | null;
+  lastCollectedAt: string | null;
+  verifiedAt: string;
+  sources: EnglishKindergartenSourceDTO[];
+};
+
+export type EnglishKindergartenDetailDTO = EnglishKindergartenCardSummaryDTO & {
+  sections: EnglishKindergartenSectionDTO[];
+  facts: EnglishKindergartenFactDTO[];
+  reviewInsight: EnglishKindergartenReviewInsightDTO | null;
+};
+
 export type InstitutionCardDTO = {
   id: string;
   slug: string;
   name: string;
   category: InstitutionCategory;
   region: string | null;
+  address?: string | null;
   /** Public Institution eligibility only; never personalized Follow state. */
   followable: boolean;
   currentAdmissionsState: OpportunityBusinessState | null;
@@ -56,6 +162,7 @@ export type InstitutionCardDTO = {
     keyDate?: string | null;
   } | null;
   lastVerifiedAt?: string | null;
+  englishKindergarten?: EnglishKindergartenCardSummaryDTO | null;
 };
 
 export type InstitutionListDTO = {
@@ -212,6 +319,7 @@ export type InstitutionDetailDTO = {
   verifiedFacts: InstitutionFactDTO[];
   officialSources: OfficialSourceDTO[];
   relatedArticles: ArticleCardDTO[];
+  englishKindergarten?: EnglishKindergartenDetailDTO | null;
   indexability: Indexability;
 };
 
