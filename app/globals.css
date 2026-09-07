@@ -2107,7 +2107,7 @@ h3 {
   color: #fff;
   cursor: pointer;
   font: inherit;
-  font-weight: 700;
+  font-weight: 650;
 }
 
 .ek-result-heading {
@@ -2455,7 +2455,7 @@ h3 {
   background: var(--ek-warm);
   color: #78552b;
   font-size: 0.78rem;
-  font-weight: 700;
+  font-weight: 650;
 }
 
 .ek-review-themes {

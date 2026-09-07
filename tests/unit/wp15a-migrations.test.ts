@@ -30,6 +30,7 @@ describe("WP-15A migration ledger comparison", () => {
       "0010_colorful_randall_flagg",
       "0011_preppy_seed_registry",
       "0012_loving_trauma",
+      "0013_english_kindergarten_profiles",
     ]);
     expect(manifest.every((row) => /^[a-f0-9]{64}$/.test(row.hash))).toBe(true);
   });

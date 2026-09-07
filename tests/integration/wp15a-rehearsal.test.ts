@@ -43,7 +43,9 @@ describe("WP-15A full non-production rehearsal", () => {
     });
 
     expect(result.stages?.baseline.appliedMigrations).toBe(0);
-    expect(result.report.migrations.latestApplied).toBe("0012_loving_trauma");
+    expect(result.report.migrations.latestApplied).toBe(
+      "0013_english_kindergarten_profiles",
+    );
     expect(result.stages?.productSignalsUnchanged).toBe(true);
     expect(result.stages?.secondPass).toMatchObject({
       institution: { created: 0, linked: 0 },
@@ -208,7 +210,7 @@ describe("WP-15A full non-production rehearsal", () => {
       now,
     });
 
-    expect(result.stages?.baseline.appliedMigrations).toBe(13);
+    expect(result.stages?.baseline.appliedMigrations).toBe(14);
     expect(result.stages?.firstPass).toMatchObject({
       institution: { created: 1, linked: 1 },
       opportunity: { created: 1, linked: 1 },
