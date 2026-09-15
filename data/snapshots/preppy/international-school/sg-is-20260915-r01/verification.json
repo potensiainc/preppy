@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "packageId": "sg-is-20260915-r01",
   "status": "PASS",
-  "checkedAt": "2026-09-15T16:22:11.048Z",
+  "checkedAt": "2026-09-15T16:30:58.868Z",
   "checks": [
     {
       "name": "strict schema and reference validation",

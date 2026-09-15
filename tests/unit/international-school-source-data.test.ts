@@ -143,6 +143,20 @@ describe("international-school canonical source data", () => {
       "NEEDS_REVIEW",
     );
     expect(coverage("ST01:19", "TRANSPORT").status).toBe("NEEDS_REVIEW");
+    const dssiTransportEvidence = INTERNATIONAL_SCHOOL_EVIDENCE.filter(
+      (item) =>
+        item.institutionRegistryId === "ST01:19" &&
+        item.field === "TRANSPORT",
+    );
+    expect(dssiTransportEvidence).toHaveLength(2);
+    expect(
+      new Set(dssiTransportEvidence.map((item) => item.sourceUrl)).size,
+    ).toBe(2);
+    expect(
+      dssiTransportEvidence.every(
+        (item) => item.sourceType === "OFFICIAL_DOCUMENT",
+      ),
+    ).toBe(true);
     expect(
       imported("ST01:36").facts.some(
         (fact) => fact.factType === "TARGET_AGE_GRADE",
