@@ -21,9 +21,11 @@ import {
 } from "@/src/db/schema";
 import type { DatabaseExecutor } from "@/src/infrastructure/db/runtime.server";
 import {
+  getInstitutionIsiIdentityIds,
   hasMonitorableSourceCoverage,
   isInstitutionFollowable,
 } from "@/src/modules/follow/followability-policy.server";
+import { isInternationalSchoolPubliclyEligible } from "@/src/modules/public/international-school-publication-policy";
 
 import type {
   ArticleCardDTO,
@@ -180,10 +182,21 @@ async function getRootBySlug(
   ) {
     throw new NotFoundError();
   }
-  const monitorable = await hasMonitorableSourceCoverage(
-    executor,
-    root.institutionId,
-  );
+  const [monitorable, isiIdentities] = await Promise.all([
+    hasMonitorableSourceCoverage(executor, root.institutionId),
+    getInstitutionIsiIdentityIds(executor, [root.institutionId]),
+  ]);
+  const hasIsiIdentity = isiIdentities.has(root.institutionId);
+  if (
+    !isInternationalSchoolPubliclyEligible({
+      category: root.institutionCategory,
+      publicationState: root.institutionPublicationState,
+      operationalState: root.institutionOperationalState,
+      hasIsiIdentity,
+    })
+  ) {
+    throw new NotFoundError();
+  }
 
   return {
     id: root.id,
@@ -200,7 +213,9 @@ async function getRootBySlug(
       followable: isInstitutionFollowable(
         {
           publicationState: root.institutionPublicationState,
+          category: root.institutionCategory,
           operationalState: root.institutionOperationalState,
+          hasIsiIdentity,
         },
         monitorable,
       ),
@@ -225,6 +240,8 @@ async function getNativeOfficialSources(
         eq(opportunityVersionEvidence.opportunityVersionId, versionId),
         inArray(sources.sourceType, officialSourceTypes),
         inArray(sources.authorityLevel, ["PRIMARY", "SECONDARY_OFFICIAL"]),
+        sql`${opportunityVersionEvidence.sourceObservationId} is not null`,
+        sql`${opportunityVersionEvidence.sourceSnapshotId} is not null`,
       ),
     )
     .orderBy(
@@ -289,6 +306,8 @@ async function getLegacyOfficialSource(
         eq(eventVersionEvidence.eventVersionId, eventVersionId),
         inArray(sources.sourceType, officialSourceTypes),
         inArray(sources.authorityLevel, ["PRIMARY", "SECONDARY_OFFICIAL"]),
+        sql`${eventVersionEvidence.sourceObservationId} is not null`,
+        sql`${eventVersionEvidence.snapshotId} is not null`,
       ),
     )
     .orderBy(
@@ -361,6 +380,9 @@ async function getNativeTruth(
     getNativeOfficialSources(executor, version.id),
     getNativeLastCollectedAt(executor, version.id),
   ]);
+  if (officialSources.length === 0 || lastCollectedAt === null) {
+    throw new NotFoundError();
+  }
   return {
     title: version.title,
     businessState: version.businessState,
@@ -435,6 +457,9 @@ async function getLegacyTruth(
     getLegacyOfficialSource(executor, version.eventVersionId),
     getLegacyLastCollectedAt(executor, version.eventVersionId),
   ]);
+  if (officialSource === null || lastCollectedAt === null) {
+    throw new NotFoundError();
+  }
 
   return {
     title: version.title,
@@ -587,6 +612,8 @@ async function getSameCycleAdmissions(
       where ${opportunityVersionEvidence.opportunityVersionId} = ${opportunityVersions.id}
       and ${inArray(sources.sourceType, officialSourceTypes)}
       and ${inArray(sources.authorityLevel, ["PRIMARY", "SECONDARY_OFFICIAL"])}
+      and ${opportunityVersionEvidence.sourceObservationId} is not null
+      and ${opportunityVersionEvidence.sourceSnapshotId} is not null
     )`,
       ),
     )

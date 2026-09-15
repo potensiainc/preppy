@@ -1,12 +1,18 @@
 import "server-only";
 
+import type {
+  InstitutionCategory,
+  InstitutionOperationalState,
+  InstitutionPublicationState,
+} from "@/src/db/schema";
 import { isInstitutionFollowable } from "@/src/modules/follow/followability-policy.server";
 
 export type PendingFollowInstitutionRecord = {
   id: string;
   slug: string;
-  publicationState: string;
-  operationalState: string;
+  category: InstitutionCategory;
+  publicationState: InstitutionPublicationState;
+  operationalState: InstitutionOperationalState;
 };
 
 export type ResolvedPendingFollowTarget<
@@ -23,15 +29,22 @@ export async function resolveCanonicalPendingFollowTarget<
   institutionId: string,
   findInstitution: (id: string) => Promise<Institution | null>,
   hasMonitorableSourceCoverage: (id: string) => Promise<boolean>,
+  hasIsiIdentity: (id: string) => Promise<boolean>,
 ): Promise<ResolvedPendingFollowTarget<Institution> | null> {
   const institution = await findInstitution(institutionId);
-  const monitorable = institution
-    ? await hasMonitorableSourceCoverage(institution.id)
-    : false;
+  const [monitorable, isiIdentity] = institution
+    ? await Promise.all([
+        hasMonitorableSourceCoverage(institution.id),
+        hasIsiIdentity(institution.id),
+      ])
+    : [false, false];
   if (
     !institution ||
     institution.id.toLowerCase() !== institutionId.toLowerCase() ||
-    !isInstitutionFollowable(institution, monitorable)
+    !isInstitutionFollowable(
+      { ...institution, hasIsiIdentity: isiIdentity },
+      monitorable,
+    )
   ) {
     return null;
   }

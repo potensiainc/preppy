@@ -64,6 +64,7 @@ async function createInstitution(
     category?: string;
     publicationState?: string;
     operationalState?: string;
+    hasIsiIdentity?: boolean;
   } = {},
 ) {
   const id = randomUUID();
@@ -81,6 +82,22 @@ async function createInstitution(
       ${overrides.publicationState === "HIDDEN" ? null : "2026-08-01T00:00:00.000Z"}
     )
   `;
+  if (
+    (overrides.category ?? "INTERNATIONAL_SCHOOL") ===
+      "INTERNATIONAL_SCHOOL" &&
+    overrides.hasIsiIdentity !== false
+  ) {
+    await runtime.client`
+      insert into institution_registry_identities (
+        institution_id, registry_name, registry_external_id,
+        registry_record_url, registry_locator, metadata_json
+      ) values (
+        ${id}, 'ISI', ${`${prefix}:${id}`},
+        ${`https://isi.example.test/${prefix}/${id}`},
+        ${`fixture:${id}`}, '{}'::jsonb
+      )
+    `;
+  }
   return { id, slug };
 }
 
@@ -115,6 +132,7 @@ async function createNativeOpportunity(
   const id = randomUUID();
   const versionId = randomUUID();
   const sourceId = randomUUID();
+  const snapshotId = randomUUID();
   tracked.opportunities.add(id);
   tracked.sources.add(sourceId);
   const slug = `${prefix}-opportunity-${state.toLowerCase()}-${id}`;
@@ -131,6 +149,22 @@ async function createNativeOpportunity(
       insert into source_monitor_configs (
         source_id, collection_strategy, monitoring_profile, is_enabled
       ) values (${sourceId}, 'HTTP', 'STANDARD_SEASONAL', true)
+    `;
+    await transaction`
+      insert into source_snapshots (
+        id, source_id, captured_at, content_hash, normalized_text, mime_type
+      ) values (
+        ${snapshotId}, ${sourceId}, '2026-08-21T00:00:00.000Z',
+        ${`hash-${snapshotId}`}, 'verified opportunity evidence', 'text/html'
+      )
+    `;
+    const [observation] = await transaction<{ id: string }[]>`
+      insert into source_observations (
+        source_id, observed_at, outcome, http_status, final_url, snapshot_id
+      ) values (
+        ${sourceId}, '2026-08-21T00:00:00.000Z', 'SUCCESS', 200,
+        ${`https://official.example.test/${prefix}/${id}`}, ${snapshotId}
+      ) returning id::text
     `;
     await transaction`
       insert into opportunities (
@@ -153,8 +187,12 @@ async function createNativeOpportunity(
     `;
     await transaction`
       insert into opportunity_version_evidence (
-        opportunity_version_id, source_id, evidence_role
-      ) values (${versionId}, ${sourceId}, 'PRIMARY')
+        opportunity_version_id, source_id, source_observation_id,
+        source_snapshot_id, evidence_role
+      ) values (
+        ${versionId}, ${sourceId}, ${observation!.id}::bigint,
+        ${snapshotId}, 'PRIMARY'
+      )
     `;
   });
   return { id, slug, versionId };
@@ -249,9 +287,12 @@ async function clearFixtures() {
       await transaction`delete from users where id in ${transaction(users)}`;
     }
     if (institutions.length > 0) {
+      await transaction`delete from institution_registry_identities where institution_id in ${transaction(institutions)}`;
       await transaction`delete from institutions where id in ${transaction(institutions)}`;
     }
     if (sources.length > 0) {
+      await transaction`delete from source_observations where source_id in ${transaction(sources)}`;
+      await transaction`delete from source_snapshots where source_id in ${transaction(sources)}`;
       await transaction`
         delete from source_monitor_configs
         where source_id in ${transaction(sources)}
@@ -326,6 +367,20 @@ describe("WP-09 My Preppy database projection", () => {
     expect(JSON.stringify(result)).not.toMatch(
       /legacy|admissionEventId|admissionCycleId|schoolId/i,
     );
+  });
+
+  it("hides an active follow when an international school has no ISI identity", async () => {
+    const userId = await createUser();
+    const institution = await createInstitution({
+      name: "ISI 식별자 없는 국제학교",
+      hasIsiIdentity: false,
+    });
+    await createFollow(userId, institution.id);
+
+    const result = await load(userId);
+    expect(result.access).toBe("ACTIVE");
+    if (result.access !== "ACTIVE") throw new Error("expected ACTIVE");
+    expect(result.data.cards).toEqual([]);
   });
 
   it("returns the canonical empty snapshot for an ACTIVE user with no active Follow", async () => {

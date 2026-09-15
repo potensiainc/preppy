@@ -9,6 +9,7 @@ import { findRedirectBySourcePath } from "@/src/modules/editorial/repository.ser
 import { sanitizeArticleHtmlV1 } from "@/src/modules/editorial/sanitizer.server";
 import { getIndexability } from "@/src/modules/public/indexability";
 import { getInstitutionBySlug } from "@/src/modules/public/institution-query.server";
+import { internationalSchoolPublicEligibilitySql } from "@/src/modules/public/international-school-publication-policy";
 import { getOpportunityBySlug } from "@/src/modules/public/opportunity-query.server";
 
 const BATCH_SIZE = 50;
@@ -54,6 +55,7 @@ async function appendInstitutions(
       .where(
         and(
           eq(institutions.publicationState, "PUBLISHED"),
+          internationalSchoolPublicEligibilitySql(),
           cursor === undefined ? undefined : gt(institutions.id, cursor),
         ),
       )
@@ -94,9 +96,12 @@ async function appendOpportunities(
     const rows = await executor.drizzle
       .select({ id: opportunities.id, slug: opportunities.slug })
       .from(opportunities)
+      .innerJoin(institutions, eq(institutions.id, opportunities.institutionId))
       .where(
         and(
           eq(opportunities.publicationState, "PUBLISHED"),
+          eq(institutions.publicationState, "PUBLISHED"),
+          internationalSchoolPublicEligibilitySql(),
           cursor === undefined ? undefined : gt(opportunities.id, cursor),
         ),
       )

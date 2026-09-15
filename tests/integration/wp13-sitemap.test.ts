@@ -26,6 +26,7 @@ const adminIds = new Set<string>();
 
 async function seedOfficialSource() {
   const id = randomUUID();
+  const snapshotId = randomUUID();
   await runtime.client`
     insert into sources (
       id, canonical_url, source_type, authority_level, lifecycle_status,
@@ -35,30 +36,61 @@ async function seedOfficialSource() {
       'OFFICIAL_ADMISSION_PAGE', 'PRIMARY', 'ACTIVE', 'Sitemap source'
     )
   `;
-  return id;
+  await runtime.client`
+    insert into source_snapshots (
+      id, source_id, captured_at, content_hash, normalized_text, mime_type
+    ) values (
+      ${snapshotId}, ${id}, '2026-08-25T00:30:00.000Z',
+      ${`hash-${snapshotId}`}, 'sitemap evidence fixture', 'text/html'
+    )
+  `;
+  const [observation] = await runtime.client<{ id: string }[]>`
+    insert into source_observations (
+      source_id, observed_at, outcome, http_status, final_url, snapshot_id
+    ) values (
+      ${id}, '2026-08-25T00:30:00.000Z', 'SUCCESS', 200,
+      ${`https://sitemap-source.example.test/${prefix}/${id}`},
+      ${snapshotId}
+    ) returning id::text
+  `;
+  return { id, snapshotId, observationId: observation!.id };
 }
 
 async function seedInstitution(input: {
   suffix: string;
   officialSource?: boolean;
+  hasIsiIdentity?: boolean;
+  operationalState?: "ACTIVE" | "UNKNOWN";
 }) {
   const id = randomUUID();
   const slug = `${prefix}-${input.suffix}`;
   await runtime.client`
     insert into institutions (
-      id, slug, display_name, category, publication_state, region_code,
+      id, slug, display_name, category, publication_state, operational_state, region_code,
       short_description, published_at
     ) values (
       ${id}, ${slug}, ${`Sitemap ${input.suffix}`},
-      'INTERNATIONAL_SCHOOL', 'PUBLISHED', 'SEOUL',
+      'INTERNATIONAL_SCHOOL', 'PUBLISHED', ${input.operationalState ?? "ACTIVE"}, 'SEOUL',
       'A meaningful public institution profile.',
       '2026-08-25T00:00:00.000Z'
     )
   `;
+  if (input.hasIsiIdentity !== false) {
+    await runtime.client`
+      insert into institution_registry_identities (
+        institution_id, registry_name, registry_external_id,
+        registry_record_url, registry_locator, metadata_json
+      ) values (
+        ${id}, 'ISI', ${`${prefix}:${id}`},
+        ${`https://isi.example.test/${prefix}/${id}`},
+        ${`fixture:${id}`}, '{}'::jsonb
+      )
+    `;
+  }
   if (input.officialSource) {
     const factId = randomUUID();
     const versionId = randomUUID();
-    const sourceId = await seedOfficialSource();
+    const source = await seedOfficialSource();
     await runtime.client.begin(async (transaction) => {
       await transaction`
         insert into institution_facts (id, institution_id, fact_type)
@@ -76,8 +108,12 @@ async function seedInstitution(input: {
       `;
       await transaction`
         insert into institution_fact_version_evidence (
-          institution_fact_version_id, source_id, evidence_role
-        ) values (${versionId}, ${sourceId}, 'PRIMARY')
+          institution_fact_version_id, source_id, source_observation_id,
+          source_snapshot_id, evidence_role
+        ) values (
+          ${versionId}, ${source.id}, ${source.observationId}::bigint,
+          ${source.snapshotId}, 'PRIMARY'
+        )
       `;
     });
   }
@@ -91,7 +127,7 @@ async function seedOpportunity(input: {
 }) {
   const id = randomUUID();
   const versionId = randomUUID();
-  const sourceId = await seedOfficialSource();
+  const source = await seedOfficialSource();
   const slug = `${prefix}-${input.suffix}`;
   await runtime.client.begin(async (transaction) => {
     await transaction`
@@ -117,8 +153,12 @@ async function seedOpportunity(input: {
     `;
     await transaction`
       insert into opportunity_version_evidence (
-        opportunity_version_id, source_id, evidence_role
-      ) values (${versionId}, ${sourceId}, 'PRIMARY')
+        opportunity_version_id, source_id, source_observation_id,
+        source_snapshot_id, evidence_role
+      ) values (
+        ${versionId}, ${source.id}, ${source.observationId}::bigint,
+        ${source.snapshotId}, 'PRIMARY'
+      )
     `;
   });
   return { id, slug };
@@ -188,7 +228,10 @@ async function cleanup() {
         select id from institutions where slug like ${`${prefix}%`}
       )
     `;
+    await transaction`delete from institution_registry_identities where registry_external_id like ${`${prefix}:%`}`;
     await transaction`delete from institutions where slug like ${`${prefix}%`}`;
+    await transaction`delete from source_observations where source_id in (select id from sources where canonical_url like ${`https://sitemap-source.example.test/${prefix}/%`})`;
+    await transaction`delete from source_snapshots where source_id in (select id from sources where canonical_url like ${`https://sitemap-source.example.test/${prefix}/%`})`;
     await transaction`
       delete from sources
       where canonical_url like ${`https://sitemap-source.example.test/${prefix}/%`}
@@ -268,6 +311,11 @@ describe("WP-13 INDEX-only sitemap", () => {
     const noindexInstitution = await seedInstitution({
       suffix: "institution-noindex",
     });
+    const ineligibleInternationalSchool = await seedInstitution({
+      suffix: "institution-no-isi",
+      officialSource: true,
+      hasIsiIdentity: false,
+    });
     const indexedOpportunity = await seedOpportunity({
       institutionId: indexedInstitution.id,
       suffix: "opportunity-index",
@@ -277,6 +325,11 @@ describe("WP-13 INDEX-only sitemap", () => {
       institutionId: indexedInstitution.id,
       suffix: "opportunity-noindex",
       actionable: false,
+    });
+    const ineligibleOpportunity = await seedOpportunity({
+      institutionId: ineligibleInternationalSchool.id,
+      suffix: "opportunity-no-isi",
+      actionable: true,
     });
     const indexedArticle = await seedArticle({
       suffix: "article-index",
@@ -315,11 +368,17 @@ describe("WP-13 INDEX-only sitemap", () => {
       expect(urls).not.toContain(
         `https://preppy.example/institutions/${noindexInstitution.slug}`,
       );
+      expect(urls).not.toContain(
+        `https://preppy.example/institutions/${ineligibleInternationalSchool.slug}`,
+      );
       expect(urls).toContain(
         `https://preppy.example/opportunities/${indexedOpportunity.slug}`,
       );
       expect(urls).not.toContain(
         `https://preppy.example/opportunities/${noindexOpportunity.slug}`,
+      );
+      expect(urls).not.toContain(
+        `https://preppy.example/opportunities/${ineligibleOpportunity.slug}`,
       );
       expect(urls).toContain(
         `https://preppy.example/articles/${indexedArticle.slug}`,

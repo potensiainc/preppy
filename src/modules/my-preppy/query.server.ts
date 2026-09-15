@@ -19,6 +19,7 @@ import type {
 import { readUserSession } from "@/src/modules/auth/session.server";
 import type { OpportunityCardDTO } from "@/src/modules/public/dto";
 import { getPublicOpportunityCardsByIds } from "@/src/modules/public/institution-query.server";
+import { internationalSchoolPublicEligibilitySql } from "@/src/modules/public/international-school-publication-policy";
 
 const MAX_ACTIVE_FOLLOWS = 24;
 const MAX_PUBLISHED_OPPORTUNITIES = 50;
@@ -205,6 +206,7 @@ export const defaultMyPreppyPersistence: MyPreppyPersistence = {
           eq(follows.status, "ACTIVE"),
           eq(institutions.publicationState, "PUBLISHED"),
           ne(institutions.operationalState, "CLOSED"),
+          internationalSchoolPublicEligibilitySql(),
         ),
       )
       .orderBy(desc(follows.currentActivatedAt), desc(follows.id))
@@ -239,6 +241,7 @@ export const defaultMyPreppyPersistence: MyPreppyPersistence = {
           eq(follows.status, "ACTIVE"),
           eq(institutions.publicationState, "PUBLISHED"),
           ne(institutions.operationalState, "CLOSED"),
+          internationalSchoolPublicEligibilitySql(),
         ),
       );
     return Number(row?.count ?? 0);
@@ -267,6 +270,15 @@ export const defaultMyPreppyPersistence: MyPreppyPersistence = {
           and o.publication_state = 'PUBLISHED'
           and o.truth_mode = 'NATIVE'
           and v.business_state in ('OPEN', 'UPCOMING')
+          and exists (
+            select 1 from opportunity_version_evidence evidence
+            join sources source on source.id=evidence.source_id
+            where evidence.opportunity_version_id=v.id
+              and evidence.source_observation_id is not null
+              and evidence.source_snapshot_id is not null
+              and source.source_type in ('OFFICIAL_ADMISSION_PAGE','OFFICIAL_NOTICE_BOARD','OFFICIAL_DOCUMENT','OFFICIAL_APPLICATION_PORTAL','OFFICIAL_SCHOOL_PAGE','OFFICIAL_SOCIAL')
+              and source.authority_level in ('PRIMARY','SECONDARY_OFFICIAL')
+          )
 
         union all
 
@@ -293,6 +305,15 @@ export const defaultMyPreppyPersistence: MyPreppyPersistence = {
           and o.publication_state = 'PUBLISHED'
           and o.truth_mode = 'LEGACY_BACKED'
           and v.event_status in ('ACTIVE', 'SCHEDULED')
+          and exists (
+            select 1 from event_version_evidence evidence
+            join sources source on source.id=evidence.source_id
+            where evidence.event_version_id=v.id
+              and evidence.source_observation_id is not null
+              and evidence.snapshot_id is not null
+              and source.source_type in ('OFFICIAL_ADMISSION_PAGE','OFFICIAL_NOTICE_BOARD','OFFICIAL_DOCUMENT','OFFICIAL_APPLICATION_PORTAL','OFFICIAL_SCHOOL_PAGE','OFFICIAL_SOCIAL')
+              and source.authority_level in ('PRIMARY','SECONDARY_OFFICIAL')
+          )
       ), ranked as (
         select *, row_number() over (
           partition by "institutionId", state

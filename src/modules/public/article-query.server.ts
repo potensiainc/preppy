@@ -22,6 +22,7 @@ import {
   getPublicOpportunityCardsByIds,
 } from "./institution-query.server";
 import type { UnsafeStoredArticleDetailDTO } from "./article-detail.server";
+import { internationalSchoolPublicEligibilitySql } from "./international-school-publication-policy";
 
 const RELATED_TARGET_LIMIT = 12;
 
@@ -63,6 +64,7 @@ export async function getRelatedInstitutions(
       and(
         eq(institutions.id, articleInstitutions.institutionId),
         eq(institutions.publicationState, "PUBLISHED"),
+        internationalSchoolPublicEligibilitySql(),
       ),
     )
     .where(eq(articleInstitutions.articleId, articleId))
@@ -103,6 +105,7 @@ export async function getRelatedOpportunities(
       and(
         eq(institutions.id, opportunities.institutionId),
         eq(institutions.publicationState, "PUBLISHED"),
+        internationalSchoolPublicEligibilitySql(),
       ),
     )
     .where(
@@ -111,11 +114,11 @@ export async function getRelatedOpportunities(
         or(
           and(
             eq(opportunities.truthMode, "NATIVE"),
-            sql`exists (select 1 from ${opportunityVersions} where ${opportunityVersions.opportunityId} = ${opportunities.id} and ${opportunityVersions.isCurrent} = true and ${opportunityVersions.verificationState} = 'VERIFIED' and ${opportunityVersions.verifiedAt} is not null and ${opportunityVersions.businessState} <> 'UNKNOWN')`,
+            sql`exists (select 1 from ${opportunityVersions} where ${opportunityVersions.opportunityId} = ${opportunities.id} and ${opportunityVersions.isCurrent} = true and ${opportunityVersions.verificationState} = 'VERIFIED' and ${opportunityVersions.verifiedAt} is not null and ${opportunityVersions.businessState} <> 'UNKNOWN' and exists (select 1 from opportunity_version_evidence evidence join sources source on source.id=evidence.source_id where evidence.opportunity_version_id=${opportunityVersions.id} and evidence.source_observation_id is not null and evidence.source_snapshot_id is not null and source.source_type in ('OFFICIAL_ADMISSION_PAGE','OFFICIAL_NOTICE_BOARD','OFFICIAL_DOCUMENT','OFFICIAL_APPLICATION_PORTAL','OFFICIAL_SCHOOL_PAGE','OFFICIAL_SOCIAL') and source.authority_level in ('PRIMARY','SECONDARY_OFFICIAL')))`,
           ),
           and(
             eq(opportunities.truthMode, "LEGACY_BACKED"),
-            sql`exists (select 1 from ${opportunityAdmissionEventLinks} join ${admissionEvents} on ${admissionEvents.id} = ${opportunityAdmissionEventLinks.admissionEventId} and ${admissionEvents.isPublic} = true join ${admissionEventVersions} on ${admissionEventVersions.admissionEventId} = ${admissionEvents.id} and ${admissionEventVersions.isCurrent} = true and ${admissionEventVersions.verificationStatus} = 'VERIFIED' and ${admissionEventVersions.verifiedAt} is not null and ${admissionEventVersions.eventStatus} in ('ACTIVE', 'SCHEDULED', 'CLOSED', 'COMPLETED', 'CANCELLED') where ${opportunityAdmissionEventLinks.opportunityId} = ${opportunities.id})`,
+            sql`exists (select 1 from ${opportunityAdmissionEventLinks} join ${admissionEvents} on ${admissionEvents.id} = ${opportunityAdmissionEventLinks.admissionEventId} and ${admissionEvents.isPublic} = true join ${admissionEventVersions} on ${admissionEventVersions.admissionEventId} = ${admissionEvents.id} and ${admissionEventVersions.isCurrent} = true and ${admissionEventVersions.verificationStatus} = 'VERIFIED' and ${admissionEventVersions.verifiedAt} is not null and ${admissionEventVersions.eventStatus} in ('ACTIVE', 'SCHEDULED', 'CLOSED', 'COMPLETED', 'CANCELLED') where ${opportunityAdmissionEventLinks.opportunityId} = ${opportunities.id} and exists (select 1 from event_version_evidence evidence join sources source on source.id=evidence.source_id where evidence.event_version_id=${admissionEventVersions.id} and evidence.source_observation_id is not null and evidence.snapshot_id is not null and source.source_type in ('OFFICIAL_ADMISSION_PAGE','OFFICIAL_NOTICE_BOARD','OFFICIAL_DOCUMENT','OFFICIAL_APPLICATION_PORTAL','OFFICIAL_SCHOOL_PAGE','OFFICIAL_SOCIAL') and source.authority_level in ('PRIMARY','SECONDARY_OFFICIAL')))`,
           ),
         ),
       ),

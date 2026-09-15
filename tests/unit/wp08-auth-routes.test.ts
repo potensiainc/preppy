@@ -113,8 +113,9 @@ describe("WP-08 auth Route Handler factories", () => {
     const findInstitution = vi.fn(async () => ({
       id: institutionId,
       slug: "seoul-international-school",
-      publicationState: "PUBLISHED",
-      operationalState: "ACTIVE",
+      category: "INTERNATIONAL_SCHOOL" as const,
+      publicationState: "PUBLISHED" as const,
+      operationalState: "ACTIVE" as const,
     }));
     const handler = createFollowIntentHandler({
       appBaseUrl,
@@ -122,6 +123,7 @@ describe("WP-08 auth Route Handler factories", () => {
       tracker,
       findInstitution,
       hasMonitorableSourceCoverage: async () => true,
+      hasInstitutionIsiIdentity: async () => true,
       now: () => now,
       production: true,
     });
@@ -173,12 +175,14 @@ describe("WP-08 auth Route Handler factories", () => {
       .mockResolvedValueOnce({
         id: institutionId,
         slug: "hidden-school",
+        category: "INTERNATIONAL_SCHOOL" as const,
         publicationState: "DRAFT",
         operationalState: "ACTIVE",
       })
       .mockResolvedValueOnce({
         id: institutionId,
         slug: "closed-school",
+        category: "INTERNATIONAL_SCHOOL" as const,
         publicationState: "PUBLISHED",
         operationalState: "CLOSED",
       });
@@ -188,6 +192,7 @@ describe("WP-08 auth Route Handler factories", () => {
       tracker,
       findInstitution,
       hasMonitorableSourceCoverage: async () => true,
+      hasInstitutionIsiIdentity: async () => true,
       now: () => now,
     });
     const form = new URLSearchParams({

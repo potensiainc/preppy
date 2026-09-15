@@ -631,6 +631,7 @@ describe("WP-08 Task 4 review fixes", () => {
       tracker: new TestAnalyticsTracker(),
       findInstitution,
       hasMonitorableSourceCoverage: async () => true,
+      hasInstitutionIsiIdentity: async () => true,
       now: () => now,
     });
     const declared = new ReadableStream<Uint8Array>({
@@ -710,6 +711,7 @@ describe("WP-08 Task 4 review fixes", () => {
         throw new Error("private database host");
       },
       hasMonitorableSourceCoverage: async () => true,
+      hasInstitutionIsiIdentity: async () => true,
     })(
       new Request(`${appBaseUrl}/api/auth/follow-intent`, {
         method: "POST",

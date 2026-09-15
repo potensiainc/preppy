@@ -11,6 +11,7 @@ import {
   getHomeCurrentOpportunityCards,
   getPublicInstitutionCardsByIds,
 } from "./institution-query.server";
+import { internationalSchoolPublicEligibilitySql } from "./international-school-publication-policy";
 
 const HOME_SECTION_LIMIT = 12;
 const HOME_INSTITUTIONS_PER_CATEGORY = 4;
@@ -45,6 +46,7 @@ async function getFeaturedInstitutions(
         .where(
           and(
             eq(institutions.publicationState, "PUBLISHED"),
+            internationalSchoolPublicEligibilitySql(),
             eq(institutions.category, category),
           ),
         )
