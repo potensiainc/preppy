@@ -1,6 +1,19 @@
 import { createHash } from "node:crypto";
-import { sql } from "drizzle-orm";
+import { inArray, sql } from "drizzle-orm";
 
+import {
+  institutionFacts as institutionFactsTable,
+  institutionFactVersions as institutionFactVersionsTable,
+  institutionFactVersionEvidence as institutionFactVersionEvidenceTable,
+  institutionSectionCoverages as institutionSectionCoveragesTable,
+  institutionSourceBindings as institutionSourceBindingsTable,
+  opportunities as opportunitiesTable,
+  opportunityVersions as opportunityVersionsTable,
+  opportunityVersionEvidence as opportunityVersionEvidenceTable,
+  sourceObservations as sourceObservationsTable,
+  sources as sourcesTable,
+  sourceSnapshots as sourceSnapshotsTable,
+} from "@/src/db/schema";
 import type { ReadOnlyDatabaseExecutor } from "@/src/infrastructure/db/runtime.server";
 import { institutionIdForRegistryIdentity } from "@/src/modules/institution-seed/planner";
 import type {
@@ -401,6 +414,14 @@ function sameHost(left: string | null, right: string): boolean {
   } catch {
     return false;
   }
+}
+
+function dateEqual(
+  left: Date | string | null,
+  right: Date | string | null,
+): boolean {
+  if (left === null || right === null) return left === right;
+  return new Date(left).toISOString() === new Date(right).toISOString();
 }
 
 function emptyActions(): InternationalSchoolImportPlan["actions"] {
@@ -1015,6 +1036,448 @@ export async function planInternationalSchoolImport(
           unchanged,
         );
       }
+    }
+  }
+
+  const institutionIds = actions.institutions.map(
+    (action) => action.institutionId,
+  );
+  const sourceUrls = actions.sources.map((action) => action.desired.canonicalUrl);
+  const sourceIds = actions.sources.map((action) => action.desired.id);
+  const [
+    existingSources,
+    existingSnapshots,
+    existingObservations,
+    existingBindings,
+    existingCoverages,
+    existingFacts,
+    existingOpportunities,
+  ] = await Promise.all([
+    executor.drizzle
+      .select()
+      .from(sourcesTable)
+      .where(inArray(sourcesTable.canonicalUrl, sourceUrls)),
+    executor.drizzle
+      .select()
+      .from(sourceSnapshotsTable)
+      .where(inArray(sourceSnapshotsTable.sourceId, sourceIds)),
+    executor.drizzle
+      .select()
+      .from(sourceObservationsTable)
+      .where(inArray(sourceObservationsTable.sourceId, sourceIds)),
+    executor.drizzle
+      .select()
+      .from(institutionSourceBindingsTable)
+      .where(
+        inArray(institutionSourceBindingsTable.institutionId, institutionIds),
+      ),
+    executor.drizzle
+      .select()
+      .from(institutionSectionCoveragesTable)
+      .where(
+        inArray(institutionSectionCoveragesTable.institutionId, institutionIds),
+      ),
+    executor.drizzle
+      .select()
+      .from(institutionFactsTable)
+      .where(inArray(institutionFactsTable.institutionId, institutionIds)),
+    executor.drizzle
+      .select()
+      .from(opportunitiesTable)
+      .where(inArray(opportunitiesTable.institutionId, institutionIds)),
+  ]);
+
+  const existingSourceByUrl = new Map(
+    existingSources.map((row) => [row.canonicalUrl, row]),
+  );
+  for (let index = 0; index < actions.sources.length; index += 1) {
+    const action = actions.sources[index]!;
+    const row = existingSourceByUrl.get(action.desired.canonicalUrl);
+    if (!row) continue;
+    const exact =
+      row.id === action.desired.id &&
+      row.sourceType === action.desired.sourceType &&
+      row.authorityLevel === action.desired.authorityLevel &&
+      row.lifecycleStatus === action.desired.lifecycleStatus &&
+      row.sourceName === action.desired.sourceName &&
+      row.requiresJs === action.desired.requiresJs &&
+      row.contentTypeHint === action.desired.contentTypeHint;
+    if (exact) {
+      actions.sources[index] = { ...action, operation: "NONE" };
+    } else {
+      rejects.push({
+        code: "SOURCE_COLLISION",
+        key: action.key,
+        message: "같은 공식 URL의 기존 출처가 스냅샷과 달라요.",
+      });
+    }
+  }
+
+  const existingSnapshotById = new Map(
+    existingSnapshots.map((row) => [row.id, row]),
+  );
+  for (let index = 0; index < actions.snapshots.length; index += 1) {
+    const action = actions.snapshots[index]!;
+    const row = existingSnapshotById.get(action.desired.id);
+    if (!row) continue;
+    const exact =
+      row.sourceId === action.desired.sourceId &&
+      row.contentHash === action.desired.contentHash &&
+      row.textHash === action.desired.textHash &&
+      row.normalizedText === action.desired.normalizedText &&
+      row.mimeType === action.desired.mimeType;
+    if (exact) {
+      actions.snapshots[index] = { ...action, operation: "NONE" };
+    } else {
+      rejects.push({
+        code: "MATERIAL_FIELD_COLLISION",
+        key: action.key,
+        message: "기존 공식 스냅샷이 검토한 내용과 달라요.",
+      });
+    }
+  }
+
+  const existingObservationByReference = new Map(
+    existingObservations.flatMap((row) => {
+      const reference = row.metadata?.artifactObservationRef;
+      return typeof reference === "string"
+        ? [[`${row.sourceId}\u0000${reference}`, row] as const]
+        : [];
+    }),
+  );
+  for (let index = 0; index < actions.observations.length; index += 1) {
+    const action = actions.observations[index]!;
+    const row = existingObservationByReference.get(
+      `${action.desired.sourceId}\u0000${action.desired.observationRef}`,
+    );
+    if (!row) continue;
+    const exact =
+      row.outcome === action.desired.outcome &&
+      dateEqual(row.observedAt, action.desired.observedAt) &&
+      row.finalUrl === action.desired.finalUrl &&
+      row.contentHash === action.desired.contentHash &&
+      row.textHash === action.desired.textHash &&
+      row.snapshotId === action.desired.snapshotId;
+    if (exact) {
+      actions.observations[index] = { ...action, operation: "NONE" };
+    } else {
+      rejects.push({
+        code: "MATERIAL_FIELD_COLLISION",
+        key: action.key,
+        message: "기존 공식 관찰 결과가 검토한 내용과 달라요.",
+      });
+    }
+  }
+
+  const existingBindingByKey = new Map(
+    existingBindings.map((row) => [
+      `${row.institutionId}\u0000${row.sourceId}\u0000${row.role}`,
+      row,
+    ]),
+  );
+  for (let index = 0; index < actions.bindings.length; index += 1) {
+    const action = actions.bindings[index]!;
+    const row = existingBindingByKey.get(action.key);
+    if (!row) continue;
+    const exact =
+      row.isPrimary === action.desired.isPrimary &&
+      row.isActive === action.desired.isActive &&
+      row.unboundAt === action.desired.unboundAt;
+    if (exact) {
+      actions.bindings[index] = { ...action, operation: "NONE" };
+    } else {
+      rejects.push({
+        code: "MATERIAL_FIELD_COLLISION",
+        key: action.key,
+        message: "기존 기관 출처 연결이 검토한 상태와 달라요.",
+      });
+    }
+  }
+
+  const existingCoverageByKey = new Map(
+    existingCoverages.map((row) => [
+      `${row.institutionId}\u0000${row.section}`,
+      row,
+    ]),
+  );
+  for (let index = 0; index < actions.coverages.length; index += 1) {
+    const action = actions.coverages[index]!;
+    const row = existingCoverageByKey.get(action.key);
+    if (!row) continue;
+    const exact =
+      row.status === action.desired.status &&
+      row.sourceId === action.desired.sourceId &&
+      row.sourceSnapshotId === action.desired.sourceSnapshotId &&
+      row.academicYearLabel === action.desired.academicYearLabel &&
+      row.publicNote === action.desired.publicNote &&
+      row.internalNote === action.desired.internalNote &&
+      dateEqual(row.lastCollectedAt, action.desired.lastCollectedAt) &&
+      dateEqual(row.lastCheckedAt, action.desired.lastCheckedAt);
+    actions.coverages[index] = {
+      ...action,
+      operation: exact ? "NONE" : "UPDATE",
+    };
+  }
+
+  const existingFactByKey = new Map(
+    existingFacts.map((row) => [
+      `${row.institutionId}\u0000${row.factType}`,
+      row,
+    ]),
+  );
+  for (let index = 0; index < actions.facts.length; index += 1) {
+    const action = actions.facts[index]!;
+    const row = existingFactByKey.get(action.key);
+    if (!row) continue;
+    if (row.id === action.desired.id) {
+      actions.facts[index] = { ...action, operation: "NONE" };
+    } else {
+      rejects.push({
+        code: "MATERIAL_FIELD_COLLISION",
+        key: action.key,
+        message: "기존 사실 루트의 식별자가 검토한 결정적 ID와 달라요.",
+      });
+    }
+  }
+
+  const factIds = actions.facts.map((action) => action.desired.id);
+  const existingFactVersions =
+    factIds.length === 0
+      ? []
+      : await executor.drizzle
+          .select()
+          .from(institutionFactVersionsTable)
+          .where(
+            inArray(institutionFactVersionsTable.institutionFactId, factIds),
+          );
+  const existingFactVersionById = new Map(
+    existingFactVersions.map((row) => [row.id, row]),
+  );
+  for (let index = 0; index < actions.factVersions.length; index += 1) {
+    const action = actions.factVersions[index]!;
+    const row = existingFactVersionById.get(action.desired.id);
+    if (!row) continue;
+    const exact =
+      row.institutionFactId === action.desired.institutionFactId &&
+      row.versionNumber === action.desired.versionNumber &&
+      row.supersedesVersionId === action.desired.supersedesVersionId &&
+      row.verificationState === action.desired.verificationState &&
+      row.isCurrent === action.desired.isCurrent &&
+      canonicalJson(row.valueJson) === canonicalJson(action.desired.valueJson) &&
+      row.displayText === action.desired.displayText &&
+      dateEqual(row.verifiedAt, action.desired.verifiedAt);
+    if (exact) {
+      actions.factVersions[index] = { ...action, operation: "NONE" };
+    } else {
+      rejects.push({
+        code: "MATERIAL_FIELD_COLLISION",
+        key: action.key,
+        message: "기존 사실 버전이 검토한 값과 달라요.",
+      });
+    }
+  }
+
+  const factEvidenceIds = actions.factVersionEvidence.map(
+    (action) => action.desired.id,
+  );
+  const existingFactEvidence =
+    factEvidenceIds.length === 0
+      ? []
+      : await executor.drizzle
+          .select()
+          .from(institutionFactVersionEvidenceTable)
+          .where(
+            inArray(institutionFactVersionEvidenceTable.id, factEvidenceIds),
+          );
+  const existingFactEvidenceById = new Map(
+    existingFactEvidence.map((row) => [row.id, row]),
+  );
+  const observationReferenceById = new Map(
+    existingObservations.flatMap((row) => {
+      const reference = row.metadata?.artifactObservationRef;
+      return typeof reference === "string"
+        ? [[row.id.toString(), reference] as const]
+        : [];
+    }),
+  );
+  for (
+    let index = 0;
+    index < actions.factVersionEvidence.length;
+    index += 1
+  ) {
+    const action = actions.factVersionEvidence[index]!;
+    const row = existingFactEvidenceById.get(action.desired.id);
+    if (!row) continue;
+    const exact =
+      row.institutionFactVersionId ===
+        action.desired.institutionFactVersionId &&
+      row.sourceId === action.desired.sourceId &&
+      row.sourceSnapshotId === action.desired.sourceSnapshotId &&
+      row.evidenceRole === action.desired.evidenceRole &&
+      row.sourceObservationId !== null &&
+      observationReferenceById.get(row.sourceObservationId.toString()) ===
+        action.desired.sourceObservationRef;
+    if (exact) {
+      actions.factVersionEvidence[index] = {
+        ...action,
+        operation: "NONE",
+      };
+    } else {
+      rejects.push({
+        code: "MATERIAL_FIELD_COLLISION",
+        key: action.key,
+        message: "기존 사실 근거 연결이 검토한 공식 근거와 달라요.",
+      });
+    }
+  }
+
+  const existingOpportunityBySlug = new Map(
+    existingOpportunities.map((row) => [row.slug, row]),
+  );
+  for (let index = 0; index < actions.opportunities.length; index += 1) {
+    const action = actions.opportunities[index]!;
+    const row = existingOpportunityBySlug.get(action.desired.slug);
+    if (!row) continue;
+    const exact =
+      row.id === action.desired.id &&
+      row.institutionId === action.desired.institutionId &&
+      row.kind === action.desired.kind &&
+      row.truthMode === action.desired.truthMode &&
+      row.publicationState === action.desired.publicationState &&
+      row.publishedAt === action.desired.publishedAt &&
+      row.archivedAt === action.desired.archivedAt;
+    if (exact) {
+      actions.opportunities[index] = { ...action, operation: "NONE" };
+    } else {
+      rejects.push({
+        code: "MATERIAL_FIELD_COLLISION",
+        key: action.key,
+        message: "기존 행사 루트가 검토한 값과 달라요.",
+      });
+    }
+  }
+
+  const opportunityIds = actions.opportunities.map(
+    (action) => action.desired.id,
+  );
+  const existingOpportunityVersions =
+    opportunityIds.length === 0
+      ? []
+      : await executor.drizzle
+          .select()
+          .from(opportunityVersionsTable)
+          .where(
+            inArray(opportunityVersionsTable.opportunityId, opportunityIds),
+          );
+  const existingOpportunityVersionById = new Map(
+    existingOpportunityVersions.map((row) => [row.id, row]),
+  );
+  for (
+    let index = 0;
+    index < actions.opportunityVersions.length;
+    index += 1
+  ) {
+    const action = actions.opportunityVersions[index]!;
+    const row = existingOpportunityVersionById.get(action.desired.id);
+    if (!row) continue;
+    const exact =
+      row.opportunityId === action.desired.opportunityId &&
+      row.versionNumber === action.desired.versionNumber &&
+      row.supersedesVersionId === action.desired.supersedesVersionId &&
+      row.verificationState === action.desired.verificationState &&
+      row.isCurrent === action.desired.isCurrent &&
+      row.title === action.desired.title &&
+      row.businessState === action.desired.businessState &&
+      dateEqual(row.eventStartAt, action.desired.eventStartsAt) &&
+      dateEqual(
+        row.applicationCloseAt,
+        action.desired.applicationClosesAt,
+      ) &&
+      row.actionUrl === action.desired.actionUrl &&
+      dateEqual(row.verifiedAt, action.desired.verifiedAt);
+    if (exact) {
+      actions.opportunityVersions[index] = {
+        ...action,
+        operation: "NONE",
+      };
+    } else {
+      rejects.push({
+        code: "MATERIAL_FIELD_COLLISION",
+        key: action.key,
+        message: "기존 행사 버전이 검토한 값과 달라요.",
+      });
+    }
+  }
+
+  const opportunityEvidenceIds = actions.opportunityVersionEvidence.map(
+    (action) => action.desired.id,
+  );
+  const existingOpportunityEvidence =
+    opportunityEvidenceIds.length === 0
+      ? []
+      : await executor.drizzle
+          .select()
+          .from(opportunityVersionEvidenceTable)
+          .where(
+            inArray(
+              opportunityVersionEvidenceTable.id,
+              opportunityEvidenceIds,
+            ),
+          );
+  const existingOpportunityEvidenceById = new Map(
+    existingOpportunityEvidence.map((row) => [row.id, row]),
+  );
+  for (
+    let index = 0;
+    index < actions.opportunityVersionEvidence.length;
+    index += 1
+  ) {
+    const action = actions.opportunityVersionEvidence[index]!;
+    const row = existingOpportunityEvidenceById.get(action.desired.id);
+    if (!row) continue;
+    const exact =
+      row.opportunityVersionId === action.desired.opportunityVersionId &&
+      row.sourceId === action.desired.sourceId &&
+      row.sourceSnapshotId === action.desired.sourceSnapshotId &&
+      row.evidenceRole === action.desired.evidenceRole &&
+      row.sourceObservationId !== null &&
+      observationReferenceById.get(row.sourceObservationId.toString()) ===
+        action.desired.sourceObservationRef;
+    if (exact) {
+      actions.opportunityVersionEvidence[index] = {
+        ...action,
+        operation: "NONE",
+      };
+    } else {
+      rejects.push({
+        code: "MATERIAL_FIELD_COLLISION",
+        key: action.key,
+        message: "기존 행사 근거 연결이 검토한 공식 근거와 달라요.",
+      });
+    }
+  }
+
+  Object.assign(created, emptyCounts());
+  Object.assign(updated, emptyCounts());
+  Object.assign(unchanged, emptyCounts());
+  const actionGroups = [
+    ["institutions", actions.institutions],
+    ["registryIdentities", actions.registryIdentities],
+    ["sources", actions.sources],
+    ["snapshots", actions.snapshots],
+    ["observations", actions.observations],
+    ["bindings", actions.bindings],
+    ["coverages", actions.coverages],
+    ["facts", actions.facts],
+    ["factVersions", actions.factVersions],
+    ["factVersionEvidence", actions.factVersionEvidence],
+    ["opportunities", actions.opportunities],
+    ["opportunityVersions", actions.opportunityVersions],
+    ["opportunityVersionEvidence", actions.opportunityVersionEvidence],
+  ] as const;
+  for (const [key, group] of actionGroups) {
+    for (const action of group) {
+      count(action.operation, key, created, updated, unchanged);
     }
   }
 
