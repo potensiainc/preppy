@@ -82,7 +82,9 @@ async function seedInstitution(options: {
 beforeAll(async () => {
   await lock`select pg_advisory_lock(hashtext('international-school-import-tests'))`;
   await migrateDatabase(databaseUrl!);
-  packageDirectory = await mkdtemp(join(tmpdir(), "preppy-is-production-audit-"));
+  packageDirectory = await mkdtemp(
+    join(tmpdir(), "preppy-is-production-audit-"),
+  );
   await writeValidInternationalSchoolPackage(packageDirectory);
 
   await admin`select pg_advisory_lock(hashtext('production-readonly-role-ddl-tests'))`;
@@ -103,7 +105,9 @@ beforeAll(async () => {
     `grant connect on database admissionradar_test to ${readOnlyRole}`,
   );
   await admin.unsafe(`grant usage on schema public to ${readOnlyRole}`);
-  await admin.unsafe(`grant select on all tables in schema public to ${readOnlyRole}`);
+  await admin.unsafe(
+    `grant select on all tables in schema public to ${readOnlyRole}`,
+  );
 });
 
 afterAll(async () => {
@@ -123,7 +127,9 @@ describe("international-school production audit", () => {
     const result = await runInternationalSchoolProductionAudit(
       packageDirectory,
       { DATABASE_URL: databaseUrl, PRODUCTION_DATABASE_URL: undefined },
-      { runReadOnly } as unknown as InternationalSchoolProductionAuditDependencies,
+      {
+        runReadOnly,
+      } as unknown as InternationalSchoolProductionAuditDependencies,
     );
 
     expect(result).toMatchObject({
@@ -142,7 +148,9 @@ describe("international-school production audit", () => {
     const result = await runInternationalSchoolProductionAudit(
       packageDirectory,
       { PRODUCTION_DATABASE_URL: databaseUrl },
-      { runReadOnly } as unknown as InternationalSchoolProductionAuditDependencies,
+      {
+        runReadOnly,
+      } as unknown as InternationalSchoolProductionAuditDependencies,
     );
 
     expect(result).toMatchObject({

@@ -70,9 +70,7 @@ export function parseInternationalSchoolCliArgs(
   const mode = modes[0] ?? "dry-run";
   if (mode === "apply") {
     if (!checksum || !/^[a-f0-9]{64}$/u.test(checksum)) {
-      throw new Error(
-        `${USAGE}: --apply requires a 64-character --checksum`,
-      );
+      throw new Error(`${USAGE}: --apply requires a 64-character --checksum`);
     }
   } else if (checksum) {
     throw new Error(`${USAGE}: --checksum is only valid with --apply`);

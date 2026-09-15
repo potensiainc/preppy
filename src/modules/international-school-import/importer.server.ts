@@ -1,6 +1,6 @@
 import "server-only";
 
-import { eq, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 
 import {
   institutionFacts,
@@ -63,7 +63,9 @@ export type InternationalSchoolImportReport = Readonly<{
   sideEffects: InternationalSchoolImportSideEffects;
 }>;
 
-function zeroAppliedCounts(plan: InternationalSchoolImportPlan): ImportCountSet {
+function zeroAppliedCounts(
+  plan: InternationalSchoolImportPlan,
+): ImportCountSet {
   return Object.fromEntries(
     Object.keys(plan.created).map((key) => [key, 0]),
   ) as ImportCountSet;
@@ -100,8 +102,7 @@ function sideEffectDelta(
     updates: after.updates - before.updates,
     detectedChanges: after.detectedChanges - before.detectedChanges,
     meaningfulChanges: after.meaningfulChanges - before.meaningfulChanges,
-    opportunityChanges:
-      after.opportunityChanges - before.opportunityChanges,
+    opportunityChanges: after.opportunityChanges - before.opportunityChanges,
   };
 }
 
@@ -166,7 +167,8 @@ async function persistPlan(
   }
   for (const action of plan.actions.observations) {
     if (action.operation !== "CREATE") continue;
-    const { observationRef: _observationRef, ...desired } = action.desired;
+    const { observationRef, ...desired } = action.desired;
+    void observationRef;
     await executor.drizzle.insert(sourceObservations).values({
       ...desired,
       createdAt: occurredAt,
@@ -231,8 +233,7 @@ async function persistPlan(
     if (action.operation !== "CREATE") continue;
     await executor.drizzle.insert(opportunities).values({
       ...action.desired,
-      kind: action.desired
-        .kind as (typeof opportunities.$inferInsert)["kind"],
+      kind: action.desired.kind as (typeof opportunities.$inferInsert)["kind"],
       createdAt: occurredAt,
       updatedAt: occurredAt,
     });
@@ -247,9 +248,8 @@ async function persistPlan(
       verificationState: action.desired.verificationState,
       isCurrent: action.desired.isCurrent,
       title: action.desired.title,
-      businessState:
-        action.desired
-          .businessState as (typeof opportunityVersions.$inferInsert)["businessState"],
+      businessState: action.desired
+        .businessState as (typeof opportunityVersions.$inferInsert)["businessState"],
       eventStartAt: action.desired.eventStartsAt,
       applicationCloseAt: action.desired.applicationClosesAt,
       actionUrl: action.desired.actionUrl,

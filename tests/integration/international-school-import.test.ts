@@ -221,9 +221,7 @@ async function insertInstitution(
       ${source.district},
       ${source.addressLine},
       ${overrides.websiteUrl ?? source.websiteUrl},
-      ${publicationState === "PUBLISHED"
-        ? "2026-09-15T00:00:00.000Z"
-        : null}
+      ${publicationState === "PUBLISHED" ? "2026-09-15T00:00:00.000Z" : null}
     )
   `;
   return id;
@@ -323,7 +321,9 @@ describe("international-school import planner", () => {
   });
 
   it("rejects material and publication collisions on the ISI identity", async () => {
-    const institutionId = await insertInstitution({ displayName: "Wrong Name" });
+    const institutionId = await insertInstitution({
+      displayName: "Wrong Name",
+    });
     await insertIdentity(institutionId);
     const material = await planInternationalSchoolImport(
       runtime.executor,

@@ -20,10 +20,7 @@ import type {
   EvidenceArtifactRecord,
   InternationalSchoolImportPackage,
 } from "./artifact-schema";
-import {
-  canonicalJson,
-  validateInternationalSchoolPackage,
-} from "./validator";
+import { canonicalJson, validateInternationalSchoolPackage } from "./validator";
 
 const PREPPY_SEED_NAMESPACE = "9c930974-2c56-5d2d-8833-11e4df9bc18e";
 type Operation = "CREATE" | "UPDATE" | "NONE";
@@ -565,16 +562,31 @@ export async function planInternationalSchoolImport(
     from institutions i
     left join institution_registry_identities identity
       on identity.institution_id=i.id and identity.registry_name='ISI'
-    where i.id in (${sql.join(expectedIds.map((id) => sql`${id}`), sql`, `)})
-       or i.slug in (${sql.join(slugs.map((slug) => sql`${slug}`), sql`, `)})
+    where i.id in (${sql.join(
+      expectedIds.map((id) => sql`${id}`),
+      sql`, `,
+    )})
+       or i.slug in (${sql.join(
+         slugs.map((slug) => sql`${slug}`),
+         sql`, `,
+       )})
        or identity.registry_external_id in (
-         ${sql.join(registryIds.map((id) => sql`${id}`), sql`, `)}
+         ${sql.join(
+           registryIds.map((id) => sql`${id}`),
+           sql`, `,
+         )}
        )
        or i.display_name in (
-         ${sql.join(names.map((name) => sql`${name}`), sql`, `)}
+         ${sql.join(
+           names.map((name) => sql`${name}`),
+           sql`, `,
+         )}
        )
        or i.website_url in (
-         ${sql.join(websites.map((url) => sql`${url}`), sql`, `)}
+         ${sql.join(
+           websites.map((url) => sql`${url}`),
+           sql`, `,
+         )}
        )
     order by i.id, identity.registry_external_id
   `)) as unknown as ExistingInstitutionRow[];
@@ -585,7 +597,10 @@ export async function planInternationalSchoolImport(
       "ISI",
       institution.registryExternalId,
     );
-    institutionIdByRegistryId.set(institution.registryExternalId, institutionId);
+    institutionIdByRegistryId.set(
+      institution.registryExternalId,
+      institutionId,
+    );
     const desired: InstitutionAction["desired"] = {
       id: institutionId,
       slug: institution.slug,
@@ -661,7 +676,8 @@ export async function planInternationalSchoolImport(
         warnings.push({
           code: "POSSIBLE_IDENTITY_COLLISION",
           key: institution.registryExternalId,
-          message: "이름·도메인·주소가 비슷한 별도 기관이 있어 자동 병합하지 않았어요.",
+          message:
+            "이름·도메인·주소가 비슷한 별도 기관이 있어 자동 병합하지 않았어요.",
         });
         break;
       }
@@ -674,13 +690,7 @@ export async function planInternationalSchoolImport(
       registryExternalId: institution.registryExternalId,
       desired,
     });
-    count(
-      institutionOperation,
-      "institutions",
-      created,
-      updated,
-      unchanged,
-    );
+    count(institutionOperation, "institutions", created, updated, unchanged);
 
     const identityDesired: RegistryIdentityAction["desired"] = {
       id:
@@ -712,13 +722,7 @@ export async function planInternationalSchoolImport(
       registryExternalId: institution.registryExternalId,
       desired: identityDesired,
     });
-    count(
-      identityOperation,
-      "registryIdentities",
-      created,
-      updated,
-      unchanged,
-    );
+    count(identityOperation, "registryIdentities", created, updated, unchanged);
   }
 
   const evidenceById = new Map(
@@ -820,8 +824,7 @@ export async function planInternationalSchoolImport(
             ? null
             : evidence.sourceContentSha256,
         snapshotId: evidence.sourceSnapshotId,
-        errorCode:
-          evidence.status === "ACCESS_FAILED" ? "ACCESS_FAILED" : null,
+        errorCode: evidence.status === "ACCESS_FAILED" ? "ACCESS_FAILED" : null,
         errorMessage: null,
         metadata: {
           packageId: packageValue.snapshot.packageId,
@@ -911,7 +914,8 @@ export async function planInternationalSchoolImport(
         },
       });
       count("CREATE", "facts", created, updated, unchanged);
-      const { factType: _factType, ...valueJson } = fact.value;
+      const { factType, ...valueJson } = fact.value;
+      void factType;
       const versionId = deterministicUuid(
         `preppy:international-school:fact-version:${factId}:${canonicalJson(valueJson)}`,
       );
@@ -951,13 +955,7 @@ export async function planInternationalSchoolImport(
             evidenceRole: "primary",
           },
         });
-        count(
-          "CREATE",
-          "factVersionEvidence",
-          created,
-          updated,
-          unchanged,
-        );
+        count("CREATE", "factVersionEvidence", created, updated, unchanged);
       }
     }
     for (const opportunity of [...item.opportunities].sort((left, right) =>
@@ -1042,7 +1040,9 @@ export async function planInternationalSchoolImport(
   const institutionIds = actions.institutions.map(
     (action) => action.institutionId,
   );
-  const sourceUrls = actions.sources.map((action) => action.desired.canonicalUrl);
+  const sourceUrls = actions.sources.map(
+    (action) => action.desired.canonicalUrl,
+  );
   const sourceIds = actions.sources.map((action) => action.desired.id);
   const [
     existingSources,
@@ -1263,7 +1263,8 @@ export async function planInternationalSchoolImport(
       row.supersedesVersionId === action.desired.supersedesVersionId &&
       row.verificationState === action.desired.verificationState &&
       row.isCurrent === action.desired.isCurrent &&
-      canonicalJson(row.valueJson) === canonicalJson(action.desired.valueJson) &&
+      canonicalJson(row.valueJson) ===
+        canonicalJson(action.desired.valueJson) &&
       row.displayText === action.desired.displayText &&
       dateEqual(row.verifiedAt, action.desired.verifiedAt);
     if (exact) {
@@ -1300,11 +1301,7 @@ export async function planInternationalSchoolImport(
         : [];
     }),
   );
-  for (
-    let index = 0;
-    index < actions.factVersionEvidence.length;
-    index += 1
-  ) {
+  for (let index = 0; index < actions.factVersionEvidence.length; index += 1) {
     const action = actions.factVersionEvidence[index]!;
     const row = existingFactEvidenceById.get(action.desired.id);
     if (!row) continue;
@@ -1372,11 +1369,7 @@ export async function planInternationalSchoolImport(
   const existingOpportunityVersionById = new Map(
     existingOpportunityVersions.map((row) => [row.id, row]),
   );
-  for (
-    let index = 0;
-    index < actions.opportunityVersions.length;
-    index += 1
-  ) {
+  for (let index = 0; index < actions.opportunityVersions.length; index += 1) {
     const action = actions.opportunityVersions[index]!;
     const row = existingOpportunityVersionById.get(action.desired.id);
     if (!row) continue;
@@ -1389,10 +1382,7 @@ export async function planInternationalSchoolImport(
       row.title === action.desired.title &&
       row.businessState === action.desired.businessState &&
       dateEqual(row.eventStartAt, action.desired.eventStartsAt) &&
-      dateEqual(
-        row.applicationCloseAt,
-        action.desired.applicationClosesAt,
-      ) &&
+      dateEqual(row.applicationCloseAt, action.desired.applicationClosesAt) &&
       row.actionUrl === action.desired.actionUrl &&
       dateEqual(row.verifiedAt, action.desired.verifiedAt);
     if (exact) {
@@ -1419,10 +1409,7 @@ export async function planInternationalSchoolImport(
           .select()
           .from(opportunityVersionEvidenceTable)
           .where(
-            inArray(
-              opportunityVersionEvidenceTable.id,
-              opportunityEvidenceIds,
-            ),
+            inArray(opportunityVersionEvidenceTable.id, opportunityEvidenceIds),
           );
   const existingOpportunityEvidenceById = new Map(
     existingOpportunityEvidence.map((row) => [row.id, row]),

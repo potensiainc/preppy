@@ -279,10 +279,7 @@ async function createLegacyOpportunity(
     closeTime?: string | null;
     timezone?: string | null;
     evidenceMode?:
-      | "COMPLETE"
-      | "NO_OBSERVATION"
-      | "NO_SNAPSHOT"
-      | "DISCOVERY_ONLY";
+      "COMPLETE" | "NO_OBSERVATION" | "NO_SNAPSHOT" | "DISCOVERY_ONLY";
   } = {},
 ) {
   const existing =
@@ -819,7 +816,7 @@ describe("WP-06A Institution public query", () => {
   it("excludes legacy admission truth without a complete official observation and snapshot", async () => {
     const institution = await createInstitution({
       name: `${prefix} Legacy evidence guard`,
-      category: "PRIVATE_ELEMENTARY",
+      category: "INTERNATIONAL_SCHOOL",
     });
     const noObservation = await createLegacyOpportunity(institution.id, {
       evidenceMode: "NO_OBSERVATION",
@@ -840,11 +837,7 @@ describe("WP-06A Institution public query", () => {
       accepted.id,
     ]);
     expect(detail.currentOpportunities.map((item) => item.id)).not.toEqual(
-      expect.arrayContaining([
-        noObservation.id,
-        noSnapshot.id,
-        discovery.id,
-      ]),
+      expect.arrayContaining([noObservation.id, noSnapshot.id, discovery.id]),
     );
   });
 
@@ -947,9 +940,9 @@ describe("WP-06A Institution public query", () => {
     expect(detail.verifiedFacts.map((fact) => fact.displayValue)).not.toContain(
       "Unverified fact",
     );
-    expect(
-      detail.verifiedFacts.map((fact) => fact.displayValue),
-    ).not.toContain("Discovery fact");
+    expect(detail.verifiedFacts.map((fact) => fact.displayValue)).not.toContain(
+      "Discovery fact",
+    );
     expect(detail.officialSources.map((source) => source.url)).toContain(
       official.url,
     );

@@ -5,9 +5,7 @@ import {
   coverageStatusValues,
   englishKindergartenSectionValues,
 } from "@/src/modules/english-kindergarten/coverage";
-import {
-  artifactEvidenceStatusValues,
-} from "@/src/modules/international-school/artifact-status";
+import { artifactEvidenceStatusValues } from "@/src/modules/international-school/artifact-status";
 import {
   internationalSchoolFactTypeValues,
   parseInternationalSchoolFactValue,
@@ -111,11 +109,7 @@ export const evidenceArtifactRecordSchema = z
     sourceUrl: httpsUrl,
     finalUrl: httpsUrl,
     sourceType: z.enum(sourceTypeValues),
-    authorityLevel: z.enum([
-      "PRIMARY",
-      "SECONDARY_OFFICIAL",
-      "DISCOVERY_ONLY",
-    ]),
+    authorityLevel: z.enum(["PRIMARY", "SECONDARY_OFFICIAL", "DISCOVERY_ONLY"]),
     status: z.enum(artifactEvidenceStatusValues),
     excerpt: nullableText.refine(
       (value) => value === null || value.length <= 2_000,
@@ -164,13 +158,7 @@ export const socialEvidenceArtifactRecordSchema = z
     url: httpsUrl,
     accessStatus: z.enum(artifactEvidenceStatusValues),
     accessedAt: isoDateTime,
-    perspective: z.enum([
-      "PARENT",
-      "STUDENT",
-      "TEACHER",
-      "ALUMNI",
-      "UNKNOWN",
-    ]),
+    perspective: z.enum(["PARENT", "STUDENT", "TEACHER", "ALUMNI", "UNKNOWN"]),
     reviewSampleCount: z.number().int().nonnegative(),
     themeSummary: z.array(nonEmpty),
     periodStart: isoDate.nullable(),

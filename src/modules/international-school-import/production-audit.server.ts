@@ -72,7 +72,8 @@ export async function runInternationalSchoolProductionAudit(
   environment: Environment,
   dependencies: InternationalSchoolProductionAuditDependencies = {},
 ): Promise<InternationalSchoolProductionAuditResult> {
-  const loadPackage = dependencies.loadPackage ?? loadInternationalSchoolPackage;
+  const loadPackage =
+    dependencies.loadPackage ?? loadInternationalSchoolPackage;
   const packageValue = await loadPackage(packageDirectory);
   const validation = validateInternationalSchoolPackage(packageValue);
   if (validation.status === "FAIL") {
@@ -106,14 +107,20 @@ export async function runInternationalSchoolProductionAudit(
         from institution_registry_identities
         where registry_name='ISI'
           and registry_external_id in (
-            ${sql.join(expectedIsiIds.map((id) => sql`${id}`), sql`, `)}
+            ${sql.join(
+              expectedIsiIds.map((id) => sql`${id}`),
+              sql`, `,
+            )}
           )
         order by registry_external_id
       `)) as unknown as Array<{ registryExternalId: string }>;
 
       const artifactOnlyNames = [
         ...packageValue.specialAccess.map((item) => item.name),
-        ...packageValue.candidates.flatMap((item) => [item.name, ...item.aliases]),
+        ...packageValue.candidates.flatMap((item) => [
+          item.name,
+          ...item.aliases,
+        ]),
       ].map((name) => name.toLowerCase());
       const artifactOnlyHosts = [
         ...packageValue.specialAccess.map((item) => item.publicUrl),
@@ -127,17 +134,26 @@ export async function runInternationalSchoolProductionAudit(
         select distinct i.slug
         from institutions i
         where i.id not in (
-          ${sql.join(expectedInstitutionIds.map((id) => sql`${id}`), sql`, `)}
+          ${sql.join(
+            expectedInstitutionIds.map((id) => sql`${id}`),
+            sql`, `,
+          )}
         )
           and (
             lower(i.display_name) in (
-              ${sql.join(uniqueNames.map((name) => sql`${name}`), sql`, `)}
+              ${sql.join(
+                uniqueNames.map((name) => sql`${name}`),
+                sql`, `,
+              )}
             )
             or regexp_replace(
               lower(split_part(split_part(regexp_replace(coalesce(i.website_url, ''), '^https?://', '', 'i'), '/', 1), ':', 1)),
               '^www\\.', ''
             ) in (
-              ${sql.join(uniqueHosts.map((hostname) => sql`${hostname}`), sql`, `)}
+              ${sql.join(
+                uniqueHosts.map((hostname) => sql`${hostname}`),
+                sql`, `,
+              )}
             )
           )
         order by i.slug

@@ -292,7 +292,9 @@ export function createValidInternationalSchoolPackageValues() {
 
 export async function writeValidInternationalSchoolPackage(
   directory: string,
-  mutate?: (values: ReturnType<typeof createValidInternationalSchoolPackageValues>) => void,
+  mutate?: (
+    values: ReturnType<typeof createValidInternationalSchoolPackageValues>,
+  ) => void,
 ) {
   const values = createValidInternationalSchoolPackageValues();
   mutate?.(values);
@@ -309,7 +311,8 @@ export async function writeValidInternationalSchoolPackage(
     "candidates.ndjson":
       values.candidates.map((row) => JSON.stringify(row)).join("\n") + "\n",
     "progress.json": JSON.stringify(values.progress, null, 2) + "\n",
-    "preppy-import.snapshot.json": JSON.stringify(values.snapshot, null, 2) + "\n",
+    "preppy-import.snapshot.json":
+      JSON.stringify(values.snapshot, null, 2) + "\n",
   };
   const manifest = {
     schemaVersion: 1,

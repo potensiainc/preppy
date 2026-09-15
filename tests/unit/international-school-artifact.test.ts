@@ -25,9 +25,9 @@ async function packageDirectory(): Promise<string> {
 afterEach(async () => {
   const { rm } = await import("node:fs/promises");
   await Promise.all(
-    directories.splice(0).map((directory) =>
-      rm(directory, { recursive: true, force: true }),
-    ),
+    directories
+      .splice(0)
+      .map((directory) => rm(directory, { recursive: true, force: true })),
   );
 });
 
@@ -52,10 +52,30 @@ describe("international-school package validation", () => {
   });
 
   it.each([
-    ["OFFICIAL_COUNT", (values: ReturnType<typeof createValidInternationalSchoolPackageValues>) => values.institutions.pop()],
-    ["SPECIAL_ACCESS_COUNT", (values: ReturnType<typeof createValidInternationalSchoolPackageValues>) => values.specialAccess.pop()],
-    ["CANDIDATE_COUNT", (values: ReturnType<typeof createValidInternationalSchoolPackageValues>) => values.candidates.pop()],
-    ["SNAPSHOT_COUNT", (values: ReturnType<typeof createValidInternationalSchoolPackageValues>) => values.snapshot.institutions.pop()],
+    [
+      "OFFICIAL_COUNT",
+      (
+        values: ReturnType<typeof createValidInternationalSchoolPackageValues>,
+      ) => values.institutions.pop(),
+    ],
+    [
+      "SPECIAL_ACCESS_COUNT",
+      (
+        values: ReturnType<typeof createValidInternationalSchoolPackageValues>,
+      ) => values.specialAccess.pop(),
+    ],
+    [
+      "CANDIDATE_COUNT",
+      (
+        values: ReturnType<typeof createValidInternationalSchoolPackageValues>,
+      ) => values.candidates.pop(),
+    ],
+    [
+      "SNAPSHOT_COUNT",
+      (
+        values: ReturnType<typeof createValidInternationalSchoolPackageValues>,
+      ) => values.snapshot.institutions.pop(),
+    ],
   ])("rejects the wrong %s", async (code, mutate) => {
     const directory = await packageDirectory();
     await writeValidInternationalSchoolPackage(directory, mutate);
@@ -90,18 +110,21 @@ describe("international-school package validation", () => {
     ["VERIFIED_WITH_WARNING", "UNQUALIFIED_CURRENT_FACT"],
     ["VERIFIED_WITH_DATE_LIMIT", "UNQUALIFIED_CURRENT_FACT"],
     ["NEEDS_REVIEW", "UNQUALIFIED_CURRENT_FACT"],
-  ])("does not promote %s evidence into a current fact", async (status, code) => {
-    const directory = await packageDirectory();
-    await writeValidInternationalSchoolPackage(directory, (values) => {
-      values.evidence.at(-1)!.status = status;
-    });
+  ])(
+    "does not promote %s evidence into a current fact",
+    async (status, code) => {
+      const directory = await packageDirectory();
+      await writeValidInternationalSchoolPackage(directory, (values) => {
+        values.evidence.at(-1)!.status = status;
+      });
 
-    const report = validateInternationalSchoolPackage(
-      await loadInternationalSchoolPackage(directory),
-    );
+      const report = validateInternationalSchoolPackage(
+        await loadInternationalSchoolPackage(directory),
+      );
 
-    expect(report.errors.map((error) => error.code)).toContain(code);
-  });
+      expect(report.errors.map((error) => error.code)).toContain(code);
+    },
+  );
 
   it.each([
     ["sourceObservationRef", "MISSING_EVIDENCE_CAPTURE"],

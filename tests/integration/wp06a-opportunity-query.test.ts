@@ -100,7 +100,7 @@ async function insertInstitution({
       short_description, published_at
     ) values (
       ${id}, ${slug}, 'WP-06A Opportunity Institution',
-      'INTERNATIONAL_SCHOOL', ${publicationState}, 'SEOUL',
+      'PRIVATE_ELEMENTARY', ${publicationState}, 'SEOUL',
       'A meaningful public institution profile.',
       ${publicationState === "PUBLISHED" ? "2026-08-01T00:00:00.000Z" : null}
     )

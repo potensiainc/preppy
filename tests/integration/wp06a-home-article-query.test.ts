@@ -56,15 +56,27 @@ async function createInstitution(
   category:
     | "ENGLISH_KINDERGARTEN"
     | "PRIVATE_ELEMENTARY"
-    | "INTERNATIONAL_SCHOOL" = "INTERNATIONAL_SCHOOL",
+    | "INTERNATIONAL_SCHOOL" = "PRIVATE_ELEMENTARY",
 ) {
   const id = randomUUID();
   const slug = `${prefix}-institution-${id}`;
   await runtime.client`
-    insert into institutions (id, slug, display_name, category, publication_state, region_code, short_description, published_at)
-    values (${id}, ${slug}, ${name}, ${category}, ${state}, 'SEOUL', 'A public profile.',
+    insert into institutions (id, slug, display_name, category, publication_state, operational_state, region_code, short_description, published_at)
+    values (${id}, ${slug}, ${name}, ${category}, ${state}, 'ACTIVE', 'SEOUL', 'A public profile.',
       ${state === "PUBLISHED" ? "2026-08-01T00:00:00.000Z" : null})
   `;
+  if (category === "INTERNATIONAL_SCHOOL") {
+    await runtime.client`
+      insert into institution_registry_identities (
+        institution_id, registry_name, registry_external_id,
+        registry_record_url, registry_locator, metadata_json
+      ) values (
+        ${id}, 'ISI', ${`${prefix}:${id}`},
+        ${`https://registry.example.test/${prefix}/${id}`},
+        ${`fixture:${id}`}, '{}'::jsonb
+      )
+    `;
+  }
   return { id, slug, name };
 }
 
@@ -179,6 +191,7 @@ async function cleanup(): Promise<void> {
     await transaction`delete from institution_school_links where school_id in (select id from schools where slug like ${`${prefix}%`})`;
     await transaction`delete from source_bindings where school_id in (select id from schools where slug like ${`${prefix}%`})`;
     await transaction`delete from schools where slug like ${`${prefix}%`}`;
+    await transaction`delete from institution_registry_identities where registry_external_id like ${`${prefix}:%`}`;
     await transaction`delete from institutions where slug like ${`${prefix}%`}`;
     await transaction`delete from admin_users where external_auth_subject like ${`${prefix}-%`}`;
     await transaction`delete from source_monitor_configs where source_id in (select id from sources where canonical_url like ${`https://source.example.test/${prefix}/%`})`;

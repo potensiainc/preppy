@@ -123,9 +123,12 @@ export async function loadInternationalSchoolPackage(
   const actualFiles = (await readdir(resolvedDirectory)).sort();
   const expectedFiles = [...PACKAGE_FILES].sort();
   const unexpected = actualFiles.filter(
-    (filename) => !expectedFiles.includes(filename as (typeof PACKAGE_FILES)[number]),
+    (filename) =>
+      !expectedFiles.includes(filename as (typeof PACKAGE_FILES)[number]),
   );
-  const missing = expectedFiles.filter((filename) => !actualFiles.includes(filename));
+  const missing = expectedFiles.filter(
+    (filename) => !actualFiles.includes(filename),
+  );
   if (unexpected.length > 0 || missing.length > 0) {
     throw new Error(
       `허용되지 않은 파일 또는 누락 파일이 있습니다. unexpected=${unexpected.join(",")} missing=${missing.join(",")}`,
@@ -175,10 +178,8 @@ export async function loadInternationalSchoolPackage(
       "institutions.ndjson",
       (value) => institutionArtifactRecordSchema.parse(value),
     ),
-    evidence: parseNdjson(
-      text["evidence.ndjson"],
-      "evidence.ndjson",
-      (value) => evidenceArtifactRecordSchema.parse(value),
+    evidence: parseNdjson(text["evidence.ndjson"], "evidence.ndjson", (value) =>
+      evidenceArtifactRecordSchema.parse(value),
     ),
     socialEvidence: parseNdjson(
       text["social-evidence.ndjson"],
@@ -280,16 +281,32 @@ export function validateInternationalSchoolPackage(
     snapshotInstitutions: packageValue.snapshot.institutions.length,
   };
   if (counts.officialActive !== OFFICIAL_ACTIVE_COUNT) {
-    add("OFFICIAL_COUNT", "institutions.ndjson", "공식 운영 기관은 22곳이어야 합니다.");
+    add(
+      "OFFICIAL_COUNT",
+      "institutions.ndjson",
+      "공식 운영 기관은 22곳이어야 합니다.",
+    );
   }
   if (counts.specialAccess !== SPECIAL_ACCESS_COUNT) {
-    add("SPECIAL_ACCESS_COUNT", "special-access.ndjson", "특수접근 기관은 7곳이어야 합니다.");
+    add(
+      "SPECIAL_ACCESS_COUNT",
+      "special-access.ndjson",
+      "특수접근 기관은 7곳이어야 합니다.",
+    );
   }
   if (counts.candidates !== CANDIDATE_COUNT) {
-    add("CANDIDATE_COUNT", "candidates.ndjson", "후보 레코드는 60개여야 합니다.");
+    add(
+      "CANDIDATE_COUNT",
+      "candidates.ndjson",
+      "후보 레코드는 60개여야 합니다.",
+    );
   }
   if (counts.snapshotInstitutions !== OFFICIAL_ACTIVE_COUNT) {
-    add("SNAPSHOT_COUNT", "preppy-import.snapshot.json", "반입 스냅샷은 22곳이어야 합니다.");
+    add(
+      "SNAPSHOT_COUNT",
+      "preppy-import.snapshot.json",
+      "반입 스냅샷은 22곳이어야 합니다.",
+    );
   }
 
   const officialIds = packageValue.institutions.map(
@@ -297,27 +314,45 @@ export function validateInternationalSchoolPackage(
   );
   const officialIdSet = new Set(officialIds);
   if (duplicates(officialIds).length > 0) {
-    add("DUPLICATE_ISI_ID", "institutions.ndjson", "중복 ISI 등록키가 있습니다.");
+    add(
+      "DUPLICATE_ISI_ID",
+      "institutions.ndjson",
+      "중복 ISI 등록키가 있습니다.",
+    );
   }
   if (
     duplicates(packageValue.institutions.map((item) => item.recordId)).length >
     0
   ) {
-    add("DUPLICATE_RECORD_ID", "institutions.ndjson", "중복 기관 recordId가 있습니다.");
+    add(
+      "DUPLICATE_RECORD_ID",
+      "institutions.ndjson",
+      "중복 기관 recordId가 있습니다.",
+    );
   }
-  if (duplicates(packageValue.institutions.map((item) => item.slug)).length > 0) {
+  if (
+    duplicates(packageValue.institutions.map((item) => item.slug)).length > 0
+  ) {
     add("DUPLICATE_SLUG", "institutions.ndjson", "중복 기관 slug가 있습니다.");
   }
   if (
     duplicates(packageValue.institutions.map((item) => item.officialMainUrl))
       .length > 0
   ) {
-    add("DUPLICATE_OFFICIAL_URL", "institutions.ndjson", "중복 공식 URL이 있습니다.");
+    add(
+      "DUPLICATE_OFFICIAL_URL",
+      "institutions.ndjson",
+      "중복 공식 URL이 있습니다.",
+    );
   }
 
   const evidenceIds = packageValue.evidence.map((item) => item.evidenceId);
   if (duplicates(evidenceIds).length > 0) {
-    add("DUPLICATE_EVIDENCE_ID", "evidence.ndjson", "중복 evidenceId가 있습니다.");
+    add(
+      "DUPLICATE_EVIDENCE_ID",
+      "evidence.ndjson",
+      "중복 evidenceId가 있습니다.",
+    );
   }
   const evidenceById = new Map(
     packageValue.evidence.map((evidence) => [evidence.evidenceId, evidence]),
@@ -447,7 +482,9 @@ export function validateInternationalSchoolPackage(
     for (const fact of item.facts) {
       const factEvidence = fact.evidenceIds
         .map((id) => evidenceById.get(id))
-        .filter((value): value is EvidenceArtifactRecord => value !== undefined);
+        .filter(
+          (value): value is EvidenceArtifactRecord => value !== undefined,
+        );
       const qualified = factEvidence.some(
         (evidence) =>
           evidence.institutionRegistryId === item.registryExternalId &&
@@ -476,7 +513,9 @@ export function validateInternationalSchoolPackage(
     for (const opportunity of item.opportunities) {
       const opportunityEvidence = opportunity.evidenceIds
         .map((id) => evidenceById.get(id))
-        .filter((value): value is EvidenceArtifactRecord => value !== undefined);
+        .filter(
+          (value): value is EvidenceArtifactRecord => value !== undefined,
+        );
       const qualified = opportunityEvidence.some(
         (evidence) =>
           evidence.institutionRegistryId === item.registryExternalId &&
@@ -502,10 +541,18 @@ export function validateInternationalSchoolPackage(
   for (const social of packageValue.socialEvidence) {
     const path = `social-evidence.ndjson:${social.socialEvidenceId}`;
     if (!officialIdSet.has(social.institutionRegistryId)) {
-      add("UNKNOWN_SOCIAL_INSTITUTION", path, "공식 기관 집합에 없는 소셜 근거입니다.");
+      add(
+        "UNKNOWN_SOCIAL_INSTITUTION",
+        path,
+        "공식 기관 집합에 없는 소셜 근거입니다.",
+      );
     }
     if (social.excerpt !== null && social.excerpt.length > 2_000) {
-      add("SOCIAL_EXCERPT_TOO_LONG", path, "소셜 발췌문은 2,000자를 넘을 수 없습니다.");
+      add(
+        "SOCIAL_EXCERPT_TOO_LONG",
+        path,
+        "소셜 발췌문은 2,000자를 넘을 수 없습니다.",
+      );
     }
     if (social.excerpt !== null && htmlPattern.test(social.excerpt)) {
       add("SOCIAL_HTML", path, "전체 HTML을 소셜 근거로 저장할 수 없습니다.");
@@ -518,7 +565,11 @@ export function validateInternationalSchoolPackage(
         social.accessStatus === "ROBOTS_BLOCKED") &&
       social.excerpt !== null
     ) {
-      add("INACCESSIBLE_SOCIAL_EXCERPT", path, "열지 못한 글의 내용을 저장할 수 없습니다.");
+      add(
+        "INACCESSIBLE_SOCIAL_EXCERPT",
+        path,
+        "열지 못한 글의 내용을 저장할 수 없습니다.",
+      );
     }
   }
 
@@ -526,10 +577,20 @@ export function validateInternationalSchoolPackage(
     duplicates(packageValue.specialAccess.map((item) => item.recordId)).length >
     0
   ) {
-    add("DUPLICATE_SPECIAL_ACCESS_ID", "special-access.ndjson", "중복 특수접근 ID가 있습니다.");
+    add(
+      "DUPLICATE_SPECIAL_ACCESS_ID",
+      "special-access.ndjson",
+      "중복 특수접근 ID가 있습니다.",
+    );
   }
-  if (duplicates(packageValue.candidates.map((item) => item.recordId)).length > 0) {
-    add("DUPLICATE_CANDIDATE_ID", "candidates.ndjson", "중복 후보 ID가 있습니다.");
+  if (
+    duplicates(packageValue.candidates.map((item) => item.recordId)).length > 0
+  ) {
+    add(
+      "DUPLICATE_CANDIDATE_ID",
+      "candidates.ndjson",
+      "중복 후보 ID가 있습니다.",
+    );
   }
 
   const checksumsValid =
@@ -555,7 +616,11 @@ export function validateInternationalSchoolPackage(
     packageValue.verification.packageId,
   ];
   if (packageIds.some((id) => id !== packageValue.manifest.packageId)) {
-    add("PACKAGE_ID_MISMATCH", "package", "파일 사이의 packageId가 일치하지 않습니다.");
+    add(
+      "PACKAGE_ID_MISMATCH",
+      "package",
+      "파일 사이의 packageId가 일치하지 않습니다.",
+    );
   }
   if (
     packageValue.progress.counts.officialActive !== counts.officialActive ||
@@ -564,7 +629,11 @@ export function validateInternationalSchoolPackage(
     packageValue.progress.counts.importInstitutions !==
       counts.snapshotInstitutions
   ) {
-    add("PROGRESS_COUNT_MISMATCH", "progress.json", "progress 합계가 원장과 다릅니다.");
+    add(
+      "PROGRESS_COUNT_MISMATCH",
+      "progress.json",
+      "progress 합계가 원장과 다릅니다.",
+    );
   }
 
   errors.sort(

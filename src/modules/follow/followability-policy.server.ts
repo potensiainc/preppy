@@ -113,6 +113,7 @@ export async function getMonitorableInstitutionIds(
 
       select fact.institution_id
       from institution_facts fact
+      join institutions institution on institution.id = fact.institution_id
       join institution_fact_versions version
         on version.institution_fact_id = fact.id
        and version.is_current = true
@@ -120,14 +121,18 @@ export async function getMonitorableInstitutionIds(
        and version.verified_at is not null
       join institution_fact_version_evidence evidence
         on evidence.institution_fact_version_id = version.id
-       and evidence.source_observation_id is not null
-       and evidence.source_snapshot_id is not null
       join monitorable_sources source on source.id = evidence.source_id
+      where institution.category <> 'INTERNATIONAL_SCHOOL'
+         or (
+           evidence.source_observation_id is not null
+           and evidence.source_snapshot_id is not null
+         )
 
       union
 
       select opportunity.institution_id
       from opportunities opportunity
+      join institutions institution on institution.id = opportunity.institution_id
       join opportunity_versions version
         on version.opportunity_id = opportunity.id
        and version.is_current = true
@@ -135,10 +140,15 @@ export async function getMonitorableInstitutionIds(
        and version.verified_at is not null
       join opportunity_version_evidence evidence
         on evidence.opportunity_version_id = version.id
-       and evidence.source_observation_id is not null
-       and evidence.source_snapshot_id is not null
       join monitorable_sources source on source.id = evidence.source_id
       where opportunity.publication_state = 'PUBLISHED'
+        and (
+          institution.category <> 'INTERNATIONAL_SCHOOL'
+          or (
+            evidence.source_observation_id is not null
+            and evidence.source_snapshot_id is not null
+          )
+        )
     )
     select distinct covered.institution_id as "institutionId"
     from covered_institutions covered

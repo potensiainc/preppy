@@ -267,11 +267,9 @@ describe("international school public query guard", () => {
     }
   });
 
-  it("requires complete official captures for facts and English-kindergarten comparison filters", async () => {
+  it("requires complete official captures for international-school facts without changing English-kindergarten facts", async () => {
     const rejected = await createInstitution({
       name: `${prefix} rejected facts`,
-      category: "ENGLISH_KINDERGARTEN",
-      hasIsiIdentity: false,
     });
     await addFact(
       rejected.id,
@@ -298,11 +296,12 @@ describe("international school public query guard", () => {
 
     const accepted = await createInstitution({
       name: `${prefix} accepted facts`,
-      category: "ENGLISH_KINDERGARTEN",
-      hasIsiIdentity: false,
     });
     for (const [factType, value] of [
-      ["TUITION", { billingCadence: "MONTHLY", academicYearLabel: "2027", amountMin: 2 }],
+      [
+        "TUITION",
+        { billingCadence: "MONTHLY", academicYearLabel: "2027", amountMin: 2 },
+      ],
       ["TARGET_AGE_GRADE", { minAge: 4, maxAge: 7 }],
       ["TRANSPORT", { isAvailable: true }],
     ] as const) {
@@ -319,6 +318,49 @@ describe("international school public query guard", () => {
       rejected.slug,
     );
     expect(rejectedDetail.verifiedFacts).toEqual([]);
+    const acceptedDetail = await getInstitutionBySlug(
+      runtime.executor,
+      accepted.slug,
+    );
+    expect(
+      acceptedDetail.verifiedFacts.map((fact) => fact.factType).sort(),
+    ).toEqual(["TARGET_AGE_GRADE", "TRANSPORT", "TUITION"]);
+
+    const kindergarten = await createInstitution({
+      name: `${prefix} existing kindergarten facts`,
+      category: "ENGLISH_KINDERGARTEN",
+      hasIsiIdentity: false,
+    });
+    await addFact(
+      kindergarten.id,
+      "TUITION",
+      { billingCadence: "MONTHLY", academicYearLabel: "2027", amountMin: 3 },
+      await createEvidence({ captureMode: "NO_OBSERVATION" }),
+    );
+    await addFact(
+      kindergarten.id,
+      "TARGET_AGE_GRADE",
+      { minAge: 4, maxAge: 7 },
+      await createEvidence({ captureMode: "NO_SNAPSHOT" }),
+    );
+    await addFact(
+      kindergarten.id,
+      "TRANSPORT",
+      { isAvailable: true },
+      await createEvidence({
+        captureMode: "COMPLETE",
+        sourceType: "THIRD_PARTY_DISCOVERY",
+        authority: "DISCOVERY_ONLY",
+      }),
+    );
+    const kindergartenDetail = await getInstitutionBySlug(
+      runtime.executor,
+      kindergarten.slug,
+    );
+    expect(
+      kindergartenDetail.verifiedFacts.map((fact) => fact.factType).sort(),
+    ).toEqual(["TARGET_AGE_GRADE", "TRANSPORT", "TUITION"]);
+
     for (const filter of [
       { hasConfirmedTuition: true },
       { minAge: 5 },
@@ -331,12 +373,14 @@ describe("international school public query guard", () => {
         page: 1,
         pageSize: 50,
       });
-      expect(result.items.map((item) => item.id)).toEqual([accepted.id]);
+      expect(result.items.map((item) => item.id)).toEqual([kindergarten.id]);
     }
   });
 
   it("requires complete official captures before a native opportunity is public", async () => {
-    const institution = await createInstitution({ name: `${prefix} admissions` });
+    const institution = await createInstitution({
+      name: `${prefix} admissions`,
+    });
     const noObservation = await addNativeOpportunity(
       institution.id,
       await createEvidence({ captureMode: "NO_OBSERVATION" }),
@@ -352,7 +396,10 @@ describe("international school public query guard", () => {
       await createEvidence({ captureMode: "COMPLETE" }),
     );
 
-    const detail = await getInstitutionBySlug(runtime.executor, institution.slug);
+    const detail = await getInstitutionBySlug(
+      runtime.executor,
+      institution.slug,
+    );
     expect(detail.currentOpportunities.map((item) => item.id)).toEqual([
       accepted.id,
     ]);

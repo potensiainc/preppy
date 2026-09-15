@@ -77,7 +77,13 @@ describe("international-school import CLI", () => {
     );
     await expect(
       runInternationalSchoolImportCli(
-        ["--package", packageDirectory, "--apply", "--checksum", "0".repeat(64)],
+        [
+          "--package",
+          packageDirectory,
+          "--apply",
+          "--checksum",
+          "0".repeat(64),
+        ],
         { NODE_ENV: "test" },
         {},
       ),
@@ -88,7 +94,13 @@ describe("international-school import CLI", () => {
     const openRuntime = vi.fn();
     await expect(
       runInternationalSchoolImportCli(
-        ["--package", packageDirectory, "--apply", "--checksum", "0".repeat(64)],
+        [
+          "--package",
+          packageDirectory,
+          "--apply",
+          "--checksum",
+          "0".repeat(64),
+        ],
         {
           NODE_ENV: "test",
           ALLOW_PRODUCTION_INTERNATIONAL_SCHOOL_IMPORT: "1",
