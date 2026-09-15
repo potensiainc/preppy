@@ -1,0 +1,2264 @@
+{
+  "schemaVersion": 1,
+  "packageId": "sg-is-20260915-r01",
+  "targetAcademicYearLabel": "2026–27",
+  "institutions": [
+    {
+      "registryName": "ISI",
+      "registryExternalId": "ST01:1",
+      "category": "INTERNATIONAL_SCHOOL",
+      "internationalSubtype": "FOREIGN_SCHOOL",
+      "operationalState": "ACTIVE",
+      "publicationState": "DRAFT",
+      "coverages": [
+        {
+          "section": "TUITION",
+          "status": "CONFIRMED",
+          "evidenceId": "tuition-1",
+          "academicYearLabel": "2026–27",
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": "2026-09-15T03:00:00.000Z",
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "INFORMATION_SESSION",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TARGET_AGE_GRADE",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "CURRICULUM",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TRANSPORT",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "MEALS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "REVIEWS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "OPERATING_INFO",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        }
+      ],
+      "facts": [],
+      "opportunities": []
+    },
+    {
+      "registryName": "ISI",
+      "registryExternalId": "ST01:3",
+      "category": "INTERNATIONAL_SCHOOL",
+      "internationalSubtype": "FOREIGN_SCHOOL",
+      "operationalState": "ACTIVE",
+      "publicationState": "DRAFT",
+      "coverages": [
+        {
+          "section": "TUITION",
+          "status": "CONFIRMED",
+          "evidenceId": "tuition-3",
+          "academicYearLabel": "2026–27",
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": "2026-09-15T03:00:00.000Z",
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "INFORMATION_SESSION",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TARGET_AGE_GRADE",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "CURRICULUM",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TRANSPORT",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "MEALS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "REVIEWS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "OPERATING_INFO",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        }
+      ],
+      "facts": [],
+      "opportunities": []
+    },
+    {
+      "registryName": "ISI",
+      "registryExternalId": "ST01:4",
+      "category": "INTERNATIONAL_SCHOOL",
+      "internationalSubtype": "FOREIGN_SCHOOL",
+      "operationalState": "ACTIVE",
+      "publicationState": "DRAFT",
+      "coverages": [
+        {
+          "section": "TUITION",
+          "status": "CONFIRMED",
+          "evidenceId": "tuition-4",
+          "academicYearLabel": "2026–27",
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": "2026-09-15T03:00:00.000Z",
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "INFORMATION_SESSION",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TARGET_AGE_GRADE",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "CURRICULUM",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TRANSPORT",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "MEALS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "REVIEWS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "OPERATING_INFO",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        }
+      ],
+      "facts": [
+        {
+          "factType": "TUITION",
+          "value": {
+            "academicYearLabel": "2026–27",
+            "gradeBands": [
+              {
+                "label": "Kindergarten–Grade 5",
+                "tuitionComponents": [
+                  {
+                    "currency": "KRW",
+                    "amount": 23400000,
+                    "billingUnit": "ANNUAL",
+                    "required": true
+                  },
+                  {
+                    "currency": "USD",
+                    "amount": 7600,
+                    "billingUnit": "ANNUAL",
+                    "required": true
+                  }
+                ],
+                "notes": []
+              },
+              {
+                "label": "Grades 6–8",
+                "tuitionComponents": [
+                  {
+                    "currency": "KRW",
+                    "amount": 28100000,
+                    "billingUnit": "ANNUAL",
+                    "required": true
+                  },
+                  {
+                    "currency": "USD",
+                    "amount": 7900,
+                    "billingUnit": "ANNUAL",
+                    "required": true
+                  }
+                ],
+                "notes": []
+              },
+              {
+                "label": "Grades 9–12",
+                "tuitionComponents": [
+                  {
+                    "currency": "KRW",
+                    "amount": 31000000,
+                    "billingUnit": "ANNUAL",
+                    "required": true
+                  },
+                  {
+                    "currency": "USD",
+                    "amount": 8100,
+                    "billingUnit": "ANNUAL",
+                    "required": true
+                  }
+                ],
+                "notes": []
+              }
+            ],
+            "extraFees": [
+              {
+                "feeType": "APPLICATION",
+                "label": "Application processing fee",
+                "components": [
+                  {
+                    "currency": "KRW",
+                    "amount": 400000,
+                    "billingUnit": "ONE_TIME",
+                    "required": true
+                  }
+                ],
+                "refundable": false,
+                "note": null
+              },
+              {
+                "feeType": "ADMISSION",
+                "label": "Entrance fee",
+                "components": [
+                  {
+                    "currency": "KRW",
+                    "amount": 4000000,
+                    "billingUnit": "ONE_TIME",
+                    "required": true
+                  }
+                ],
+                "refundable": false,
+                "note": null
+              },
+              {
+                "feeType": "TRANSPORT",
+                "label": "Annual bus fee within Seoul",
+                "components": [
+                  {
+                    "currency": "KRW",
+                    "amount": 4000000,
+                    "billingUnit": "ANNUAL",
+                    "required": null
+                  }
+                ],
+                "refundable": null,
+                "note": "서울시 밖 35km 이내는 연 4,100,000원으로 안내돼 있어요."
+              }
+            ],
+            "paymentOptions": [
+              "KRW 학비와 버스비는 분기 납부를 선택할 수 있어요.",
+              "USD 학비와 그 밖의 비용은 첫 납부 때 전액 납부해요."
+            ],
+            "refundTerms": "USD 학비와 분기 납부액 등 공식 안내에 명시된 비용은 환불되지 않아요.",
+            "changeNote": "통화별 금액을 임의 환율로 합산하지 않았어요."
+          },
+          "displayText": "2026–27학년도 APIS 학비는 학년군별 원화와 달러 금액으로 나뉘어요.",
+          "evidenceIds": [
+            "tuition-4"
+          ],
+          "verifiedAt": "2026-09-15T03:00:00.000Z"
+        }
+      ],
+      "opportunities": []
+    },
+    {
+      "registryName": "ISI",
+      "registryExternalId": "ST01:5",
+      "category": "INTERNATIONAL_SCHOOL",
+      "internationalSubtype": "FOREIGN_SCHOOL",
+      "operationalState": "ACTIVE",
+      "publicationState": "DRAFT",
+      "coverages": [
+        {
+          "section": "TUITION",
+          "status": "CONFIRMED",
+          "evidenceId": "tuition-5",
+          "academicYearLabel": "2026–27",
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": "2026-09-15T03:00:00.000Z",
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "INFORMATION_SESSION",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TARGET_AGE_GRADE",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "CURRICULUM",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TRANSPORT",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "MEALS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "REVIEWS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "OPERATING_INFO",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        }
+      ],
+      "facts": [
+        {
+          "factType": "TUITION",
+          "value": {
+            "academicYearLabel": "2026–27",
+            "gradeBands": [
+              {
+                "label": "Kindergarten–Grade 5",
+                "tuitionComponents": [
+                  {
+                    "currency": "KRW",
+                    "amount": 27285000,
+                    "billingUnit": "ANNUAL",
+                    "required": true
+                  },
+                  {
+                    "currency": "USD",
+                    "amount": 13500,
+                    "billingUnit": "ANNUAL",
+                    "required": true
+                  }
+                ],
+                "notes": []
+              },
+              {
+                "label": "Grades 6–8",
+                "tuitionComponents": [
+                  {
+                    "currency": "KRW",
+                    "amount": 27930000,
+                    "billingUnit": "ANNUAL",
+                    "required": true
+                  },
+                  {
+                    "currency": "USD",
+                    "amount": 14625,
+                    "billingUnit": "ANNUAL",
+                    "required": true
+                  }
+                ],
+                "notes": []
+              },
+              {
+                "label": "Grades 9–12",
+                "tuitionComponents": [
+                  {
+                    "currency": "KRW",
+                    "amount": 33370000,
+                    "billingUnit": "ANNUAL",
+                    "required": true
+                  },
+                  {
+                    "currency": "USD",
+                    "amount": 14955,
+                    "billingUnit": "ANNUAL",
+                    "required": true
+                  }
+                ],
+                "notes": []
+              }
+            ],
+            "extraFees": [
+              {
+                "feeType": "APPLICATION",
+                "label": "Application fee",
+                "components": [
+                  {
+                    "currency": "KRW",
+                    "amount": 450000,
+                    "billingUnit": "ONE_TIME",
+                    "required": true
+                  }
+                ],
+                "refundable": false,
+                "note": null
+              },
+              {
+                "feeType": "TRANSPORT",
+                "label": "Annual round-trip bus fee",
+                "components": [
+                  {
+                    "currency": "KRW",
+                    "amount": 4200000,
+                    "billingUnit": "ANNUAL",
+                    "required": null
+                  }
+                ],
+                "refundable": null,
+                "note": "좌석은 보장되지 않으며 학교 확인이 필요해요."
+              }
+            ],
+            "paymentOptions": [],
+            "refundTerms": null,
+            "changeNote": "통화별 금액을 임의 환율로 합산하지 않았어요."
+          },
+          "displayText": "2026–27학년도 SFS 학비는 학년군별 원화와 달러 금액으로 나뉘어요.",
+          "evidenceIds": [
+            "tuition-5"
+          ],
+          "verifiedAt": "2026-09-15T03:00:00.000Z"
+        }
+      ],
+      "opportunities": [
+        {
+          "slug": "seoul-foreign-school-2026-27-application",
+          "title": "서울외국인학교 2026–27학년도 지원 안내",
+          "kind": "APPLICATION",
+          "businessState": "OPEN",
+          "eventStartsAt": null,
+          "applicationClosesAt": null,
+          "actionUrl": "https://www.seoulforeign.org/admissions/apply",
+          "evidenceIds": [
+            "sfs-application-2026-27"
+          ],
+          "verifiedAt": "2026-09-15T03:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "registryName": "ISI",
+      "registryExternalId": "ST01:6",
+      "category": "INTERNATIONAL_SCHOOL",
+      "internationalSubtype": "FOREIGN_SCHOOL",
+      "operationalState": "ACTIVE",
+      "publicationState": "DRAFT",
+      "coverages": [
+        {
+          "section": "TUITION",
+          "status": "CONFIRMED",
+          "evidenceId": "tuition-6",
+          "academicYearLabel": "2026–27",
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": "2026-09-15T03:00:00.000Z",
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "INFORMATION_SESSION",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TARGET_AGE_GRADE",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "CURRICULUM",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TRANSPORT",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "MEALS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "REVIEWS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "OPERATING_INFO",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        }
+      ],
+      "facts": [],
+      "opportunities": []
+    },
+    {
+      "registryName": "ISI",
+      "registryExternalId": "ST01:10",
+      "category": "INTERNATIONAL_SCHOOL",
+      "internationalSubtype": "FOREIGN_SCHOOL",
+      "operationalState": "ACTIVE",
+      "publicationState": "DRAFT",
+      "coverages": [
+        {
+          "section": "TUITION",
+          "status": "CHECKED_NOT_FOUND",
+          "evidenceId": "yiss-tuition-not-found",
+          "academicYearLabel": "2026–27",
+          "publicNote": "확인한 학교 공식 안내에서 학비 정보를 찾지 못했어요.",
+          "internalNote": "미발표로 해석하지 않아요.",
+          "lastCollectedAt": "2026-09-15T03:00:00.000Z",
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "INFORMATION_SESSION",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TARGET_AGE_GRADE",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "CURRICULUM",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TRANSPORT",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "MEALS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "REVIEWS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "OPERATING_INFO",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        }
+      ],
+      "facts": [],
+      "opportunities": []
+    },
+    {
+      "registryName": "ISI",
+      "registryExternalId": "ST01:13",
+      "category": "INTERNATIONAL_SCHOOL",
+      "internationalSubtype": "FOREIGN_SCHOOL",
+      "operationalState": "ACTIVE",
+      "publicationState": "DRAFT",
+      "coverages": [
+        {
+          "section": "TUITION",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "INFORMATION_SESSION",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TARGET_AGE_GRADE",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "CURRICULUM",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TRANSPORT",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "MEALS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "REVIEWS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "OPERATING_INFO",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        }
+      ],
+      "facts": [],
+      "opportunities": []
+    },
+    {
+      "registryName": "ISI",
+      "registryExternalId": "ST01:14",
+      "category": "INTERNATIONAL_SCHOOL",
+      "internationalSubtype": "FOREIGN_SCHOOL",
+      "operationalState": "ACTIVE",
+      "publicationState": "DRAFT",
+      "coverages": [
+        {
+          "section": "TUITION",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "INFORMATION_SESSION",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TARGET_AGE_GRADE",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "CURRICULUM",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TRANSPORT",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "MEALS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "REVIEWS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "OPERATING_INFO",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        }
+      ],
+      "facts": [],
+      "opportunities": []
+    },
+    {
+      "registryName": "ISI",
+      "registryExternalId": "ST01:15",
+      "category": "INTERNATIONAL_SCHOOL",
+      "internationalSubtype": "FOREIGN_SCHOOL",
+      "operationalState": "ACTIVE",
+      "publicationState": "DRAFT",
+      "coverages": [
+        {
+          "section": "TUITION",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "INFORMATION_SESSION",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TARGET_AGE_GRADE",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "CURRICULUM",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TRANSPORT",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "MEALS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "REVIEWS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "OPERATING_INFO",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        }
+      ],
+      "facts": [],
+      "opportunities": []
+    },
+    {
+      "registryName": "ISI",
+      "registryExternalId": "ST01:16",
+      "category": "INTERNATIONAL_SCHOOL",
+      "internationalSubtype": "FOREIGN_SCHOOL",
+      "operationalState": "ACTIVE",
+      "publicationState": "DRAFT",
+      "coverages": [
+        {
+          "section": "TUITION",
+          "status": "CONFIRMED",
+          "evidenceId": "tuition-16",
+          "academicYearLabel": "2026–27",
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": "2026-09-15T03:00:00.000Z",
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "INFORMATION_SESSION",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TARGET_AGE_GRADE",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "CURRICULUM",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TRANSPORT",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "MEALS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "REVIEWS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "OPERATING_INFO",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        }
+      ],
+      "facts": [],
+      "opportunities": []
+    },
+    {
+      "registryName": "ISI",
+      "registryExternalId": "ST01:17",
+      "category": "INTERNATIONAL_SCHOOL",
+      "internationalSubtype": "FOREIGN_SCHOOL",
+      "operationalState": "ACTIVE",
+      "publicationState": "DRAFT",
+      "coverages": [
+        {
+          "section": "TUITION",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "INFORMATION_SESSION",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TARGET_AGE_GRADE",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "CURRICULUM",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TRANSPORT",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "MEALS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "REVIEWS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "OPERATING_INFO",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        }
+      ],
+      "facts": [],
+      "opportunities": []
+    },
+    {
+      "registryName": "ISI",
+      "registryExternalId": "ST01:18",
+      "category": "INTERNATIONAL_SCHOOL",
+      "internationalSubtype": "FOREIGN_SCHOOL",
+      "operationalState": "ACTIVE",
+      "publicationState": "DRAFT",
+      "coverages": [
+        {
+          "section": "TUITION",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "INFORMATION_SESSION",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TARGET_AGE_GRADE",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "CURRICULUM",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TRANSPORT",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "MEALS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "REVIEWS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "OPERATING_INFO",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        }
+      ],
+      "facts": [],
+      "opportunities": []
+    },
+    {
+      "registryName": "ISI",
+      "registryExternalId": "ST01:19",
+      "category": "INTERNATIONAL_SCHOOL",
+      "internationalSubtype": "FOREIGN_SCHOOL",
+      "operationalState": "ACTIVE",
+      "publicationState": "DRAFT",
+      "coverages": [
+        {
+          "section": "TUITION",
+          "status": "CONFIRMED",
+          "evidenceId": "tuition-19",
+          "academicYearLabel": "2026–27",
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": "2026-09-15T03:00:00.000Z",
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "INFORMATION_SESSION",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TARGET_AGE_GRADE",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "CURRICULUM",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TRANSPORT",
+          "status": "NEEDS_REVIEW",
+          "evidenceId": "dssi-transport-year-conflict",
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": "영문·독문 통학비 학년도 표기를 확인해야 해요.",
+          "lastCollectedAt": "2026-09-15T03:00:00.000Z",
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "MEALS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "REVIEWS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "OPERATING_INFO",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        }
+      ],
+      "facts": [],
+      "opportunities": []
+    },
+    {
+      "registryName": "ISI",
+      "registryExternalId": "ST01:20",
+      "category": "INTERNATIONAL_SCHOOL",
+      "internationalSubtype": "FOREIGN_SCHOOL",
+      "operationalState": "ACTIVE",
+      "publicationState": "DRAFT",
+      "coverages": [
+        {
+          "section": "TUITION",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "INFORMATION_SESSION",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TARGET_AGE_GRADE",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "CURRICULUM",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TRANSPORT",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "MEALS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "REVIEWS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "OPERATING_INFO",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        }
+      ],
+      "facts": [],
+      "opportunities": []
+    },
+    {
+      "registryName": "ISI",
+      "registryExternalId": "ST01:32",
+      "category": "INTERNATIONAL_SCHOOL",
+      "internationalSubtype": "FOREIGN_SCHOOL",
+      "operationalState": "ACTIVE",
+      "publicationState": "DRAFT",
+      "coverages": [
+        {
+          "section": "TUITION",
+          "status": "CONFIRMED",
+          "evidenceId": "tuition-32",
+          "academicYearLabel": "2026–27",
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": "2026-09-15T03:00:00.000Z",
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "INFORMATION_SESSION",
+          "status": "NEEDS_REVIEW",
+          "evidenceId": "kis-pangyo-open-house-page",
+          "academicYearLabel": "2026–27",
+          "publicNote": "학교 안내에 적힌 시간이 서로 달라요. 정확한 시간은 학교에 확인해 주세요.",
+          "internalNote": "오전 9시와 오전 10시가 충돌해 행사 레코드를 만들지 않아요.",
+          "lastCollectedAt": "2026-09-15T03:00:00.000Z",
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TARGET_AGE_GRADE",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "CURRICULUM",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TRANSPORT",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "MEALS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "REVIEWS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "OPERATING_INFO",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        }
+      ],
+      "facts": [],
+      "opportunities": []
+    },
+    {
+      "registryName": "ISI",
+      "registryExternalId": "ST01:33",
+      "category": "INTERNATIONAL_SCHOOL",
+      "internationalSubtype": "FOREIGN_SCHOOL",
+      "operationalState": "ACTIVE",
+      "publicationState": "DRAFT",
+      "coverages": [
+        {
+          "section": "TUITION",
+          "status": "CONFIRMED",
+          "evidenceId": "tuition-33",
+          "academicYearLabel": "2026–27",
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": "2026-09-15T03:00:00.000Z",
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "INFORMATION_SESSION",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TARGET_AGE_GRADE",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "CURRICULUM",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TRANSPORT",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "MEALS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "REVIEWS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "OPERATING_INFO",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        }
+      ],
+      "facts": [],
+      "opportunities": []
+    },
+    {
+      "registryName": "ISI",
+      "registryExternalId": "ST01:34",
+      "category": "INTERNATIONAL_SCHOOL",
+      "internationalSubtype": "FOREIGN_SCHOOL",
+      "operationalState": "ACTIVE",
+      "publicationState": "DRAFT",
+      "coverages": [
+        {
+          "section": "TUITION",
+          "status": "CONFIRMED",
+          "evidenceId": "tuition-34",
+          "academicYearLabel": "2026–27",
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": "2026-09-15T03:00:00.000Z",
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "INFORMATION_SESSION",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TARGET_AGE_GRADE",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "CURRICULUM",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TRANSPORT",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "MEALS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "REVIEWS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "OPERATING_INFO",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        }
+      ],
+      "facts": [],
+      "opportunities": []
+    },
+    {
+      "registryName": "ISI",
+      "registryExternalId": "ST01:36",
+      "category": "INTERNATIONAL_SCHOOL",
+      "internationalSubtype": "FOREIGN_SCHOOL",
+      "operationalState": "ACTIVE",
+      "publicationState": "DRAFT",
+      "coverages": [
+        {
+          "section": "TUITION",
+          "status": "CONFIRMED",
+          "evidenceId": "tuition-36",
+          "academicYearLabel": "2026–27",
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": "2026-09-15T03:00:00.000Z",
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "INFORMATION_SESSION",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TARGET_AGE_GRADE",
+          "status": "NEEDS_REVIEW",
+          "evidenceId": "icsu-grade-range-conflict",
+          "academicYearLabel": "2026–27",
+          "publicNote": null,
+          "internalNote": "G4–12와 G5–12 표기를 확인해야 해요.",
+          "lastCollectedAt": "2026-09-15T03:00:00.000Z",
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "CURRICULUM",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TRANSPORT",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "MEALS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "REVIEWS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "OPERATING_INFO",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        }
+      ],
+      "facts": [],
+      "opportunities": []
+    },
+    {
+      "registryName": "ISI",
+      "registryExternalId": "ST01:38",
+      "category": "INTERNATIONAL_SCHOOL",
+      "internationalSubtype": "FOREIGN_SCHOOL",
+      "operationalState": "ACTIVE",
+      "publicationState": "DRAFT",
+      "coverages": [
+        {
+          "section": "TUITION",
+          "status": "ACCESS_FAILED",
+          "evidenceId": "suwon-chinese-tuition-access-failed",
+          "academicYearLabel": "2026–27",
+          "publicNote": "학교 페이지를 불러오지 못해 학비를 확인하지 못했어요.",
+          "internalNote": null,
+          "lastCollectedAt": "2026-09-15T03:00:00.000Z",
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "INFORMATION_SESSION",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TARGET_AGE_GRADE",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "CURRICULUM",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TRANSPORT",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "MEALS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "REVIEWS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "OPERATING_INFO",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        }
+      ],
+      "facts": [],
+      "opportunities": []
+    },
+    {
+      "registryName": "ISI",
+      "registryExternalId": "ST01:56",
+      "category": "INTERNATIONAL_SCHOOL",
+      "internationalSubtype": "FOREIGN_SCHOOL",
+      "operationalState": "ACTIVE",
+      "publicationState": "DRAFT",
+      "coverages": [
+        {
+          "section": "TUITION",
+          "status": "CONFIRMED",
+          "evidenceId": "tuition-56",
+          "academicYearLabel": "2026–27",
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": "2026-09-15T03:00:00.000Z",
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "INFORMATION_SESSION",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TARGET_AGE_GRADE",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "CURRICULUM",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TRANSPORT",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "MEALS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "REVIEWS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "OPERATING_INFO",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        }
+      ],
+      "facts": [],
+      "opportunities": []
+    },
+    {
+      "registryName": "ISI",
+      "registryExternalId": "ST01:57",
+      "category": "INTERNATIONAL_SCHOOL",
+      "internationalSubtype": "FOREIGN_SCHOOL",
+      "operationalState": "ACTIVE",
+      "publicationState": "DRAFT",
+      "coverages": [
+        {
+          "section": "TUITION",
+          "status": "NEEDS_REVIEW",
+          "evidenceId": "icsp-tuition-date-limited",
+          "academicYearLabel": "2025–26",
+          "publicNote": "이 정보는 2025–26학년도 안내예요. 2026–27학년도에는 달라질 수 있어요.",
+          "internalNote": "현재 학년도 사실로 승격하지 않아요.",
+          "lastCollectedAt": "2026-09-15T03:00:00.000Z",
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "INFORMATION_SESSION",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TARGET_AGE_GRADE",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "CURRICULUM",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TRANSPORT",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "MEALS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "REVIEWS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "OPERATING_INFO",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        }
+      ],
+      "facts": [],
+      "opportunities": []
+    },
+    {
+      "registryName": "ISI",
+      "registryExternalId": "ST01:76",
+      "category": "INTERNATIONAL_SCHOOL",
+      "internationalSubtype": "FOREIGN_SCHOOL",
+      "operationalState": "ACTIVE",
+      "publicationState": "DRAFT",
+      "coverages": [
+        {
+          "section": "TUITION",
+          "status": "CONFIRMED",
+          "evidenceId": "tuition-76",
+          "academicYearLabel": "2026–27",
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": "2026-09-15T03:00:00.000Z",
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "INFORMATION_SESSION",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TARGET_AGE_GRADE",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "CURRICULUM",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "TRANSPORT",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "MEALS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "REVIEWS",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        },
+        {
+          "section": "OPERATING_INFO",
+          "status": "NOT_RESEARCHED",
+          "evidenceId": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null,
+          "lastCollectedAt": null,
+          "lastCheckedAt": "2026-09-15T03:00:00.000Z"
+        }
+      ],
+      "facts": [],
+      "opportunities": []
+    }
+  ]
+}
