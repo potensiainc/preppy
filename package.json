@@ -30,6 +30,7 @@
     "data:import-institution-seed": "tsx --tsconfig scripts/db/tsconfig.json scripts/data/import-institution-seed.ts",
     "data:import-english-kindergarten-mvp": "tsx --tsconfig scripts/db/tsconfig.json scripts/data/import-english-kindergarten-mvp.ts",
     "data:import-international-school-mvp": "tsx --tsconfig scripts/db/tsconfig.json scripts/data/import-international-school-mvp.ts",
+    "data:audit-international-school-mvp": "tsx --tsconfig scripts/db/tsconfig.json scripts/data/audit-international-school-production.ts",
     "data:audit-english-kindergarten-mvp": "tsx --tsconfig scripts/db/tsconfig.json scripts/data/audit-english-kindergarten-production.ts",
     "collector:http": "tsx --tsconfig scripts/db/tsconfig.json scripts/data/collect-official-main-http.ts",
     "data:live-admissions:5": "tsx --tsconfig scripts/db/tsconfig.json scripts/data/run-five-school-live-admissions.ts",

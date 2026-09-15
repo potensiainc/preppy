@@ -18,6 +18,13 @@ describe("WP-15A production connection gate", () => {
   const admin = postgres(databaseUrl, { max: 1 });
 
   beforeAll(async () => {
+    await admin`select pg_advisory_lock(hashtext('production-readonly-role-ddl-tests'))`;
+    const [existingRole] = await admin<{ exists: boolean }[]>`
+      select exists(select 1 from pg_roles where rolname=${readOnlyRole}) as exists
+    `;
+    if (existingRole?.exists) {
+      await admin.unsafe(`drop owned by ${readOnlyRole}`);
+    }
     await admin.unsafe(`drop role if exists ${readOnlyRole}`);
     await admin.unsafe(
       `create role ${readOnlyRole} login password '${readOnlyPassword}'`,
@@ -41,6 +48,7 @@ describe("WP-15A production connection gate", () => {
   afterAll(async () => {
     await admin.unsafe(`drop owned by ${readOnlyRole}`);
     await admin.unsafe(`drop role if exists ${readOnlyRole}`);
+    await admin`select pg_advisory_unlock(hashtext('production-readonly-role-ddl-tests'))`;
     await admin.end({ timeout: 5 });
   });
 
@@ -73,6 +81,15 @@ describe("WP-15A production connection gate", () => {
       "REPEATABLE_READ_READ_ONLY",
     );
     expect(result.relations).toContain("institutions");
+    expect(result.relations).toEqual(
+      expect.arrayContaining([
+        "institution_registry_identities",
+        "institution_section_coverages",
+        "institution_review_insights",
+        "institution_review_insight_versions",
+        "institution_review_insight_version_evidence",
+      ]),
+    );
   });
 
   it("assembles a PII-safe machine report without production mutation paths", async () => {

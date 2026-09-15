@@ -6,6 +6,7 @@ import { describe, expect, it } from "vitest";
 import {
   assertReadOnlySessionSettings,
   isReadOnlySqlText,
+  PREFLIGHT_TABLES,
   UnsafeProductionConnectionError,
 } from "@/src/modules/production-preflight/read-only-database.server";
 
@@ -48,6 +49,18 @@ describe("WP-15A production read-only boundary", () => {
     ]) {
       expect(isReadOnlySqlText(query)).toBe(false);
     }
+  });
+
+  it("allowlists every international-school import relation needed by the production audit", () => {
+    expect(PREFLIGHT_TABLES).toEqual(
+      expect.arrayContaining([
+        "institution_registry_identities",
+        "institution_section_coverages",
+        "institution_review_insights",
+        "institution_review_insight_versions",
+        "institution_review_insight_version_evidence",
+      ]),
+    );
   });
 
   it("contains no production mutation, worker, migration, or apply-backfill imports", async () => {
