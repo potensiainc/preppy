@@ -5,6 +5,7 @@
 !next.config.ts
 !next-env.d.ts
 !tsconfig.json
+!proxy.ts
 !app/
 !app/**
 !src/

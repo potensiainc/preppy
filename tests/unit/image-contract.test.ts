@@ -20,6 +20,7 @@ describe("release image contract", () => {
     roots.push(root);
     for (const file of [
       "package.json",
+      "proxy.ts",
       ".next/BUILD_ID",
       "node_modules/.bin/tsx",
       "scripts/worker.ts",
@@ -87,5 +88,11 @@ describe("release image contract", () => {
     const root = await imageRoot();
     await rm(join(root, "node_modules", ".bin", "tsx"));
     await expect(assertRuntimeImageContract(root)).rejects.toThrow(/tsx/);
+  });
+
+  it("rejects an image without the staging indexing proxy", async () => {
+    const root = await imageRoot();
+    await rm(join(root, "proxy.ts"));
+    await expect(assertRuntimeImageContract(root)).rejects.toThrow(/proxy\.ts/);
   });
 });

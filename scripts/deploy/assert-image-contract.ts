@@ -4,6 +4,7 @@ import { pathToFileURL } from "node:url";
 
 const requiredPaths = [
   "package.json",
+  "proxy.ts",
   ".next/BUILD_ID",
   "node_modules/.bin/tsx",
   "scripts/worker.ts",

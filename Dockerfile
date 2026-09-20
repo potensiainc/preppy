@@ -11,6 +11,7 @@ COPY package.json package-lock.json ./
 RUN npm ci --no-audit --no-fund
 
 COPY next.config.ts next-env.d.ts tsconfig.json ./
+COPY proxy.ts ./
 COPY app ./app
 COPY src ./src
 COPY scripts ./scripts
