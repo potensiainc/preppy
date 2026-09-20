@@ -2,6 +2,8 @@ import type { MetadataRoute } from "next";
 
 import { getSeoAppBaseUrl } from "@/src/modules/public/seo";
 
+export const dynamic = "force-dynamic";
+
 export default function robots(
   environment: Record<string, string | undefined> = process.env,
 ): MetadataRoute.Robots {
