@@ -501,6 +501,7 @@ async function ensureOpportunityEvidence(
     versionId: string;
     provenance: Provenance;
     now: Date;
+    supporting?: boolean;
   }>,
   counts: MutableCreatedCounts,
 ): Promise<void> {
@@ -511,7 +512,7 @@ async function ensureOpportunityEvidence(
     ) values (
       ${input.versionId}, ${input.provenance.sourceId},
       ${input.provenance.observationId === null ? null : BigInt(input.provenance.observationId)},
-      ${input.provenance.snapshotId}, 'PRIMARY', ${databaseTime(input.now)}
+      ${input.provenance.snapshotId}, ${input.supporting ? "SUPPORTING" : "PRIMARY"}, ${databaseTime(input.now)}
     )
     on conflict (
       opportunity_version_id, source_id, source_observation_id,
@@ -662,7 +663,7 @@ async function persistAdmission(
     );
     await ensureOpportunityEvidence(
       executor,
-      { versionId, provenance, now: input.now },
+      { versionId, provenance, now: input.now, supporting: true },
       counts,
     );
   }

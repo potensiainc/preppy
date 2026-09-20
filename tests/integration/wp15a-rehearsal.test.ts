@@ -44,7 +44,7 @@ describe("WP-15A full non-production rehearsal", () => {
 
     expect(result.stages?.baseline.appliedMigrations).toBe(0);
     expect(result.report.migrations.latestApplied).toBe(
-      "0013_english_kindergarten_profiles",
+      "0016_english_kindergarten_profiles",
     );
     expect(result.stages?.productSignalsUnchanged).toBe(true);
     expect(result.stages?.secondPass).toMatchObject({
@@ -210,7 +210,7 @@ describe("WP-15A full non-production rehearsal", () => {
       now,
     });
 
-    expect(result.stages?.baseline.appliedMigrations).toBe(14);
+    expect(result.stages?.baseline.appliedMigrations).toBe(17);
     expect(result.stages?.firstPass).toMatchObject({
       institution: { created: 1, linked: 1 },
       opportunity: { created: 1, linked: 1 },

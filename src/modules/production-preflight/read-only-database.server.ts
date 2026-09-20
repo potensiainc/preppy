@@ -125,6 +125,16 @@ export type BridgeIntegrityCounts = {
   multipleOpportunityPrimary: number;
 };
 
+export type CurrentSourceBindingIntegrityCounts = {
+  currentVerifiedEvidence: number;
+  missingActiveBinding: number;
+  bindingRoleMismatch: number;
+  orphanEvidenceSource: number;
+  observationSourceMismatch: number;
+  snapshotSourceMismatch: number;
+  duplicateActivePrimary: number;
+};
+
 export type IdentityIntegrityCounts = {
   duplicateAuthIdentity: number;
   duplicateUserEmail: number;
@@ -420,6 +430,61 @@ export class ReadOnlyPreflightSession {
         ) conflicts) as "multipleOpportunityPrimary"
     `;
     if (!row) throw new Error("Bridge integrity aggregate is unavailable.");
+    return row;
+  }
+
+  async getCurrentSourceBindingIntegrityCounts(): Promise<CurrentSourceBindingIntegrityCounts> {
+    const [row] = await this.sql<CurrentSourceBindingIntegrityCounts[]>`
+      with current_evidence as (
+        select o.id as opportunity_id, e.source_id,
+          e.evidence_role, e.source_observation_id, e.source_snapshot_id
+        from opportunities o
+        join opportunity_versions v on v.opportunity_id = o.id
+        join opportunity_version_evidence e on e.opportunity_version_id = v.id
+        where o.truth_mode = 'NATIVE' and v.truth_mode = 'NATIVE'
+          and v.is_current and v.verification_state = 'VERIFIED'
+      )
+      select
+        (select count(*)::int from current_evidence) as "currentVerifiedEvidence",
+        (select count(*)::int from current_evidence e
+          where not exists (
+            select 1 from opportunity_source_bindings b
+            where b.opportunity_id=e.opportunity_id
+              and b.source_id=e.source_id and b.is_active
+          )) as "missingActiveBinding",
+        (select count(*)::int from current_evidence e
+          where exists (
+            select 1 from opportunity_source_bindings b
+            where b.opportunity_id=e.opportunity_id
+              and b.source_id=e.source_id and b.is_active
+          ) and not exists (
+            select 1 from opportunity_source_bindings b
+            where b.opportunity_id=e.opportunity_id
+              and b.source_id=e.source_id and b.is_active
+              and ((b.role='SUPPORTING' and upper(e.evidence_role)='SUPPORTING')
+                or (b.role<>'SUPPORTING' and upper(e.evidence_role)='PRIMARY'))
+          )) as "bindingRoleMismatch",
+        (select count(*)::int from current_evidence e
+          left join sources s on s.id=e.source_id
+          where s.id is null) as "orphanEvidenceSource",
+        (select count(*)::int from current_evidence e
+          left join source_observations observation
+            on observation.id=e.source_observation_id
+          where e.source_observation_id is not null
+            and (observation.id is null or observation.source_id<>e.source_id))
+          as "observationSourceMismatch",
+        (select count(*)::int from current_evidence e
+          left join source_snapshots snapshot on snapshot.id=e.source_snapshot_id
+          where e.source_snapshot_id is not null
+            and (snapshot.id is null or snapshot.source_id<>e.source_id))
+          as "snapshotSourceMismatch",
+        (select count(*)::int from (
+          select opportunity_id, role from opportunity_source_bindings
+          where is_active and is_primary
+          group by opportunity_id, role having count(*)>1
+        ) duplicates) as "duplicateActivePrimary"
+    `;
+    if (!row) throw new Error("Current Source binding audit is unavailable.");
     return row;
   }
 

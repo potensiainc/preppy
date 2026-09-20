@@ -88,6 +88,14 @@ export const schools = pgTable(
       table.lifecycleStatus,
       table.isPublic,
     ),
+    index("schools_normalized_canonical_name_trgm_idx").using(
+      "gin",
+      sql`(regexp_replace(lower(coalesce(${table.canonicalName}, '')), '[^0-9a-z가-힣]+', '', 'g')) gin_trgm_ops`,
+    ),
+    index("schools_normalized_name_en_trgm_idx").using(
+      "gin",
+      sql`(regexp_replace(lower(coalesce(${table.nameEn}, '')), '[^0-9a-z가-힣]+', '', 'g')) gin_trgm_ops`,
+    ),
     check(
       "schools_school_type_check",
       sql`${table.schoolType} in ('PRIVATE_ELEMENTARY', 'INTERNATIONAL_SCHOOL', 'FOREIGN_SCHOOL')`,
@@ -117,6 +125,22 @@ export const schoolAliases = pgTable(
       table.normalizedAlias,
     ),
     index("school_aliases_normalized_idx").on(table.normalizedAlias),
+    index("school_aliases_normalized_alias_value_trgm_idx")
+      .using(
+        "gin",
+        sql`(regexp_replace(lower(coalesce(${table.alias}, '')), '[^0-9a-z가-힣]+', '', 'g')) gin_trgm_ops`,
+      )
+      .where(
+        sql`${table.aliasType} in ('KOREAN', 'ENGLISH', 'ABBREVIATION', 'FORMER_NAME', 'COMMON_NAME')`,
+      ),
+    index("school_aliases_normalized_normalized_alias_trgm_idx")
+      .using(
+        "gin",
+        sql`(regexp_replace(lower(coalesce(${table.normalizedAlias}, '')), '[^0-9a-z가-힣]+', '', 'g')) gin_trgm_ops`,
+      )
+      .where(
+        sql`${table.aliasType} in ('KOREAN', 'ENGLISH', 'ABBREVIATION', 'FORMER_NAME', 'COMMON_NAME')`,
+      ),
     check(
       "school_aliases_alias_type_check",
       sql`${table.aliasType} in ('KOREAN', 'ENGLISH', 'ABBREVIATION', 'FORMER_NAME', 'COMMON_NAME', 'OTHER')`,
@@ -1336,6 +1360,14 @@ export const institutions = pgTable(
       table.district,
     ),
     index("institutions_display_name_idx").on(table.displayName),
+    index("institutions_normalized_display_name_trgm_idx").using(
+      "gin",
+      sql`(regexp_replace(lower(coalesce(${table.displayName}, '')), '[^0-9a-z가-힣]+', '', 'g')) gin_trgm_ops`,
+    ),
+    index("institutions_normalized_slug_trgm_idx").using(
+      "gin",
+      sql`(regexp_replace(lower(coalesce(${table.slug}, '')), '[^0-9a-z가-힣]+', '', 'g')) gin_trgm_ops`,
+    ),
     check(
       "institutions_category_check",
       sql`${table.category} in ('ENGLISH_KINDERGARTEN', 'PRIVATE_ELEMENTARY', 'INTERNATIONAL_SCHOOL')`,
@@ -1391,6 +1423,10 @@ export const institutionRegistryIdentities = pgTable(
     ),
     index("institution_registry_identities_institution_idx").on(
       table.institutionId,
+    ),
+    index("institution_registry_identities_normalized_name_en_trgm_idx").using(
+      "gin",
+      sql`(regexp_replace(lower(coalesce(${table.metadataJson} ->> 'canonical_name_en', '')), '[^0-9a-z가-힣]+', '', 'g')) gin_trgm_ops`,
     ),
     check(
       "institution_registry_identities_registry_name_check",
@@ -1581,6 +1617,84 @@ export const opportunities = pgTable(
     check(
       "opportunities_publication_state_check",
       sql`${table.publicationState} in ('DRAFT', 'PUBLISHED', 'HIDDEN', 'ARCHIVED')`,
+    ),
+  ],
+);
+
+/**
+ * An explicit public grouping for repeated sessions of one admission event.
+ * Membership is never inferred from titles or slugs at read time.
+ */
+export const opportunitySeries = pgTable(
+  "opportunity_series",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    institutionId: uuid("institution_id")
+      .notNull()
+      .references(() => institutions.id, { onDelete: "restrict" }),
+    slug: text("slug").notNull(),
+    title: text("title").notNull(),
+    kind: text("kind").$type<OpportunityKind>().notNull(),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (table) => [
+    uniqueIndex("opportunity_series_slug_unique").on(table.slug),
+    unique("opportunity_series_id_institution_unique").on(
+      table.id,
+      table.institutionId,
+    ),
+    index("opportunity_series_institution_kind_idx").on(
+      table.institutionId,
+      table.kind,
+    ),
+    check(
+      "opportunity_series_slug_format_check",
+      sql`${table.slug} ~ '^[a-z0-9]+(?:-[a-z0-9]+)*$'`,
+    ),
+    check(
+      "opportunity_series_title_check",
+      sql`length(btrim(${table.title})) > 0`,
+    ),
+    check(
+      "opportunity_series_kind_check",
+      sql`${table.kind} in ('RECRUITMENT', 'ADDITIONAL_RECRUITMENT', 'INFORMATION_SESSION', 'CONSULTATION', 'LEVEL_TEST', 'OPEN_HOUSE', 'APPLICATION', 'DOCUMENT_SUBMISSION', 'ASSESSMENT', 'INTERVIEW', 'LOTTERY', 'RESULT_ANNOUNCEMENT', 'REGISTRATION', 'DEADLINE', 'OTHER')`,
+    ),
+  ],
+);
+
+export const opportunitySeriesMembers = pgTable(
+  "opportunity_series_members",
+  {
+    opportunityId: uuid("opportunity_id").notNull(),
+    seriesId: uuid("series_id").notNull(),
+    institutionId: uuid("institution_id").notNull(),
+    sessionNumber: smallint("session_number").notNull(),
+    createdAt: createdAt(),
+  },
+  (table) => [
+    primaryKey({
+      columns: [table.opportunityId],
+      name: "opportunity_series_members_pkey",
+    }),
+    uniqueIndex("opportunity_series_members_number_unique").on(
+      table.seriesId,
+      table.sessionNumber,
+    ),
+    index("opportunity_series_members_series_idx").on(table.seriesId),
+    foreignKey({
+      name: "opportunity_series_members_opportunity_institution_fk",
+      columns: [table.opportunityId, table.institutionId],
+      foreignColumns: [opportunities.id, opportunities.institutionId],
+    }).onDelete("restrict"),
+    foreignKey({
+      name: "opportunity_series_members_series_institution_fk",
+      columns: [table.seriesId, table.institutionId],
+      foreignColumns: [opportunitySeries.id, opportunitySeries.institutionId],
+    }).onDelete("restrict"),
+    check(
+      "opportunity_series_members_session_number_check",
+      sql`${table.sessionNumber} > 0`,
     ),
   ],
 );

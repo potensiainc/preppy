@@ -14,7 +14,7 @@ export const EXPECTED_REPOSITORY_MIGRATIONS = [
   },
   {
     identifier: "0002_spicy_starbolt",
-    hash: "c8ca302801557941071fe2aed8e4775faa79a6e5d5ba7650084efb6cfbb44d2a",
+    hash: "62f762b168a5cd9c9363d9e552d3420108ae634115562d966f5d208f00fad032",
   },
   {
     identifier: "0003_stormy_mach_iv",
@@ -42,11 +42,11 @@ export const EXPECTED_REPOSITORY_MIGRATIONS = [
   },
   {
     identifier: "0009_exotic_nico_minoru",
-    hash: "769709600cfe1722157691cfad229e1afe54505d79e1027270470a7505368c56",
+    hash: "08788938053c03ae3d659f4e4eb8df6d9f0559ffdb621a9dbdd42717c3260032",
   },
   {
     identifier: "0010_colorful_randall_flagg",
-    hash: "13e8eba61bda25617411b760bb270d9ed1d800be06c91423412de2debd7c9248",
+    hash: "b2b24cfdf2fc655fdcbdc2ecb2212616dd3e709ff30cbb6b26f83feac870e901",
   },
   {
     identifier: "0011_preppy_seed_registry",
@@ -57,7 +57,19 @@ export const EXPECTED_REPOSITORY_MIGRATIONS = [
     hash: "86763907ea81b534fb3fbfd9e7af09a1f8f65e1b7314fbf1f105215f0cf674cd",
   },
   {
-    identifier: "0013_english_kindergarten_profiles",
+    identifier: "0013_normalized_institution_search",
+    hash: "1a5bfaee5532b0115d08f8b1e403a18d8400d19dfcc246248298459fd88d5b31",
+  },
+  {
+    identifier: "0014_aspiring_deathbird",
+    hash: "53aed2c43c6711ce4144c36208bb90af888b59299888ff89898dcb7053088c88",
+  },
+  {
+    identifier: "0015_smart_king_bedlam",
+    hash: "6cb7c289cc9428aebdffde1238e1b7c4a771073de1a974a1c38f17bc6f997e5a",
+  },
+  {
+    identifier: "0016_english_kindergarten_profiles",
     hash: "d1c9c1b17e71c813db4dccedbf0054051df6895fb68c2d78d3bcc4ac4c70d47c",
   },
 ] as const satisfies readonly RepositoryMigration[];

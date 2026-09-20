@@ -101,9 +101,7 @@ beforeAll(async () => {
   await admin.unsafe(
     `alter role ${readOnlyRole} set default_transaction_read_only = on`,
   );
-  await admin.unsafe(
-    `grant connect on database admissionradar_test to ${readOnlyRole}`,
-  );
+  await admin`grant connect on database ${admin(new URL(databaseUrl!).pathname.slice(1))} to ${admin(readOnlyRole)}`;
   await admin.unsafe(`grant usage on schema public to ${readOnlyRole}`);
   await admin.unsafe(
     `grant select on all tables in schema public to ${readOnlyRole}`,

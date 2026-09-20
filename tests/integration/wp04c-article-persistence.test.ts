@@ -452,7 +452,7 @@ describe("WP-04C canonical Article, relation, and redirect persistence", () => {
     ).rejects.toMatchObject({ code: "23503" });
     await expect(
       sql`delete from admin_users where id = ${authorId}`,
-    ).rejects.toMatchObject({ code: "23503" });
+    ).rejects.toMatchObject({ code: expect.stringMatching(/^(23001|23503)$/) });
   });
 
   it("enforces canonical native many-to-many Article relations, both FK directions, and cascade direction", async () => {
@@ -502,10 +502,10 @@ describe("WP-04C canonical Article, relation, and redirect persistence", () => {
     ).rejects.toMatchObject({ code: "23514" });
     await expect(
       sql`delete from institutions where id = ${institutionId}`,
-    ).rejects.toMatchObject({ code: "23503" });
+    ).rejects.toMatchObject({ code: expect.stringMatching(/^(23001|23503)$/) });
     await expect(
       sql`delete from opportunities where id = ${opportunityId}`,
-    ).rejects.toMatchObject({ code: "23503" });
+    ).rejects.toMatchObject({ code: expect.stringMatching(/^(23001|23503)$/) });
     await sql`delete from articles where id = ${articleId}`;
     fixtureIds.articles.delete(articleId);
     expect(

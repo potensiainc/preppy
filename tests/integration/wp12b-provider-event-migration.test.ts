@@ -114,11 +114,11 @@ describe("WP-12B provider event migration", () => {
   it("migrates a fresh database through the current repository migration and re-runs as a ledger no-op", async () => {
     await migrateDatabase(migrationUrl.toString());
     expect(await state()).toEqual({
-      migrationCount: 14,
+      migrationCount: 17,
       receiptTable: "email_provider_events",
     });
     await migrateDatabase(migrationUrl.toString());
-    expect((await state()).migrationCount).toBe(14);
+    expect((await state()).migrationCount).toBe(17);
   });
 
   it("upgrades 0009 additively while preserving existing Outbox rows", async () => {
@@ -142,11 +142,11 @@ describe("WP-12B provider event migration", () => {
         select count(*)::int count from outbox_events where id=${eventId}`;
       expect(preserved?.count).toBe(1);
       expect(await state()).toEqual({
-        migrationCount: 14,
+        migrationCount: 17,
         receiptTable: "email_provider_events",
       });
       await migrateDatabase(migrationUrl.toString());
-      expect((await state()).migrationCount).toBe(14);
+      expect((await state()).migrationCount).toBe(17);
     } finally {
       await sql.end({ timeout: 5 });
       await rm(folder, { recursive: true, force: true });

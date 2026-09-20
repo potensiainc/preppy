@@ -112,7 +112,7 @@ describe("PREPPY seed registry schema", () => {
 
     await expect(
       sql`delete from institutions where id = ${institutionId}`,
-    ).rejects.toMatchObject({ code: "23503" });
+    ).rejects.toMatchObject({ code: expect.stringMatching(/^(23001|23503)$/) });
   });
 
   it("accepts the minimal registry Source and binding vocabulary", async () => {

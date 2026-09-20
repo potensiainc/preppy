@@ -320,7 +320,7 @@ describe("one-time production five-school rollout on disposable PostgreSQL", () 
       mode: "inspect",
       migration: {
         status: "MATCH",
-        latest: "0013_english_kindergarten_profiles",
+        latest: "0016_english_kindergarten_profiles",
       },
       records: [{ state: "READY", stage: "PREPARE" }],
     });

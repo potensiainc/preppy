@@ -1,6 +1,6 @@
 {
-  "id": "522228ff-202c-4212-b19e-393cdd298d4f",
-  "prevId": "b4d67f5a-0573-4d0f-9ed3-5bcd7b094800",
+  "id": "36dc7a76-3a1c-4746-8d85-68f974b1418a",
+  "prevId": "522228ff-202c-4212-b19e-393cdd298d4f",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -4099,6 +4099,21 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
+        },
+        "institution_registry_identities_normalized_name_en_trgm_idx": {
+          "name": "institution_registry_identities_normalized_name_en_trgm_idx",
+          "columns": [
+            {
+              "expression": "(regexp_replace(lower(coalesce(\"metadata_json\" ->> 'canonical_name_en', '')), '[^0-9a-z가-힣]+', '', 'g')) gin_trgm_ops",
+              "asc": true,
+              "isExpression": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "gin",
+          "with": {}
         }
       },
       "foreignKeys": {
@@ -4646,6 +4661,21 @@
           "columns": [
             {
               "expression": "(regexp_replace(lower(coalesce(\"display_name\", '')), '[^0-9a-z가-힣]+', '', 'g')) gin_trgm_ops",
+              "asc": true,
+              "isExpression": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "gin",
+          "with": {}
+        },
+        "institutions_normalized_slug_trgm_idx": {
+          "name": "institutions_normalized_slug_trgm_idx",
+          "columns": [
+            {
+              "expression": "(regexp_replace(lower(coalesce(\"slug\", '')), '[^0-9a-z가-힣]+', '', 'g')) gin_trgm_ops",
               "asc": true,
               "isExpression": true,
               "nulls": "last"
@@ -7327,6 +7357,38 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
+        },
+        "school_aliases_normalized_alias_value_trgm_idx": {
+          "name": "school_aliases_normalized_alias_value_trgm_idx",
+          "columns": [
+            {
+              "expression": "(regexp_replace(lower(coalesce(\"alias\", '')), '[^0-9a-z가-힣]+', '', 'g')) gin_trgm_ops",
+              "asc": true,
+              "isExpression": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "where": "\"school_aliases\".\"alias_type\" in ('KOREAN', 'ENGLISH', 'ABBREVIATION', 'FORMER_NAME', 'COMMON_NAME')",
+          "concurrently": false,
+          "method": "gin",
+          "with": {}
+        },
+        "school_aliases_normalized_normalized_alias_trgm_idx": {
+          "name": "school_aliases_normalized_normalized_alias_trgm_idx",
+          "columns": [
+            {
+              "expression": "(regexp_replace(lower(coalesce(\"normalized_alias\", '')), '[^0-9a-z가-힣]+', '', 'g')) gin_trgm_ops",
+              "asc": true,
+              "isExpression": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "where": "\"school_aliases\".\"alias_type\" in ('KOREAN', 'ENGLISH', 'ABBREVIATION', 'FORMER_NAME', 'COMMON_NAME')",
+          "concurrently": false,
+          "method": "gin",
+          "with": {}
         }
       },
       "foreignKeys": {
@@ -7511,6 +7573,36 @@
           "isUnique": false,
           "concurrently": false,
           "method": "btree",
+          "with": {}
+        },
+        "schools_normalized_canonical_name_trgm_idx": {
+          "name": "schools_normalized_canonical_name_trgm_idx",
+          "columns": [
+            {
+              "expression": "(regexp_replace(lower(coalesce(\"canonical_name\", '')), '[^0-9a-z가-힣]+', '', 'g')) gin_trgm_ops",
+              "asc": true,
+              "isExpression": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "gin",
+          "with": {}
+        },
+        "schools_normalized_name_en_trgm_idx": {
+          "name": "schools_normalized_name_en_trgm_idx",
+          "columns": [
+            {
+              "expression": "(regexp_replace(lower(coalesce(\"name_en\", '')), '[^0-9a-z가-힣]+', '', 'g')) gin_trgm_ops",
+              "asc": true,
+              "isExpression": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "gin",
           "with": {}
         }
       },

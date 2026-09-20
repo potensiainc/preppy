@@ -1,6 +1,6 @@
 {
-  "id": "522228ff-202c-4212-b19e-393cdd298d4f",
-  "prevId": "b4d67f5a-0573-4d0f-9ed3-5bcd7b094800",
+  "id": "fd31b244-5d46-4854-b92c-f8394f67331f",
+  "prevId": "36dc7a76-3a1c-4746-8d85-68f974b1418a",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -4099,6 +4099,21 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
+        },
+        "institution_registry_identities_normalized_name_en_trgm_idx": {
+          "name": "institution_registry_identities_normalized_name_en_trgm_idx",
+          "columns": [
+            {
+              "expression": "(regexp_replace(lower(coalesce(\"metadata_json\" ->> 'canonical_name_en', '')), '[^0-9a-z가-힣]+', '', 'g')) gin_trgm_ops",
+              "asc": true,
+              "isExpression": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "gin",
+          "with": {}
         }
       },
       "foreignKeys": {
@@ -4646,6 +4661,21 @@
           "columns": [
             {
               "expression": "(regexp_replace(lower(coalesce(\"display_name\", '')), '[^0-9a-z가-힣]+', '', 'g')) gin_trgm_ops",
+              "asc": true,
+              "isExpression": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "gin",
+          "with": {}
+        },
+        "institutions_normalized_slug_trgm_idx": {
+          "name": "institutions_normalized_slug_trgm_idx",
+          "columns": [
+            {
+              "expression": "(regexp_replace(lower(coalesce(\"slug\", '')), '[^0-9a-z가-힣]+', '', 'g')) gin_trgm_ops",
               "asc": true,
               "isExpression": true,
               "nulls": "last"
@@ -6372,6 +6402,261 @@
       },
       "isRLSEnabled": false
     },
+    "public.opportunity_series": {
+      "name": "opportunity_series",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "institution_id": {
+          "name": "institution_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slug": {
+          "name": "slug",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "kind": {
+          "name": "kind",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "opportunity_series_slug_unique": {
+          "name": "opportunity_series_slug_unique",
+          "columns": [
+            {
+              "expression": "slug",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "opportunity_series_institution_kind_idx": {
+          "name": "opportunity_series_institution_kind_idx",
+          "columns": [
+            {
+              "expression": "institution_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "kind",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "opportunity_series_institution_id_institutions_id_fk": {
+          "name": "opportunity_series_institution_id_institutions_id_fk",
+          "tableFrom": "opportunity_series",
+          "tableTo": "institutions",
+          "columnsFrom": [
+            "institution_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "opportunity_series_id_institution_unique": {
+          "name": "opportunity_series_id_institution_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "id",
+            "institution_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "opportunity_series_slug_format_check": {
+          "name": "opportunity_series_slug_format_check",
+          "value": "\"opportunity_series\".\"slug\" ~ '^[a-z0-9]+(?:-[a-z0-9]+)*$'"
+        },
+        "opportunity_series_title_check": {
+          "name": "opportunity_series_title_check",
+          "value": "length(btrim(\"opportunity_series\".\"title\")) > 0"
+        },
+        "opportunity_series_kind_check": {
+          "name": "opportunity_series_kind_check",
+          "value": "\"opportunity_series\".\"kind\" in ('RECRUITMENT', 'ADDITIONAL_RECRUITMENT', 'INFORMATION_SESSION', 'CONSULTATION', 'LEVEL_TEST', 'OPEN_HOUSE', 'APPLICATION', 'DOCUMENT_SUBMISSION', 'ASSESSMENT', 'INTERVIEW', 'LOTTERY', 'RESULT_ANNOUNCEMENT', 'REGISTRATION', 'DEADLINE', 'OTHER')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.opportunity_series_members": {
+      "name": "opportunity_series_members",
+      "schema": "",
+      "columns": {
+        "opportunity_id": {
+          "name": "opportunity_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "series_id": {
+          "name": "series_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "institution_id": {
+          "name": "institution_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "session_number": {
+          "name": "session_number",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "opportunity_series_members_number_unique": {
+          "name": "opportunity_series_members_number_unique",
+          "columns": [
+            {
+              "expression": "series_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "session_number",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "opportunity_series_members_series_idx": {
+          "name": "opportunity_series_members_series_idx",
+          "columns": [
+            {
+              "expression": "series_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "opportunity_series_members_opportunity_institution_fk": {
+          "name": "opportunity_series_members_opportunity_institution_fk",
+          "tableFrom": "opportunity_series_members",
+          "tableTo": "opportunities",
+          "columnsFrom": [
+            "opportunity_id",
+            "institution_id"
+          ],
+          "columnsTo": [
+            "id",
+            "institution_id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "no action"
+        },
+        "opportunity_series_members_series_institution_fk": {
+          "name": "opportunity_series_members_series_institution_fk",
+          "tableFrom": "opportunity_series_members",
+          "tableTo": "opportunity_series",
+          "columnsFrom": [
+            "series_id",
+            "institution_id"
+          ],
+          "columnsTo": [
+            "id",
+            "institution_id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "opportunity_series_members_pkey": {
+          "name": "opportunity_series_members_pkey",
+          "columns": [
+            "opportunity_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "opportunity_series_members_session_number_check": {
+          "name": "opportunity_series_members_session_number_check",
+          "value": "\"opportunity_series_members\".\"session_number\" > 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
     "public.opportunity_source_bindings": {
       "name": "opportunity_source_bindings",
       "schema": "",
@@ -7327,6 +7612,38 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
+        },
+        "school_aliases_normalized_alias_value_trgm_idx": {
+          "name": "school_aliases_normalized_alias_value_trgm_idx",
+          "columns": [
+            {
+              "expression": "(regexp_replace(lower(coalesce(\"alias\", '')), '[^0-9a-z가-힣]+', '', 'g')) gin_trgm_ops",
+              "asc": true,
+              "isExpression": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "where": "\"school_aliases\".\"alias_type\" in ('KOREAN', 'ENGLISH', 'ABBREVIATION', 'FORMER_NAME', 'COMMON_NAME')",
+          "concurrently": false,
+          "method": "gin",
+          "with": {}
+        },
+        "school_aliases_normalized_normalized_alias_trgm_idx": {
+          "name": "school_aliases_normalized_normalized_alias_trgm_idx",
+          "columns": [
+            {
+              "expression": "(regexp_replace(lower(coalesce(\"normalized_alias\", '')), '[^0-9a-z가-힣]+', '', 'g')) gin_trgm_ops",
+              "asc": true,
+              "isExpression": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "where": "\"school_aliases\".\"alias_type\" in ('KOREAN', 'ENGLISH', 'ABBREVIATION', 'FORMER_NAME', 'COMMON_NAME')",
+          "concurrently": false,
+          "method": "gin",
+          "with": {}
         }
       },
       "foreignKeys": {
@@ -7511,6 +7828,36 @@
           "isUnique": false,
           "concurrently": false,
           "method": "btree",
+          "with": {}
+        },
+        "schools_normalized_canonical_name_trgm_idx": {
+          "name": "schools_normalized_canonical_name_trgm_idx",
+          "columns": [
+            {
+              "expression": "(regexp_replace(lower(coalesce(\"canonical_name\", '')), '[^0-9a-z가-힣]+', '', 'g')) gin_trgm_ops",
+              "asc": true,
+              "isExpression": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "gin",
+          "with": {}
+        },
+        "schools_normalized_name_en_trgm_idx": {
+          "name": "schools_normalized_name_en_trgm_idx",
+          "columns": [
+            {
+              "expression": "(regexp_replace(lower(coalesce(\"name_en\", '')), '[^0-9a-z가-힣]+', '', 'g')) gin_trgm_ops",
+              "asc": true,
+              "isExpression": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "gin",
           "with": {}
         }
       },
