@@ -24,6 +24,7 @@ describe("release image contract", () => {
       ".next/BUILD_ID",
       "node_modules/.bin/tsx",
       "scripts/worker.ts",
+      "scripts/db/server-only.ts",
       "src/db/migrations/meta/_journal.json",
     ]) {
       const path = join(root, file);
@@ -90,6 +91,11 @@ describe("release image contract", () => {
     await expect(assertRuntimeImageContract(root)).rejects.toThrow(/tsx/);
   });
 
+  it("rejects an image without the database script server-only shim", async () => {
+    const root = await imageRoot();
+    await rm(join(root, "scripts", "db", "server-only.ts"));
+    await expect(assertRuntimeImageContract(root)).rejects.toThrow(/server-only/);
+  });
   it("rejects an image without the staging indexing proxy", async () => {
     const root = await imageRoot();
     await rm(join(root, "proxy.ts"));
