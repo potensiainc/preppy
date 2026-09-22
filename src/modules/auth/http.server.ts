@@ -33,6 +33,7 @@ import {
 } from "@/src/modules/auth/pending-follow-intent.server";
 import {
   resolveCanonicalPendingFollowTarget,
+  type PendingFollowInstitutionRecord,
   type ResolvedPendingFollowTarget,
 } from "@/src/modules/auth/pending-follow-target.server";
 import type { RateLimiter } from "@/src/modules/auth/rate-limit.server";
@@ -57,12 +58,7 @@ const KAKAO_CALLBACK_EMERGENCY_PROCESS_KEY = "kakao-callback:process-global";
 
 type Clock = () => Date;
 
-type PublicIntentInstitution = {
-  id: string;
-  slug: string;
-  publicationState: string;
-  operationalState: string;
-};
+type PublicIntentInstitution = PendingFollowInstitutionRecord;
 
 type ResolvedUser = {
   id: string;
@@ -337,6 +333,7 @@ export function createFollowIntentHandler(dependencies: {
   tracker: AnalyticsTracker;
   findInstitution(id: string): Promise<PublicIntentInstitution | null>;
   hasMonitorableSourceCoverage(id: string): Promise<boolean>;
+  hasInstitutionIsiIdentity(id: string): Promise<boolean>;
   now?: Clock;
   production?: boolean;
 }): (request: Request) => Promise<Response> {
@@ -360,6 +357,7 @@ export function createFollowIntentHandler(dependencies: {
         input.institutionId,
         dependencies.findInstitution,
         dependencies.hasMonitorableSourceCoverage,
+        dependencies.hasInstitutionIsiIdentity,
       );
     } catch {
       return safeMutationFailure(503);

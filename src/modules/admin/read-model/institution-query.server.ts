@@ -11,18 +11,28 @@ import {
 import type { DatabaseExecutor } from "@/src/infrastructure/db/runtime.server";
 
 import type {
+  AdminEnglishKindergartenCoverageDTO,
+  AdminEnglishKindergartenDTO,
   AdminInstitutionDTO,
   AdminOpportunitySummaryDTO,
   AdminPageDTO,
+  AdminReviewInsightSummaryDTO,
 } from "./contracts";
 import { parseAdminDetailInput, parseInstitutionAdminListInput } from "./input";
+import { safeAbsoluteHttpUrl } from "./source-query.server";
+import {
+  englishKindergartenSectionValues,
+  type CoverageStatus,
+  type EnglishKindergartenSection,
+} from "@/src/modules/english-kindergarten/coverage";
+import type { ReviewInsightValue } from "@/src/modules/english-kindergarten/review-insight";
 
 const LIST_OPPORTUNITY_LIMIT = 3;
 const DETAIL_OPPORTUNITY_LIMIT = 10;
 
 type InstitutionBase = Omit<
   AdminInstitutionDTO,
-  "activeSourceBindingCount" | "opportunitySummary"
+  "activeSourceBindingCount" | "opportunitySummary" | "englishKindergarten"
 >;
 
 function iso(value: Date | string | null): string | null {
@@ -30,6 +40,154 @@ function iso(value: Date | string | null): string | null {
   return value instanceof Date
     ? value.toISOString()
     : new Date(value).toISOString();
+}
+
+function calendarDate(value: Date | string | null): string | null {
+  if (value === null) return null;
+  if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/u.test(value)) {
+    return value;
+  }
+  return (value instanceof Date ? value : new Date(value))
+    .toISOString()
+    .slice(0, 10);
+}
+
+async function loadEnglishKindergartenCoverage(
+  executor: DatabaseExecutor,
+  institutionId: string,
+): Promise<AdminEnglishKindergartenCoverageDTO[]> {
+  const rows = (await executor.raw(sql`
+    select c.section, c.status, c.source_id as "sourceId",
+      s.source_name as "sourceName", s.canonical_url as "sourceUrl",
+      c.source_snapshot_id as "sourceSnapshotId",
+      c.academic_year_label as "academicYearLabel",
+      c.public_note as "publicNote", c.internal_note as "internalNote",
+      c.last_collected_at as "lastCollectedAt",
+      c.last_checked_at as "lastCheckedAt"
+    from institution_section_coverages c
+    left join sources s on s.id = c.source_id
+    where c.institution_id = ${institutionId}
+    order by c.section
+  `)) as unknown as Array<{
+    section: EnglishKindergartenSection;
+    status: CoverageStatus;
+    sourceId: string | null;
+    sourceName: string | null;
+    sourceUrl: string | null;
+    sourceSnapshotId: string | null;
+    academicYearLabel: string | null;
+    publicNote: string | null;
+    internalNote: string | null;
+    lastCollectedAt: Date | string | null;
+    lastCheckedAt: Date | string;
+  }>;
+  const bySection = new Map(rows.map((row) => [row.section, row]));
+  return englishKindergartenSectionValues.map((section) => {
+    const row = bySection.get(section);
+    if (!row) {
+      return {
+        section,
+        status: "NOT_RESEARCHED",
+        sourceId: null,
+        sourceName: null,
+        sourceUrl: null,
+        safeSourceUrl: null,
+        sourceSnapshotId: null,
+        academicYearLabel: null,
+        publicNote: null,
+        internalNote: null,
+        lastCollectedAt: null,
+        lastCheckedAt: null,
+      };
+    }
+    return {
+      section,
+      status: row.status,
+      sourceId: row.sourceId,
+      sourceName: row.sourceName,
+      sourceUrl: row.sourceUrl,
+      safeSourceUrl:
+        row.sourceUrl === null ? null : safeAbsoluteHttpUrl(row.sourceUrl),
+      sourceSnapshotId: row.sourceSnapshotId,
+      academicYearLabel: row.academicYearLabel,
+      publicNote: row.publicNote,
+      internalNote: row.internalNote,
+      lastCollectedAt: iso(row.lastCollectedAt),
+      lastCheckedAt: iso(row.lastCheckedAt),
+    };
+  });
+}
+
+async function loadEnglishKindergartenReviewInsight(
+  executor: DatabaseExecutor,
+  institutionId: string,
+): Promise<AdminReviewInsightSummaryDTO | null> {
+  const rows = (await executor.raw(sql`
+    select v.id as "versionId", v.version_number as "versionNumber",
+      v.verification_state as "verificationState", v.period_start as "periodStart",
+      v.period_end as "periodEnd", v.sample_size as "sampleSize",
+      v.themes, v.limitations, v.verified_at as "verifiedAt"
+    from institution_review_insights r
+    join institution_review_insight_versions v
+      on v.institution_review_insight_id = r.id
+    where r.institution_id = ${institutionId}
+    order by v.version_number desc, v.id desc
+    limit 1
+  `)) as unknown as Array<{
+    versionId: string;
+    versionNumber: number;
+    verificationState: AdminReviewInsightSummaryDTO["verificationState"];
+    periodStart: Date | string | null;
+    periodEnd: Date | string | null;
+    sampleSize: number;
+    themes: ReviewInsightValue["themes"];
+    limitations: string | null;
+    verifiedAt: Date | string | null;
+  }>;
+  const row = rows[0];
+  if (!row) return null;
+  const evidence = (await executor.raw(sql`
+    select e.source_id as "sourceId", s.source_name as "sourceName",
+      s.canonical_url as "sourceUrl",
+      e.source_snapshot_id as "sourceSnapshotId",
+      e.evidence_role as "evidenceRole"
+    from institution_review_insight_version_evidence e
+    join sources s on s.id = e.source_id
+    where e.institution_review_insight_version_id = ${row.versionId}
+    order by e.evidence_role, e.id
+  `)) as unknown as Array<{
+    sourceId: string;
+    sourceName: string;
+    sourceUrl: string;
+    sourceSnapshotId: string | null;
+    evidenceRole: string;
+  }>;
+  return {
+    versionId: row.versionId,
+    versionNumber: row.versionNumber,
+    verificationState: row.verificationState,
+    periodStart: calendarDate(row.periodStart),
+    periodEnd: calendarDate(row.periodEnd),
+    sampleSize: row.sampleSize,
+    themes: row.themes,
+    limitations: row.limitations,
+    verifiedAt: iso(row.verifiedAt),
+    evidence: evidence.map((item) => ({
+      ...item,
+      safeSourceUrl: safeAbsoluteHttpUrl(item.sourceUrl),
+    })),
+  };
+}
+
+async function loadEnglishKindergartenAdmin(
+  executor: DatabaseExecutor,
+  institutionId: string,
+): Promise<AdminEnglishKindergartenDTO> {
+  const [coverages, reviewInsight] = await Promise.all([
+    loadEnglishKindergartenCoverage(executor, institutionId),
+    loadEnglishKindergartenReviewInsight(executor, institutionId),
+  ]);
+  return { coverages, reviewInsight };
 }
 
 async function loadOpportunitySummaries(
@@ -119,6 +277,7 @@ function projectInstitution(
   summaries: ReadonlyMap<string, readonly AdminOpportunitySummaryDTO[]>,
   bindingCounts: ReadonlyMap<string, number>,
   opportunityCounts: ReadonlyMap<string, number>,
+  englishKindergarten: AdminEnglishKindergartenDTO | null = null,
 ): AdminInstitutionDTO {
   return {
     id: row.id,
@@ -127,6 +286,7 @@ function projectInstitution(
     category: row.category,
     operationalState: row.operationalState,
     publicationState: row.publicationState,
+    englishKindergarten,
     activeSourceBindingCount: bindingCounts.get(row.id) ?? 0,
     opportunitySummary: {
       total: opportunityCounts.get(row.id) ?? 0,
@@ -273,10 +433,15 @@ export async function getAdminInstitution(
     DETAIL_OPPORTUNITY_LIMIT,
   );
   const counts = await loadInstitutionCounts(executor, [row.id]);
+  const englishKindergarten =
+    row.category === "ENGLISH_KINDERGARTEN"
+      ? await loadEnglishKindergartenAdmin(executor, row.id)
+      : null;
   return projectInstitution(
     row,
     summaries,
     counts.bindingCounts,
     counts.opportunityCounts,
+    englishKindergarten,
   );
 }

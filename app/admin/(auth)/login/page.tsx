@@ -13,9 +13,9 @@ export default function AdminLoginPage() {
       <section className="admin-login-panel">
         <p className="admin-kicker">PREPPY 운영 / 접근 제한</p>
         <h1 id="admin-login-heading">관리자 로그인</h1>
-        <p>기존 PREPPY 관리자 계정에 연결된 조직 계정으로 로그인해 주세요.</p>
+        <p>PREPPY 운영 권한이 있는 Google 계정으로 로그인해 주세요.</p>
         <a className="admin-button" href="/admin/auth/start">
-          조직 계정으로 로그인
+          Google 계정으로 로그인
         </a>
       </section>
     </main>

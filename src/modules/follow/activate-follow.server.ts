@@ -26,6 +26,7 @@ import {
 } from "@/src/modules/follow/repository.server";
 import { mapFollowDatabaseError } from "@/src/modules/follow/database-errors.server";
 import {
+  hasInstitutionIsiIdentity,
   hasMonitorableSourceCoverage,
   isInstitutionFollowable,
 } from "@/src/modules/follow/followability-policy.server";
@@ -51,6 +52,7 @@ export type ActivateFollowResult = {
 export type ActivateFollowPersistence = {
   findUserForUpdate: typeof findUserForUpdate;
   findInstitutionById: typeof findInstitutionById;
+  hasInstitutionIsiIdentity: typeof hasInstitutionIsiIdentity;
   hasMonitorableSourceCoverage: typeof hasMonitorableSourceCoverage;
   findFollowForUpdate: typeof findFollowForUpdate;
   createLogicalFollowIfAbsent: typeof createLogicalFollowIfAbsent;
@@ -63,6 +65,7 @@ export type ActivateFollowPersistence = {
 export const defaultActivateFollowPersistence: ActivateFollowPersistence = {
   findUserForUpdate,
   findInstitutionById,
+  hasInstitutionIsiIdentity,
   hasMonitorableSourceCoverage,
   findFollowForUpdate,
   createLogicalFollowIfAbsent,
@@ -109,11 +112,16 @@ export async function activateFollowInTransaction(
     input.institutionId,
   );
   if (!institution) throw new NotFoundError();
-  const monitorable = await persistence.hasMonitorableSourceCoverage(
-    executor,
-    institution.id,
-  );
-  if (!isInstitutionFollowable(institution, monitorable)) {
+  const [monitorable, hasIsiIdentity] = await Promise.all([
+    persistence.hasMonitorableSourceCoverage(executor, institution.id),
+    persistence.hasInstitutionIsiIdentity(executor, institution.id),
+  ]);
+  if (
+    !isInstitutionFollowable(
+      { ...institution, hasIsiIdentity },
+      monitorable,
+    )
+  ) {
     throw new NotEligibleError();
   }
 

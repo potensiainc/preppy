@@ -185,6 +185,10 @@ const PREVIEW_OPPORTUNITY_EVIDENCE_IDS = PREVIEW_DEMO_FIXTURE.opportunities.map(
   (_, index) =>
     `59000000-0000-4000-8000-${String(index + 1).padStart(12, "0")}`,
 );
+const PREVIEW_SOURCE_SNAPSHOT_IDS = PREVIEW_DEMO_FIXTURE.institutions.map(
+  (_, index) =>
+    `60000000-0000-4000-8000-${String(index + 1).padStart(12, "0")}`,
+);
 
 const ALL_AGGREGATE_IDS = [
   ...PREVIEW_DEMO_FIXTURE.institutions.map(({ id }) => id),
@@ -278,6 +282,10 @@ export async function seedPreviewDemo(
 ): Promise<PreviewDemoReport> {
   const appBaseUrl = normalizeAppBaseUrl(input.appBaseUrl);
   return sql.begin(async (transaction) => {
+    const captureBySourceId = new Map<
+      string,
+      Readonly<{ observationId: string; snapshotId: string }>
+    >();
     await transaction`select pg_advisory_xact_lock(hashtext('preppy-ui-preview-demo-seed-v1'))`;
     await assertNoIdentityConflicts(
       transaction,
@@ -327,6 +335,46 @@ export async function seedPreviewDemo(
           monitoring_profile=excluded.monitoring_profile,
           is_enabled=excluded.is_enabled
       `;
+      const snapshotId = PREVIEW_SOURCE_SNAPSHOT_IDS[index]!;
+      await transaction`
+        insert into source_snapshots (
+          id, source_id, captured_at, content_hash, normalized_text, mime_type
+        ) values (
+          ${snapshotId}, ${sourceId}, '2026-08-25T00:30:00.000Z',
+          ${`preview-demo-${sourceId}`},
+          ${`${institution.name} 공식 데모 출처의 합성 캡처입니다.`},
+          'text/html'
+        ) on conflict (id) do update set
+          source_id=excluded.source_id,
+          captured_at=excluded.captured_at,
+          content_hash=excluded.content_hash,
+          normalized_text=excluded.normalized_text,
+          mime_type=excluded.mime_type
+      `;
+      const [existingObservation] = await transaction<Array<{ id: string }>>`
+        select id::text as id
+        from source_observations
+        where source_id=${sourceId} and snapshot_id=${snapshotId}
+          and observed_at='2026-08-25T00:30:00.000Z'
+        order by id
+        limit 1
+      `;
+      const observationId =
+        existingObservation?.id ??
+        (
+          await transaction<Array<{ id: string }>>`
+            insert into source_observations (
+              source_id, observed_at, outcome, http_status, final_url,
+              content_hash, snapshot_id
+            ) values (
+              ${sourceId}, '2026-08-25T00:30:00.000Z', 'SUCCESS', 200,
+              ${`https://official-demo.preppy.example/${institution.slug}`},
+              ${`preview-demo-${sourceId}`}, ${snapshotId}
+            )
+            returning id::text as id
+          `
+        )[0]!.id;
+      captureBySourceId.set(sourceId!, { observationId, snapshotId });
       await transaction`
         insert into institutions (
           id, slug, display_name, category, international_subtype,
@@ -356,6 +404,23 @@ export async function seedPreviewDemo(
           short_description=excluded.short_description,
           published_at=excluded.published_at
       `;
+      if (institution.type === "INTERNATIONAL_SCHOOL") {
+        await transaction`
+          insert into institution_registry_identities (
+            institution_id, registry_name, registry_external_id,
+            registry_record_url, registry_locator, metadata_json
+          ) values (
+            ${institution.id}, 'ISI', ${`PREVIEW:${institution.id}`},
+            ${`https://registry.example.test/preview/${institution.id}`},
+            ${`preview:${institution.slug}`},
+            jsonb_build_object('fixture', 'RAILWAY_PREVIEW')
+          ) on conflict (registry_name, registry_external_id) do update set
+            institution_id=excluded.institution_id,
+            registry_record_url=excluded.registry_record_url,
+            registry_locator=excluded.registry_locator,
+            metadata_json=excluded.metadata_json
+        `;
+      }
       await transaction`
         insert into institution_source_bindings (
           institution_id, source_id, role, is_primary, is_active
@@ -385,9 +450,15 @@ export async function seedPreviewDemo(
       `;
       await transaction`
         insert into institution_fact_version_evidence (
-          id, institution_fact_version_id, source_id, evidence_role
-        ) values (${PREVIEW_FACT_EVIDENCE_IDS[index]}, ${factVersionId}, ${sourceId}, 'PRIMARY')
-        on conflict (id) do nothing
+          id, institution_fact_version_id, source_id, source_observation_id,
+          source_snapshot_id, evidence_role
+        ) values (
+          ${PREVIEW_FACT_EVIDENCE_IDS[index]}, ${factVersionId}, ${sourceId},
+          ${observationId}, ${snapshotId}, 'PRIMARY'
+        )
+        on conflict (id) do update set
+          source_observation_id=excluded.source_observation_id,
+          source_snapshot_id=excluded.source_snapshot_id
       `;
     }
 
@@ -397,6 +468,8 @@ export async function seedPreviewDemo(
     ] of PREVIEW_DEMO_FIXTURE.opportunities.entries()) {
       const sourceId = PREVIEW_SOURCE_IDS[index];
       const versionId = PREVIEW_OPPORTUNITY_VERSION_IDS[index];
+      const capture = captureBySourceId.get(sourceId!);
+      if (!capture) throw new Error("Preview source capture was not prepared");
       await transaction`
         insert into opportunities (
           id, institution_id, slug, kind, truth_mode, publication_state,
@@ -450,9 +523,15 @@ export async function seedPreviewDemo(
       `;
       await transaction`
         insert into opportunity_version_evidence (
-          id, opportunity_version_id, source_id, evidence_role
-        ) values (${PREVIEW_OPPORTUNITY_EVIDENCE_IDS[index]}, ${versionId}, ${sourceId}, 'PRIMARY')
-        on conflict (id) do nothing
+          id, opportunity_version_id, source_id, source_observation_id,
+          source_snapshot_id, evidence_role
+        ) values (
+          ${PREVIEW_OPPORTUNITY_EVIDENCE_IDS[index]}, ${versionId}, ${sourceId},
+          ${capture.observationId}, ${capture.snapshotId}, 'PRIMARY'
+        )
+        on conflict (id) do update set
+          source_observation_id=excluded.source_observation_id,
+          source_snapshot_id=excluded.source_snapshot_id
       `;
     }
 

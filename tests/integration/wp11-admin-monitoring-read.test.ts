@@ -409,7 +409,7 @@ describe("WP-11 Admin Monitoring read projections", () => {
         expectedCurrentVersionId: null,
       });
       const facts = detail.facts as Array<Record<string, unknown>>;
-      expect(facts).toHaveLength(7);
+      expect(facts).toHaveLength(8);
       expect(facts.find((fact) => fact.factType === "TUITION")).toEqual({
         factType: "TUITION",
         expectedCurrentVersionId: factVersionId,
@@ -426,6 +426,11 @@ describe("WP-11 Admin Monitoring read projections", () => {
         facts.find((fact) => fact.factType === "CURRICULUM"),
       ).toMatchObject({
         factType: "CURRICULUM",
+        expectedCurrentVersionId: null,
+        current: null,
+      });
+      expect(facts.find((fact) => fact.factType === "MEALS")).toMatchObject({
+        factType: "MEALS",
         expectedCurrentVersionId: null,
         current: null,
       });

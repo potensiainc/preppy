@@ -1,0 +1,29 @@
+{
+  "status": "PASS",
+  "packageId": "sg-ek-20260901-r01",
+  "packageChecksum": "aa40844a7b36985dacb623704846a1f9f3b452dd3bda3eef1d55512e5fa32643",
+  "counts": {
+    "campuses": 25,
+    "evidence": 75,
+    "districts": {
+      "강남구": 13,
+      "서초구": 12
+    },
+    "legalDongs": {
+      "반포동": 11,
+      "신사동": 13,
+      "잠원동": 1
+    }
+  },
+  "duplicateCampusIds": [],
+  "duplicateSlugs": [],
+  "duplicateEvidenceIds": [],
+  "unknownEvidenceCampusIds": [],
+  "missingEvidenceCampusIds": [],
+  "sourceTextHashMismatches": [],
+  "snapshotCampusMismatches": [],
+  "progressMatches": true,
+  "checksumsValid": true,
+  "errors": [],
+  "reportChecksum": "f35c5d98a5dc9180cc1f0883638c88eb02afe9081f7256d9d541e7556beb8790"
+}

@@ -103,6 +103,43 @@ describe("WP-13 Admin Article editor UI contract", () => {
     );
   });
 
+  it("adds an operator review gate, dirty state, and searchable relations", async () => {
+    const editor = await source("app/admin/_components/article-editor.tsx");
+    const relations = await source(
+      "app/admin/_components/article-relations.tsx",
+    );
+    const detail = await source(
+      "app/admin/(protected)/articles/[articleId]/page.tsx",
+    );
+
+    expect(editor).toContain("발행 전 확인");
+    expect(editor).toContain("확인하고 발행");
+    expect(editor).toContain("저장하지 않은 변경사항");
+    expect(editor).toContain("isBusy");
+    expect(editor).toContain("disabled={isBusy}");
+    expect(relations).toContain("기관 검색");
+    expect(relations).toContain("입학정보 검색");
+    expect(relations).toContain("선택됨");
+    expect(detail).toContain("마지막 저장");
+    expect(detail).toContain("공개 페이지");
+  });
+
+  it("searches the full relation catalog through an authenticated no-store endpoint", async () => {
+    const route = await source(
+      "app/api/admin/articles/relation-options/route.ts",
+    );
+    const relations = await source(
+      "app/admin/_components/article-relations.tsx",
+    );
+    expect(route).toContain("requireCurrentAdmin");
+    expect(route).toContain("ADMIN_SESSION_COOKIE_NAME");
+    expect(route).toContain("new UnauthenticatedError");
+    expect(route).toContain("privateNoStoreJson");
+    expect(route).toContain("listAdminArticleInstitutionOptions");
+    expect(route).toContain("listAdminArticleOpportunityOptions");
+    expect(relations).toContain("/api/admin/articles/relation-options");
+  });
+
   it("keeps Tiptap imports out of public runtime modules", async () => {
     const publicArticle = await source("app/(public)/articles/[slug]/page.tsx");
     const prose = await source("app/_components/article-prose.tsx");

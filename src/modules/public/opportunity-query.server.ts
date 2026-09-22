@@ -21,9 +21,11 @@ import {
 } from "@/src/db/schema";
 import type { DatabaseExecutor } from "@/src/infrastructure/db/runtime.server";
 import {
+  getInstitutionIsiIdentityIds,
   hasMonitorableSourceCoverage,
   isInstitutionFollowable,
 } from "@/src/modules/follow/followability-policy.server";
+import { isInternationalSchoolPubliclyEligible } from "@/src/modules/public/international-school-publication-policy";
 
 import type {
   ArticleCardDTO,
@@ -180,10 +182,21 @@ async function getRootBySlug(
   ) {
     throw new NotFoundError();
   }
-  const monitorable = await hasMonitorableSourceCoverage(
-    executor,
-    root.institutionId,
-  );
+  const [monitorable, isiIdentities] = await Promise.all([
+    hasMonitorableSourceCoverage(executor, root.institutionId),
+    getInstitutionIsiIdentityIds(executor, [root.institutionId]),
+  ]);
+  const hasIsiIdentity = isiIdentities.has(root.institutionId);
+  if (
+    !isInternationalSchoolPubliclyEligible({
+      category: root.institutionCategory,
+      publicationState: root.institutionPublicationState,
+      operationalState: root.institutionOperationalState,
+      hasIsiIdentity,
+    })
+  ) {
+    throw new NotFoundError();
+  }
 
   return {
     id: root.id,
@@ -200,7 +213,9 @@ async function getRootBySlug(
       followable: isInstitutionFollowable(
         {
           publicationState: root.institutionPublicationState,
+          category: root.institutionCategory,
           operationalState: root.institutionOperationalState,
+          hasIsiIdentity,
         },
         monitorable,
       ),
@@ -211,6 +226,7 @@ async function getRootBySlug(
 async function getNativeOfficialSources(
   executor: DatabaseExecutor,
   versionId: string,
+  requireCapturedEvidence: boolean,
 ): Promise<OfficialSourceDTO[]> {
   const sourceRows = await executor.drizzle
     .select({
@@ -225,6 +241,12 @@ async function getNativeOfficialSources(
         eq(opportunityVersionEvidence.opportunityVersionId, versionId),
         inArray(sources.sourceType, officialSourceTypes),
         inArray(sources.authorityLevel, ["PRIMARY", "SECONDARY_OFFICIAL"]),
+        requireCapturedEvidence
+          ? sql`${opportunityVersionEvidence.sourceObservationId} is not null`
+          : undefined,
+        requireCapturedEvidence
+          ? sql`${opportunityVersionEvidence.sourceSnapshotId} is not null`
+          : undefined,
       ),
     )
     .orderBy(
@@ -275,6 +297,7 @@ async function getNativeLastCollectedAt(
 async function getLegacyOfficialSource(
   executor: DatabaseExecutor,
   eventVersionId: string,
+  requireCapturedEvidence: boolean,
 ): Promise<OfficialSourceDTO | null> {
   const [source] = await executor.drizzle
     .select({
@@ -289,6 +312,12 @@ async function getLegacyOfficialSource(
         eq(eventVersionEvidence.eventVersionId, eventVersionId),
         inArray(sources.sourceType, officialSourceTypes),
         inArray(sources.authorityLevel, ["PRIMARY", "SECONDARY_OFFICIAL"]),
+        requireCapturedEvidence
+          ? sql`${eventVersionEvidence.sourceObservationId} is not null`
+          : undefined,
+        requireCapturedEvidence
+          ? sql`${eventVersionEvidence.snapshotId} is not null`
+          : undefined,
       ),
     )
     .orderBy(
@@ -328,6 +357,7 @@ async function getLegacyLastCollectedAt(
 async function getNativeTruth(
   executor: DatabaseExecutor,
   opportunityId: string,
+  requireCapturedEvidence: boolean,
 ): Promise<Truth> {
   const [version] = await executor.drizzle
     .select({
@@ -358,9 +388,15 @@ async function getNativeTruth(
   }
 
   const [officialSources, lastCollectedAt] = await Promise.all([
-    getNativeOfficialSources(executor, version.id),
+    getNativeOfficialSources(executor, version.id, requireCapturedEvidence),
     getNativeLastCollectedAt(executor, version.id),
   ]);
+  if (
+    requireCapturedEvidence &&
+    (officialSources.length === 0 || lastCollectedAt === null)
+  ) {
+    throw new NotFoundError();
+  }
   return {
     title: version.title,
     businessState: version.businessState,
@@ -383,6 +419,7 @@ async function getNativeTruth(
 async function getLegacyTruth(
   executor: DatabaseExecutor,
   opportunityId: string,
+  requireCapturedEvidence: boolean,
 ): Promise<Truth> {
   const [version] = await executor.drizzle
     .select({
@@ -432,9 +469,19 @@ async function getLegacyTruth(
   }
 
   const [officialSource, lastCollectedAt] = await Promise.all([
-    getLegacyOfficialSource(executor, version.eventVersionId),
+    getLegacyOfficialSource(
+      executor,
+      version.eventVersionId,
+      requireCapturedEvidence,
+    ),
     getLegacyLastCollectedAt(executor, version.eventVersionId),
   ]);
+  if (
+    requireCapturedEvidence &&
+    (officialSource === null || lastCollectedAt === null)
+  ) {
+    throw new NotFoundError();
+  }
 
   return {
     title: version.title,
@@ -518,7 +565,11 @@ async function getSameCycleAdmissionGuide(
   if (guide === undefined) return null;
 
   const [officialSources, lastCollectedAt] = await Promise.all([
-    getNativeOfficialSources(executor, guide.versionId),
+    getNativeOfficialSources(
+      executor,
+      guide.versionId,
+      root.institution.category === "INTERNATIONAL_SCHOOL",
+    ),
     getNativeLastCollectedAt(executor, guide.versionId),
   ]);
   if (officialSources.length === 0 || guide.verifiedAt === null) return null;
@@ -548,6 +599,11 @@ async function getSameCycleAdmissions(
 ): Promise<NonNullable<PublicOpportunityDTO["relatedAdmissions"]>> {
   const cycle = canonicalAdmissionCycle(root);
   if (cycle === null) return [];
+  const captureRequirement =
+    root.institution.category === "INTERNATIONAL_SCHOOL"
+      ? sql`and ${opportunityVersionEvidence.sourceObservationId} is not null
+        and ${opportunityVersionEvidence.sourceSnapshotId} is not null`
+      : sql``;
   const eventPattern = `^live-admissions-${root.institution.id}-${cycle}-event-[a-z0-9]+(-[a-z0-9]+)*$`;
   const rows = await executor.drizzle
     .select({
@@ -587,6 +643,7 @@ async function getSameCycleAdmissions(
       where ${opportunityVersionEvidence.opportunityVersionId} = ${opportunityVersions.id}
       and ${inArray(sources.sourceType, officialSourceTypes)}
       and ${inArray(sources.authorityLevel, ["PRIMARY", "SECONDARY_OFFICIAL"])}
+      ${captureRequirement}
     )`,
       ),
     )
@@ -601,7 +658,11 @@ async function getSameCycleAdmissions(
       summary: row.summary,
       targetAudience: row.targetAudience,
       actionUrl: row.actionUrl,
-      officialSources: await getNativeOfficialSources(executor, row.versionId),
+      officialSources: await getNativeOfficialSources(
+        executor,
+        row.versionId,
+        root.institution.category === "INTERNATIONAL_SCHOOL",
+      ),
       lastCollectedAt: await getNativeLastCollectedAt(executor, row.versionId),
       lastVerifiedAt: toOptionalIso(row.verifiedAt),
       keyDates: {
@@ -706,10 +767,12 @@ export async function getOpportunityBySlug(
   slug: string,
 ): Promise<PublicOpportunityDTO> {
   const root = await getRootBySlug(executor, slug);
+  const requireCapturedEvidence =
+    root.institution.category === "INTERNATIONAL_SCHOOL";
   const truth =
     root.truthMode === "NATIVE"
-      ? await getNativeTruth(executor, root.id)
-      : await getLegacyTruth(executor, root.id);
+      ? await getNativeTruth(executor, root.id, requireCapturedEvidence)
+      : await getLegacyTruth(executor, root.id, requireCapturedEvidence);
 
   const [
     recentMeaningfulChanges,

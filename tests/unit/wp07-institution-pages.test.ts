@@ -56,6 +56,7 @@ const opportunity = {
 
 const list: InstitutionListDTO = {
   items: [institution],
+  districtFacets: [],
   pagination: { page: 2, pageSize: 12, total: 36, hasNext: true },
 };
 
@@ -545,6 +546,40 @@ describe("WP-07 Institution pages", () => {
     expect(
       toInstitutionListInput({ category: "not-a-category", page: "0" }),
     ).toEqual({
+      page: 1,
+      pageSize: 12,
+    });
+    expect(
+      toInstitutionListInput({
+        category: "ENGLISH_KINDERGARTEN",
+        district: "강남구",
+        hasConfirmedTuition: "true",
+        minAge: "4",
+        transport: "AVAILABLE",
+        hasUpcomingInfoSession: "true",
+        sort: "TUITION_ASC",
+        page: "1",
+      }),
+    ).toEqual({
+      category: "ENGLISH_KINDERGARTEN",
+      region: "KR-11",
+      district: "강남구",
+      hasConfirmedTuition: true,
+      minAge: 4,
+      transport: "AVAILABLE",
+      hasUpcomingInfoSession: true,
+      sort: "TUITION_ASC",
+      page: 1,
+      pageSize: 12,
+    });
+    expect(
+      toInstitutionListInput({
+        category: "ENGLISH_KINDERGARTEN",
+        district: "서울시",
+      }),
+    ).toEqual({
+      category: "ENGLISH_KINDERGARTEN",
+      region: "KR-11",
       page: 1,
       pageSize: 12,
     });

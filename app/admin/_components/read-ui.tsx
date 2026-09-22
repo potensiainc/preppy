@@ -128,10 +128,42 @@ export function formatAdminDate(value: string | null): string {
   return `${new Intl.DateTimeFormat("ko-KR", {
     dateStyle: "medium",
     timeStyle: "short",
-    timeZone: "UTC",
-  }).format(new Date(value))} UTC`;
+    timeZone: "Asia/Seoul",
+  }).format(new Date(value))} KST`;
 }
 
 export function formatAdminCode(value: string): string {
   return value.replaceAll("_", " ");
+}
+
+const articleStatusLabels: Readonly<Record<string, string>> = {
+  DRAFT: "초안",
+  PUBLISHED: "공개 중",
+  UNPUBLISHED: "발행 취소",
+  ARCHIVED: "보관",
+};
+
+const articleTypeLabels: Readonly<Record<string, string>> = {
+  GUIDE: "가이드",
+  UPDATE: "업데이트",
+  ROUNDUP: "모아보기",
+};
+
+const articleCategoryLabels: Readonly<Record<string, string>> = {
+  ADMISSIONS_GENERAL: "입학 일반",
+  ENGLISH_KINDERGARTEN: "영어유치원",
+  PRIVATE_ELEMENTARY: "사립초등학교",
+  INTERNATIONAL_SCHOOL: "국제학교",
+};
+
+export function formatAdminArticleStatus(value: string): string {
+  return articleStatusLabels[value] ?? formatAdminCode(value);
+}
+
+export function formatAdminArticleType(value: string): string {
+  return articleTypeLabels[value] ?? formatAdminCode(value);
+}
+
+export function formatAdminArticleCategory(value: string): string {
+  return articleCategoryLabels[value] ?? formatAdminCode(value);
 }

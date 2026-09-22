@@ -1,16 +1,30 @@
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
-import { formatAdminDate } from "@/app/admin/_components/read-ui";
+import {
+  formatAdminArticleCategory,
+  formatAdminArticleStatus,
+  formatAdminArticleType,
+  formatAdminDate,
+} from "@/app/admin/_components/read-ui";
 
 describe("Admin date meaning", () => {
-  it("identifies the UTC timezone without turning missing timestamps into observations", () => {
-    // Mutation caught: a UTC instant appears as an unlabeled local time or a missing timestamp becomes a made-up date.
-    expect(formatAdminDate("2026-09-01T09:00:00+09:00")).toContain("UTC");
+  it("shows operational timestamps in explicitly labelled Korean time", () => {
+    // Mutation caught: an instant appears in UTC or as an unlabeled local time.
+    expect(formatAdminDate("2026-09-01T09:00:00+09:00")).toContain("KST");
+    expect(formatAdminDate("2026-09-01T00:00:00Z")).toContain("오전 9:00");
     expect(formatAdminDate("2026-09-01T09:00:00+09:00")).toBe(
       formatAdminDate("2026-09-01T00:00:00Z"),
     );
     expect(formatAdminDate(null)).toBe("확인할 수 없음");
+  });
+
+  it("translates article codes into decision-ready Korean labels", () => {
+    expect(formatAdminArticleStatus("UNPUBLISHED")).toBe("발행 취소");
+    expect(formatAdminArticleType("ROUNDUP")).toBe("모아보기");
+    expect(formatAdminArticleCategory("ENGLISH_KINDERGARTEN")).toBe(
+      "영어유치원",
+    );
   });
 });
 
@@ -115,8 +129,18 @@ describe("WP-11 Admin read input boundaries", () => {
       lifecycleStatus: "PAUSED",
     });
     expect(
-      input.parseArticleAdminListInput({ type: "GUIDE", status: "DRAFT" }),
-    ).toMatchObject({ type: "GUIDE", status: "DRAFT" });
+      input.parseArticleAdminListInput({
+        type: "GUIDE",
+        status: "DRAFT",
+        category: "INTERNATIONAL_SCHOOL",
+        query: "  판교   입학  ",
+      }),
+    ).toMatchObject({
+      type: "GUIDE",
+      status: "DRAFT",
+      category: "INTERNATIONAL_SCHOOL",
+      query: "판교 입학",
+    });
     expect(
       input.parseNotificationAdminListInput({
         status: "READY",
@@ -199,6 +223,7 @@ const institution = {
   category: "INTERNATIONAL_SCHOOL" as const,
   operationalState: "ACTIVE" as const,
   publicationState: "PUBLISHED" as const,
+  englishKindergarten: null,
   activeSourceBindingCount: 1,
   opportunitySummary: {
     total: 1,
@@ -439,5 +464,85 @@ describe("WP-11 Admin read-only pages", () => {
         }),
       ),
     ).toContain('role="status"');
+  });
+
+  it("renders English-kindergarten coverage and review verification as separate read-only sections", async () => {
+    const details = await importDetailPages();
+    expect(details).not.toBeNull();
+    if (!details) return;
+    const markup = renderToStaticMarkup(
+      createElement(details[0].AdminInstitutionDetailView, {
+        data: {
+          ...institution,
+          category: "ENGLISH_KINDERGARTEN",
+          publicationState: "DRAFT",
+          englishKindergarten: {
+            coverages: [
+              {
+                section: "TUITION",
+                status: "CONFIRMED",
+                sourceId: "source-1",
+                sourceName: "기관 공식 페이지",
+                sourceUrl: "https://academy.example.test",
+                sourceSnapshotId: "snapshot-1",
+                academicYearLabel: "2026학년도",
+                publicNote: null,
+                internalNote: "금액표 재확인 완료",
+                lastCollectedAt: "2026-09-03T01:02:03.000Z",
+                lastCheckedAt: "2026-09-04T04:05:06.000Z",
+              },
+              {
+                section: "INFORMATION_SESSION",
+                status: "CHECKED_NOT_FOUND",
+                sourceId: null,
+                sourceName: null,
+                sourceUrl: null,
+                sourceSnapshotId: null,
+                academicYearLabel: null,
+                publicNote: null,
+                internalNote: null,
+                lastCollectedAt: null,
+                lastCheckedAt: "2026-09-04T04:05:06.000Z",
+              },
+              {
+                section: "TRANSPORT",
+                status: "ACCESS_FAILED",
+                sourceId: null,
+                sourceName: null,
+                sourceUrl: null,
+                sourceSnapshotId: null,
+                academicYearLabel: null,
+                publicNote: null,
+                internalNote: "로그인 필요",
+                lastCollectedAt: null,
+                lastCheckedAt: "2026-09-04T04:05:06.000Z",
+              },
+            ],
+            reviewInsight: {
+              versionId: "review-version-1",
+              versionNumber: 1,
+              verificationState: "VERIFIED",
+              periodStart: "2026-01-01",
+              periodEnd: "2026-08-31",
+              sampleSize: 12,
+              themes: [{ summary: "놀이 활동 언급", mentionCount: 5 }],
+              limitations: "공개 후기만 검토",
+              verifiedAt: "2026-09-05T06:07:08.000Z",
+              evidence: [],
+            },
+          },
+        } as never,
+      }),
+    );
+
+    expect(markup).toContain("정보 확인 상태");
+    expect(markup).toContain("후기 요약 검수");
+    expect(markup).toContain("공식 안내에서 미발견");
+    expect(markup).toContain("페이지 접근 실패");
+    expect(markup).toContain("자료 수집");
+    expect(markup).toContain("내용 확인");
+    expect(markup).toContain("금액표 재확인 완료");
+    expect(markup).toContain("검수 완료");
+    expect(markup).not.toMatch(/<form|<button/);
   });
 });

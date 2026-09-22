@@ -22,6 +22,12 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
+import type {
+  CoverageStatus,
+  EnglishKindergartenSection,
+} from "@/src/modules/english-kindergarten/coverage";
+import type { ReviewInsightValue } from "@/src/modules/english-kindergarten/review-insight";
+
 const bytea = customType<{ data: Buffer }>({
   dataType() {
     return "bytea";
@@ -82,6 +88,14 @@ export const schools = pgTable(
       table.lifecycleStatus,
       table.isPublic,
     ),
+    index("schools_normalized_canonical_name_trgm_idx").using(
+      "gin",
+      sql`(regexp_replace(lower(coalesce(${table.canonicalName}, '')), '[^0-9a-z가-힣]+', '', 'g')) gin_trgm_ops`,
+    ),
+    index("schools_normalized_name_en_trgm_idx").using(
+      "gin",
+      sql`(regexp_replace(lower(coalesce(${table.nameEn}, '')), '[^0-9a-z가-힣]+', '', 'g')) gin_trgm_ops`,
+    ),
     check(
       "schools_school_type_check",
       sql`${table.schoolType} in ('PRIVATE_ELEMENTARY', 'INTERNATIONAL_SCHOOL', 'FOREIGN_SCHOOL')`,
@@ -111,6 +125,22 @@ export const schoolAliases = pgTable(
       table.normalizedAlias,
     ),
     index("school_aliases_normalized_idx").on(table.normalizedAlias),
+    index("school_aliases_normalized_alias_value_trgm_idx")
+      .using(
+        "gin",
+        sql`(regexp_replace(lower(coalesce(${table.alias}, '')), '[^0-9a-z가-힣]+', '', 'g')) gin_trgm_ops`,
+      )
+      .where(
+        sql`${table.aliasType} in ('KOREAN', 'ENGLISH', 'ABBREVIATION', 'FORMER_NAME', 'COMMON_NAME')`,
+      ),
+    index("school_aliases_normalized_normalized_alias_trgm_idx")
+      .using(
+        "gin",
+        sql`(regexp_replace(lower(coalesce(${table.normalizedAlias}, '')), '[^0-9a-z가-힣]+', '', 'g')) gin_trgm_ops`,
+      )
+      .where(
+        sql`${table.aliasType} in ('KOREAN', 'ENGLISH', 'ABBREVIATION', 'FORMER_NAME', 'COMMON_NAME')`,
+      ),
     check(
       "school_aliases_alias_type_check",
       sql`${table.aliasType} in ('KOREAN', 'ENGLISH', 'ABBREVIATION', 'FORMER_NAME', 'COMMON_NAME', 'OTHER')`,
@@ -1330,6 +1360,14 @@ export const institutions = pgTable(
       table.district,
     ),
     index("institutions_display_name_idx").on(table.displayName),
+    index("institutions_normalized_display_name_trgm_idx").using(
+      "gin",
+      sql`(regexp_replace(lower(coalesce(${table.displayName}, '')), '[^0-9a-z가-힣]+', '', 'g')) gin_trgm_ops`,
+    ),
+    index("institutions_normalized_slug_trgm_idx").using(
+      "gin",
+      sql`(regexp_replace(lower(coalesce(${table.slug}, '')), '[^0-9a-z가-힣]+', '', 'g')) gin_trgm_ops`,
+    ),
     check(
       "institutions_category_check",
       sql`${table.category} in ('ENGLISH_KINDERGARTEN', 'PRIVATE_ELEMENTARY', 'INTERNATIONAL_SCHOOL')`,
@@ -1385,6 +1423,10 @@ export const institutionRegistryIdentities = pgTable(
     ),
     index("institution_registry_identities_institution_idx").on(
       table.institutionId,
+    ),
+    index("institution_registry_identities_normalized_name_en_trgm_idx").using(
+      "gin",
+      sql`(regexp_replace(lower(coalesce(${table.metadataJson} ->> 'canonical_name_en', '')), '[^0-9a-z가-힣]+', '', 'g')) gin_trgm_ops`,
     ),
     check(
       "institution_registry_identities_registry_name_check",
@@ -1575,6 +1617,84 @@ export const opportunities = pgTable(
     check(
       "opportunities_publication_state_check",
       sql`${table.publicationState} in ('DRAFT', 'PUBLISHED', 'HIDDEN', 'ARCHIVED')`,
+    ),
+  ],
+);
+
+/**
+ * An explicit public grouping for repeated sessions of one admission event.
+ * Membership is never inferred from titles or slugs at read time.
+ */
+export const opportunitySeries = pgTable(
+  "opportunity_series",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    institutionId: uuid("institution_id")
+      .notNull()
+      .references(() => institutions.id, { onDelete: "restrict" }),
+    slug: text("slug").notNull(),
+    title: text("title").notNull(),
+    kind: text("kind").$type<OpportunityKind>().notNull(),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (table) => [
+    uniqueIndex("opportunity_series_slug_unique").on(table.slug),
+    unique("opportunity_series_id_institution_unique").on(
+      table.id,
+      table.institutionId,
+    ),
+    index("opportunity_series_institution_kind_idx").on(
+      table.institutionId,
+      table.kind,
+    ),
+    check(
+      "opportunity_series_slug_format_check",
+      sql`${table.slug} ~ '^[a-z0-9]+(?:-[a-z0-9]+)*$'`,
+    ),
+    check(
+      "opportunity_series_title_check",
+      sql`length(btrim(${table.title})) > 0`,
+    ),
+    check(
+      "opportunity_series_kind_check",
+      sql`${table.kind} in ('RECRUITMENT', 'ADDITIONAL_RECRUITMENT', 'INFORMATION_SESSION', 'CONSULTATION', 'LEVEL_TEST', 'OPEN_HOUSE', 'APPLICATION', 'DOCUMENT_SUBMISSION', 'ASSESSMENT', 'INTERVIEW', 'LOTTERY', 'RESULT_ANNOUNCEMENT', 'REGISTRATION', 'DEADLINE', 'OTHER')`,
+    ),
+  ],
+);
+
+export const opportunitySeriesMembers = pgTable(
+  "opportunity_series_members",
+  {
+    opportunityId: uuid("opportunity_id").notNull(),
+    seriesId: uuid("series_id").notNull(),
+    institutionId: uuid("institution_id").notNull(),
+    sessionNumber: smallint("session_number").notNull(),
+    createdAt: createdAt(),
+  },
+  (table) => [
+    primaryKey({
+      columns: [table.opportunityId],
+      name: "opportunity_series_members_pkey",
+    }),
+    uniqueIndex("opportunity_series_members_number_unique").on(
+      table.seriesId,
+      table.sessionNumber,
+    ),
+    index("opportunity_series_members_series_idx").on(table.seriesId),
+    foreignKey({
+      name: "opportunity_series_members_opportunity_institution_fk",
+      columns: [table.opportunityId, table.institutionId],
+      foreignColumns: [opportunities.id, opportunities.institutionId],
+    }).onDelete("restrict"),
+    foreignKey({
+      name: "opportunity_series_members_series_institution_fk",
+      columns: [table.seriesId, table.institutionId],
+      foreignColumns: [opportunitySeries.id, opportunitySeries.institutionId],
+    }).onDelete("restrict"),
+    check(
+      "opportunity_series_members_session_number_check",
+      sql`${table.sessionNumber} > 0`,
     ),
   ],
 );
@@ -2018,6 +2138,7 @@ export const institutionFactTypeValues = [
   "CURRICULUM",
   "ELIGIBILITY",
   "TRANSPORT",
+  "MEALS",
   "ADMISSION_PROCESS",
   "OPERATING_INFO",
 ] as const;
@@ -2041,7 +2162,7 @@ export const institutionFacts = pgTable(
     ),
     check(
       "institution_facts_type_check",
-      sql`${table.factType} in ('TUITION', 'TARGET_AGE_GRADE', 'CURRICULUM', 'ELIGIBILITY', 'TRANSPORT', 'ADMISSION_PROCESS', 'OPERATING_INFO')`,
+      sql`${table.factType} in ('TUITION', 'TARGET_AGE_GRADE', 'CURRICULUM', 'ELIGIBILITY', 'TRANSPORT', 'MEALS', 'ADMISSION_PROCESS', 'OPERATING_INFO')`,
     ),
   ],
 );
@@ -2167,6 +2288,229 @@ export const institutionFactVersionEvidence = pgTable(
       .nullsNotDistinct(),
     check(
       "institution_fact_version_evidence_role_check",
+      sql`length(btrim(${table.evidenceRole})) > 0`,
+    ),
+  ],
+);
+
+export const institutionSectionCoverages = pgTable(
+  "institution_section_coverages",
+  {
+    institutionId: uuid("institution_id")
+      .notNull()
+      .references(() => institutions.id, { onDelete: "restrict" }),
+    section: text("section").$type<EnglishKindergartenSection>().notNull(),
+    status: text("status").$type<CoverageStatus>().notNull(),
+    sourceId: uuid("source_id").references(() => sources.id, {
+      onDelete: "restrict",
+    }),
+    sourceSnapshotId: uuid("source_snapshot_id"),
+    academicYearLabel: text("academic_year_label"),
+    publicNote: text("public_note"),
+    internalNote: text("internal_note"),
+    lastCollectedAt: timestamp("last_collected_at", { withTimezone: true }),
+    lastCheckedAt: timestamp("last_checked_at", {
+      withTimezone: true,
+    }).notNull(),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (table) => [
+    primaryKey({
+      name: "institution_section_coverages_pk",
+      columns: [table.institutionId, table.section],
+    }),
+    foreignKey({
+      name: "institution_section_coverages_snapshot_source_fk",
+      columns: [table.sourceSnapshotId, table.sourceId],
+      foreignColumns: [sourceSnapshots.id, sourceSnapshots.sourceId],
+    }).onDelete("restrict"),
+    index("institution_section_coverages_status_idx").on(
+      table.section,
+      table.status,
+    ),
+    check(
+      "institution_section_coverages_section_check",
+      sql`${table.section} in ('TUITION', 'INFORMATION_SESSION', 'TARGET_AGE_GRADE', 'CURRICULUM', 'TRANSPORT', 'MEALS', 'REVIEWS', 'OPERATING_INFO')`,
+    ),
+    check(
+      "institution_section_coverages_status_check",
+      sql`${table.status} in ('NOT_RESEARCHED', 'CONFIRMED', 'CHECKED_NOT_FOUND', 'ACCESS_FAILED', 'NEEDS_REVIEW')`,
+    ),
+    check(
+      "institution_section_coverages_snapshot_source_check",
+      sql`${table.sourceSnapshotId} is null or ${table.sourceId} is not null`,
+    ),
+    check(
+      "institution_section_coverages_year_check",
+      sql`${table.academicYearLabel} is null or length(btrim(${table.academicYearLabel})) > 0`,
+    ),
+    check(
+      "institution_section_coverages_public_note_check",
+      sql`${table.publicNote} is null or length(btrim(${table.publicNote})) > 0`,
+    ),
+    check(
+      "institution_section_coverages_internal_note_check",
+      sql`${table.internalNote} is null or length(btrim(${table.internalNote})) > 0`,
+    ),
+    check(
+      "institution_section_coverages_collection_order_check",
+      sql`${table.lastCollectedAt} is null or ${table.lastCollectedAt} <= ${table.lastCheckedAt}`,
+    ),
+  ],
+);
+
+export const institutionReviewInsights = pgTable(
+  "institution_review_insights",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    institutionId: uuid("institution_id")
+      .notNull()
+      .references(() => institutions.id, { onDelete: "restrict" }),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (table) => [
+    uniqueIndex("institution_review_insights_institution_unique").on(
+      table.institutionId,
+    ),
+  ],
+);
+
+export const institutionReviewInsightVersions = pgTable(
+  "institution_review_insight_versions",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    institutionReviewInsightId: uuid("institution_review_insight_id")
+      .notNull()
+      .references(() => institutionReviewInsights.id, {
+        onDelete: "restrict",
+      }),
+    versionNumber: integer("version_number").notNull(),
+    supersedesVersionId: uuid("supersedes_version_id"),
+    verificationState: text("verification_state")
+      .$type<VersionVerificationState>()
+      .notNull(),
+    isCurrent: boolean("is_current").notNull().default(false),
+    periodStart: date("period_start"),
+    periodEnd: date("period_end"),
+    sampleSize: integer("sample_size").notNull(),
+    themes: jsonb("themes").$type<ReviewInsightValue["themes"]>().notNull(),
+    limitations: text("limitations"),
+    verifiedAt: timestamp("verified_at", { withTimezone: true }),
+    verifiedByAdminId: uuid("verified_by_admin_id").references(
+      () => adminUsers.id,
+      { onDelete: "restrict" },
+    ),
+    createdAt: createdAt(),
+  },
+  (table) => [
+    unique("institution_review_insight_versions_id_root_unique").on(
+      table.id,
+      table.institutionReviewInsightId,
+    ),
+    uniqueIndex("institution_review_insight_versions_root_number_unique").on(
+      table.institutionReviewInsightId,
+      table.versionNumber,
+    ),
+    uniqueIndex("institution_review_insight_versions_one_current_per_root")
+      .on(table.institutionReviewInsightId)
+      .where(sql`${table.isCurrent} = true`),
+    uniqueIndex("institution_review_insight_versions_one_successor")
+      .on(table.supersedesVersionId)
+      .where(sql`${table.supersedesVersionId} is not null`),
+    foreignKey({
+      name: "institution_review_insight_versions_supersedes_fk",
+      columns: [table.supersedesVersionId, table.institutionReviewInsightId],
+      foreignColumns: [table.id, table.institutionReviewInsightId],
+    }).onDelete("restrict"),
+    check(
+      "institution_review_insight_versions_number_check",
+      sql`${table.versionNumber} > 0`,
+    ),
+    check(
+      "institution_review_insight_versions_verification_state_check",
+      sql`${table.verificationState} in ('UNVERIFIED', 'VERIFIED', 'SUPERSEDED')`,
+    ),
+    check(
+      "institution_review_insight_versions_current_verified_check",
+      sql`not ${table.isCurrent} or ${table.verificationState} = 'VERIFIED'`,
+    ),
+    check(
+      "institution_review_insight_versions_verified_at_check",
+      sql`${table.verificationState} <> 'VERIFIED' or ${table.verifiedAt} is not null`,
+    ),
+    check(
+      "institution_review_insight_versions_superseded_not_current_check",
+      sql`${table.verificationState} <> 'SUPERSEDED' or not ${table.isCurrent}`,
+    ),
+    check(
+      "institution_review_insight_versions_not_self_superseding_check",
+      sql`${table.supersedesVersionId} is null or ${table.supersedesVersionId} <> ${table.id}`,
+    ),
+    check(
+      "institution_review_insight_versions_sample_size_check",
+      sql`${table.sampleSize} > 0`,
+    ),
+    check(
+      "institution_review_insight_versions_themes_check",
+      sql`jsonb_typeof(${table.themes}) = 'array' and jsonb_array_length(${table.themes}) > 0`,
+    ),
+    check(
+      "institution_review_insight_versions_period_order_check",
+      sql`${table.periodEnd} is null or ${table.periodStart} is null or ${table.periodEnd} >= ${table.periodStart}`,
+    ),
+    check(
+      "institution_review_insight_versions_limitations_check",
+      sql`${table.limitations} is null or length(btrim(${table.limitations})) > 0`,
+    ),
+  ],
+);
+
+export const institutionReviewInsightVersionEvidence = pgTable(
+  "institution_review_insight_version_evidence",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    institutionReviewInsightVersionId: uuid(
+      "institution_review_insight_version_id",
+    ).notNull(),
+    sourceId: uuid("source_id").notNull(),
+    sourceObservationId: bigint("source_observation_id", { mode: "bigint" }),
+    sourceSnapshotId: uuid("source_snapshot_id"),
+    evidenceRole: text("evidence_role").notNull(),
+    createdAt: createdAt(),
+  },
+  (table) => [
+    foreignKey({
+      name: "institution_review_insight_version_evidence_version_fk",
+      columns: [table.institutionReviewInsightVersionId],
+      foreignColumns: [institutionReviewInsightVersions.id],
+    }).onDelete("restrict"),
+    foreignKey({
+      name: "institution_review_insight_version_evidence_source_fk",
+      columns: [table.sourceId],
+      foreignColumns: [sources.id],
+    }).onDelete("restrict"),
+    foreignKey({
+      name: "institution_review_insight_version_evidence_observation_source_fk",
+      columns: [table.sourceObservationId, table.sourceId],
+      foreignColumns: [sourceObservations.id, sourceObservations.sourceId],
+    }).onDelete("restrict"),
+    foreignKey({
+      name: "institution_review_insight_version_evidence_snapshot_source_fk",
+      columns: [table.sourceSnapshotId, table.sourceId],
+      foreignColumns: [sourceSnapshots.id, sourceSnapshots.sourceId],
+    }).onDelete("restrict"),
+    unique("institution_review_insight_version_evidence_logical_unique")
+      .on(
+        table.institutionReviewInsightVersionId,
+        table.sourceId,
+        table.sourceObservationId,
+        table.sourceSnapshotId,
+      )
+      .nullsNotDistinct(),
+    check(
+      "institution_review_insight_version_evidence_role_check",
       sql`length(btrim(${table.evidenceRole})) > 0`,
     ),
   ],

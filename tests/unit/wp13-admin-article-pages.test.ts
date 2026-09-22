@@ -43,6 +43,14 @@ describe("WP-13 Admin Article pages", () => {
     );
     expect(markup).toContain(`/admin/articles/${article.id}`);
     expect(markup).toContain("/admin/articles/new");
+    expect(markup).toContain('name="query"');
+    expect(markup).toContain('name="category"');
+    expect(markup).toContain("가이드");
+    expect(markup).toContain("입학 일반");
+    expect(markup).toContain("초안");
+    expect(markup).toContain("최근 발행");
+    expect(markup).not.toContain("발행 기록");
+    expect(markup).not.toContain(">GUIDE<");
   });
 
   it("renders only sanitizedContentHtml in detail and preview through ArticleProse", () => {

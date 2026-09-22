@@ -572,6 +572,46 @@
   font-weight: 800;
 }
 
+.admin-catalog-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.admin-article-filters {
+  margin-top: 22px;
+  padding: 18px;
+  border-top: 1px solid var(--admin-ink);
+  background: var(--admin-surface);
+}
+
+.admin-article-filter-grid {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.6fr) repeat(3, minmax(130px, 0.7fr));
+  gap: 14px;
+}
+
+.admin-article-filter-grid label,
+.admin-relation-search {
+  display: grid;
+  gap: 6px;
+  color: var(--admin-ink);
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.admin-article-filter-grid input,
+.admin-article-filter-grid select,
+.admin-relation-search input {
+  width: 100%;
+  min-height: 42px;
+  padding: 9px 10px;
+  border: 1px solid #8d9892;
+  border-radius: 0;
+  background: #fff;
+  color: var(--admin-ink);
+  font: inherit;
+}
+
 .admin-filter-guidance {
   margin-top: 18px;
   padding: 22px;
@@ -732,6 +772,53 @@
   margin-top: 30px;
 }
 
+.admin-article-summary {
+  margin-top: 20px;
+  padding: 0;
+  border-top: 3px solid var(--admin-ink);
+  background: var(--admin-surface);
+}
+
+.admin-article-summary dl,
+.admin-publish-review dl {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0;
+}
+
+.admin-article-summary dl > div,
+.admin-publish-review dl > div {
+  min-width: 0;
+  padding: 14px;
+  border-right: 1px solid var(--admin-rule);
+  border-bottom: 1px solid var(--admin-rule);
+}
+
+.admin-article-summary dt,
+.admin-publish-review dt {
+  margin-bottom: 6px;
+  color: var(--admin-muted);
+  font-size: 0.66rem;
+  font-weight: 850;
+}
+
+.admin-article-summary dd,
+.admin-publish-review dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-size: 0.78rem;
+  font-weight: 750;
+}
+
+.admin-article-summary__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 14px;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
 .admin-article-form-grid,
 .admin-article-create {
   display: grid;
@@ -803,6 +890,51 @@
   gap: 5px;
 }
 
+.admin-article-submit-actions {
+  position: sticky;
+  z-index: 4;
+  bottom: 12px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid var(--admin-ink);
+  background: rgba(247, 248, 245, 0.96);
+  box-shadow: 6px 6px 0 #cbd1cc;
+  backdrop-filter: blur(10px);
+}
+
+.admin-unsaved-state {
+  flex: 1 1 220px;
+  margin: 0;
+  color: var(--admin-muted);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.admin-unsaved-state--dirty {
+  color: #7a3e10;
+}
+
+.admin-publish-review {
+  display: grid;
+  gap: 18px;
+  padding: 22px;
+  border: 3px solid var(--admin-ink);
+  background: #fff;
+  box-shadow: 10px 10px 0 #cbd1cc;
+}
+
+.admin-publish-review h2,
+.admin-publish-review p {
+  margin-bottom: 8px;
+}
+
+.admin-publish-review__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
 .admin-article-toolbar button,
 .admin-article-mode button,
 .admin-article-primary,
@@ -834,6 +966,13 @@
   opacity: 0.38;
 }
 
+.admin-article-submit-actions button:disabled,
+.admin-article-relations button:disabled,
+.admin-publish-review button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
 .admin-article-editor .tiptap {
   min-height: 320px;
   margin-top: 12px;
@@ -859,12 +998,44 @@
 .admin-article-relation-grid fieldset {
   display: grid;
   gap: 8px;
-  max-height: 340px;
   margin: 0;
   padding: 16px;
-  overflow: auto;
   border: 1px solid var(--admin-rule);
   background: var(--admin-surface);
+}
+
+.admin-selected-relations {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--admin-rule);
+}
+
+.admin-selected-relations strong {
+  flex-basis: 100%;
+  color: var(--admin-muted);
+  font-size: 0.68rem;
+}
+
+.admin-selected-relations button {
+  min-height: 30px;
+  padding: 4px 7px;
+  background: #e2e6e2;
+  font-size: 0.68rem;
+}
+
+.admin-relation-results {
+  display: grid;
+  gap: 8px;
+  max-height: 280px;
+  overflow: auto;
+}
+
+.admin-relation-empty {
+  margin: 4px 0;
+  color: var(--admin-muted);
+  font-size: 0.74rem;
 }
 
 .admin-article-relation-grid label {
@@ -951,6 +1122,12 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .admin-article-filter-grid,
+  .admin-article-summary dl,
+  .admin-publish-review dl {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .admin-detail-ledger dl {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -997,6 +1174,9 @@
   }
 
   .admin-filter-grid,
+  .admin-article-filter-grid,
+  .admin-article-summary dl,
+  .admin-publish-review dl,
   .admin-detail-ledger dl,
   .admin-action-grid,
   .admin-source-move__modes {

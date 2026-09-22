@@ -4,7 +4,7 @@
     "baseUrl": "../..",
     "paths": {
       "@/*": ["./*"],
-      "server-only": ["tests/support/server-only.ts"]
+      "server-only": ["scripts/support/server-only.ts"]
     }
   }
 }

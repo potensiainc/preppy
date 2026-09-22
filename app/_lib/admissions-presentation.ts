@@ -82,7 +82,16 @@ export function admissionClock(value: string): string | null {
   }
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return null;
-  return `${new Intl.DateTimeFormat("ko-KR", { timeZone: "Asia/Seoul", hour: "numeric", minute: "2-digit", hour12: true }).format(date)} KST`;
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Seoul",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(date);
+  const hour = Number(parts.find((part) => part.type === "hour")?.value);
+  const minute = parts.find((part) => part.type === "minute")?.value;
+  if (!Number.isInteger(hour) || minute === undefined) return null;
+  return `${hour < 12 ? "오전" : "오후"} ${hour % 12 || 12}:${minute} KST`;
 }
 
 export function admissionSourceType(url: string): string {

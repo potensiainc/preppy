@@ -482,6 +482,7 @@ describe("WP-11 Admin Institution read projection", () => {
         "activeSourceBindingCount",
         "category",
         "displayName",
+        "englishKindergarten",
         "id",
         "operationalState",
         "opportunitySummary",
@@ -491,6 +492,7 @@ describe("WP-11 Admin Institution read projection", () => {
     );
     expect(first.items[0]).toMatchObject({
       activeSourceBindingCount: 1,
+      englishKindergarten: null,
       opportunitySummary: { total: 4 },
     });
     expect(first.items[0]!.opportunitySummary.items).toHaveLength(3);

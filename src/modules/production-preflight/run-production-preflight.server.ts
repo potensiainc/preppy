@@ -3,6 +3,7 @@ import "server-only";
 import { existsSync } from "node:fs";
 
 import { collectBackfillDryRun } from "@/src/modules/production-preflight/backfill-dry-run.server";
+import { collectCurrentSourceBindingAudit } from "@/src/modules/production-preflight/current-source-binding-audit.server";
 import type {
   MigrationInventory,
   PreflightCheck,
@@ -210,33 +211,53 @@ export async function runProductionPreflight(options: {
       const backfillReady = backfillTables.every(
         (table) => inventory.schema.tables[table] === "PRESENT",
       );
-      const backfills = backfillReady
+      const historicalBackfills = backfillReady
         ? await collectBackfillDryRun(session)
         : { status: "NOT_EXECUTED_SCHEMA_INCOMPATIBLE" };
-      if ("institution" in backfills) {
+      const currentSourceBindings = backfillReady
+        ? await collectCurrentSourceBindingAudit(session)
+        : null;
+      const canonicalOnly =
+        inventory.rowCounts.source_bindings === 0 &&
+        inventory.rowCounts.event_version_evidence === 0 &&
+        (inventory.distributions.opportunityTruthMode.LEGACY_BACKED ?? 0) === 0;
+      const backfills = {
+        ...historicalBackfills,
+        currentSourceBindings: currentSourceBindings?.counts ?? null,
+      };
+      if ("institution" in historicalBackfills) {
         for (const [scope, dryRun] of [
-          ["INSTITUTION", backfills.institution],
-          ["OPPORTUNITY", backfills.opportunity],
-          ["SOURCE_BINDING", backfills.sourceBindings],
+          ["INSTITUTION", historicalBackfills.institution],
+          ["OPPORTUNITY", historicalBackfills.opportunity],
+          ["SOURCE_BINDING", historicalBackfills.sourceBindings],
         ] as const) {
           if (dryRun.wouldBlock > 0) {
+            const historicalDiagnostic =
+              scope === "SOURCE_BINDING" && canonicalOnly;
             checks.push({
-              code: `${scope}_BACKFILL_BLOCKED`,
-              severity: "BLOCKER",
+              code: historicalDiagnostic
+                ? "SOURCE_BINDING_BACKFILL_HISTORICAL_DIAGNOSTIC"
+                : `${scope}_BACKFILL_BLOCKED`,
+              severity: historicalDiagnostic ? "INFO" : "BLOCKER",
               count: dryRun.wouldBlock,
-              message: `${scope} deterministic backfill has blocking preconditions.`,
+              message: historicalDiagnostic
+                ? "Legacy Source-binding replay differs from existing canonical bindings; current integrity is audited separately."
+                : `${scope} deterministic backfill has blocking preconditions.`,
             });
           }
         }
-        if (backfills.sourceBindings.notImported > 0) {
+        if (historicalBackfills.sourceBindings.notImported > 0) {
           checks.push({
             code: "SOURCE_BINDING_NOT_IMPORTED",
             severity: "INFO",
-            count: backfills.sourceBindings.notImported,
+            count: historicalBackfills.sourceBindings.notImported,
             message:
               "Source binding candidates were intentionally not imported by policy.",
           });
         }
+      }
+      if (currentSourceBindings) {
+        checks.push(...currentSourceBindings.checks);
       }
 
       checks.push({

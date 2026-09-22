@@ -8,6 +8,10 @@ import { useState } from "react";
 import { ArticleEditorToolbar } from "@/app/admin/_components/article-editor-toolbar";
 import { ArticleLifecycleActions } from "@/app/admin/_components/article-lifecycle-actions";
 import { ArticleRelations } from "@/app/admin/_components/article-relations";
+import {
+  formatAdminArticleCategory,
+  formatAdminArticleType,
+} from "@/app/admin/_components/read-ui";
 import type {
   AdminArticleDetailDTO,
   ArticleRelationOptionDTO,
@@ -79,18 +83,18 @@ export function AdminNewArticleEditor() {
       <label>
         유형
         <select name="type" defaultValue="GUIDE">
-          <option>GUIDE</option>
-          <option>UPDATE</option>
-          <option>ROUNDUP</option>
+          <option value="GUIDE">가이드</option>
+          <option value="UPDATE">업데이트</option>
+          <option value="ROUNDUP">모아보기</option>
         </select>
       </label>
       <label>
         분류
         <select name="category" defaultValue="ADMISSIONS_GENERAL">
-          <option>ADMISSIONS_GENERAL</option>
-          <option>ENGLISH_KINDERGARTEN</option>
-          <option>PRIVATE_ELEMENTARY</option>
-          <option>INTERNATIONAL_SCHOOL</option>
+          <option value="ADMISSIONS_GENERAL">입학 일반</option>
+          <option value="ENGLISH_KINDERGARTEN">영어유치원</option>
+          <option value="PRIVATE_ELEMENTARY">사립초등학교</option>
+          <option value="INTERNATIONAL_SCHOOL">국제학교</option>
         </select>
       </label>
       <button type="submit">초안 만들기</button>
@@ -136,6 +140,9 @@ export function AdminArticleEditor({
   });
   const [message, setMessage] = useState("");
   const [isStale, setIsStale] = useState(false);
+  const [isBusy, setIsBusy] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
+  const [showPublishReview, setShowPublishReview] = useState(false);
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -145,7 +152,10 @@ export function AdminArticleEditor({
     ],
     content: initialSanitizedContentHtml,
     immediatelyRender: false,
-    onUpdate: ({ editor: current }) => setSourceHtml(current.getHTML()),
+    onUpdate: ({ editor: current }) => {
+      setSourceHtml(current.getHTML());
+      setIsDirty(true);
+    },
   });
 
   const switchMode = (next: "visual" | "source") => {
@@ -172,39 +182,54 @@ export function AdminArticleEditor({
   const submit = async (intent: "SAVE_DRAFT" | "PUBLISH") => {
     const publish = intent === "PUBLISH";
     setIsStale(false);
-    const response = await fetch(
-      `/api/admin/articles/${article.id}/${publish ? "publish" : "draft"}`,
-      {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          expectedUpdatedAt: updatedAt,
-          candidate: publish
-            ? { ...candidate(), institutionIds, opportunityIds }
-            : candidate(),
-        }),
-      },
-    );
-    if (response.status === 409) {
-      setMessage(staleMessage);
-      setIsStale(true);
-      return;
-    }
-    if (!response.ok) {
-      setMessage(
-        "입력 내용을 저장하지 못했어요. 입력값과 현재 발행 상태를 확인해 주세요.",
+    setIsBusy(true);
+    setMessage(publish ? "발행하고 있어요." : "초안을 저장하고 있어요.");
+    try {
+      const response = await fetch(
+        `/api/admin/articles/${article.id}/${publish ? "publish" : "draft"}`,
+        {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            expectedUpdatedAt: updatedAt,
+            candidate: publish
+              ? { ...candidate(), institutionIds, opportunityIds }
+              : candidate(),
+          }),
+        },
       );
-      return;
+      if (response.status === 409) {
+        setMessage(staleMessage);
+        setIsStale(true);
+        return;
+      }
+      if (!response.ok) {
+        setMessage(
+          publish
+            ? "발행하지 못했어요. 필수 정보와 현재 발행 상태를 확인해 주세요."
+            : "초안을 저장하지 못했어요. 입력값을 확인해 주세요.",
+        );
+        return;
+      }
+      const payload = (await response.json()) as {
+        data: { updatedAt: string };
+      };
+      setUpdatedAt(payload.data.updatedAt);
+      setIsDirty(false);
+      setShowPublishReview(false);
+      setMessage(publish ? "변경 내용을 발행했어요." : "초안을 저장했어요.");
+      router.refresh();
+    } finally {
+      setIsBusy(false);
     }
-    const payload = (await response.json()) as { data: { updatedAt: string } };
-    setUpdatedAt(payload.data.updatedAt);
-    setMessage("입력 내용을 저장했어요.");
-    router.refresh();
   };
   const set = <K extends keyof typeof fields>(
     key: K,
     value: (typeof fields)[K],
-  ) => setFields((current) => ({ ...current, [key]: value }));
+  ) => {
+    setFields((current) => ({ ...current, [key]: value }));
+    setIsDirty(true);
+  };
 
   return (
     <div className="admin-article-workbench">
@@ -224,9 +249,9 @@ export function AdminArticleEditor({
               set("type", event.target.value as typeof fields.type)
             }
           >
-            <option>GUIDE</option>
-            <option>UPDATE</option>
-            <option>ROUNDUP</option>
+            <option value="GUIDE">가이드</option>
+            <option value="UPDATE">업데이트</option>
+            <option value="ROUNDUP">모아보기</option>
           </select>
         </label>
         <label>
@@ -237,10 +262,10 @@ export function AdminArticleEditor({
               set("category", event.target.value as typeof fields.category)
             }
           >
-            <option>ADMISSIONS_GENERAL</option>
-            <option>ENGLISH_KINDERGARTEN</option>
-            <option>PRIVATE_ELEMENTARY</option>
-            <option>INTERNATIONAL_SCHOOL</option>
+            <option value="ADMISSIONS_GENERAL">입학 일반</option>
+            <option value="ENGLISH_KINDERGARTEN">영어유치원</option>
+            <option value="PRIVATE_ELEMENTARY">사립초등학교</option>
+            <option value="INTERNATIONAL_SCHOOL">국제학교</option>
           </select>
         </label>
         <label>
@@ -339,23 +364,107 @@ export function AdminArticleEditor({
             <textarea
               className="admin-article-source"
               value={sourceHtml}
-              onChange={(event) => setSourceHtml(event.target.value)}
+              onChange={(event) => {
+                setSourceHtml(event.target.value);
+                setIsDirty(true);
+              }}
             />
             <small>저장할 때 안전하지 않은 HTML 요소가 제거될 수 있어요.</small>
           </label>
         )}
       </section>
+      {showPublishReview ? (
+        <section
+          className="admin-publish-review"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="publish-review-heading"
+        >
+          <div>
+            <p className="admin-kicker">공개 전 마지막 점검</p>
+            <h2 id="publish-review-heading">발행 전 확인</h2>
+            <p>
+              아래 내용으로 독자에게 공개돼요. 잘못된 정보가 없는지 한 번 더
+              확인해 주세요.
+            </p>
+          </div>
+          <dl>
+            <div>
+              <dt>제목</dt>
+              <dd>{fields.title || "제목 없음"}</dd>
+            </div>
+            <div>
+              <dt>유형과 분류</dt>
+              <dd>
+                {formatAdminArticleType(fields.type)} ·{" "}
+                {formatAdminArticleCategory(fields.category)}
+              </dd>
+            </div>
+            <div>
+              <dt>검색 노출</dt>
+              <dd>
+                {fields.robotsIndex ? "검색 노출 허용" : "검색 노출 차단"} ·{" "}
+                {fields.robotsFollow ? "링크 추적 허용" : "링크 추적 차단"}
+              </dd>
+            </div>
+            <div>
+              <dt>연결 정보</dt>
+              <dd>
+                기관 {institutionIds.length}곳 · 입학정보{" "}
+                {opportunityIds.length}건
+              </dd>
+            </div>
+            <div>
+              <dt>공개 주소</dt>
+              <dd>/articles/{article.slug}</dd>
+            </div>
+          </dl>
+          <div className="admin-publish-review__actions">
+            <button
+              type="button"
+              disabled={isBusy}
+              onClick={() => setShowPublishReview(false)}
+            >
+              검토로 돌아가기
+            </button>
+            <button
+              className="admin-article-primary"
+              type="button"
+              disabled={isBusy}
+              onClick={() => void submit("PUBLISH")}
+            >
+              {isBusy ? "발행 중" : "확인하고 발행"}
+            </button>
+          </div>
+        </section>
+      ) : null}
       <div className="admin-article-submit-actions">
+        <p
+          className={
+            isDirty
+              ? "admin-unsaved-state admin-unsaved-state--dirty"
+              : "admin-unsaved-state"
+          }
+        >
+          {isDirty
+            ? "저장하지 않은 변경사항이 있어요."
+            : "모든 변경사항을 저장했어요."}
+        </p>
         {article.status !== "PUBLISHED" && article.status !== "ARCHIVED" ? (
-          <button type="button" onClick={() => void submit("SAVE_DRAFT")}>
-            초안 저장
+          <button
+            type="button"
+            disabled={isBusy || !isDirty}
+            onClick={() => void submit("SAVE_DRAFT")}
+          >
+            {isBusy ? "저장 중" : "초안 저장"}
           </button>
         ) : null}
         {article.status !== "ARCHIVED" ? (
           <button
             className="admin-article-primary"
             type="button"
-            onClick={() => void submit("PUBLISH")}
+            disabled={isBusy}
+            onClick={() => setShowPublishReview(true)}
           >
             {article.status === "PUBLISHED" ? "변경 내용 발행" : "아티클 발행"}
           </button>
@@ -382,6 +491,7 @@ export function AdminArticleEditor({
         onChange={(next) => {
           setInstitutionIds(next.institutionIds);
           setOpportunityIds(next.opportunityIds);
+          setIsDirty(true);
         }}
         onUpdated={setUpdatedAt}
       />

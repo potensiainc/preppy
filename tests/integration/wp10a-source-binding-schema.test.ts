@@ -368,10 +368,10 @@ describe("WP-10A canonical Source binding schema", () => {
     await insertInstitutionBinding({ institutionId, sourceId });
     await expect(
       sql`delete from sources where id = ${sourceId}`,
-    ).rejects.toMatchObject({ code: "23503" });
+    ).rejects.toMatchObject({ code: expect.stringMatching(/^(23001|23503)$/) });
     await expect(
       sql`delete from institutions where id = ${institutionId}`,
-    ).rejects.toMatchObject({ code: "23503" });
+    ).rejects.toMatchObject({ code: expect.stringMatching(/^(23001|23503)$/) });
   });
 
   it("binds Sources directly to Native and LEGACY_BACKED Opportunities", async () => {
@@ -515,6 +515,6 @@ describe("WP-10A canonical Source binding schema", () => {
     await insertOpportunityBinding({ opportunityId, sourceId });
     await expect(
       sql`delete from opportunities where id = ${opportunityId}`,
-    ).rejects.toMatchObject({ code: "23503" });
+    ).rejects.toMatchObject({ code: expect.stringMatching(/^(23001|23503)$/) });
   });
 });

@@ -69,38 +69,49 @@ export function TrustSource({ source }: { source: OfficialSourceDTO }) {
 export function InstitutionCard({
   institution,
   analyticsEvent,
+  headingLevel = 3,
 }: {
   institution: InstitutionCardDTO;
   analyticsEvent?: CapturedAnalyticsEvent;
+  headingLevel?: 3 | 4;
 }) {
+  const Heading = headingLevel === 4 ? "h4" : "h3";
+  const region =
+    institution.district ||
+    (institution.region === "KR-11" ? "서울" : institution.region);
   return (
-    <article className="public-card institution-card">
+    <article className="public-card institution-card public-card--linked">
       <div className="card-kicker">
         <span>{categoryLabel(institution.category)}</span>
         {institution.currentAdmissionsState ? (
           <StateBadge state={institution.currentAdmissionsState} />
         ) : null}
       </div>
-      <h3>
+      <Heading>
         {analyticsEvent ? (
           <AnalyticsLink
+            className="card-primary-link"
             event={analyticsEvent}
             href={`/institutions/${institution.slug}`}
           >
             {institution.name}
           </AnalyticsLink>
         ) : (
-          <Link href={`/institutions/${institution.slug}`}>
+          <Link
+            className="card-primary-link"
+            href={`/institutions/${institution.slug}`}
+          >
             {institution.name}
           </Link>
         )}
-      </h3>
-      {institution.region ? (
-        <p className="card-region">{institution.region}</p>
-      ) : null}
+      </Heading>
+      {region ? <p className="card-region">{region}</p> : null}
       {institution.currentOpportunity ? (
         <p className="card-opportunity">
-          <Link href={`/opportunities/${institution.currentOpportunity.slug}`}>
+          <Link
+            className="card-secondary-link"
+            href={`/opportunities/${institution.currentOpportunity.slug}`}
+          >
             {institution.currentOpportunity.title}
           </Link>
         </p>
@@ -116,18 +127,24 @@ export function OpportunityCard({
   opportunity: OpportunityCardDTO;
 }) {
   return (
-    <article className="public-card opportunity-card">
+    <article className="public-card opportunity-card public-card--linked">
       <div className="card-kicker">
         <span>{opportunityKindLabel(opportunity.kind)}</span>
         <StateBadge state={opportunity.businessState} />
       </div>
       <p className="card-parent">
-        <Link href={`/institutions/${opportunity.institution.slug}`}>
+        <Link
+          className="card-secondary-link"
+          href={`/institutions/${opportunity.institution.slug}`}
+        >
           {opportunity.institution.name}
         </Link>
       </p>
       <h3>
-        <Link href={`/opportunities/${opportunity.slug}`}>
+        <Link
+          className="card-primary-link"
+          href={`/opportunities/${opportunity.slug}`}
+        >
           {opportunity.title}
         </Link>
       </h3>
