@@ -8,6 +8,7 @@ const requiredPaths = [
   ".next/BUILD_ID",
   "node_modules/.bin/tsx",
   "scripts/worker.ts",
+  "scripts/support/server-only.ts",
   "src/db/migrations/meta/_journal.json",
 ] as const;
 

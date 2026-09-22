@@ -24,6 +24,7 @@ describe("release image contract", () => {
       ".next/BUILD_ID",
       "node_modules/.bin/tsx",
       "scripts/worker.ts",
+      "scripts/support/server-only.ts",
       "src/db/migrations/meta/_journal.json",
     ]) {
       const path = join(root, file);
@@ -88,6 +89,16 @@ describe("release image contract", () => {
     const root = await imageRoot();
     await rm(join(root, "node_modules", ".bin", "tsx"));
     await expect(assertRuntimeImageContract(root)).rejects.toThrow(/tsx/);
+  });
+
+  it("rejects an image that cannot resolve the server-only CLI shim", async () => {
+    const root = await imageRoot();
+    await rm(join(root, "scripts", "support", "server-only.ts"), {
+      force: true,
+    });
+    await expect(assertRuntimeImageContract(root)).rejects.toThrow(
+      /server-only\.ts/,
+    );
   });
 
   it("rejects an image without the staging indexing proxy", async () => {
