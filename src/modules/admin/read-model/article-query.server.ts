@@ -78,7 +78,16 @@ export async function listAdminArticles(
   const input = parseArticleAdminListInput(rawInput);
   const conditions = [
     input.type === undefined ? undefined : eq(articles.type, input.type),
+    input.category === undefined
+      ? undefined
+      : eq(articles.category, input.category),
     input.status === undefined ? undefined : eq(articles.status, input.status),
+    input.query === undefined
+      ? undefined
+      : or(
+          ilike(articles.title, `%${input.query}%`),
+          ilike(articles.slug, `%${input.query}%`),
+        ),
   ].filter((condition) => condition !== undefined);
   const where = conditions.length === 0 ? undefined : and(...conditions);
   const [rows, totals] = await Promise.all([

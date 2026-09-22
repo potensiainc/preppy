@@ -1,16 +1,30 @@
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
-import { formatAdminDate } from "@/app/admin/_components/read-ui";
+import {
+  formatAdminArticleCategory,
+  formatAdminArticleStatus,
+  formatAdminArticleType,
+  formatAdminDate,
+} from "@/app/admin/_components/read-ui";
 
 describe("Admin date meaning", () => {
-  it("identifies the UTC timezone without turning missing timestamps into observations", () => {
-    // Mutation caught: a UTC instant appears as an unlabeled local time or a missing timestamp becomes a made-up date.
-    expect(formatAdminDate("2026-09-01T09:00:00+09:00")).toContain("UTC");
+  it("shows operational timestamps in explicitly labelled Korean time", () => {
+    // Mutation caught: an instant appears in UTC or as an unlabeled local time.
+    expect(formatAdminDate("2026-09-01T09:00:00+09:00")).toContain("KST");
+    expect(formatAdminDate("2026-09-01T00:00:00Z")).toContain("오전 9:00");
     expect(formatAdminDate("2026-09-01T09:00:00+09:00")).toBe(
       formatAdminDate("2026-09-01T00:00:00Z"),
     );
     expect(formatAdminDate(null)).toBe("확인할 수 없음");
+  });
+
+  it("translates article codes into decision-ready Korean labels", () => {
+    expect(formatAdminArticleStatus("UNPUBLISHED")).toBe("발행 취소");
+    expect(formatAdminArticleType("ROUNDUP")).toBe("모아보기");
+    expect(formatAdminArticleCategory("ENGLISH_KINDERGARTEN")).toBe(
+      "영어유치원",
+    );
   });
 });
 
@@ -115,8 +129,18 @@ describe("WP-11 Admin read input boundaries", () => {
       lifecycleStatus: "PAUSED",
     });
     expect(
-      input.parseArticleAdminListInput({ type: "GUIDE", status: "DRAFT" }),
-    ).toMatchObject({ type: "GUIDE", status: "DRAFT" });
+      input.parseArticleAdminListInput({
+        type: "GUIDE",
+        status: "DRAFT",
+        category: "INTERNATIONAL_SCHOOL",
+        query: "  판교   입학  ",
+      }),
+    ).toMatchObject({
+      type: "GUIDE",
+      status: "DRAFT",
+      category: "INTERNATIONAL_SCHOOL",
+      query: "판교 입학",
+    });
     expect(
       input.parseNotificationAdminListInput({
         status: "READY",
