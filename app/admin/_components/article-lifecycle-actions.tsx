@@ -21,30 +21,48 @@ export function ArticleLifecycleActions({
   const [newSlug, setNewSlug] = useState("");
   const [message, setMessage] = useState("");
   const [isStale, setIsStale] = useState(false);
+  const [isBusy, setIsBusy] = useState(false);
 
   const command = async (
     action: "unpublish" | "archive" | "change-slug",
     body: Record<string, unknown>,
   ) => {
-    const response = await fetch(`/api/admin/articles/${articleId}/${action}`, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ expectedUpdatedAt, ...body }),
-    });
-    if (response.status === 409) {
-      setMessage(staleMessage);
-      setIsStale(true);
-      return;
+    setIsBusy(true);
+    setMessage("변경하고 있어요.");
+    try {
+      const response = await fetch(
+        `/api/admin/articles/${articleId}/${action}`,
+        {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ expectedUpdatedAt, ...body }),
+        },
+      );
+      if (response.status === 409) {
+        setMessage(staleMessage);
+        setIsStale(true);
+        return;
+      }
+      if (!response.ok) {
+        setMessage("상태를 변경하지 못했어요. 현재 발행 상태를 확인해 주세요.");
+        return;
+      }
+      const payload = (await response.json()) as {
+        data: { updatedAt: string };
+      };
+      onUpdated(payload.data.updatedAt);
+      setIsStale(false);
+      setMessage(
+        action === "unpublish"
+          ? "발행을 취소했어요."
+          : action === "archive"
+            ? "아티클을 보관했어요."
+            : "공개 주소 이름을 변경했어요.",
+      );
+      router.refresh();
+    } finally {
+      setIsBusy(false);
     }
-    if (!response.ok) {
-      setMessage("상태를 변경하지 못했어요. 현재 발행 상태를 확인해 주세요.");
-      return;
-    }
-    const payload = (await response.json()) as { data: { updatedAt: string } };
-    onUpdated(payload.data.updatedAt);
-    setIsStale(false);
-    setMessage("요청을 반영했어요.");
-    router.refresh();
   };
 
   return (
@@ -55,13 +73,25 @@ export function ArticleLifecycleActions({
       <h2 id="article-lifecycle-heading">발행 상태 관리</h2>
       <div className="admin-article-lifecycle__actions">
         {status === "PUBLISHED" && (
-          <button type="button" onClick={() => void command("unpublish", {})}>
+          <button
+            type="button"
+            disabled={isBusy}
+            onClick={() => {
+              if (
+                window.confirm(
+                  "이 아티클의 발행을 취소할까요? 공개 페이지에서 바로 내려가요.",
+                )
+              )
+                void command("unpublish", {});
+            }}
+          >
             발행 취소
           </button>
         )}
         {status !== "ARCHIVED" && (
           <button
             type="button"
+            disabled={isBusy}
             onClick={() => {
               if (
                 window.confirm(
@@ -79,7 +109,12 @@ export function ArticleLifecycleActions({
         <form
           onSubmit={(event) => {
             event.preventDefault();
-            void command("change-slug", { newSlug });
+            if (
+              window.confirm(
+                "공개 주소 이름을 변경할까요? 기존 주소에는 영구 리디렉션이 등록돼요.",
+              )
+            )
+              void command("change-slug", { newSlug });
           }}
         >
           <label htmlFor="article-new-slug">주소 이름 변경</label>
@@ -89,12 +124,15 @@ export function ArticleLifecycleActions({
             onChange={(event) => setNewSlug(event.target.value)}
             required
             pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
+            disabled={isBusy}
           />
           <p className="admin-warning">
             발행 이력이 있는 아티클의 주소 이름을 바꾸면 영구 리디렉션이
             등록돼요.
           </p>
-          <button type="submit">주소 이름 변경</button>
+          <button type="submit" disabled={isBusy}>
+            주소 이름 변경
+          </button>
         </form>
       )}
       <p className="admin-form-status" role="status" aria-live="polite">

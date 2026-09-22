@@ -2,6 +2,7 @@ import { z } from "zod";
 
 import { ValidationError } from "@/src/application/errors";
 import {
+  articleCategoryValues,
   articleStatusValues,
   articleTypeValues,
   institutionCategoryValues,
@@ -100,7 +101,9 @@ const sourceListSchema = z
 const articleListSchema = z
   .object({
     type: z.enum(articleTypeValues).optional(),
+    category: z.enum(articleCategoryValues).optional(),
     status: z.enum(articleStatusValues).optional(),
+    query: normalizedQuery.optional(),
     ...pageShape,
   })
   .strict();
