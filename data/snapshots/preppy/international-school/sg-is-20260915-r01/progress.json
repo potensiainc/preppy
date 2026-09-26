@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "packageId": "sg-is-20260915-r01",
+  "asOf": "2026-09-15",
+  "targetAcademicYearLabel": "2026–27",
+  "counts": {
+    "officialActive": 22,
+    "specialAccess": 7,
+    "candidates": 60,
+    "importInstitutions": 22
+  },
+  "regions": {
+    "서울특별시": 16,
+    "경기도": 6
+  },
+  "fieldCoverage": {
+    "TUITION": {
+      "confirmed": 13,
+      "needsReview": 1,
+      "checkedNotFound": 1,
+      "accessFailed": 1,
+      "notResearched": 6
+    },
+    "INFORMATION_SESSION": {
+      "confirmed": 0,
+      "needsReview": 1,
+      "checkedNotFound": 0,
+      "accessFailed": 0,
+      "notResearched": 21
+    },
+    "TARGET_AGE_GRADE": {
+      "confirmed": 0,
+      "needsReview": 1,
+      "checkedNotFound": 0,
+      "accessFailed": 0,
+      "notResearched": 21
+    },
+    "CURRICULUM": {
+      "confirmed": 0,
+      "needsReview": 0,
+      "checkedNotFound": 0,
+      "accessFailed": 0,
+      "notResearched": 22
+    },
+    "TRANSPORT": {
+      "confirmed": 0,
+      "needsReview": 1,
+      "checkedNotFound": 0,
+      "accessFailed": 0,
+      "notResearched": 21
+    },
+    "MEALS": {
+      "confirmed": 0,
+      "needsReview": 0,
+      "checkedNotFound": 0,
+      "accessFailed": 0,
+      "notResearched": 22
+    },
+    "REVIEWS": {
+      "confirmed": 0,
+      "needsReview": 0,
+      "checkedNotFound": 0,
+      "accessFailed": 0,
+      "notResearched": 22
+    },
+    "OPERATING_INFO": {
+      "confirmed": 0,
+      "needsReview": 0,
+      "checkedNotFound": 0,
+      "accessFailed": 0,
+      "notResearched": 22
+    }
+  },
+  "accessSummary": {
+    "verified": 36,
+    "warning": 1,
+    "dateLimited": 1,
+    "needsReview": 7,
+    "checkedNotFound": 1,
+    "accessFailed": 1,
+    "leadOnly": 0,
+    "loginRequired": 7,
+    "robotsBlocked": 7,
+    "noPublicResult": 8
+  },
+  "unresolvedConflicts": [
+    {
+      "code": "kfs-address-conflict",
+      "institutionRegistryId": "ST01:6",
+      "note": "ISI 등록 주소와 학교 공식 사이트의 현재 주소가 달라 주소 반입을 보류해요."
+    },
+    {
+      "code": "kis-pangyo-time-conflict",
+      "institutionRegistryId": "ST01:32",
+      "note": "오픈하우스 시작 시간이 공식 페이지끼리 달라 행사 생성을 보류해요."
+    },
+    {
+      "code": "icsu-grade-conflict",
+      "institutionRegistryId": "ST01:36",
+      "note": "운영 학년 범위가 G4–12와 G5–12로 달라 확인이 필요해요."
+    },
+    {
+      "code": "dssi-transport-year-conflict",
+      "institutionRegistryId": "ST01:19",
+      "note": "영문·독문 통학비 안내의 학년도 표기가 달라 사실 생성을 보류해요."
+    },
+    {
+      "code": "suwon-chinese-access-failed",
+      "institutionRegistryId": "ST01:38",
+      "note": "공식 사이트 접근 실패로 학비 확인을 마치지 못했어요."
+    }
+  ]
+}

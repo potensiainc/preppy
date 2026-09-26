@@ -56,6 +56,7 @@ const opportunity = {
 
 const list: InstitutionListDTO = {
   items: [institution],
+  districtFacets: [],
   pagination: { page: 2, pageSize: 12, total: 36, hasNext: true },
 };
 
@@ -548,6 +549,40 @@ describe("WP-07 Institution pages", () => {
       page: 1,
       pageSize: 12,
     });
+    expect(
+      toInstitutionListInput({
+        category: "ENGLISH_KINDERGARTEN",
+        district: "강남구",
+        hasConfirmedTuition: "true",
+        minAge: "4",
+        transport: "AVAILABLE",
+        hasUpcomingInfoSession: "true",
+        sort: "TUITION_ASC",
+        page: "1",
+      }),
+    ).toEqual({
+      category: "ENGLISH_KINDERGARTEN",
+      region: "KR-11",
+      district: "강남구",
+      hasConfirmedTuition: true,
+      minAge: 4,
+      transport: "AVAILABLE",
+      hasUpcomingInfoSession: true,
+      sort: "TUITION_ASC",
+      page: 1,
+      pageSize: 12,
+    });
+    expect(
+      toInstitutionListInput({
+        category: "ENGLISH_KINDERGARTEN",
+        district: "서울시",
+      }),
+    ).toEqual({
+      category: "ENGLISH_KINDERGARTEN",
+      region: "KR-11",
+      page: 1,
+      pageSize: 12,
+    });
   });
 
   it("renders a semantic GET discovery form, query-preserving pagination, and an intentional empty state", () => {
@@ -604,6 +639,8 @@ describe("WP-07 Institution pages", () => {
     );
 
     expect(markup).toContain("서울국제학교");
+    expect(markup).toContain("국제학교 · 서울");
+    expect(markup).not.toContain("국제학교 · KR-11");
     expect(markup).toContain("국제학교");
     expect(markup).toContain("서울");
     expect(markup).not.toContain("현재 모집·입학정보");
@@ -625,7 +662,8 @@ describe("WP-07 Institution pages", () => {
     expect(markup).toContain("국제학교 방문 전 확인할 점");
     expect(markup).toContain('href="/articles/school-visit-guide"');
     expect(markup).toContain("관심기관 상태 확인 중");
-    expect(markup).toContain("관심기관 등록 여부를 확인하고 있어요.");
+    expect(markup).toContain('class="favorite-heart"');
+    expect(markup).not.toContain("관심기관 등록 여부를 확인하고 있어요.");
     expect(markup).not.toContain("페이지 최종 확인");
   });
 

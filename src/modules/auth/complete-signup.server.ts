@@ -9,12 +9,13 @@ import {
   ForbiddenError,
   NotEligibleError,
   NotFoundError,
+  RetryableError,
   UnauthenticatedError,
   ValidationError,
 } from "@/src/application/errors";
 import {
   assertCurrentLegalPolicyVersion,
-  getCurrentLegalPolicy,
+  getLegalPublicationState,
 } from "@/src/application/legal-policies.server";
 import type {
   TransactionExecutor,
@@ -70,10 +71,11 @@ const optionalEmailSchema = z.preprocess(
 
 const completeSignupInputSchema = z
   .object({
+    adultConfirmed: z.literal(true),
     consents: z.array(requiredConsentSchema).length(2),
+    serviceEmailUpdatesPolicyVersion: z.string().trim().min(1).max(64),
     serviceEmailUpdatesConsent: z.boolean(),
     email: optionalEmailSchema,
-    childBirthYear: z.number().int().optional(),
     interestRegions: z
       .array(regionCodeSchema)
       .max(20)
@@ -156,6 +158,7 @@ export const defaultCompleteSignupPersistence: CompleteSignupPersistence = {
 
 export type CompleteSignupDependencies = {
   transactionManager: TransactionManager;
+  isLegalPublicationReady?: () => boolean;
   tracker: AnalyticsTracker;
   persistence?: CompleteSignupPersistence;
   followPersistence?: ActivateFollowPersistence;
@@ -181,17 +184,7 @@ function requiredConsentVersion(
   return input.consents.find((consent) => consent.type === type)!.policyVersion;
 }
 
-function assertPlausibleChildBirthYear(
-  childBirthYear: number | undefined,
-  occurredAt: Date,
-): void {
-  const currentYear = occurredAt.getUTCFullYear();
-  if (!Number.isInteger(currentYear)) throw ValidationError.invalidRequest();
-  if (childBirthYear === undefined) return;
-  if (childBirthYear < currentYear - 18 || childBirthYear > currentYear) {
-    throw ValidationError.invalidRequest();
-  }
-}
+export class SignupExpiredError extends NotEligibleError {}
 
 async function persistSignup(
   executor: TransactionExecutor,
@@ -204,11 +197,18 @@ async function persistSignup(
   if (!user) throw new UnauthenticatedError();
   if (user.status === "ACTIVE") throw new ConflictError();
   if (user.status !== "PENDING") throw new ForbiddenError();
+  if (now.getTime() >= user.createdAt.getTime() + 24 * 60 * 60 * 1000) {
+    throw new SignupExpiredError();
+  }
 
   const termsVersion = requiredConsentVersion(input, "TERMS_OF_SERVICE");
   const privacyVersion = requiredConsentVersion(input, "PRIVACY_POLICY");
   assertCurrentLegalPolicyVersion("TERMS_OF_SERVICE", termsVersion);
   assertCurrentLegalPolicyVersion("PRIVACY_POLICY", privacyVersion);
+  assertCurrentLegalPolicyVersion(
+    "SERVICE_EMAIL_UPDATES",
+    input.serviceEmailUpdatesPolicyVersion,
+  );
 
   await persistence.appendConsentDecision(executor, {
     userId,
@@ -227,7 +227,7 @@ async function persistSignup(
   await persistence.appendConsentDecision(executor, {
     userId,
     consentType: "SERVICE_EMAIL_UPDATES",
-    policyVersion: getCurrentLegalPolicy("SERVICE_EMAIL_UPDATES").version,
+    policyVersion: input.serviceEmailUpdatesPolicyVersion,
     decision: input.serviceEmailUpdatesConsent ? "GRANTED" : "REVOKED",
     decidedAt: now,
   });
@@ -240,12 +240,6 @@ async function persistSignup(
         email: input.email,
       });
     }
-  }
-  if (input.childBirthYear !== undefined) {
-    await persistence.upsertUserProfile(executor, {
-      userId,
-      childBirthYear: input.childBirthYear,
-    });
   }
   await persistence.replaceUserInterestRegions(
     executor,
@@ -283,7 +277,14 @@ export async function completeSignup(
   }
   const input = parseCompleteSignupInput(rawInput);
   const serverInput = parseCompleteSignupServerInput(rawServerInput);
-  assertPlausibleChildBirthYear(input.childBirthYear, ctx.occurredAt);
+  if (
+    !(
+      dependencies.isLegalPublicationReady ??
+      (() => getLegalPublicationState().ready)
+    )()
+  ) {
+    throw new RetryableError();
+  }
   const persistence =
     dependencies.persistence ?? defaultCompleteSignupPersistence;
   const followPersistence =

@@ -413,7 +413,7 @@ describe("WP-04B canonical Notification persistence", () => {
     ]);
     const definitions = (tableName: string) =>
       Object.fromEntries(
-        catalogs[tableName]!.constraints.map((constraint) => [
+        catalogs[tableName]!.constraints.filter((constraint) => constraint.contype !== "n").map((constraint) => [
           constraint.conname,
           [constraint.contype, constraint.definition],
         ]),

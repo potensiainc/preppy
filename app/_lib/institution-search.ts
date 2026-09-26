@@ -3,6 +3,10 @@ import type {
   OpportunityBusinessState,
 } from "@/src/db/schema";
 import type { InstitutionListQuery } from "@/src/modules/public/dto";
+import {
+  SEOUL_REGION_CODE,
+  seoulDistrictSet,
+} from "@/src/modules/public/location";
 
 export type NextSearchParams = Record<string, string | string[] | undefined>;
 
@@ -24,6 +28,11 @@ const recruitmentStates = new Set<OpportunityBusinessState>([
 const MAX_REGION_LENGTH = 64;
 const MAX_QUERY_LENGTH = 120;
 const MAX_PAGE = 10_000;
+const MAX_CHILD_AGE = 20;
+
+const englishKindergartenSorts = new Set<
+  NonNullable<InstitutionListQuery["sort"]>
+>(["NAME_ASC", "INFO_SESSION_ASC", "TUITION_ASC"]);
 
 function scalar(value: string | string[] | undefined): string | undefined {
   return typeof value === "string" ? value : undefined;
@@ -54,18 +63,63 @@ export function toInstitutionListInput(
   const recruitmentState = scalar(searchParams.recruitmentState);
   const region = normalizedText(scalar(searchParams.region), MAX_REGION_LENGTH);
   const query = normalizedText(scalar(searchParams.query), MAX_QUERY_LENGTH);
+  const isEnglishKindergarten = category === "ENGLISH_KINDERGARTEN";
+  const districtInput = scalar(searchParams.district);
+  const district =
+    isEnglishKindergarten &&
+    districtInput !== undefined &&
+    seoulDistrictSet.has(districtInput)
+      ? districtInput
+      : undefined;
+  const effectiveRegion = isEnglishKindergarten ? SEOUL_REGION_CODE : region;
+  const hasConfirmedTuition =
+    isEnglishKindergarten && scalar(searchParams.hasConfirmedTuition) === "true"
+      ? true
+      : undefined;
+  const minAgeInput = scalar(searchParams.minAge);
+  const minAge =
+    isEnglishKindergarten &&
+    minAgeInput !== undefined &&
+    /^[1-9][0-9]*$/u.test(minAgeInput) &&
+    Number(minAgeInput) <= MAX_CHILD_AGE
+      ? Number(minAgeInput)
+      : undefined;
+  const transport =
+    isEnglishKindergarten && scalar(searchParams.transport) === "AVAILABLE"
+      ? ("AVAILABLE" as const)
+      : undefined;
+  const hasUpcomingInfoSession =
+    isEnglishKindergarten &&
+    scalar(searchParams.hasUpcomingInfoSession) === "true"
+      ? true
+      : undefined;
+  const sortInput = scalar(searchParams.sort);
+  const sort =
+    isEnglishKindergarten &&
+    sortInput !== undefined &&
+    englishKindergartenSorts.has(
+      sortInput as NonNullable<InstitutionListQuery["sort"]>,
+    )
+      ? (sortInput as NonNullable<InstitutionListQuery["sort"]>)
+      : undefined;
 
   return {
     ...(category !== undefined &&
     categories.has(category as InstitutionCategory)
       ? { category: category as InstitutionCategory }
       : {}),
-    ...(region === undefined ? {} : { region }),
+    ...(effectiveRegion === undefined ? {} : { region: effectiveRegion }),
+    ...(district === undefined ? {} : { district }),
     ...(recruitmentState !== undefined &&
     recruitmentStates.has(recruitmentState as OpportunityBusinessState)
       ? { recruitmentState: recruitmentState as OpportunityBusinessState }
       : {}),
     ...(query === undefined ? {} : { query }),
+    ...(hasConfirmedTuition === undefined ? {} : { hasConfirmedTuition }),
+    ...(minAge === undefined ? {} : { minAge }),
+    ...(transport === undefined ? {} : { transport }),
+    ...(hasUpcomingInfoSession === undefined ? {} : { hasUpcomingInfoSession }),
+    ...(sort === undefined ? {} : { sort }),
     page: pageValue(scalar(searchParams.page)),
     pageSize: 12,
   };

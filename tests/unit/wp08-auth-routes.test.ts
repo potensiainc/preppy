@@ -113,8 +113,9 @@ describe("WP-08 auth Route Handler factories", () => {
     const findInstitution = vi.fn(async () => ({
       id: institutionId,
       slug: "seoul-international-school",
-      publicationState: "PUBLISHED",
-      operationalState: "ACTIVE",
+      category: "INTERNATIONAL_SCHOOL" as const,
+      publicationState: "PUBLISHED" as const,
+      operationalState: "ACTIVE" as const,
     }));
     const handler = createFollowIntentHandler({
       appBaseUrl,
@@ -122,6 +123,7 @@ describe("WP-08 auth Route Handler factories", () => {
       tracker,
       findInstitution,
       hasMonitorableSourceCoverage: async () => true,
+      hasInstitutionIsiIdentity: async () => true,
       now: () => now,
       production: true,
     });
@@ -173,12 +175,14 @@ describe("WP-08 auth Route Handler factories", () => {
       .mockResolvedValueOnce({
         id: institutionId,
         slug: "hidden-school",
+        category: "INTERNATIONAL_SCHOOL" as const,
         publicationState: "DRAFT",
         operationalState: "ACTIVE",
       })
       .mockResolvedValueOnce({
         id: institutionId,
         slug: "closed-school",
+        category: "INTERNATIONAL_SCHOOL" as const,
         publicationState: "PUBLISHED",
         operationalState: "CLOSED",
       });
@@ -188,6 +192,7 @@ describe("WP-08 auth Route Handler factories", () => {
       tracker,
       findInstitution,
       hasMonitorableSourceCoverage: async () => true,
+      hasInstitutionIsiIdentity: async () => true,
       now: () => now,
     });
     const form = new URLSearchParams({
@@ -525,11 +530,12 @@ describe("WP-08 auth Route Handler factories", () => {
     const body = new URLSearchParams([
       ["termsPolicyVersion", "2026-08-23"],
       ["privacyPolicyVersion", "2026-08-23"],
+      ["adultConfirmed", "on"],
+      ["serviceEmailUpdatesPolicyVersion", "2026-09-25"],
       ["termsConsent", "on"],
       ["privacyConsent", "on"],
       ["serviceEmailUpdatesConsent", "on"],
       ["email", "  Parent@Example.COM "],
-      ["childBirthYear", "2020"],
       ["interestRegions", "kr-11"],
       ["interestRegions", "KR-26"],
       ["interestCategories", "INTERNATIONAL_SCHOOL"],
@@ -568,9 +574,10 @@ describe("WP-08 auth Route Handler factories", () => {
             policyVersion: "2026-08-23",
           },
         ],
+        adultConfirmed: true,
+        serviceEmailUpdatesPolicyVersion: "2026-09-25",
         serviceEmailUpdatesConsent: true,
         email: "Parent@Example.COM",
-        childBirthYear: 2020,
         interestRegions: ["kr-11", "KR-26"],
         interestCategories: ["INTERNATIONAL_SCHOOL"],
       },

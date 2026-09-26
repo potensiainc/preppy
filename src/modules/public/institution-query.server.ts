@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, eq, ilike, inArray, or, sql } from "drizzle-orm";
+import { and, asc, desc, eq, ilike, inArray, or, sql } from "drizzle-orm";
 
 import { NotFoundError } from "@/src/application/errors";
 import {
@@ -18,13 +18,19 @@ import {
 } from "@/src/db/schema";
 import type { DatabaseExecutor } from "@/src/infrastructure/db/runtime.server";
 import {
+  getInstitutionIsiIdentityIds,
   getMonitorableInstitutionIds,
   isInstitutionFollowable,
 } from "@/src/modules/follow/followability-policy.server";
+import {
+  loadEnglishKindergartenCardSummaries,
+  loadEnglishKindergartenDetail,
+} from "@/src/modules/english-kindergarten/public-query.server";
 
 import type {
   InstitutionCardDTO,
   InstitutionDetailDTO,
+  EnglishKindergartenCardSummaryDTO,
   InstitutionFactDTO,
   InstitutionListDTO,
   InstitutionListQuery,
@@ -35,6 +41,12 @@ import type {
 } from "./dto";
 import { parseInstitutionListQuery } from "./input";
 import { getIndexability } from "./indexability";
+import { internationalSchoolPublicEligibilitySql } from "./international-school-publication-policy";
+import {
+  SEOUL_REGION_CODE,
+  seoulDistrictSet,
+  seoulDistrictValues,
+} from "./location";
 import { getRelatedArticles } from "./opportunity-query.server";
 
 const DETAIL_OPPORTUNITY_LIMIT = 12;
@@ -66,6 +78,7 @@ type OpportunityTruth = {
   lastVerifiedAt: string;
   evidenceVersionId: string;
   evidenceMode: "NATIVE" | "LEGACY";
+  institutionCategory: InstitutionCardDTO["category"];
   hasOfficialEvidence: boolean;
 };
 
@@ -75,8 +88,11 @@ type InstitutionRow = {
   name: string;
   category: InstitutionCardDTO["category"];
   region: string | null;
+  district: string | null;
+  address: string | null;
   shortDescription: string | null;
   operationalState: "ACTIVE" | "INACTIVE" | "CLOSED" | "UNKNOWN";
+  hasIsiIdentity: boolean;
   hasMonitorableSourceCoverage: boolean;
 };
 
@@ -84,7 +100,9 @@ function publicFollowable(institution: InstitutionRow): boolean {
   return isInstitutionFollowable(
     {
       publicationState: "PUBLISHED",
+      category: institution.category,
       operationalState: institution.operationalState,
+      hasIsiIdentity: institution.hasIsiIdentity,
     },
     institution.hasMonitorableSourceCoverage,
   );
@@ -197,6 +215,8 @@ async function getOfficialOpportunitySources(
       )})
         and s.source_type in ('OFFICIAL_ADMISSION_PAGE','OFFICIAL_NOTICE_BOARD','OFFICIAL_DOCUMENT','OFFICIAL_APPLICATION_PORTAL','OFFICIAL_SCHOOL_PAGE','OFFICIAL_SOCIAL')
         and s.authority_level in ('PRIMARY','SECONDARY_OFFICIAL')
+        and eve.source_observation_id is not null
+        and eve.source_snapshot_id is not null
       order by eve.opportunity_version_id, case when lower(eve.evidence_role) = 'primary' then 0 else 1 end,
         case when s.authority_level = 'PRIMARY' then 0 else 1 end, s.canonical_url, s.id
     `)) as unknown as Array<{
@@ -221,6 +241,8 @@ async function getOfficialOpportunitySources(
       )})
         and s.source_type in ('OFFICIAL_ADMISSION_PAGE','OFFICIAL_NOTICE_BOARD','OFFICIAL_DOCUMENT','OFFICIAL_APPLICATION_PORTAL','OFFICIAL_SCHOOL_PAGE','OFFICIAL_SOCIAL')
         and s.authority_level in ('PRIMARY','SECONDARY_OFFICIAL')
+        and eve.source_observation_id is not null
+        and eve.snapshot_id is not null
       order by eve.event_version_id, case when eve.is_primary then 0 else 1 end,
         case when s.authority_level = 'PRIMARY' then 0 else 1 end, s.canonical_url, s.id
     `)) as unknown as Array<{
@@ -287,9 +309,12 @@ async function getOpportunityTruths(
       : projection === "HOME"
         ? HOME_OPPORTUNITY_LIMIT
         : 1;
+  const rankLimit = projection === "HOME" ? 1 : limit;
+  const overallLimit =
+    projection === "HOME" ? sql`limit ${HOME_OPPORTUNITY_LIMIT}` : sql``;
   const partition =
     projection === "HOME"
-      ? sql`section`
+      ? sql`"institutionId", section`
       : "opportunityIds" in target
         ? sql`id, section`
         : sql`"institutionId", section`;
@@ -299,9 +324,27 @@ async function getOpportunityTruths(
         case when v.application_close_at is not null then 'APPLICATION_CLOSE' when v.application_open_at is not null then 'APPLICATION_OPEN' when v.event_start_at is not null then 'EVENT_START' when v.event_end_at is not null then 'EVENT_END' else null end as "keyDateKind",
         coalesce(v.application_close_at,v.application_open_at,v.event_start_at,v.event_end_at) as "nativeKeyAt",
         null::date as "legacyKeyDate", null::time as "legacyKeyTime", null::text as "legacyTimezone",
-        coalesce(v.application_close_at,v.application_open_at,v.event_start_at,v.event_end_at)::text as "sortKey"
-      from opportunities o join institutions i on i.id=o.institution_id and i.publication_state='PUBLISHED' join opportunity_versions v on v.opportunity_id=o.id and v.is_current=true and v.verification_state='VERIFIED'
+        coalesce(v.application_close_at,v.application_open_at,v.event_start_at,v.event_end_at)::text as "sortKey",
+        i.category as "institutionCategory"
+      from opportunities o join institutions i on i.id=o.institution_id and i.publication_state='PUBLISHED'
+        and (i.category <> 'INTERNATIONAL_SCHOOL' or (
+          i.operational_state='ACTIVE' and exists (
+            select 1 from institution_registry_identities isi
+            where isi.institution_id=i.id and isi.registry_name='ISI'
+          )
+        ))
+      join opportunity_versions v on v.opportunity_id=o.id and v.is_current=true and v.verification_state='VERIFIED'
       where ${targetCondition} and o.publication_state='PUBLISHED' and o.truth_mode='NATIVE' and v.verified_at is not null
+        and (i.category <> 'INTERNATIONAL_SCHOOL' or exists (
+          select 1
+          from opportunity_version_evidence evidence
+          join sources source on source.id=evidence.source_id
+          where evidence.opportunity_version_id=v.id
+            and evidence.source_observation_id is not null
+            and evidence.source_snapshot_id is not null
+            and source.source_type in ('OFFICIAL_ADMISSION_PAGE','OFFICIAL_NOTICE_BOARD','OFFICIAL_DOCUMENT','OFFICIAL_APPLICATION_PORTAL','OFFICIAL_SCHOOL_PAGE','OFFICIAL_SOCIAL')
+            and source.authority_level in ('PRIMARY','SECONDARY_OFFICIAL')
+        ))
       union all
       select o.id, o.institution_id, o.slug, o.kind, v.id, 'LEGACY', v.display_title, case v.event_status when 'ACTIVE' then 'OPEN' when 'SCHEDULED' then 'UPCOMING' when 'CLOSED' then 'CLOSED' when 'COMPLETED' then 'COMPLETED' when 'CANCELLED' then 'CANCELLED' else 'UNKNOWN' end, v.official_notes, e.audience_summary, v.action_url, v.verified_at,
         case when v.registration_close_date is not null then 'APPLICATION_CLOSE' when v.registration_open_date is not null then 'APPLICATION_OPEN' when v.event_start_date is not null then 'EVENT_START' when v.event_end_date is not null then 'EVENT_END' else null end,
@@ -309,11 +352,29 @@ async function getOpportunityTruths(
         case when v.registration_close_date is not null then v.registration_close_date when v.registration_open_date is not null then v.registration_open_date when v.event_start_date is not null then v.event_start_date when v.event_end_date is not null then v.event_end_date else null end,
         case when v.registration_close_date is not null then v.registration_close_time when v.registration_open_date is not null then v.registration_open_time when v.event_start_date is not null then v.event_start_time when v.event_end_date is not null then v.event_end_time else null end,
         v.timezone,
-        coalesce(v.registration_close_date::text || coalesce('T' || v.registration_close_time::text, ''), v.registration_open_date::text || coalesce('T' || v.registration_open_time::text, ''), v.event_start_date::text || coalesce('T' || v.event_start_time::text, ''), v.event_end_date::text || coalesce('T' || v.event_end_time::text, ''))
-      from opportunities o join institutions i on i.id=o.institution_id and i.publication_state='PUBLISHED' join opportunity_admission_event_links l on l.opportunity_id=o.id join admission_events e on e.id=l.admission_event_id and e.is_public=true join admission_event_versions v on v.admission_event_id=e.id and v.is_current=true and v.verification_status='VERIFIED'
+        coalesce(v.registration_close_date::text || coalesce('T' || v.registration_close_time::text, ''), v.registration_open_date::text || coalesce('T' || v.registration_open_time::text, ''), v.event_start_date::text || coalesce('T' || v.event_start_time::text, ''), v.event_end_date::text || coalesce('T' || v.event_end_time::text, '')),
+        i.category
+      from opportunities o join institutions i on i.id=o.institution_id and i.publication_state='PUBLISHED'
+        and (i.category <> 'INTERNATIONAL_SCHOOL' or (
+          i.operational_state='ACTIVE' and exists (
+            select 1 from institution_registry_identities isi
+            where isi.institution_id=i.id and isi.registry_name='ISI'
+          )
+        ))
+      join opportunity_admission_event_links l on l.opportunity_id=o.id join admission_events e on e.id=l.admission_event_id and e.is_public=true join admission_event_versions v on v.admission_event_id=e.id and v.is_current=true and v.verification_status='VERIFIED'
       where ${targetCondition} and o.publication_state='PUBLISHED' and o.truth_mode='LEGACY_BACKED' and v.verified_at is not null
+        and (i.category <> 'INTERNATIONAL_SCHOOL' or exists (
+          select 1
+          from event_version_evidence evidence
+          join sources source on source.id=evidence.source_id
+          where evidence.event_version_id=v.id
+            and evidence.source_observation_id is not null
+            and evidence.snapshot_id is not null
+            and source.source_type in ('OFFICIAL_ADMISSION_PAGE','OFFICIAL_NOTICE_BOARD','OFFICIAL_DOCUMENT','OFFICIAL_APPLICATION_PORTAL','OFFICIAL_SCHOOL_PAGE','OFFICIAL_SOCIAL')
+            and source.authority_level in ('PRIMARY','SECONDARY_OFFICIAL')
+        ))
     ), sectioned as (select *, ${section} as section from candidates), ranked as (select *, row_number() over (partition by ${partition} order by case state when 'OPEN' then 0 when 'UPCOMING' then 1 when 'CLOSED' then 2 when 'COMPLETED' then 3 when 'CANCELLED' then 4 else 5 end, "sortKey", title, id) rn from sectioned)
-    select * from ranked where section is not null and rn <= ${limit} order by case state when 'OPEN' then 0 when 'UPCOMING' then 1 when 'CLOSED' then 2 when 'COMPLETED' then 3 when 'CANCELLED' then 4 else 5 end, "sortKey", title, id
+    select * from ranked where section is not null and rn <= ${rankLimit} order by case state when 'OPEN' then 0 when 'UPCOMING' then 1 when 'CLOSED' then 2 when 'COMPLETED' then 3 when 'CANCELLED' then 4 else 5 end, "sortKey", title, id ${overallLimit}
   `)) as unknown as Array<{
     id: string;
     institutionId: string;
@@ -337,6 +398,7 @@ async function getOpportunityTruths(
     legacyKeyDate: string | null;
     legacyKeyTime: string | null;
     legacyTimezone: string | null;
+    institutionCategory: InstitutionCardDTO["category"];
   }>;
   const truths = rows.map((row): OpportunityTruth => {
     const keyDate =
@@ -374,6 +436,7 @@ async function getOpportunityTruths(
       lastVerifiedAt: rawIso(row.verifiedAt),
       evidenceVersionId: row.versionId,
       evidenceMode: row.mode,
+      institutionCategory: row.institutionCategory,
       hasOfficialEvidence: false,
       keyDates,
     };
@@ -387,10 +450,16 @@ async function getOpportunityTruths(
       .filter((item) => item.evidenceMode === "LEGACY")
       .map((item) => item.evidenceVersionId),
   );
-  return truths.map((item) => ({
-    ...item,
-    hasOfficialEvidence: sourcesByVersion.has(item.evidenceVersionId),
-  }));
+  return truths
+    .filter(
+      (item) =>
+        item.institutionCategory !== "INTERNATIONAL_SCHOOL" ||
+        sourcesByVersion.has(item.evidenceVersionId),
+    )
+    .map((item) => ({
+      ...item,
+      hasOfficialEvidence: sourcesByVersion.has(item.evidenceVersionId),
+    }));
 }
 
 async function getInstitutionsByIds(
@@ -405,6 +474,8 @@ async function getInstitutionsByIds(
       name: institutions.displayName,
       category: institutions.category,
       region: institutions.regionCode,
+      district: institutions.district,
+      address: institutions.addressLine,
       shortDescription: institutions.shortDescription,
       operationalState: institutions.operationalState,
     })
@@ -413,16 +484,27 @@ async function getInstitutionsByIds(
       and(
         inArray(institutions.id, [...ids]),
         eq(institutions.publicationState, "PUBLISHED"),
+        internationalSchoolPublicEligibilitySql(),
       ),
     );
-  const covered = await getMonitorableInstitutionIds(
-    executor,
-    rows.map((row) => row.id),
-  );
+  const [covered, isiIdentities] = await Promise.all([
+    getMonitorableInstitutionIds(
+      executor,
+      rows.map((row) => row.id),
+    ),
+    getInstitutionIsiIdentityIds(
+      executor,
+      rows.map((row) => row.id),
+    ),
+  ]);
   return new Map(
     rows.map((row) => [
       row.id,
-      { ...row, hasMonitorableSourceCoverage: covered.has(row.id) },
+      {
+        ...row,
+        hasIsiIdentity: isiIdentities.has(row.id),
+        hasMonitorableSourceCoverage: covered.has(row.id),
+      },
     ]),
   );
 }
@@ -469,10 +551,16 @@ export async function getPublicInstitutionCardsByIds(
   const truthsByInstitution = new Map<string, OpportunityTruth[]>();
   for (const truth of truths)
     truthsByInstitution.set(truth.institutionId, [truth]);
+  const englishKindergartenSummaries =
+    await loadEnglishKindergartenCardSummaries(
+      executor,
+      rows.map((row) => row.id),
+    );
   return rows.map((institution) =>
     cardFromInstitution(
       institution,
       truthsByInstitution.get(institution.id) ?? [],
+      englishKindergartenSummaries.get(institution.id),
     ),
   );
 }
@@ -487,10 +575,24 @@ export async function getHomeCurrentOpportunityCards(
   ]);
   return truths.flatMap((truth) => {
     const institution = institutionsById.get(truth.institutionId);
-    return institution === undefined
-      ? []
-      : [opportunityCard(truth, institution)];
+    if (institution === undefined) return [];
+    const card = opportunityCard(truth, institution);
+    return [
+      {
+        ...card,
+        title: compactOpportunityTitle(card.title, card.kind),
+      },
+    ];
   });
+}
+
+function compactOpportunityTitle(
+  title: string,
+  kind: OpportunityCardDTO["kind"],
+): string {
+  return kind === "INFORMATION_SESSION"
+    ? title.replace(/(입학설명회)\s+\d+(?:\s*\(예정\))?$/u, "$1")
+    : title;
 }
 
 function opportunityCard(
@@ -528,6 +630,7 @@ function opportunityCard(
 function cardFromInstitution(
   institution: InstitutionRow,
   truths: OpportunityTruth[],
+  englishKindergarten?: EnglishKindergartenCardSummaryDTO,
 ): InstitutionCardDTO {
   const selected = [...truths].sort(compareOpportunities)[0];
   return {
@@ -536,6 +639,10 @@ function cardFromInstitution(
     name: institution.name,
     category: institution.category,
     region: institution.region,
+    district: institution.district,
+    ...(institution.category === "ENGLISH_KINDERGARTEN"
+      ? { address: institution.address }
+      : {}),
     followable: publicFollowable(institution),
     currentAdmissionsState: selected?.businessState ?? null,
     currentOpportunity:
@@ -544,12 +651,13 @@ function cardFromInstitution(
         : {
             id: selected.id,
             slug: selected.slug,
-            title: selected.title,
+            title: compactOpportunityTitle(selected.title, selected.kind),
             kind: selected.kind,
             state: selected.businessState,
             keyDate: opportunityKeyDate(selected.keyDates),
           },
     lastVerifiedAt: selected?.lastVerifiedAt ?? null,
+    ...(englishKindergarten === undefined ? {} : { englishKindergarten }),
   };
 }
 
@@ -566,27 +674,274 @@ function recruitmentExists(state: InstitutionListQuery["recruitmentState"]) {
 function executorSelectNative(
   state: NonNullable<InstitutionListQuery["recruitmentState"]>,
 ) {
-  return sql`select 1 from ${opportunities} join ${opportunityVersions} on ${opportunityVersions.opportunityId} = ${opportunities.id} where ${opportunities.institutionId} = ${institutions.id} and ${opportunities.publicationState} = 'PUBLISHED' and ${opportunities.truthMode} = 'NATIVE' and ${opportunityVersions.isCurrent} = true and ${opportunityVersions.verificationState} = 'VERIFIED' and ${opportunityVersions.businessState} = ${state}`;
+  return sql`select 1 from ${opportunities} join ${opportunityVersions} on ${opportunityVersions.opportunityId} = ${opportunities.id} where ${opportunities.institutionId} = ${institutions.id} and ${opportunities.publicationState} = 'PUBLISHED' and ${opportunities.truthMode} = 'NATIVE' and ${opportunityVersions.isCurrent} = true and ${opportunityVersions.verificationState} = 'VERIFIED' and ${opportunityVersions.verifiedAt} is not null and ${opportunityVersions.businessState} = ${state} and (${institutions.category} <> 'INTERNATIONAL_SCHOOL' or exists (select 1 from opportunity_version_evidence evidence join sources source on source.id=evidence.source_id where evidence.opportunity_version_id=${opportunityVersions.id} and evidence.source_observation_id is not null and evidence.source_snapshot_id is not null and source.source_type in ('OFFICIAL_ADMISSION_PAGE','OFFICIAL_NOTICE_BOARD','OFFICIAL_DOCUMENT','OFFICIAL_APPLICATION_PORTAL','OFFICIAL_SCHOOL_PAGE','OFFICIAL_SOCIAL') and source.authority_level in ('PRIMARY','SECONDARY_OFFICIAL')))`;
 }
 
 function executorSelectLegacy(state: string) {
-  return sql`select 1 from ${opportunities} join ${opportunityAdmissionEventLinks} on ${opportunityAdmissionEventLinks.opportunityId} = ${opportunities.id} join ${admissionEvents} on ${admissionEvents.id} = ${opportunityAdmissionEventLinks.admissionEventId} join ${admissionEventVersions} on ${admissionEventVersions.admissionEventId} = ${admissionEvents.id} where ${opportunities.institutionId} = ${institutions.id} and ${opportunities.publicationState} = 'PUBLISHED' and ${opportunities.truthMode} = 'LEGACY_BACKED' and ${admissionEvents.isPublic} = true and ${admissionEventVersions.isCurrent} = true and ${admissionEventVersions.verificationStatus} = 'VERIFIED' and ${admissionEventVersions.verifiedAt} is not null and ${admissionEventVersions.eventStatus} = ${state}`;
+  return sql`select 1 from ${opportunities} join ${opportunityAdmissionEventLinks} on ${opportunityAdmissionEventLinks.opportunityId} = ${opportunities.id} join ${admissionEvents} on ${admissionEvents.id} = ${opportunityAdmissionEventLinks.admissionEventId} join ${admissionEventVersions} on ${admissionEventVersions.admissionEventId} = ${admissionEvents.id} where ${opportunities.institutionId} = ${institutions.id} and ${opportunities.publicationState} = 'PUBLISHED' and ${opportunities.truthMode} = 'LEGACY_BACKED' and ${admissionEvents.isPublic} = true and ${admissionEventVersions.isCurrent} = true and ${admissionEventVersions.verificationStatus} = 'VERIFIED' and ${admissionEventVersions.verifiedAt} is not null and ${admissionEventVersions.eventStatus} = ${state} and (${institutions.category} <> 'INTERNATIONAL_SCHOOL' or exists (select 1 from event_version_evidence evidence join sources source on source.id=evidence.source_id where evidence.event_version_id=${admissionEventVersions.id} and evidence.source_observation_id is not null and evidence.snapshot_id is not null and source.source_type in ('OFFICIAL_ADMISSION_PAGE','OFFICIAL_NOTICE_BOARD','OFFICIAL_DOCUMENT','OFFICIAL_APPLICATION_PORTAL','OFFICIAL_SCHOOL_PAGE','OFFICIAL_SOCIAL') and source.authority_level in ('PRIMARY','SECONDARY_OFFICIAL')))`;
 }
 
 function listConditions(query: InstitutionListQuery) {
   return and(
     eq(institutions.publicationState, "PUBLISHED"),
+    internationalSchoolPublicEligibilitySql(),
     query.category === undefined
       ? undefined
       : eq(institutions.category, query.category),
     query.region === undefined
       ? undefined
       : eq(institutions.regionCode, query.region),
+    query.district === undefined
+      ? undefined
+      : and(
+          eq(institutions.regionCode, SEOUL_REGION_CODE),
+          eq(institutions.district, query.district),
+        ),
     query.query === undefined
       ? undefined
       : ilike(institutions.displayName, `%${query.query}%`),
     recruitmentExists(query.recruitmentState),
+    query.hasConfirmedTuition === true
+      ? sql`exists (
+          select 1
+          from institution_facts ek_tuition_fact
+          join institution_fact_versions ek_tuition_version
+            on ek_tuition_version.institution_fact_id = ek_tuition_fact.id
+            and ek_tuition_version.is_current = true
+            and ek_tuition_version.verification_state = 'VERIFIED'
+            and ek_tuition_version.verified_at is not null
+          where ek_tuition_fact.institution_id = ${institutions.id}
+            and ek_tuition_fact.fact_type = 'TUITION'
+            and (${institutions.category} <> 'INTERNATIONAL_SCHOOL' or exists (
+              select 1 from institution_fact_version_evidence evidence
+              join sources source on source.id=evidence.source_id
+              where evidence.institution_fact_version_id=ek_tuition_version.id
+                and evidence.source_observation_id is not null
+                and evidence.source_snapshot_id is not null
+                and source.source_type in ('OFFICIAL_ADMISSION_PAGE','OFFICIAL_NOTICE_BOARD','OFFICIAL_DOCUMENT','OFFICIAL_APPLICATION_PORTAL','OFFICIAL_SCHOOL_PAGE','OFFICIAL_SOCIAL')
+                and source.authority_level in ('PRIMARY','SECONDARY_OFFICIAL')
+            ))
+        )`
+      : undefined,
+    query.minAge === undefined
+      ? undefined
+      : sql`exists (
+          select 1
+          from institution_facts ek_age_fact
+          join institution_fact_versions ek_age_version
+            on ek_age_version.institution_fact_id = ek_age_fact.id
+            and ek_age_version.is_current = true
+            and ek_age_version.verification_state = 'VERIFIED'
+            and ek_age_version.verified_at is not null
+          where ek_age_fact.institution_id = ${institutions.id}
+            and ek_age_fact.fact_type = 'TARGET_AGE_GRADE'
+            and jsonb_typeof(ek_age_version.value_json -> 'minAge') = 'number'
+            and jsonb_typeof(ek_age_version.value_json -> 'maxAge') = 'number'
+            and (ek_age_version.value_json ->> 'minAge')::int <= ${query.minAge}
+            and (ek_age_version.value_json ->> 'maxAge')::int >= ${query.minAge}
+            and (${institutions.category} <> 'INTERNATIONAL_SCHOOL' or exists (
+              select 1 from institution_fact_version_evidence evidence
+              join sources source on source.id=evidence.source_id
+              where evidence.institution_fact_version_id=ek_age_version.id
+                and evidence.source_observation_id is not null
+                and evidence.source_snapshot_id is not null
+                and source.source_type in ('OFFICIAL_ADMISSION_PAGE','OFFICIAL_NOTICE_BOARD','OFFICIAL_DOCUMENT','OFFICIAL_APPLICATION_PORTAL','OFFICIAL_SCHOOL_PAGE','OFFICIAL_SOCIAL')
+                and source.authority_level in ('PRIMARY','SECONDARY_OFFICIAL')
+            ))
+        )`,
+    query.transport === undefined
+      ? undefined
+      : sql`exists (
+          select 1
+          from institution_facts ek_transport_fact
+          join institution_fact_versions ek_transport_version
+            on ek_transport_version.institution_fact_id = ek_transport_fact.id
+            and ek_transport_version.is_current = true
+            and ek_transport_version.verification_state = 'VERIFIED'
+            and ek_transport_version.verified_at is not null
+          where ek_transport_fact.institution_id = ${institutions.id}
+            and ek_transport_fact.fact_type = 'TRANSPORT'
+            and ek_transport_version.value_json ->> 'isAvailable' = 'true'
+            and (${institutions.category} <> 'INTERNATIONAL_SCHOOL' or exists (
+              select 1 from institution_fact_version_evidence evidence
+              join sources source on source.id=evidence.source_id
+              where evidence.institution_fact_version_id=ek_transport_version.id
+                and evidence.source_observation_id is not null
+                and evidence.source_snapshot_id is not null
+                and source.source_type in ('OFFICIAL_ADMISSION_PAGE','OFFICIAL_NOTICE_BOARD','OFFICIAL_DOCUMENT','OFFICIAL_APPLICATION_PORTAL','OFFICIAL_SCHOOL_PAGE','OFFICIAL_SOCIAL')
+                and source.authority_level in ('PRIMARY','SECONDARY_OFFICIAL')
+            ))
+        )`,
+    query.hasUpcomingInfoSession === true
+      ? sql`exists (
+          select 1
+          from opportunities ek_session
+          join opportunity_versions ek_session_version
+            on ek_session_version.opportunity_id = ek_session.id
+            and ek_session_version.is_current = true
+            and ek_session_version.verification_state = 'VERIFIED'
+            and ek_session_version.verified_at is not null
+          where ek_session.institution_id = ${institutions.id}
+            and ek_session.kind = 'INFORMATION_SESSION'
+            and ek_session.truth_mode = 'NATIVE'
+            and ek_session.publication_state = 'PUBLISHED'
+            and ek_session_version.business_state <> 'CANCELLED'
+            and ek_session_version.event_start_at >= now()
+            and (${institutions.category} <> 'INTERNATIONAL_SCHOOL' or exists (
+              select 1 from opportunity_version_evidence evidence
+              join sources source on source.id=evidence.source_id
+              where evidence.opportunity_version_id=ek_session_version.id
+                and evidence.source_observation_id is not null
+                and evidence.source_snapshot_id is not null
+                and source.source_type in ('OFFICIAL_ADMISSION_PAGE','OFFICIAL_NOTICE_BOARD','OFFICIAL_DOCUMENT','OFFICIAL_APPLICATION_PORTAL','OFFICIAL_SCHOOL_PAGE','OFFICIAL_SOCIAL')
+                and source.authority_level in ('PRIMARY','SECONDARY_OFFICIAL')
+            ))
+        )`
+      : undefined,
   );
+}
+
+async function listEnglishKindergartenDistrictFacets(
+  executor: DatabaseExecutor,
+  query: InstitutionListQuery,
+): Promise<InstitutionListDTO["districtFacets"]> {
+  if (
+    query.category !== "ENGLISH_KINDERGARTEN" ||
+    query.region !== SEOUL_REGION_CODE
+  ) {
+    return [];
+  }
+
+  const facetQuery = { ...query };
+  delete facetQuery.district;
+  const rows = await executor.drizzle
+    .select({
+      district: institutions.district,
+      count: sql<number>`count(*)::int`,
+    })
+    .from(institutions)
+    .where(listConditions(facetQuery))
+    .groupBy(institutions.district);
+  const countByDistrict = new Map(
+    rows
+      .filter(
+        (row): row is { district: string; count: number } =>
+          row.district !== null && seoulDistrictSet.has(row.district),
+      )
+      .map((row) => [row.district, row.count]),
+  );
+
+  return seoulDistrictValues.map((district) => ({
+    district,
+    count: countByDistrict.get(district) ?? 0,
+  }));
+}
+
+function tuitionAmountOrder() {
+  return sql<number | null>`(
+    select case
+      when v.value_json ->> 'billingCadence' = 'MONTHLY'
+        and nullif(btrim(v.value_json ->> 'academicYearLabel'), '') is not null
+        and jsonb_typeof(v.value_json -> 'amountMin') = 'number'
+      then (v.value_json ->> 'amountMin')::numeric
+      else null
+    end
+    from institution_facts f
+    join institution_fact_versions v on v.institution_fact_id = f.id
+      and v.is_current = true and v.verification_state = 'VERIFIED'
+      and v.verified_at is not null
+    where f.institution_id = ${institutions.id} and f.fact_type = 'TUITION'
+      and (${institutions.category} <> 'INTERNATIONAL_SCHOOL' or exists (
+        select 1 from institution_fact_version_evidence evidence
+        join sources source on source.id=evidence.source_id
+        where evidence.institution_fact_version_id=v.id
+          and evidence.source_observation_id is not null
+          and evidence.source_snapshot_id is not null
+          and source.source_type in ('OFFICIAL_ADMISSION_PAGE','OFFICIAL_NOTICE_BOARD','OFFICIAL_DOCUMENT','OFFICIAL_APPLICATION_PORTAL','OFFICIAL_SCHOOL_PAGE','OFFICIAL_SOCIAL')
+          and source.authority_level in ('PRIMARY','SECONDARY_OFFICIAL')
+      ))
+    limit 1
+  )`;
+}
+
+function tuitionYearOrder() {
+  return sql<string | null>`(
+    select case
+      when v.value_json ->> 'billingCadence' = 'MONTHLY'
+      then nullif(btrim(v.value_json ->> 'academicYearLabel'), '')
+      else null
+    end
+    from institution_facts f
+    join institution_fact_versions v on v.institution_fact_id = f.id
+      and v.is_current = true and v.verification_state = 'VERIFIED'
+      and v.verified_at is not null
+    where f.institution_id = ${institutions.id} and f.fact_type = 'TUITION'
+      and (${institutions.category} <> 'INTERNATIONAL_SCHOOL' or exists (
+        select 1 from institution_fact_version_evidence evidence
+        join sources source on source.id=evidence.source_id
+        where evidence.institution_fact_version_id=v.id
+          and evidence.source_observation_id is not null
+          and evidence.source_snapshot_id is not null
+          and source.source_type in ('OFFICIAL_ADMISSION_PAGE','OFFICIAL_NOTICE_BOARD','OFFICIAL_DOCUMENT','OFFICIAL_APPLICATION_PORTAL','OFFICIAL_SCHOOL_PAGE','OFFICIAL_SOCIAL')
+          and source.authority_level in ('PRIMARY','SECONDARY_OFFICIAL')
+      ))
+    limit 1
+  )`;
+}
+
+function informationSessionOrder() {
+  return sql<Date | null>`(
+    select min(v.event_start_at)
+    from opportunities o
+    join opportunity_versions v on v.opportunity_id = o.id
+      and v.is_current = true and v.verification_state = 'VERIFIED'
+      and v.verified_at is not null
+    where o.institution_id = ${institutions.id}
+      and o.kind = 'INFORMATION_SESSION'
+      and o.truth_mode = 'NATIVE'
+      and o.publication_state = 'PUBLISHED'
+      and v.business_state <> 'CANCELLED'
+      and v.event_start_at >= now()
+      and (${institutions.category} <> 'INTERNATIONAL_SCHOOL' or exists (
+        select 1 from opportunity_version_evidence evidence
+        join sources source on source.id=evidence.source_id
+        where evidence.opportunity_version_id=v.id
+          and evidence.source_observation_id is not null
+          and evidence.source_snapshot_id is not null
+          and source.source_type in ('OFFICIAL_ADMISSION_PAGE','OFFICIAL_NOTICE_BOARD','OFFICIAL_DOCUMENT','OFFICIAL_APPLICATION_PORTAL','OFFICIAL_SCHOOL_PAGE','OFFICIAL_SOCIAL')
+          and source.authority_level in ('PRIMARY','SECONDARY_OFFICIAL')
+      ))
+  )`;
+}
+
+function listOrder(query: InstitutionListQuery) {
+  if (
+    query.category === "ENGLISH_KINDERGARTEN" &&
+    query.sort === "TUITION_ASC"
+  ) {
+    const amount = tuitionAmountOrder();
+    const year = tuitionYearOrder();
+    return [
+      asc(sql`case when ${amount} is null then 1 else 0 end`),
+      desc(year),
+      asc(amount),
+      asc(institutions.displayName),
+      asc(institutions.id),
+    ];
+  }
+  if (
+    query.category === "ENGLISH_KINDERGARTEN" &&
+    query.sort === "INFO_SESSION_ASC"
+  ) {
+    const session = informationSessionOrder();
+    return [
+      asc(sql`case when ${session} is null then 1 else 0 end`),
+      asc(session),
+      asc(institutions.displayName),
+      asc(institutions.id),
+    ];
+  }
+  return [asc(institutions.displayName), asc(institutions.id)];
 }
 
 export async function listInstitutions(
@@ -595,7 +950,7 @@ export async function listInstitutions(
 ): Promise<InstitutionListDTO> {
   const query = parseInstitutionListQuery(input);
   const where = listConditions(query);
-  const [countRow, rows] = await Promise.all([
+  const [countRow, rows, districtFacets] = await Promise.all([
     executor.drizzle
       .select({ total: sql<number>`count(*)::int` })
       .from(institutions)
@@ -607,27 +962,39 @@ export async function listInstitutions(
         name: institutions.displayName,
         category: institutions.category,
         region: institutions.regionCode,
+        district: institutions.district,
+        address: institutions.addressLine,
         shortDescription: institutions.shortDescription,
         operationalState: institutions.operationalState,
       })
       .from(institutions)
       .where(where)
-      .orderBy(asc(institutions.displayName), asc(institutions.id))
+      .orderBy(...listOrder(query))
       .limit(query.pageSize)
       .offset((query.page - 1) * query.pageSize),
+    listEnglishKindergartenDistrictFacets(executor, query),
   ]);
-  const covered = await getMonitorableInstitutionIds(
-    executor,
-    rows.map((row) => row.id),
-  );
+  const [covered, isiIdentities] = await Promise.all([
+    getMonitorableInstitutionIds(
+      executor,
+      rows.map((row) => row.id),
+    ),
+    getInstitutionIsiIdentityIds(
+      executor,
+      rows.map((row) => row.id),
+    ),
+  ]);
   const items: InstitutionRow[] = rows.map((row) => ({
     id: row.id,
     slug: row.slug,
     name: row.name,
     category: row.category,
     region: row.region,
+    district: row.district,
+    address: row.address,
     shortDescription: row.shortDescription,
     operationalState: row.operationalState,
+    hasIsiIdentity: isiIdentities.has(row.id),
     hasMonitorableSourceCoverage: covered.has(row.id),
   }));
   const truths = await getOpportunityTruths(
@@ -641,11 +1008,21 @@ export async function listInstitutions(
       ...(byInstitution.get(truth.institutionId) ?? []),
       truth,
     ]);
+  const englishKindergartenSummaries =
+    await loadEnglishKindergartenCardSummaries(
+      executor,
+      items.map((row) => row.id),
+    );
   const total = countRow[0]?.total ?? 0;
   return {
     items: items.map((row) =>
-      cardFromInstitution(row, byInstitution.get(row.id) ?? []),
+      cardFromInstitution(
+        row,
+        byInstitution.get(row.id) ?? [],
+        englishKindergartenSummaries.get(row.id),
+      ),
     ),
+    districtFacets,
     pagination: {
       page: query.page,
       pageSize: query.pageSize,
@@ -658,6 +1035,7 @@ export async function listInstitutions(
 async function getFactProjection(
   executor: DatabaseExecutor,
   institutionId: string,
+  category: InstitutionCardDTO["category"],
 ): Promise<{ facts: InstitutionFactDTO[]; sources: OfficialSourceDTO[] }> {
   const rows = await executor.drizzle
     .select({
@@ -684,7 +1062,8 @@ async function getFactProjection(
       ? []
       : ((await executor.raw(sql`
     select e.institution_fact_version_id as "versionId",
-      s.source_name as "sourceName", s.canonical_url as "canonicalUrl", s.authority_level as "authorityLevel"
+      s.source_name as "sourceName", s.canonical_url as "canonicalUrl", s.authority_level as "authorityLevel",
+      (e.source_observation_id is not null and e.source_snapshot_id is not null) as "captured"
     from institution_fact_version_evidence e join sources s on s.id=e.source_id
     where e.institution_fact_version_id in (${sql.join(
       versionIds.map((id) => sql`${id}`),
@@ -699,20 +1078,30 @@ async function getFactProjection(
           sourceName: string;
           canonicalUrl: string;
           authorityLevel: string;
+          captured: boolean;
         }>);
+  const eligibleEvidence =
+    category === "INTERNATIONAL_SCHOOL"
+      ? evidence.filter((row) => row.captured)
+      : evidence;
   const sourceByVersion = new Map<string, OfficialSourceDTO>();
-  for (const row of evidence)
+  for (const row of eligibleEvidence)
     if (!sourceByVersion.has(row.versionId))
       sourceByVersion.set(row.versionId, sourceDto(row));
   const facts = rows
-    .filter((row) => row.verifiedAt !== null)
+    .filter(
+      (row) =>
+        row.verifiedAt !== null &&
+        (category !== "INTERNATIONAL_SCHOOL" ||
+          sourceByVersion.has(row.versionId)),
+    )
     .map((row) => ({
       factType: row.factType,
       value: row.value,
       displayValue: row.displayValue,
       verifiedAt: toIso(row.verifiedAt as Date),
       officialSource: sourceByVersion.get(row.versionId) ?? null,
-      officialSources: evidence
+      officialSources: eligibleEvidence
         .filter((item) => item.versionId === row.versionId)
         .map(sourceDto)
         .filter(
@@ -720,7 +1109,7 @@ async function getFactProjection(
             all.findIndex((s) => s.url === source.url) === index,
         ),
     }));
-  return { facts, sources: evidence.map(sourceDto) };
+  return { facts, sources: eligibleEvidence.map(sourceDto) };
 }
 
 async function getLegacyInstitutionSources(
@@ -816,6 +1205,12 @@ async function getReviewedAdmissions(
     from opportunities o
     join institutions i on i.id=o.institution_id
       and i.publication_state='PUBLISHED'
+      and (i.category <> 'INTERNATIONAL_SCHOOL' or (
+        i.operational_state='ACTIVE' and exists (
+          select 1 from institution_registry_identities isi
+          where isi.institution_id=i.id and isi.registry_name='ISI'
+        )
+      ))
     join opportunity_versions v on v.opportunity_id=o.id
       and v.is_current=true and v.verification_state='VERIFIED'
       and v.verified_at is not null
@@ -923,6 +1318,8 @@ export async function getInstitutionBySlug(
       name: institutions.displayName,
       category: institutions.category,
       region: institutions.regionCode,
+      district: institutions.district,
+      address: institutions.addressLine,
       shortDescription: institutions.shortDescription,
       operationalState: institutions.operationalState,
     })
@@ -931,6 +1328,7 @@ export async function getInstitutionBySlug(
       and(
         eq(institutions.slug, slug),
         eq(institutions.publicationState, "PUBLISHED"),
+        internationalSchoolPublicEligibilitySql(),
       ),
     )
     .limit(1);
@@ -942,16 +1340,23 @@ export async function getInstitutionBySlug(
     legacySources,
     relatedArticles,
     covered,
+    isiIdentities,
+    englishKindergarten,
   ] = await Promise.all([
     getOpportunityTruths(executor, { institutionIds: [row.id] }, "DETAIL"),
     getReviewedAdmissions(executor, row.id),
-    getFactProjection(executor, row.id),
+    getFactProjection(executor, row.id, row.category),
     getLegacyInstitutionSources(executor, row.id),
     getRelatedArticles(executor, { institutionId: row.id }),
     getMonitorableInstitutionIds(executor, [row.id]),
+    getInstitutionIsiIdentityIds(executor, [row.id]),
+    row.category === "ENGLISH_KINDERGARTEN"
+      ? loadEnglishKindergartenDetail(executor, row.id)
+      : Promise.resolve(null),
   ]);
   const institution: InstitutionRow = {
     ...row,
+    hasIsiIdentity: isiIdentities.has(row.id),
     hasMonitorableSourceCoverage: covered.has(row.id),
   };
   const cardsFor = (states: OpportunityCardDTO["businessState"][]) =>
@@ -987,6 +1392,7 @@ export async function getInstitutionBySlug(
     verifiedFacts: factsResult.facts,
     officialSources,
     relatedArticles,
+    ...(englishKindergarten === null ? {} : { englishKindergarten }),
     indexability: getIndexability({
       entity: "INSTITUTION",
       publicationState: "PUBLISHED",

@@ -15,6 +15,24 @@ import {
 } from "@/app/_components/ui-primitives";
 import { homeCategoryLabel } from "@/app/_lib/presentation";
 
+const institutionGroups = [
+  {
+    category: "ENGLISH_KINDERGARTEN",
+    id: "home-english-kindergartens",
+    description: "지역별로 기관을 찾고, 확인된 원비와 운영 정보를 살펴보세요.",
+  },
+  {
+    category: "PRIVATE_ELEMENTARY",
+    id: "home-private-elementary",
+    description: "학교별로 확인된 모집 일정과 입학 안내를 살펴보세요.",
+  },
+  {
+    category: "INTERNATIONAL_SCHOOL",
+    id: "home-international-schools",
+    description: "학교별 기본 정보와 확인된 입학 안내를 살펴보세요.",
+  },
+] as const;
+
 function OpportunitySection({
   opportunities,
 }: {
@@ -48,24 +66,77 @@ function InstitutionSection({
 }: {
   institutions: HomePageDTO["featuredInstitutions"];
 }) {
+  const groups = institutionGroups
+    .map((group) => ({
+      ...group,
+      label: homeCategoryLabel(group.category),
+      institutions: institutions.filter(
+        (item) => item.category === group.category,
+      ),
+    }))
+    .filter((group) => group.institutions.length > 0);
+
   return (
-    <section aria-label="살펴볼 기관">
+    <section id="featured-institutions" aria-label="살펴볼 기관">
       <SectionHeader
         eyebrow="기관"
         title="살펴볼 기관"
-        description="각 기관의 기본 정보와 확인된 입학정보를 살펴볼 수 있어요."
+        description="기관 유형별로 나누어 살펴보세요."
         action={
           <Link className="text-link" href="/institutions">
             기관 전체 보기
           </Link>
         }
       />
-      {institutions.length > 0 ? (
-        <div className="home-card-grid">
-          {institutions.map((institution) => (
-            <InstitutionCard key={institution.id} institution={institution} />
-          ))}
-        </div>
+      {groups.length > 0 ? (
+        <>
+          {groups.length > 1 ? (
+            <nav
+              className="home-institution-jumps"
+              aria-label="살펴볼 기관 유형별 이동"
+            >
+              {groups.map((group) => (
+                <Link key={group.category} href={`/#${group.id}`}>
+                  {group.label}
+                  <span aria-hidden="true">↓</span>
+                </Link>
+              ))}
+            </nav>
+          ) : null}
+          <div className="home-institution-groups">
+            {groups.map((group) => (
+              <section
+                key={group.category}
+                id={group.id}
+                className="home-institution-group"
+                data-category={group.category}
+                aria-labelledby={`${group.id}-title`}
+              >
+                <header className="home-institution-group__header">
+                  <div>
+                    <h3 id={`${group.id}-title`}>{group.label}</h3>
+                    <p>{group.description}</p>
+                  </div>
+                  <Link
+                    className="home-institution-group__all"
+                    href={`/institutions?category=${group.category}`}
+                  >
+                    {group.label} 전체 보기<span aria-hidden="true">→</span>
+                  </Link>
+                </header>
+                <div className="home-institution-group__cards">
+                  {group.institutions.map((institution) => (
+                    <InstitutionCard
+                      key={institution.id}
+                      institution={institution}
+                      headingLevel={4}
+                    />
+                  ))}
+                </div>
+              </section>
+            ))}
+          </div>
+        </>
       ) : (
         <EmptyState
           title="PREPPY에 공개된 기관 정보가 없어요"

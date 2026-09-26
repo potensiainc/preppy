@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { FavoriteHeart } from "@/app/_components/favorite-heart";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 type FollowContext = "INSTITUTION" | "ARTICLE" | "OPPORTUNITY";
@@ -9,6 +10,7 @@ type FollowCtaState =
   | "anonymous"
   | "available"
   | "submitting"
+  | "removing"
   | "following"
   | "unavailable"
   | "error";
@@ -132,13 +134,11 @@ export async function runFollowCtaAction(
   }
 
   options.onCommitted();
-  navigate("/my-preppy");
   return "following";
 }
 
 export function FollowCtaPresentation({
   state,
-  label,
   onAction,
   onRetry,
 }: {
@@ -147,18 +147,6 @@ export function FollowCtaPresentation({
   onAction: () => void;
   onRetry: () => void;
 }) {
-  if (state === "following") {
-    return (
-      <>
-        <p className="follow-cta__committed" role="status">
-          관심기관 등록됨
-        </p>
-        <p className="follow-cta__hint">이 기관을 관심기관으로 등록했어요.</p>
-        <a href="/my-preppy">내 프레피에서 관리하기</a>
-      </>
-    );
-  }
-
   if (state === "unavailable") {
     return (
       <>
@@ -183,28 +171,28 @@ export function FollowCtaPresentation({
     );
   }
 
-  const pending = state === "loading" || state === "submitting";
+  const pending =
+    state === "loading" || state === "submitting" || state === "removing";
+  const saved = state === "following" || state === "removing";
+  const accessibleLabel =
+    state === "loading"
+      ? "관심기관 상태 확인 중"
+      : pending
+        ? "관심기관 저장 중"
+        : state === "anonymous"
+          ? "카카오 로그인 후 관심기관 등록"
+          : saved
+            ? "관심기관 해제"
+            : "관심기관 등록";
   return (
-    <>
-      <button disabled={pending} type="button" onClick={onAction}>
-        {state === "loading"
-          ? "관심기관 상태 확인 중…"
-          : state === "submitting"
-            ? "등록 요청 중…"
-            : state === "anonymous"
-              ? "로그인 후 관심기관 등록"
-              : label}
-      </button>
-      <p className="follow-cta__hint" aria-live="polite">
-        {state === "loading"
-          ? "관심기관 등록 여부를 확인하고 있어요."
-          : state === "anonymous"
-            ? "카카오 로그인 후 관심기관 등록을 이어갈 수 있어요."
-            : state === "available"
-              ? "등록하면 내 프레피에서 이 기관의 입학정보를 모아 볼 수 있어요."
-              : "등록 결과를 확인하고 있어요."}
-      </p>
-    </>
+    <span className="favorite-heart-wrap" aria-live="polite">
+      <FavoriteHeart
+        saved={saved}
+        pending={pending}
+        label={accessibleLabel}
+        onClick={onAction}
+      />
+    </span>
   );
 }
 
@@ -233,6 +221,9 @@ export function FollowCta({
     state: FollowCtaState;
   }>(() => ({ targetKey, state: neutralState }));
   const [reloadKey, setReloadKey] = useState(0);
+  const [actionError, setActionError] = useState(false);
+  const actionPending = useRef(false);
+  const statusRevision = useRef(0);
   const state =
     snapshot.targetKey === targetKey ? snapshot.state : neutralState;
 
@@ -249,25 +240,78 @@ export function FollowCta({
     const requestedTargetKey = targetKey;
     if (!followable) return;
     let current = true;
+    const revision = ++statusRevision.current;
     loadFollowCtaState(institutionId)
       .then((resolved) => {
-        if (current) setTargetState(requestedTargetKey, resolved);
+        if (current && revision === statusRevision.current)
+          setTargetState(requestedTargetKey, resolved);
       })
       .catch(() => {
-        if (current) setTargetState(requestedTargetKey, "error");
+        if (current && revision === statusRevision.current)
+          setTargetState(requestedTargetKey, "error");
       });
     return () => {
       current = false;
     };
   }, [followable, institutionId, reloadKey, targetKey]);
 
+  useEffect(() => {
+    function synchronize(event: Event) {
+      const detail = (
+        event as CustomEvent<{ institutionId: string; following: boolean }>
+      ).detail;
+      if (detail?.institutionId === institutionId) {
+        statusRevision.current++;
+        setTargetState(targetKey, detail.following ? "following" : "available");
+      }
+    }
+    function refreshStatus() {
+      setReloadKey((key) => key + 1);
+    }
+    window.addEventListener("preppy:follow-changed", synchronize);
+    window.addEventListener("pageshow", refreshStatus);
+    return () => {
+      window.removeEventListener("preppy:follow-changed", synchronize);
+      window.removeEventListener("pageshow", refreshStatus);
+    };
+  }, [institutionId, targetKey]);
+
   async function performAction() {
-    if (state !== "anonymous" && state !== "available") return;
+    if (
+      actionPending.current ||
+      (state !== "anonymous" && state !== "available" && state !== "following")
+    )
+      return;
+    actionPending.current = true;
+    statusRevision.current++;
+    setActionError(false);
     onAnalyticsAction?.();
     const actionTargetKey = targetKey;
     const actionState = state;
-    setTargetState(actionTargetKey, "submitting");
+    setTargetState(
+      actionTargetKey,
+      state === "following" ? "removing" : "submitting",
+    );
     try {
+      if (actionState === "following") {
+        const response = await fetch(`/api/me/follows/${institutionId}`, {
+          method: "DELETE",
+          credentials: "same-origin",
+          cache: "no-store",
+        });
+        if (response.status === 401) {
+          window.location.assign("/auth/kakao/start");
+          return;
+        }
+        if (response.status !== 204) throw new Error("Favorite removal failed");
+        setTargetState(actionTargetKey, "available");
+        window.dispatchEvent(
+          new CustomEvent("preppy:follow-changed", {
+            detail: { institutionId, following: false },
+          }),
+        );
+        return;
+      }
       const resolved = await runFollowCtaAction({
         state: actionState,
         institutionId,
@@ -280,13 +324,23 @@ export function FollowCta({
             window.location.assign(path);
           }
         },
-        onCommitted: () => setTargetState(actionTargetKey, "following"),
+        onCommitted: () => {
+          setTargetState(actionTargetKey, "following");
+          window.dispatchEvent(
+            new CustomEvent("preppy:follow-changed", {
+              detail: { institutionId, following: true },
+            }),
+          );
+        },
       });
       if (resolved === "unavailable") {
         setTargetState(actionTargetKey, "unavailable");
       }
     } catch {
-      setTargetState(actionTargetKey, "error");
+      setTargetState(actionTargetKey, actionState);
+      setActionError(true);
+    } finally {
+      actionPending.current = false;
     }
   }
 
@@ -303,6 +357,11 @@ export function FollowCta({
       data-institution-id={institutionId}
       data-return-path={returnPath}
     >
+      {actionError ? (
+        <p className="follow-cta__error" role="alert">
+          저장 결과를 확인하지 못했어요. 다시 시도해 주세요.
+        </p>
+      ) : null}
       <FollowCtaPresentation
         state={state}
         label={label}

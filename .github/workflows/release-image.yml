@@ -1,0 +1,116 @@
+name: Build release image
+
+on:
+  push:
+    branches:
+      - develop
+      - codex/production-baseline-reconciliation
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: release-image-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  image:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      IMAGE: ghcr.io/${{ github.repository }}:sha-${{ github.sha }}
+    steps:
+      - name: Check out the exact commit
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          package-manager-cache: false
+
+      - name: Install and check source
+        run: |
+          npm ci --no-audit --no-fund
+          npm run test:unit
+          npm run typecheck
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Build the image once
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: Dockerfile
+          platforms: linux/amd64
+          load: true
+          push: false
+          provenance: false
+          tags: ${{ env.IMAGE }}
+
+      - name: Verify the actual runtime image
+        run: |
+          docker run --rm --entrypoint /app/node_modules/.bin/tsx "$IMAGE" scripts/deploy/assert-image-contract.ts
+          output=$(docker run --rm \
+            -e WORKER_ENABLED=false \
+            -e EMAIL_SEND_ENABLED=false \
+            -e ANALYTICS_ENABLED=false \
+            -e CACHE_REVALIDATION_ENABLED=false \
+            "$IMAGE" npm run worker:once)
+          printf '%s\n' "$output"
+          grep -q '"enabled":false' <<< "$output"
+          if docker run --rm --entrypoint printenv "$IMAGE" APP_BASE_URL; then
+            echo "Build-only APP_BASE_URL leaked into the runtime image."
+            exit 1
+          fi
+
+      - name: Verify runtime-specific robots URLs
+        run: |
+          for origin in https://staging.preppy.invalid https://production.preppy.invalid; do
+            container=$(docker run -d --rm -e APP_BASE_URL="$origin" -p 127.0.0.1:3000:3000 "$IMAGE")
+            trap 'docker stop "$container" >/dev/null' EXIT
+            body=""
+            for attempt in $(seq 1 30); do
+              if body=$(curl --fail --silent http://127.0.0.1:3000/robots.txt); then
+                break
+              fi
+              sleep 1
+            done
+            printf '%s\n' "$body" | grep -F "Sitemap: $origin/sitemap.xml"
+            docker stop "$container" >/dev/null
+            trap - EXIT
+          done
+
+      - name: Sign in to GitHub Container Registry
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish the tested image and record its digest
+        id: published
+        run: |
+          docker push "$IMAGE"
+          digest=$(docker buildx imagetools inspect "$IMAGE" | sed -n 's/^Digest:[[:space:]]*//p' | head -n 1)
+          [[ "$digest" =~ ^sha256:[a-f0-9]{64}$ ]]
+          immutable_ref="ghcr.io/$GITHUB_REPOSITORY@$digest"
+          printf 'digest=%s\n' "$digest" >> "$GITHUB_OUTPUT"
+          printf 'immutable_ref=%s\n' "$immutable_ref" >> "$GITHUB_OUTPUT"
+          printf '{"gitSha":"%s","image":"%s","digest":"%s","immutableRef":"%s"}\n' \
+            "$GITHUB_SHA" "$IMAGE" "$digest" "$immutable_ref" > release-image-manifest.json
+          printf 'Git SHA: %s\n\nImage: %s\n\nDigest: %s\n' \
+            "$GITHUB_SHA" "$IMAGE" "$digest" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Retain the release identity
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-image-${{ github.sha }}
+          path: release-image-manifest.json
+          retention-days: 30
+

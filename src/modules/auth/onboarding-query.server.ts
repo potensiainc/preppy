@@ -1,12 +1,18 @@
 import "server-only";
 
 import { ConflictError, UnauthenticatedError } from "@/src/application/errors";
-import { getCurrentLegalPolicyVersions } from "@/src/application/legal-policies.server";
+import {
+  getCurrentLegalPolicyVersions,
+  getLegalPublicationState,
+} from "@/src/application/legal-policies.server";
 import { getSessionUser } from "@/src/application/current-user.server";
 import type { DatabaseExecutor } from "@/src/infrastructure/db/runtime.server";
 import { readPendingFollowIntent } from "@/src/modules/auth/pending-follow-intent.server";
 import { resolveCanonicalPendingFollowTarget } from "@/src/modules/auth/pending-follow-target.server";
-import { hasMonitorableSourceCoverage } from "@/src/modules/follow/followability-policy.server";
+import {
+  hasInstitutionIsiIdentity,
+  hasMonitorableSourceCoverage,
+} from "@/src/modules/follow/followability-policy.server";
 import { findOnboardingDefaults } from "@/src/modules/identity/repository.server";
 import { findInstitutionById } from "@/src/modules/institution/repository.server";
 
@@ -42,7 +48,13 @@ export async function getOnboardingState(
 
   return {
     userState: "PENDING" as const,
-    defaults,
+    defaults: {
+      email: defaults.email,
+      interestRegions: defaults.interestRegions,
+      interestCategories: defaults.interestCategories,
+      serviceEmailUpdatesConsent: false,
+    },
+    legalPublicationReady: getLegalPublicationState().ready,
     policyVersions: getCurrentLegalPolicyVersions(),
     pendingInstitution,
   };
@@ -61,6 +73,7 @@ async function findPendingInstitution(
     intent.institutionId,
     (institutionId) => findInstitutionById(executor, institutionId),
     (institutionId) => hasMonitorableSourceCoverage(executor, institutionId),
+    (institutionId) => hasInstitutionIsiIdentity(executor, institutionId),
   );
   if (!target) return null;
   return {

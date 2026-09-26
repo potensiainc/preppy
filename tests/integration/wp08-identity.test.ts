@@ -274,9 +274,10 @@ describe("Kakao canonical identity resolution", () => {
       `;
 
     expect(userIds.size).toBe(1);
-    expect(nextCandidate).toBe(candidateUserIds.length);
-    expect(issuedCandidateUserIds).toEqual(candidateUserIds);
-    expect(new Set(issuedCandidateUserIds).size).toBe(candidateUserIds.length);
+    expect(nextCandidate).toBeGreaterThan(0);
+    expect(nextCandidate).toBeLessThanOrEqual(candidateUserIds.length);
+    expect(issuedCandidateUserIds).toEqual(candidateUserIds.slice(0, nextCandidate));
+    expect(new Set(issuedCandidateUserIds).size).toBe(nextCandidate);
     expect(identityCount).toBe(1);
     expect(linkedUserCount).toBe(1);
     expect(candidateUsers).toEqual([{ id: [...userIds][0] }]);

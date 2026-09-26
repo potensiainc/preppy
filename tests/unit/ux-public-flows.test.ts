@@ -81,9 +81,8 @@ describe("public/member UX state and action truth", () => {
       expect($("time[datetime='2026-11-11']").text()).toBe("2026년 11월 11일");
       expect($(".my-preppy-card__state").text()).toContain("미확인");
       expect($(".verified-at time").length).toBe(0);
-      expect($(".my-preppy-readiness strong").text()).toBe(
-        ready ? "이메일 업데이트 준비됨" : "이메일 미등록",
-      );
+      expect($(".my-preppy-readiness")).toHaveLength(0);
+      expect($(".favorite-heart").attr("aria-pressed")).toBe("true");
     },
   );
   it("names the login prerequisite only for the anonymous follow action", () => {
@@ -99,8 +98,10 @@ describe("public/member UX state and action truth", () => {
           }),
         ),
       );
-    expect(render("anonymous")("button").text()).toMatch(/로그인/);
-    expect(render("available")("button").text()).not.toMatch(/로그인/);
+    expect(render("anonymous")("button").attr("aria-label")).toMatch(/로그인/);
+    expect(render("available")("button").attr("aria-label")).not.toMatch(
+      /로그인/,
+    );
   });
 
   it("does not infer email delivery from a committed institution follow", () => {
@@ -115,9 +116,9 @@ describe("public/member UX state and action truth", () => {
         }),
       ),
     );
-    expect($("[role=status]").text()).toContain("관심기관");
+    expect($("button").attr("aria-pressed")).toBe("true");
     expect($("body").text()).not.toMatch(/업데이트 받는 중|알림을 받는 중/);
-    expect($("a[href='/my-preppy']").text()).toContain("내 프레피");
+    expect($("a[href='/my-preppy']")).toHaveLength(0);
   });
 
   it("keeps unsupported follow UI hidden but explains a request that became unavailable", () => {
@@ -198,9 +199,9 @@ describe("public/member UX state and action truth", () => {
     const $ = load(
       renderToStaticMarkup(
         createElement(OnboardingForm, {
+          legalPublicationReady: true,
           defaults: {
             email: null,
-            childBirthYear: null,
             interestRegions: ["KR-11"],
             interestCategories: [],
             serviceEmailUpdatesConsent: false,
@@ -225,10 +226,10 @@ describe("public/member UX state and action truth", () => {
       $("input[required]")
         .map((_, el) => $(el).attr("name"))
         .get(),
-    ).toEqual(["termsConsent", "privacyConsent"]);
+    ).toEqual(["adultConfirmed", "termsConsent", "privacyConsent"]);
     expect($("input[name=privacyPolicyVersion]").val()).toBe("2026-08-23");
     expect($("input[name=termsPolicyVersion]").val()).toBe("2026-08-23");
-    expect($("input[name=interestRegions]").val()).toBe("KR-11");
+    expect($("input[name=interestRegions]").length).toBe(0);
     expect($("input[name=serviceEmailUpdatesConsent]").is(":checked")).toBe(
       false,
     );
@@ -259,9 +260,9 @@ describe("public/member UX state and action truth", () => {
     const $ = load(
       renderToStaticMarkup(
         createElement(OnboardingForm, {
+          legalPublicationReady: true,
           defaults: {
             email: null,
-            childBirthYear: null,
             interestRegions: [],
             interestCategories: [],
             serviceEmailUpdatesConsent: false,

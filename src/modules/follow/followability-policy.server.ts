@@ -2,23 +2,68 @@ import "server-only";
 
 import { sql } from "drizzle-orm";
 
+import type {
+  InstitutionCategory,
+  InstitutionOperationalState,
+  InstitutionPublicationState,
+} from "@/src/db/schema";
 import type { DatabaseExecutor } from "@/src/infrastructure/db/runtime.server";
+import { isInternationalSchoolPubliclyEligible } from "@/src/modules/public/international-school-publication-policy";
 
 const MAX_INSTITUTION_COVERAGE_BATCH = 100;
 
 export type FollowabilityInstitution = {
-  publicationState: string;
-  operationalState: string;
+  category: InstitutionCategory;
+  publicationState: InstitutionPublicationState;
+  operationalState: InstitutionOperationalState;
+  hasIsiIdentity: boolean;
 };
 
+/** Saving a public institution is independent of monitoring and email readiness. */
 export function isInstitutionFollowable(
   institution: FollowabilityInstitution,
-  hasMonitorableSourceCoverage: boolean,
+  _hasMonitorableSourceCoverage?: boolean,
 ): boolean {
   return (
-    institution.publicationState === "PUBLISHED" &&
-    institution.operationalState !== "CLOSED" &&
-    hasMonitorableSourceCoverage
+    isInternationalSchoolPubliclyEligible({
+      category: institution.category,
+      publicationState: institution.publicationState,
+      operationalState: institution.operationalState,
+      hasIsiIdentity: institution.hasIsiIdentity,
+    }) && institution.operationalState !== "CLOSED"
+  );
+}
+
+export async function getInstitutionIsiIdentityIds(
+  executor: DatabaseExecutor,
+  institutionIds: readonly string[],
+): Promise<Set<string>> {
+  const ids = [...new Set(institutionIds)];
+  if (ids.length === 0) return new Set();
+  if (ids.length > MAX_INSTITUTION_COVERAGE_BATCH) {
+    throw new Error("Institution ISI identity batch exceeds the query limit.");
+  }
+
+  const rows = (await executor.raw(sql`
+    select distinct identity.institution_id as "institutionId"
+    from institution_registry_identities identity
+    where identity.registry_name = 'ISI'
+      and identity.institution_id in (${sql.join(
+        ids.map((id) => sql`${id}`),
+        sql`, `,
+      )})
+    order by identity.institution_id
+  `)) as unknown as Array<{ institutionId: string }>;
+
+  return new Set(rows.map((row) => row.institutionId));
+}
+
+export async function hasInstitutionIsiIdentity(
+  executor: DatabaseExecutor,
+  institutionId: string,
+): Promise<boolean> {
+  return (await getInstitutionIsiIdentityIds(executor, [institutionId])).has(
+    institutionId,
   );
 }
 
@@ -67,6 +112,7 @@ export async function getMonitorableInstitutionIds(
 
       select fact.institution_id
       from institution_facts fact
+      join institutions institution on institution.id = fact.institution_id
       join institution_fact_versions version
         on version.institution_fact_id = fact.id
        and version.is_current = true
@@ -75,11 +121,17 @@ export async function getMonitorableInstitutionIds(
       join institution_fact_version_evidence evidence
         on evidence.institution_fact_version_id = version.id
       join monitorable_sources source on source.id = evidence.source_id
+      where institution.category <> 'INTERNATIONAL_SCHOOL'
+         or (
+           evidence.source_observation_id is not null
+           and evidence.source_snapshot_id is not null
+         )
 
       union
 
       select opportunity.institution_id
       from opportunities opportunity
+      join institutions institution on institution.id = opportunity.institution_id
       join opportunity_versions version
         on version.opportunity_id = opportunity.id
        and version.is_current = true
@@ -89,6 +141,13 @@ export async function getMonitorableInstitutionIds(
         on evidence.opportunity_version_id = version.id
       join monitorable_sources source on source.id = evidence.source_id
       where opportunity.publication_state = 'PUBLISHED'
+        and (
+          institution.category <> 'INTERNATIONAL_SCHOOL'
+          or (
+            evidence.source_observation_id is not null
+            and evidence.source_snapshot_id is not null
+          )
+        )
     )
     select distinct covered.institution_id as "institutionId"
     from covered_institutions covered

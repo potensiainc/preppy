@@ -16,6 +16,7 @@ const oauthStatePayloadSchema = z
   .object({
     version: z.literal(1),
     stateHash: z.string().regex(/^[A-Za-z0-9_-]{43}$/),
+    returnTo: z.literal("/my-preppy/settings").optional(),
   })
   .strict();
 
@@ -27,7 +28,11 @@ function hashState(state: string): Buffer {
   return createHash("sha256").update(state, "utf8").digest();
 }
 
-export function createOAuthState(options: { secret: string; now?: Date }): {
+export function createOAuthState(options: {
+  secret: string;
+  now?: Date;
+  returnTo?: "/my-preppy/settings";
+}): {
   state: string;
   cookieValue: string;
 } {
@@ -35,7 +40,13 @@ export function createOAuthState(options: { secret: string; now?: Date }): {
   return {
     state,
     cookieValue: sealSecureCookie(
-      { version: 1, stateHash: hashState(state).toString("base64url") },
+      {
+        version: 1,
+        stateHash: hashState(state).toString("base64url"),
+        ...(options.returnTo === "/my-preppy/settings"
+          ? { returnTo: options.returnTo }
+          : {}),
+      },
       {
         purpose: OAUTH_STATE_PURPOSE,
         secret: options.secret,
@@ -74,4 +85,21 @@ export function validateOAuthState(options: {
   const expected = Buffer.from(parsed.data.stateHash, "base64url");
   const actual = hashState(options.browserState);
   return expected.length === actual.length && timingSafeEqual(expected, actual);
+}
+
+/** Read only a protected return destination; callback must validate state first. */
+export function readOAuthReturnTo(
+  cookieValue: string | null | undefined,
+  options: { secret: string; now?: Date },
+): "/my-preppy/settings" | null {
+  const parsed = oauthStatePayloadSchema.safeParse(
+    openSecureCookie(cookieValue, {
+      purpose: OAUTH_STATE_PURPOSE,
+      secret: options.secret,
+      now: options.now,
+      maxPlaintextBytes: 384,
+      maxTokenBytes: 768,
+    }),
+  );
+  return parsed.success ? (parsed.data.returnTo ?? null) : null;
 }

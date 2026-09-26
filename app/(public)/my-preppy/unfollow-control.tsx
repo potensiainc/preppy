@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState, type Ref } from "react";
+import { useRef, useState, type Ref } from "react";
 
-type UnfollowState = "idle" | "confirming" | "submitting" | "error";
+import { FavoriteHeart } from "@/app/_components/favorite-heart";
+
+type UnfollowState = "idle" | "submitting" | "error";
 type Fetcher = typeof fetch;
 
 export type UnfollowTransitions = {
@@ -48,128 +50,89 @@ export function UnfollowPresentation({
   state,
   institutionName,
   onRequest,
-  onConfirm,
-  onCancel,
   onRetry,
   triggerRef,
-  confirmRef,
 }: {
   state: UnfollowState;
   institutionName: string;
   onRequest: () => void;
-  onConfirm: () => void;
-  onCancel: () => void;
+  onConfirm?: () => void;
+  onCancel?: () => void;
   onRetry: () => void;
   triggerRef?: Ref<HTMLButtonElement>;
   confirmRef?: Ref<HTMLButtonElement>;
 }) {
-  if (state === "confirming") {
-    return (
-      <div
-        className="unfollow-confirmation"
-        role="group"
-        aria-live="polite"
-        aria-label={`${institutionName} 관심기관 해제 확인`}
-      >
-        <p>
-          이 기관을 관심기관에서 해제할까요? 해제하면 내 프레피 목록에서 빠져요.
-        </p>
-        <div className="unfollow-confirmation__actions">
-          <button ref={confirmRef} type="button" onClick={onConfirm}>
-            관심기관 해제
-          </button>
-          <button
-            type="button"
-            className="unfollow-button--quiet"
-            onClick={onCancel}
-          >
-            관심기관 유지
-          </button>
-        </div>
-      </div>
-    );
-  }
-  if (state === "submitting") {
-    return (
-      <p className="unfollow-status" role="status">
-        해제하는 중…
-      </p>
-    );
-  }
-  if (state === "error") {
-    return (
-      <div className="unfollow-confirmation">
+  return (
+    <div>
+      <FavoriteHeart
+        saved
+        pending={state === "submitting"}
+        label={`${institutionName} 관심기관 해제`}
+        onClick={state === "error" ? onRetry : onRequest}
+        buttonRef={triggerRef}
+      />
+      {state === "error" ? (
         <p role="alert">
           해제 결과를 확인하지 못했어요. 잠시 후 다시 시도해 주세요.
         </p>
-        <button type="button" onClick={onRetry}>
-          해제 다시 시도
-        </button>
-      </div>
-    );
-  }
-  return (
-    <button
-      ref={triggerRef}
-      className="unfollow-button"
-      type="button"
-      onClick={onRequest}
-    >
-      관심기관 해제
-    </button>
+      ) : null}
+    </div>
   );
 }
 
 export function UnfollowControl({
   institutionId,
   institutionName,
+  onRemove,
+  onRestore,
 }: {
   institutionId: string;
   institutionName: string;
+  onRemove?: () => void;
+  onRestore?: () => void;
 }) {
   const [state, setState] = useState<UnfollowState>("idle");
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const confirmRef = useRef<HTMLButtonElement>(null);
-  const restoreTriggerFocus = useRef(false);
-
-  useEffect(() => {
-    if (state === "confirming") confirmRef.current?.focus();
-    if (state === "idle" && restoreTriggerFocus.current) {
-      restoreTriggerFocus.current = false;
-      triggerRef.current?.focus();
-    }
-  }, [state]);
-
-  async function confirm() {
+  const pending = useRef(false);
+  async function remove() {
+    if (pending.current) return;
+    pending.current = true;
     setState("submitting");
+    onRemove?.();
     try {
       await runMyPreppyUnfollow(institutionId, fetch, {
-        committed: () => window.location.reload(),
-        reauthenticate: () =>
-          window.location.replace(
-            new URL("/auth/kakao/start", window.location.origin).toString(),
-          ),
-        reauthorize: () => window.location.reload(),
-        refresh: () => window.location.reload(),
+        committed: () => {
+          window.dispatchEvent(
+            new CustomEvent("preppy:follow-changed", {
+              detail: { institutionId, following: false },
+            }),
+          );
+        },
+        reauthenticate: () => {
+          onRestore?.();
+          window.location.replace("/auth/kakao/start");
+        },
+        reauthorize: () => {
+          onRestore?.();
+          window.location.reload();
+        },
+        refresh: () => {
+          onRestore?.();
+          window.location.reload();
+        },
       });
     } catch {
+      onRestore?.();
       setState("error");
+    } finally {
+      pending.current = false;
     }
   }
-
   return (
     <UnfollowPresentation
       state={state}
       institutionName={institutionName}
-      triggerRef={triggerRef}
-      confirmRef={confirmRef}
-      onRequest={() => {
-        restoreTriggerFocus.current = true;
-        setState("confirming");
-      }}
-      onConfirm={() => void confirm()}
-      onCancel={() => setState("idle")}
-      onRetry={() => setState("confirming")}
+      onRequest={() => void remove()}
+      onRetry={() => void remove()}
     />
   );
 }

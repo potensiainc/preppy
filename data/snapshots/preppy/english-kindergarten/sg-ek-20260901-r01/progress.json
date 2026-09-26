@@ -1,0 +1,21 @@
+{
+  "packageId": "sg-ek-20260901-r01",
+  "confirmed": 25,
+  "excluded": 0,
+  "held": 0,
+  "recordsReviewed": 25,
+  "districts": {
+    "강남구": 13,
+    "서초구": 12
+  },
+  "legalDongs": {
+    "신사동": 13,
+    "잠원동": 1,
+    "반포동": 11
+  },
+  "sourceFetches": {
+    "success": 23,
+    "accessFailed": 2,
+    "checkedNotFound": 0
+  }
+}

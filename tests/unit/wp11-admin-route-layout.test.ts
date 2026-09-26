@@ -410,7 +410,7 @@ describe("WP-11 public/Admin route and layout separation", () => {
           outbox: { pending: number; deadLetter: number };
         };
       }>;
-    }>("@/app/admin/(protected)/page");
+    }>("@/app/admin/(protected)/page-content");
     expect(loaded).not.toBeNull();
     if (!loaded) return;
 

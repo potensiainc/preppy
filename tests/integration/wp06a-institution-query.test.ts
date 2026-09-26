@@ -58,6 +58,8 @@ async function createInstitution({
   state = "PUBLISHED",
   description = "A meaningful public profile.",
   operationalState = "ACTIVE",
+  district = null,
+  hasIsiIdentity = true,
 }: {
   name?: string;
   category?:
@@ -66,14 +68,28 @@ async function createInstitution({
   state?: "DRAFT" | "PUBLISHED" | "HIDDEN" | "ARCHIVED";
   description?: string | null;
   operationalState?: "ACTIVE" | "INACTIVE" | "CLOSED" | "UNKNOWN";
+  district?: string | null;
+  hasIsiIdentity?: boolean;
 } = {}) {
   const id = randomUUID();
   const slug = `${prefix}-institution-${id}`;
   await runtime.client`
-    insert into institutions (id, slug, display_name, category, publication_state, operational_state, region_code, short_description, published_at)
-    values (${id}, ${slug}, ${name}, ${category}, ${state}, ${operationalState}, ${region}, ${description},
+    insert into institutions (id, slug, display_name, category, publication_state, operational_state, region_code, district, short_description, published_at)
+    values (${id}, ${slug}, ${name}, ${category}, ${state}, ${operationalState}, ${region}, ${district}, ${description},
       ${state === "PUBLISHED" ? "2026-08-01T00:00:00.000Z" : null})
   `;
+  if (category === "INTERNATIONAL_SCHOOL" && hasIsiIdentity) {
+    await runtime.client`
+      insert into institution_registry_identities (
+        institution_id, registry_name, registry_external_id,
+        registry_record_url, registry_locator, metadata_json
+      ) values (
+        ${id}, 'ISI', ${`${prefix}:${id}`},
+        ${`https://isi.example.test/${prefix}/${id}`},
+        ${`fixture:${id}`}, '{}'::jsonb
+      )
+    `;
+  }
   return { id, slug };
 }
 
@@ -95,7 +111,23 @@ async function createSource({
       source_id, collection_strategy, monitoring_profile, is_enabled
     ) values (${id}, 'HTTP', 'STANDARD_SEASONAL', true)
   `;
-  return { id, url };
+  const snapshotId = randomUUID();
+  await runtime.client`
+    insert into source_snapshots (
+      id, source_id, captured_at, content_hash, normalized_text, mime_type
+    ) values (
+      ${snapshotId}, ${id}, '2026-08-10T01:02:03.000Z',
+      ${`hash-${snapshotId}`}, 'verified source fixture', 'text/html'
+    )
+  `;
+  const [observation] = await runtime.client<{ id: string }[]>`
+    insert into source_observations (
+      source_id, observed_at, outcome, http_status, final_url, snapshot_id
+    ) values (
+      ${id}, '2026-08-10T01:02:03.000Z', 'SUCCESS', 200, ${url}, ${snapshotId}
+    ) returning id::text
+  `;
+  return { id, url, snapshotId, observationId: observation!.id };
 }
 
 async function createNativeOpportunity(
@@ -135,8 +167,13 @@ async function createNativeOpportunity(
         '2026-08-11T02:03:04.000Z')
     `;
     await transaction`
-      insert into opportunity_version_evidence (opportunity_version_id, source_id, evidence_role)
-      values (${versionId}, ${source.id}, 'PRIMARY')
+      insert into opportunity_version_evidence (
+        opportunity_version_id, source_id, source_observation_id,
+        source_snapshot_id, evidence_role
+      ) values (
+        ${versionId}, ${source.id}, ${source.observationId}::bigint,
+        ${source.snapshotId}, 'PRIMARY'
+      )
     `;
   });
   return { id, slug, versionId, source };
@@ -157,8 +194,13 @@ async function addVerifiedFact(institutionId: string) {
         'KRW 10,000,000 annually', '2026-08-12T03:04:05.000Z')
     `;
     await transaction`
-      insert into institution_fact_version_evidence (institution_fact_version_id, source_id, evidence_role)
-      values (${versionId}, ${source.id}, 'PRIMARY')
+      insert into institution_fact_version_evidence (
+        institution_fact_version_id, source_id, source_observation_id,
+        source_snapshot_id, evidence_role
+      ) values (
+        ${versionId}, ${source.id}, ${source.observationId}::bigint,
+        ${source.snapshotId}, 'PRIMARY'
+      )
     `;
   });
   return source;
@@ -176,7 +218,7 @@ async function addFactTrustFixtures(institutionId: string) {
   await runtime.client.begin(async (transaction) => {
     await transaction`insert into institution_facts (id, institution_id, fact_type) values (${currentFact}, ${institutionId}, 'CURRICULUM'), (${unverifiedFact}, ${institutionId}, 'TRANSPORT')`;
     await transaction`insert into institution_fact_versions (id, institution_fact_id, version_number, verification_state, is_current, value_json, display_text, verified_at) values (${currentVersion}, ${currentFact}, 1, 'VERIFIED', true, ${JSON.stringify({ label: "discovery fact" })}::jsonb, 'Discovery fact', '2026-08-16T00:00:00.000Z'), (${unverifiedVersion}, ${unverifiedFact}, 1, 'UNVERIFIED', false, ${JSON.stringify({ label: "unverified" })}::jsonb, 'Unverified fact', null)`;
-    await transaction`insert into institution_fact_version_evidence (institution_fact_version_id, source_id, evidence_role) values (${currentVersion}, ${discovery.id}, 'PRIMARY')`;
+    await transaction`insert into institution_fact_version_evidence (institution_fact_version_id, source_id, source_observation_id, source_snapshot_id, evidence_role) values (${currentVersion}, ${discovery.id}, ${discovery.observationId}::bigint, ${discovery.snapshotId}, 'PRIMARY')`;
   });
   return discovery;
 }
@@ -228,6 +270,7 @@ async function createLegacyOpportunity(
     closeDate = "2026-09-02",
     closeTime = null,
     timezone = "Asia/Seoul",
+    evidenceMode = "COMPLETE",
   }: {
     status?: "ACTIVE" | "SCHEDULED" | "CLOSED" | "COMPLETED" | "CANCELLED";
     publicEvent?: boolean;
@@ -235,6 +278,8 @@ async function createLegacyOpportunity(
     closeDate?: string | null;
     closeTime?: string | null;
     timezone?: string | null;
+    evidenceMode?:
+      "COMPLETE" | "NO_OBSERVATION" | "NO_SNAPSHOT" | "DISCOVERY_ONLY";
   } = {},
 ) {
   const existing =
@@ -244,7 +289,14 @@ async function createLegacyOpportunity(
   const eventId = randomUUID();
   const id = randomUUID();
   const versionId = randomUUID();
-  const source = await createSource();
+  const source = await createSource(
+    evidenceMode === "DISCOVERY_ONLY"
+      ? {
+          sourceType: "THIRD_PARTY_DISCOVERY",
+          authority: "DISCOVERY_ONLY",
+        }
+      : {},
+  );
   const slug = `${prefix}-legacy-opportunity-${id}`;
   await runtime.client.begin(async (transaction) => {
     if (existing.length === 0) {
@@ -254,7 +306,7 @@ async function createLegacyOpportunity(
     await transaction`insert into admission_cycles (id, school_id, academic_year, lifecycle_status, admission_mode) values (${cycleId}, ${schoolId}, ${2027 + legacyFixtureSequence++}, 'ACTIVE', 'FIXED_WINDOW')`;
     await transaction`insert into admission_events (id, admission_cycle_id, event_key, event_type, occurrence_no, canonical_title, audience_summary, is_public) values (${eventId}, ${cycleId}, ${`${prefix}-legacy-event-${eventId}`}, 'APPLICATION', 1, 'Legacy title', 'Legacy families', ${publicEvent})`;
     await transaction`insert into admission_event_versions (id, admission_event_id, version_no, is_current, verification_status, knowledge_state, event_status, display_title, registration_close_date, registration_close_time, timezone, official_notes, verified_at) values (${versionId}, ${eventId}, 1, true, 'VERIFIED', 'KNOWN', ${status}, ${`Legacy ${status}`}, ${closeDate}, ${closeTime}, ${timezone}, 'Legacy verified summary', ${verifiedAt})`;
-    await transaction`insert into event_version_evidence (event_version_id, source_id, is_primary) values (${versionId}, ${source.id}, true)`;
+    await transaction`insert into event_version_evidence (event_version_id, source_id, source_observation_id, snapshot_id, is_primary) values (${versionId}, ${source.id}, ${evidenceMode === "NO_OBSERVATION" ? null : source.observationId}::bigint, ${evidenceMode === "NO_SNAPSHOT" ? null : source.snapshotId}, true)`;
     await transaction`insert into opportunities (id, institution_id, slug, kind, truth_mode, publication_state, published_at) values (${id}, ${institutionId}, ${slug}, 'APPLICATION', 'LEGACY_BACKED', 'PUBLISHED', '2026-08-01T00:00:00.000Z')`;
     await transaction`insert into opportunity_admission_event_links (opportunity_id, institution_id, truth_mode, admission_event_id, admission_cycle_id, school_id) values (${id}, ${institutionId}, 'LEGACY_BACKED', ${eventId}, ${cycleId}, ${schoolId})`;
   });
@@ -282,6 +334,7 @@ async function cleanup(): Promise<void> {
     await transaction`delete from source_bindings where school_id in (select id from schools where slug like ${`${prefix}%`})`;
     await transaction`delete from institution_school_links where school_id in (select id from schools where slug like ${`${prefix}%`})`;
     await transaction`delete from schools where slug like ${`${prefix}%`}`;
+    await transaction`delete from institution_registry_identities where registry_external_id like ${`${prefix}:%`}`;
     await transaction`delete from institutions where slug like ${`${prefix}%`}`;
     await transaction`delete from source_monitor_configs where source_id in (
       select id from sources where canonical_url like ${`https://institution-source.example.test/${prefix}/%`}
@@ -348,6 +401,70 @@ describe("WP-06A Institution public query", () => {
     await expect(
       listInstitutions(runtime.executor, { unknown: "nope" }),
     ).rejects.toBeInstanceOf(ValidationError);
+  });
+
+  it("filters English kindergartens by Seoul district and returns dynamic district counts", async () => {
+    const gangnamA = await createInstitution({
+      name: `${prefix} Seoul district Gangnam A`,
+      category: "ENGLISH_KINDERGARTEN",
+      region: "KR-11",
+      district: "강남구",
+    });
+    const gangnamB = await createInstitution({
+      name: `${prefix} Seoul district Gangnam B`,
+      category: "ENGLISH_KINDERGARTEN",
+      region: "KR-11",
+      district: "강남구",
+    });
+    await createInstitution({
+      name: `${prefix} Seoul district Seocho`,
+      category: "ENGLISH_KINDERGARTEN",
+      region: "KR-11",
+      district: "서초구",
+    });
+    await createInstitution({
+      name: `${prefix} Seoul district Outside Seoul`,
+      category: "ENGLISH_KINDERGARTEN",
+      region: "BUSAN",
+      district: "강남구",
+    });
+
+    const result = await listInstitutions(runtime.executor, {
+      category: "ENGLISH_KINDERGARTEN",
+      region: "KR-11",
+      district: "강남구",
+      query: `${prefix} Seoul district`,
+      page: 1,
+      pageSize: 12,
+    });
+    const districtFacets = (
+      result as unknown as {
+        districtFacets: Array<{ district: string; count: number }>;
+      }
+    ).districtFacets;
+
+    expect(result.pagination.total).toBe(2);
+    expect(result.items.map((item) => item.id)).toEqual([
+      gangnamA.id,
+      gangnamB.id,
+    ]);
+    expect(result.items.map((item) => item.district)).toEqual([
+      "강남구",
+      "강남구",
+    ]);
+    expect(districtFacets).toHaveLength(25);
+    expect(districtFacets.find((item) => item.district === "강남구")).toEqual({
+      district: "강남구",
+      count: 2,
+    });
+    expect(districtFacets.find((item) => item.district === "서초구")).toEqual({
+      district: "서초구",
+      count: 1,
+    });
+    expect(districtFacets.find((item) => item.district === "송파구")).toEqual({
+      district: "송파구",
+      count: 0,
+    });
   });
 
   it("orders matching Institution pages by name then id with bounded pagination", async () => {
@@ -518,7 +635,10 @@ describe("WP-06A Institution public query", () => {
   it("projects CLOSED as not followable and excludes unpublished Institutions", async () => {
     // Mutation caught: omitting non-personal operational/publication eligibility from CTA projections.
     const active = await createInstitution({ operationalState: "ACTIVE" });
-    const closed = await createInstitution({ operationalState: "CLOSED" });
+    const closed = await createInstitution({
+      category: "ENGLISH_KINDERGARTEN",
+      operationalState: "CLOSED",
+    });
     const unpublished = await createInstitution({
       state: "DRAFT",
       operationalState: "ACTIVE",
@@ -551,7 +671,7 @@ describe("WP-06A Institution public query", () => {
     ).rejects.toBeInstanceOf(NotFoundError);
   });
 
-  it("projects a public source-less Institution as not followable", async () => {
+  it("projects public Institutions as followable regardless of source coverage", async () => {
     const name = `${prefix} Coverage list`;
     const sourceLess = await createInstitution({
       name,
@@ -576,8 +696,8 @@ describe("WP-06A Institution public query", () => {
       list.items.map((item) => [item.id, item.followable]),
     );
 
-    expect(detail.institution.followable).toBe(false);
-    expect(followableById.get(sourceLess.id)).toBe(false);
+    expect(detail.institution.followable).toBe(true);
+    expect(followableById.get(sourceLess.id)).toBe(true);
     expect(followableById.get(covered.id)).toBe(true);
   });
 
@@ -693,6 +813,34 @@ describe("WP-06A Institution public query", () => {
     expect(privateDetail.currentOpportunities).toEqual([]);
   });
 
+  it("excludes legacy admission truth without a complete official observation and snapshot", async () => {
+    const institution = await createInstitution({
+      name: `${prefix} Legacy evidence guard`,
+      category: "INTERNATIONAL_SCHOOL",
+    });
+    const noObservation = await createLegacyOpportunity(institution.id, {
+      evidenceMode: "NO_OBSERVATION",
+    });
+    const noSnapshot = await createLegacyOpportunity(institution.id, {
+      evidenceMode: "NO_SNAPSHOT",
+    });
+    const discovery = await createLegacyOpportunity(institution.id, {
+      evidenceMode: "DISCOVERY_ONLY",
+    });
+    const accepted = await createLegacyOpportunity(institution.id);
+
+    const detail = await getInstitutionBySlug(
+      runtime.executor,
+      institution.slug,
+    );
+    expect(detail.currentOpportunities.map((item) => item.id)).toEqual([
+      accepted.id,
+    ]);
+    expect(detail.currentOpportunities.map((item) => item.id)).not.toEqual(
+      expect.arrayContaining([noObservation.id, noSnapshot.id, discovery.id]),
+    );
+  });
+
   it("preserves Native and Legacy key-date semantics and rejects Legacy truth without verification freshness", async () => {
     const institution = await createInstitution({
       name: `${prefix} Key date fidelity`,
@@ -792,11 +940,9 @@ describe("WP-06A Institution public query", () => {
     expect(detail.verifiedFacts.map((fact) => fact.displayValue)).not.toContain(
       "Unverified fact",
     );
-    expect(
-      detail.verifiedFacts.find(
-        (fact) => fact.displayValue === "Discovery fact",
-      )?.officialSource,
-    ).toBeNull();
+    expect(detail.verifiedFacts.map((fact) => fact.displayValue)).not.toContain(
+      "Discovery fact",
+    );
     expect(detail.officialSources.map((source) => source.url)).toContain(
       official.url,
     );

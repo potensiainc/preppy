@@ -134,7 +134,8 @@ describe("WP-08 auth-aware public UI", () => {
         },
       }),
     );
-    expect(ambiguous).not.toContain('class="follow-cta"');
+    expect(ambiguous.match(/class="follow-cta"/g)).toHaveLength(2);
+    expect(ambiguous).not.toContain('data-return-path="/articles/');
   });
 
   it("posts intent before navigating to exact Kakao start and reports a safe error", async () => {
@@ -209,9 +210,9 @@ describe("WP-08 auth-aware public UI", () => {
     // Mutation caught: hard-coding required profile data, omitting manifest versions, or claiming interest activation.
     const markup = renderToStaticMarkup(
       createElement(OnboardingForm, {
+        legalPublicationReady: true,
         defaults: {
           email: null,
-          childBirthYear: null,
           interestRegions: [],
           interestCategories: [],
           serviceEmailUpdatesConsent: false,
@@ -234,11 +235,11 @@ describe("WP-08 auth-aware public UI", () => {
     expect(markup).toContain('name="termsPolicyVersion" value="2026-08-23"');
     expect(markup).toContain('name="privacyPolicyVersion" value="2026-08-23"');
     expect(markup).toContain('name="email"');
-    expect(markup).toContain('name="childBirthYear"');
-    expect(markup).toContain('name="interestRegions"');
-    expect(markup).toMatch(
-      /name="interestRegions"[^>]*type="text"|type="text"[^>]*name="interestRegions"/,
-    );
+    expect(markup).not.toContain('name="childBirthYear"');
+    expect(markup).not.toContain('name="interestRegions"');
+    expect(markup).not.toContain("KR-11");
+    expect(markup).toContain("남들보다 빠르게 입학정보 받아볼래요 (선택)");
+    expect(markup).not.toContain('disabled=""');
     expect(markup).toContain('aria-live="polite"');
     expect(markup).toContain("선택");
     expect(markup).toContain("서울국제학교");
@@ -246,7 +247,7 @@ describe("WP-08 auth-aware public UI", () => {
       "기본 설정을 완료하면 이 기관도 관심기관으로 등록돼요",
     );
     expect(markup).toContain(
-      "저장을 완료해야 관심기관 등록과 이메일 수신 설정이 반영돼요",
+      "가입을 완료해야 관심기관 등록과 이메일 수신 설정이 반영돼요",
     );
     expect(markup).not.toMatch(/팔로우 완료|관심기관 등록이 완료/);
   });
@@ -264,7 +265,7 @@ describe("WP-08 auth-aware public UI", () => {
     expect(source).toContain("onSubmit=");
     expect(source).toContain('accept: "application/json"');
     expect(source).toContain('fetch("/api/me/onboarding/complete"');
-    expect(source).toContain("response.status === 409");
+    expect(source).toContain('result.error?.code === "CONSENT_POLICY_UPDATED"');
     expect(source).toContain(
       "페이지를 새로고침한 뒤 내용을 확인하고 다시 동의해 주세요",
     );

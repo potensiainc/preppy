@@ -530,7 +530,8 @@ describe("WP-07 Opportunity and Article detail pages", () => {
     expect(markup).toContain("입학설명회 전 확인할 체크리스트");
     expect(markup).toContain('href="/articles/admissions-visit-checklist"');
     expect(markup).toContain("관심기관 상태 확인 중");
-    expect(markup).toContain("관심기관 등록 여부를 확인하고 있어요.");
+    expect(markup).toContain('class="favorite-heart"');
+    expect(markup).not.toContain("관심기관 등록 여부를 확인하고 있어요.");
     expect(markup).not.toContain("INDEX");
   });
 

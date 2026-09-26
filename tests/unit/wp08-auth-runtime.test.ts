@@ -43,6 +43,7 @@ describe("WP-08 completion Institution resolver", () => {
         institutionId,
         findInstitution,
         async () => true,
+        async () => true,
       ),
     ).resolves.toBe("/institutions/seoul-international-school");
     for (let index = 0; index < 3; index += 1) {
@@ -51,8 +52,26 @@ describe("WP-08 completion Institution resolver", () => {
           institutionId,
           findInstitution,
           async () => true,
+          async () => true,
         ),
       ).resolves.toBeNull();
     }
+  });
+
+  it("does not resolve an international school without an ISI identity", async () => {
+    await expect(
+      resolveCanonicalCompletionInstitutionPath(
+        institutionId,
+        async () => ({
+          id: institutionId,
+          slug: "international-school-without-isi",
+          category: "INTERNATIONAL_SCHOOL",
+          publicationState: "PUBLISHED",
+          operationalState: "ACTIVE",
+        }),
+        async () => true,
+        async () => false,
+      ),
+    ).resolves.toBeNull();
   });
 });

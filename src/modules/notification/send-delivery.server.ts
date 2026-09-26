@@ -292,22 +292,68 @@ export async function processEmailDelivery(
   if (prepared.kind !== "SEND") return prepared;
   await dependencies.afterAttemptStarted?.();
 
-  let providerResult: SendEmailResult;
-  try {
-    providerResult = safeResult(
-      await dependencies.sender.send(prepared.message, {
-        deliveryId: input.deliveryId,
-        attemptNumber: prepared.attemptNumber,
-      }),
-      dependencies.sender.provider,
+  // Serialize the final provider handoff with account revocation. A final
+  // unlocked SELECT leaves a race between the eligibility check and send().
+  // The configured provider must enforce a bounded HTTP timeout; account
+  // deletion waits for an already-started handoff before acknowledging receipt.
+  let finalSuppressReason: NotificationDeliverySuppressReason = "USER_INACTIVE";
+  const providerResult = await transactionManager.run(async (executor) => {
+    await executor.raw(sql`
+      select u.id from users u join notification_deliveries d on d.user_id=u.id
+      where d.id=${input.deliveryId} for update of u
+    `);
+    const [owned] = (await executor.raw(sql`
+      select id from outbox_events where id=${input.eventId}
+      and status='PROCESSING' and locked_by=${input.workerId} for update
+    `)) as unknown as Array<{ id: string }>;
+    if (!owned) return null;
+    const eligibility = await evaluateDeliveryEligibility(
+      executor,
+      input.deliveryId,
     );
-  } catch {
-    providerResult = {
-      kind: "RESULT_UNKNOWN",
-      provider: dependencies.sender.provider,
-      errorCode: "PROVIDER_RESULT_UNKNOWN",
-    };
-  }
+    if (
+      !eligibility?.eligible ||
+      eligibility.emailNormalized !== prepared.message.to
+    ) {
+      const reason =
+        eligibility && !eligibility.eligible
+          ? eligibility.reason
+          : "EMAIL_UNAVAILABLE";
+      finalSuppressReason = reason;
+      await executor.raw(sql`
+        update notification_delivery_attempts set attempt_status='FAILED_TERMINAL',
+        completed_at=${nowIso}::timestamptz,error_code='RECIPIENT_NO_LONGER_ELIGIBLE'
+        where id=${prepared.attemptId} and attempt_status='STARTED'
+      `);
+      await executor.raw(sql`
+        update notification_deliveries set status='SUPPRESSED',suppress_reason=${reason},
+        suppressed_at=${nowIso}::timestamptz where id=${input.deliveryId} and status='QUEUED'
+      `);
+      await completeOutboxEvent(executor, {
+        eventId: input.eventId,
+        workerId: input.workerId,
+        now: input.now,
+      });
+      return null;
+    }
+    try {
+      return safeResult(
+        await dependencies.sender.send(prepared.message, {
+          deliveryId: input.deliveryId,
+          attemptNumber: prepared.attemptNumber,
+        }),
+        dependencies.sender.provider,
+      );
+    } catch {
+      return {
+        kind: "RESULT_UNKNOWN",
+        provider: dependencies.sender.provider,
+        errorCode: "PROVIDER_RESULT_UNKNOWN",
+      } as const;
+    }
+  });
+  if (!providerResult)
+    return { kind: "SUPPRESSED", reason: finalSuppressReason } as const;
   await dependencies.afterProviderCall?.(providerResult);
 
   const settled = await transactionManager.run(async (executor) => {

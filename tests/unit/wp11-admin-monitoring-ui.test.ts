@@ -30,8 +30,8 @@ async function importMonitoringInput(): Promise<MonitoringInputModule | null> {
 async function importMonitoringUi() {
   try {
     return await Promise.all([
-      vi.importActual<typeof import("@/app/admin/(protected)/monitoring/page")>(
-        "@/app/admin/(protected)/monitoring/page",
+      vi.importActual<typeof import("@/app/admin/(protected)/monitoring/page-content")>(
+        "@/app/admin/(protected)/monitoring/page-content",
       ),
       vi.importActual<
         typeof import("@/app/admin/_components/monitoring-detail")

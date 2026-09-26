@@ -15,6 +15,11 @@ import type {
   OpportunityTruthMode,
   VersionVerificationState,
 } from "@/src/db/schema";
+import type {
+  CoverageStatus,
+  EnglishKindergartenSection,
+} from "@/src/modules/english-kindergarten/coverage";
+import type { ReviewInsightValue } from "@/src/modules/english-kindergarten/review-insight";
 import type { emailReadinessValues } from "./input";
 import type { OperationalSnapshot } from "@/src/modules/production-safety/operational-snapshot.server";
 
@@ -41,6 +46,46 @@ export type AdminOpportunitySummaryDTO = Readonly<{
   verifiedAt: string | null;
 }>;
 
+export type AdminEnglishKindergartenCoverageDTO = Readonly<{
+  section: EnglishKindergartenSection;
+  status: CoverageStatus;
+  sourceId: string | null;
+  sourceName: string | null;
+  sourceUrl: string | null;
+  safeSourceUrl: string | null;
+  sourceSnapshotId: string | null;
+  academicYearLabel: string | null;
+  publicNote: string | null;
+  internalNote: string | null;
+  lastCollectedAt: string | null;
+  lastCheckedAt: string | null;
+}>;
+
+export type AdminReviewInsightSummaryDTO = Readonly<{
+  versionId: string;
+  versionNumber: number;
+  verificationState: VersionVerificationState;
+  periodStart: string | null;
+  periodEnd: string | null;
+  sampleSize: number;
+  themes: ReviewInsightValue["themes"];
+  limitations: string | null;
+  verifiedAt: string | null;
+  evidence: readonly Readonly<{
+    sourceId: string;
+    sourceName: string;
+    sourceUrl: string;
+    safeSourceUrl: string | null;
+    sourceSnapshotId: string | null;
+    evidenceRole: string;
+  }>[];
+}>;
+
+export type AdminEnglishKindergartenDTO = Readonly<{
+  coverages: readonly AdminEnglishKindergartenCoverageDTO[];
+  reviewInsight: AdminReviewInsightSummaryDTO | null;
+}>;
+
 export type AdminInstitutionDTO = Readonly<{
   id: string;
   slug: string;
@@ -48,6 +93,7 @@ export type AdminInstitutionDTO = Readonly<{
   category: InstitutionCategory;
   operationalState: InstitutionOperationalState;
   publicationState: InstitutionPublicationState;
+  englishKindergarten: AdminEnglishKindergartenDTO | null;
   activeSourceBindingCount: number;
   opportunitySummary: Readonly<{
     total: number;

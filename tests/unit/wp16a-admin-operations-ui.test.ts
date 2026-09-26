@@ -7,8 +7,8 @@ import type { OperationalSnapshot } from "@/src/modules/production-safety/operat
 describe("WP-16A Admin Operations observability", () => {
   it("renders the read-only operational snapshot without controls or deep public health changes", async () => {
     const page = await vi.importActual<
-      typeof import("@/app/admin/(protected)/operations/health/page")
-    >("@/app/admin/(protected)/operations/health/page");
+      typeof import("@/app/admin/(protected)/operations/health/page-content")
+    >("@/app/admin/(protected)/operations/health/page-content");
     const operational: OperationalSnapshot = {
       checkedAt: "2026-08-25T00:00:00.000Z",
       consistency: "POINT_IN_TIME_PER_QUERY",

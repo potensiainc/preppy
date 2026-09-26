@@ -83,6 +83,59 @@ const homePage: HomePageDTO = {
 };
 
 describe("WP-07 Home page", () => {
+  it("separates mixed institutions into named groups while preserving admission facts and links", () => {
+    const markup = renderToStaticMarkup(
+      createElement(HomePageView, {
+        data: {
+          ...homePage,
+          featuredInstitutions: [
+            {
+              ...homePage.featuredInstitutions[0],
+              id: "primary",
+              slug: "primary",
+              name: "사립초 테스트",
+              category: "PRIVATE_ELEMENTARY",
+            },
+            {
+              ...homePage.featuredInstitutions[0],
+              id: "ek",
+              slug: "ek",
+              name: "영유 테스트",
+              category: "ENGLISH_KINDERGARTEN",
+              region: "KR-11",
+              district: "서초구",
+            },
+          ],
+        },
+      }),
+    );
+    const groups = [
+      ...markup.matchAll(
+        /<section[^>]*data-category="([^"]+)"[^>]*>(.*?)<\/section>/gs,
+      ),
+    ];
+    expect(groups.map((group) => group[1])).toEqual([
+      "ENGLISH_KINDERGARTEN",
+      "PRIVATE_ELEMENTARY",
+    ]);
+    expect(groups[0][2]).toContain("영유 테스트");
+    expect(groups[0][2]).not.toContain("사립초 테스트");
+    expect(groups[1][2]).toContain("사립초 테스트");
+    expect(groups[1][2]).not.toContain("영유 테스트");
+    expect(groups[0][2]).toContain("서초구");
+    expect(groups[0][2]).not.toContain("KR-11");
+    expect(groups[0][2]).toContain("영어유치원 전체 보기");
+    expect(groups[1][2]).toContain("사립초등학교 전체 보기");
+    for (const group of groups) {
+      expect(group[2]).toContain("2027학년도 입학 전형");
+      expect(group[2]).toContain("2026-08-23T03:30:00.000Z");
+      expect(group[2]).toContain('href="/opportunities/seoul-2027-admissions"');
+      expect(group[2]).toContain("<h4>");
+    }
+    expect(markup).toContain('href="/#home-private-elementary"');
+    expect(markup).not.toContain('id="home-international-schools"');
+  });
+
   it("turns complete public Home data into a truthful acquisition page", () => {
     // Mutation caught: Home stops displaying query-backed discovery content, locked CTAs, or truthful monitoring value.
     const markup = renderToStaticMarkup(
@@ -113,6 +166,9 @@ describe("WP-07 Home page", () => {
     expect(markup).not.toContain("International Schools");
     expect(markup).toContain("2027학년도 입학 전형");
     expect(markup).toContain("서울국제학교");
+    expect(markup).toContain('id="home-international-schools"');
+    expect(markup).toContain("국제학교 전체 보기");
+    expect(markup).not.toContain("더 많은 기관");
     expect(markup).toContain("국제학교 방문 전 확인할 점");
     expect(markup).toContain("살펴볼 기관");
     expect(markup).toContain('aria-label="현재 모집·입학정보"');
@@ -138,6 +194,7 @@ describe("WP-07 Home page", () => {
 
     expect(markup).toContain("PREPPY에 공개된 모집·입학정보가 없어요");
     expect(markup).toContain("PREPPY에 공개된 기관 정보가 없어요");
+    expect(markup).not.toContain("더 많은 기관");
     expect(markup).toContain("PREPPY에 공개된 아티클이 없어요");
   });
 

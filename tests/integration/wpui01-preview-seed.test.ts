@@ -50,8 +50,11 @@ async function cleanup(): Promise<void> {
     await transaction`delete from opportunity_versions where opportunity_id in ${transaction(ids.opportunities)}`;
     await transaction`delete from opportunities where id in ${transaction(ids.opportunities)}`;
     await transaction`delete from institution_source_bindings where institution_id in ${transaction(ids.institutions)}`;
+    await transaction`delete from institution_registry_identities where institution_id in ${transaction(ids.institutions)}`;
     await transaction`delete from institutions where id in ${transaction(ids.institutions)}`;
     await transaction`delete from source_monitor_configs where source_id::text like '54000000-0000-4000-8000-%'`;
+    await transaction`delete from source_observations where source_id::text like '54000000-0000-4000-8000-%'`;
+    await transaction`delete from source_snapshots where source_id::text like '54000000-0000-4000-8000-%'`;
     await transaction`delete from sources where id::text like '54000000-0000-4000-8000-%'`;
   });
 }

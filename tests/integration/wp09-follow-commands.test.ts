@@ -71,6 +71,8 @@ async function createInstitution(
   overrides: {
     publicationState?: string;
     operationalState?: string;
+    category?: "ENGLISH_KINDERGARTEN" | "INTERNATIONAL_SCHOOL";
+    hasIsiIdentity?: boolean;
     coverage?:
       | "NATIVE"
       | "LEGACY"
@@ -88,10 +90,25 @@ async function createInstitution(
       id, slug, display_name, category, publication_state, operational_state
     ) values (
       ${id}, ${`${prefix}${id}`}, 'WP-09 Institution',
-      'ENGLISH_KINDERGARTEN', ${overrides.publicationState ?? "PUBLISHED"},
+      ${overrides.category ?? "ENGLISH_KINDERGARTEN"}, ${overrides.publicationState ?? "PUBLISHED"},
       ${overrides.operationalState ?? "ACTIVE"}
     )
   `;
+  if (
+    overrides.category === "INTERNATIONAL_SCHOOL" &&
+    overrides.hasIsiIdentity !== false
+  ) {
+    await runtime.client`
+      insert into institution_registry_identities (
+        institution_id, registry_name, registry_external_id,
+        registry_record_url, registry_locator, metadata_json
+      ) values (
+        ${id}, 'ISI', ${`${prefix}:${id}`},
+        ${`https://isi.example.test/${prefix}/${id}`},
+        ${`fixture:${id}`}, '{}'::jsonb
+      )
+    `;
+  }
   const coverage = overrides.coverage ?? "NATIVE";
   if (coverage !== "NONE") await addMonitorableCoverage(id, coverage);
   return id;
@@ -108,6 +125,7 @@ async function addMonitorableCoverage(
     | "MONITOR_DISABLED",
 ) {
   const sourceId = randomUUID();
+  const snapshotId = randomUUID();
   sourceIds.add(sourceId);
   const authority =
     coverage === "DISCOVERY_ONLY" ? "DISCOVERY_ONLY" : "PRIMARY";
@@ -126,6 +144,23 @@ async function addMonitorableCoverage(
       insert into source_monitor_configs (
         source_id, collection_strategy, monitoring_profile, is_enabled
       ) values (${sourceId}, 'HTTP', 'STANDARD_SEASONAL', ${monitorEnabled})
+    `;
+    await transaction`
+      insert into source_snapshots (
+        id, source_id, captured_at, content_hash, normalized_text, mime_type
+      ) values (
+        ${snapshotId}, ${sourceId}, ${firstActivationAt.toISOString()},
+        ${`hash-${snapshotId}`}, 'monitorable coverage fixture', 'text/html'
+      )
+    `;
+    const [observation] = await transaction<{ id: string }[]>`
+      insert into source_observations (
+        source_id, observed_at, outcome, http_status, final_url, snapshot_id
+      ) values (
+        ${sourceId}, ${firstActivationAt.toISOString()}, 'SUCCESS', 200,
+        ${`https://follow-source.example.test/${prefix}${sourceId}`},
+        ${snapshotId}
+      ) returning id::text
     `;
 
     if (coverage === "LEGACY") {
@@ -169,8 +204,12 @@ async function addMonitorableCoverage(
       `;
       await transaction`
         insert into institution_fact_version_evidence (
-          institution_fact_version_id, source_id, evidence_role
-        ) values (${versionId}, ${sourceId}, 'PRIMARY')
+          institution_fact_version_id, source_id, source_observation_id,
+          source_snapshot_id, evidence_role
+        ) values (
+          ${versionId}, ${sourceId}, ${observation!.id}::bigint,
+          ${snapshotId}, 'PRIMARY'
+        )
       `;
       return;
     }
@@ -197,8 +236,12 @@ async function addMonitorableCoverage(
     `;
     await transaction`
       insert into opportunity_version_evidence (
-        opportunity_version_id, source_id, evidence_role
-      ) values (${versionId}, ${sourceId}, 'PRIMARY')
+        opportunity_version_id, source_id, source_observation_id,
+        source_snapshot_id, evidence_role
+      ) values (
+        ${versionId}, ${sourceId}, ${observation!.id}::bigint,
+        ${snapshotId}, 'PRIMARY'
+      )
     `;
   });
 }
@@ -315,12 +358,16 @@ async function clearFixtures() {
           )`;
         await transaction`delete from institution_school_links
           where institution_id in ${transaction(institutions)}`;
+        await transaction`delete from institution_registry_identities
+          where institution_id in ${transaction(institutions)}`;
         await transaction`delete from institutions where id in ${transaction(institutions)}`;
       }
       if (schools.length > 0) {
         await transaction`delete from schools where id in ${transaction(schools)}`;
       }
       if (sources.length > 0) {
+        await transaction`delete from source_observations where source_id in ${transaction(sources)}`;
+        await transaction`delete from source_snapshots where source_id in ${transaction(sources)}`;
         await transaction`delete from source_monitor_configs where source_id in ${transaction(sources)}`;
         await transaction`delete from sources where id in ${transaction(sources)}`;
       }
@@ -353,7 +400,7 @@ describe("WP-09 Follow commands", () => {
   });
 
   it.each(["NONE", "DISCOVERY_ONLY", "PAUSED", "MONITOR_DISABLED"] as const)(
-    "rejects an otherwise public Institution with %s source coverage",
+    "saves an otherwise public Institution with %s source coverage",
     async (coverage) => {
       const userId = await createUser();
       const institutionId = await createInstitution({ coverage });
@@ -365,23 +412,36 @@ describe("WP-09 Follow commands", () => {
           { institutionId },
           dependencies(tracker),
         ),
-      ).rejects.toMatchObject({ code: "NOT_ELIGIBLE" });
+      ).resolves.toMatchObject({ state: "ACTIVE" });
       await expect(
         runtime.client`
         select id from follows
         where user_id = ${userId} and institution_id = ${institutionId}
       `,
-      ).resolves.toHaveLength(0);
+      ).resolves.toHaveLength(1);
       await expect(
         runtime.client`
         select episode.id from follow_episodes episode
         join follows follow on follow.id = episode.follow_id
         where follow.user_id = ${userId}
       `,
-      ).resolves.toHaveLength(0);
-      expect(tracker.snapshot()).toEqual([]);
+      ).resolves.toHaveLength(1);
+      expect(tracker.snapshot()).toHaveLength(1);
     },
   );
+
+  it("rejects a published active international school without an ISI identity", async () => {
+    const userId = await createUser();
+    const institutionId = await createInstitution({
+      category: "INTERNATIONAL_SCHOOL",
+      hasIsiIdentity: false,
+      coverage: "NATIVE",
+    });
+
+    await expect(
+      activateFollow(context(userId), { institutionId }, dependencies()),
+    ).rejects.toMatchObject({ code: "NOT_ELIGIBLE" });
+  });
 
   it.each(["NATIVE", "LEGACY", "FACT"] as const)(
     "accepts %s monitorable coverage through the existing schema",

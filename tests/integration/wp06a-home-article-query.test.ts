@@ -53,14 +53,30 @@ function assertNoForbiddenKeys(value: unknown): void {
 async function createInstitution(
   name: string,
   state: "DRAFT" | "PUBLISHED" | "HIDDEN" | "ARCHIVED" = "PUBLISHED",
+  category:
+    | "ENGLISH_KINDERGARTEN"
+    | "PRIVATE_ELEMENTARY"
+    | "INTERNATIONAL_SCHOOL" = "PRIVATE_ELEMENTARY",
 ) {
   const id = randomUUID();
   const slug = `${prefix}-institution-${id}`;
   await runtime.client`
-    insert into institutions (id, slug, display_name, category, publication_state, region_code, short_description, published_at)
-    values (${id}, ${slug}, ${name}, 'INTERNATIONAL_SCHOOL', ${state}, 'SEOUL', 'A public profile.',
+    insert into institutions (id, slug, display_name, category, publication_state, operational_state, region_code, short_description, published_at)
+    values (${id}, ${slug}, ${name}, ${category}, ${state}, 'ACTIVE', 'SEOUL', 'A public profile.',
       ${state === "PUBLISHED" ? "2026-08-01T00:00:00.000Z" : null})
   `;
+  if (category === "INTERNATIONAL_SCHOOL") {
+    await runtime.client`
+      insert into institution_registry_identities (
+        institution_id, registry_name, registry_external_id,
+        registry_record_url, registry_locator, metadata_json
+      ) values (
+        ${id}, 'ISI', ${`${prefix}:${id}`},
+        ${`https://registry.example.test/${prefix}/${id}`},
+        ${`fixture:${id}`}, '{}'::jsonb
+      )
+    `;
+  }
   return { id, slug, name };
 }
 
@@ -68,6 +84,11 @@ async function createNativeOpportunity(
   institutionId: string,
   state: "OPEN" | "UPCOMING" | "CLOSED" | "UNKNOWN" = "OPEN",
   published = true,
+  options: Readonly<{
+    kind?: "APPLICATION" | "INFORMATION_SESSION";
+    title?: string;
+    applicationCloseAt?: string;
+  }> = {},
 ) {
   const id = randomUUID();
   const versionId = randomUUID();
@@ -84,13 +105,13 @@ async function createNativeOpportunity(
     `;
     await transaction`
       insert into opportunities (id, institution_id, slug, kind, truth_mode, publication_state, published_at)
-      values (${id}, ${institutionId}, ${slug}, 'APPLICATION', 'NATIVE', ${published ? "PUBLISHED" : "DRAFT"},
+      values (${id}, ${institutionId}, ${slug}, ${options.kind ?? "APPLICATION"}, 'NATIVE', ${published ? "PUBLISHED" : "DRAFT"},
         ${published ? "2026-08-01T00:00:00.000Z" : null})
     `;
     await transaction`
       insert into opportunity_versions (id, opportunity_id, truth_mode, version_number, verification_state, business_state, is_current, title, summary, application_close_at, action_url, verified_at)
-      values (${versionId}, ${id}, 'NATIVE', 1, 'VERIFIED', ${state}, true, ${`Opportunity ${state}`},
-        'Verified summary.', '2026-09-01T00:00:00.000Z', 'https://apply.example.test', '2026-08-11T02:03:04.000Z')
+      values (${versionId}, ${id}, 'NATIVE', 1, 'VERIFIED', ${state}, true, ${options.title ?? `Opportunity ${state}`},
+        'Verified summary.', ${options.applicationCloseAt ?? "2026-09-01T00:00:00.000Z"}, 'https://apply.example.test', '2026-08-11T02:03:04.000Z')
     `;
     await transaction`
       insert into opportunity_version_evidence (opportunity_version_id, source_id, evidence_role)
@@ -170,6 +191,7 @@ async function cleanup(): Promise<void> {
     await transaction`delete from institution_school_links where school_id in (select id from schools where slug like ${`${prefix}%`})`;
     await transaction`delete from source_bindings where school_id in (select id from schools where slug like ${`${prefix}%`})`;
     await transaction`delete from schools where slug like ${`${prefix}%`}`;
+    await transaction`delete from institution_registry_identities where registry_external_id like ${`${prefix}:%`}`;
     await transaction`delete from institutions where slug like ${`${prefix}%`}`;
     await transaction`delete from admin_users where external_auth_subject like ${`${prefix}-%`}`;
     await transaction`delete from source_monitor_configs where source_id in (select id from sources where canonical_url like ${`https://source.example.test/${prefix}/%`})`;
@@ -332,11 +354,51 @@ describe("WP-06A Article and Home public queries", () => {
     ]);
   });
 
+  it("keeps four published institutions per category when one category grows", async () => {
+    const categories = [
+      "ENGLISH_KINDERGARTEN",
+      "PRIVATE_ELEMENTARY",
+      "INTERNATIONAL_SCHOOL",
+    ] as const;
+    const expectedIds: string[] = [];
+    for (const category of categories) {
+      await createInstitution("000 hidden", "HIDDEN", category);
+      for (let index = 0; index < 8; index += 1) {
+        const row = await createInstitution(
+          `000 ${category} ${index}`,
+          "PUBLISHED",
+          category,
+        );
+        if (index < 4) expectedIds.push(row.id);
+      }
+    }
+    const result = await getHomePage(runtime.executor);
+    expect(result.featuredInstitutions.map((item) => item.id)).toEqual(
+      expectedIds,
+    );
+    for (const category of categories) {
+      expect(
+        result.featuredInstitutions.filter(
+          (item) => item.category === category,
+        ),
+      ).toHaveLength(4);
+    }
+  });
+
   it("builds deterministic globally cache-safe Home sections from published canonical records only", async () => {
     const alpha = await createInstitution("Home Alpha");
     const beta = await createInstitution("Home Beta");
     const hidden = await createInstitution("Home Hidden", "HIDDEN");
-    const open = await createNativeOpportunity(alpha.id, "OPEN");
+    const open = await createNativeOpportunity(alpha.id, "OPEN", true, {
+      kind: "INFORMATION_SESSION",
+      title: "2027학년도 Home Alpha 입학설명회 1",
+      applicationCloseAt: "2026-09-01T00:00:00.000Z",
+    });
+    await createNativeOpportunity(alpha.id, "UPCOMING", true, {
+      kind: "INFORMATION_SESSION",
+      title: "2027학년도 Home Alpha 입학설명회 2",
+      applicationCloseAt: "2026-09-02T00:00:00.000Z",
+    });
     await createNativeOpportunity(beta.id, "UPCOMING");
     await createNativeOpportunity(hidden.id, "OPEN");
     const publishedArticle = await createArticle("PUBLISHED");
@@ -349,6 +411,16 @@ describe("WP-06A Article and Home public queries", () => {
       open.id,
     );
     expect(
+      first.currentOpportunities.filter(
+        (item) => item.institution.id === alpha.id,
+      ),
+    ).toHaveLength(1);
+    expect(
+      first.currentOpportunities.find(
+        (item) => item.institution.id === alpha.id,
+      )?.title,
+    ).toBe("2027학년도 Home Alpha 입학설명회");
+    expect(
       first.currentOpportunities.every((item) =>
         ["OPEN", "UPCOMING"].includes(item.businessState),
       ),
@@ -358,6 +430,10 @@ describe("WP-06A Article and Home public queries", () => {
     expect(first.featuredInstitutions.map((item) => item.id)).toEqual(
       expect.arrayContaining([alpha.id, beta.id]),
     );
+    expect(
+      first.featuredInstitutions.find((item) => item.id === alpha.id)
+        ?.currentOpportunity?.title,
+    ).toBe("2027학년도 Home Alpha 입학설명회");
     expect(first.latestArticles.map((item) => item.id)).toEqual(
       expect.arrayContaining([publishedArticle.id]),
     );

@@ -318,7 +318,10 @@ describe("one-time production five-school rollout on disposable PostgreSQL", () 
     );
     expect(inspected).toMatchObject({
       mode: "inspect",
-      migration: { status: "MATCH", latest: "0012_loving_trauma" },
+      migration: {
+        status: "MATCH",
+        latest: "0017_account_deletion",
+      },
       records: [{ state: "READY", stage: "PREPARE" }],
     });
     expect(await scopedCounts()).toEqual(beforeInspect);

@@ -15,7 +15,10 @@ import {
 } from "@/src/modules/auth/pending-follow-target.server";
 import { ProcessLocalRateLimiter } from "@/src/modules/auth/rate-limit.server";
 import { activateFollow } from "@/src/modules/follow/activate-follow.server";
-import { hasMonitorableSourceCoverage } from "@/src/modules/follow/followability-policy.server";
+import {
+  hasInstitutionIsiIdentity,
+  hasMonitorableSourceCoverage,
+} from "@/src/modules/follow/followability-policy.server";
 import { findInstitutionById } from "@/src/modules/institution/repository.server";
 
 // Emergency process ceiling only: it neither isolates callers nor coordinates hosts.
@@ -33,11 +36,13 @@ export async function resolveCanonicalCompletionInstitutionPath(
     id: string,
   ) => Promise<PendingFollowInstitutionRecord | null>,
   monitorableCoverage: (id: string) => Promise<boolean>,
+  isiIdentity: (id: string) => Promise<boolean>,
 ): Promise<string | null> {
   const target = await resolveCanonicalPendingFollowTarget(
     institutionId,
     findInstitution,
     monitorableCoverage,
+    isiIdentity,
   );
   return target?.canonicalPath ?? null;
 }
@@ -76,6 +81,8 @@ export function getAuthRuntime() {
     findInstitution: (id: string) => findInstitutionById(database.executor, id),
     hasMonitorableSourceCoverage: (id: string) =>
       hasMonitorableSourceCoverage(database.executor, id),
+    hasInstitutionIsiIdentity: (id: string) =>
+      hasInstitutionIsiIdentity(database.executor, id),
     resolveIdentity: async (
       identity: Parameters<typeof resolveKakaoIdentity>[0],
     ) => {
@@ -93,6 +100,7 @@ export function getAuthRuntime() {
         institutionId,
         (id) => findInstitutionById(database.executor, id),
         (id) => hasMonitorableSourceCoverage(database.executor, id),
+        (id) => hasInstitutionIsiIdentity(database.executor, id),
       ),
     activateFollow: (
       context: Parameters<typeof activateFollow>[0],

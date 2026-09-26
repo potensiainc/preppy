@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "packageId": "sg-is-20260915-r01",
+  "files": {
+    "institutions.ndjson": "b809539758e4804cd452446421b4fefe0101cf462122b79e2b2d670dbf3c8521",
+    "evidence.ndjson": "e75dfe590b13e91a64ead1c2ee7010717b59b92dd021e94da8b00abd3d30fb4f",
+    "social-evidence.ndjson": "b3c4305734c12a17425feba3d1bb0604b2e9df8630a3c96830778aecd72691fa",
+    "special-access.ndjson": "83463652cb81b51b853ae948eab128bb60d84aa75b58a85310389f551c939128",
+    "candidates.ndjson": "57860dbdedfe27f574ceceabccb4d9c6c006d91c3e0c601a309ffa54e19bcb60",
+    "progress.json": "613d82c98f80d8b9ac841ca4ea00d0f9e4e21ecb17b4e6f167d4e7dba629f280",
+    "preppy-import.snapshot.json": "cd5225047600d020562e5469cbc4a2d986c3b61d01e7e63097f613472ccd2e52"
+  },
+  "preppyImportChecksum": "58c3639d11f19660ed0f45a01fe81446756b606458c51322d174c93d03ef43fa"
+}

@@ -43,7 +43,10 @@ import {
   activateFollow,
   defaultActivateFollowPersistence,
 } from "@/src/modules/follow/activate-follow.server";
-import { hasMonitorableSourceCoverage } from "@/src/modules/follow/followability-policy.server";
+import {
+  hasInstitutionIsiIdentity,
+  hasMonitorableSourceCoverage,
+} from "@/src/modules/follow/followability-policy.server";
 import { findInstitutionById } from "@/src/modules/institution/repository.server";
 import { assertDedicatedTestDatabaseUrl } from "@/tests/support/test-database";
 
@@ -80,6 +83,7 @@ function signupContext(userId: string, occurredAt: Date = now) {
 
 function signupInput(overrides: Record<string, unknown> = {}) {
   return {
+    adultConfirmed: true,
     consents: [
       {
         type: "TERMS_OF_SERVICE",
@@ -92,6 +96,7 @@ function signupInput(overrides: Record<string, unknown> = {}) {
         policyVersion: policyVersions.PRIVACY_POLICY,
       },
     ],
+    serviceEmailUpdatesPolicyVersion: policyVersions.SERVICE_EMAIL_UPDATES,
     serviceEmailUpdatesConsent: true,
     ...overrides,
   };
@@ -158,12 +163,24 @@ async function createInstitutionFixture(
   trackedInstitutionIds.add(institutionId);
   await runtime.client`
     insert into institutions (
-      id, slug, display_name, category, publication_state, region_code,
-      city, district, address_line, website_url, short_description, published_at
+      id, slug, display_name, category, publication_state, operational_state,
+      region_code, city, district, address_line, website_url, short_description,
+      published_at
     ) values (
       ${institutionId}, ${`signup-school-${institutionId}`}, 'Safe School',
-      'INTERNATIONAL_SCHOOL', 'PUBLISHED', 'SEOUL', 'Seoul', 'Jongno-gu',
-      'sensitive address', 'https://secret.example.test', 'sensitive copy', ${now.toISOString()}
+      'INTERNATIONAL_SCHOOL', 'PUBLISHED', 'ACTIVE', 'SEOUL', 'Seoul',
+      'Jongno-gu', 'sensitive address', 'https://secret.example.test',
+      'sensitive copy', ${now.toISOString()}
+    )
+  `;
+  await runtime.client`
+    insert into institution_registry_identities (
+      institution_id, registry_name, registry_external_id,
+      registry_record_url, registry_locator, metadata_json
+    ) values (
+      ${institutionId}, 'ISI', ${`signup:${institutionId}`},
+      ${`https://isi.example.test/signup/${institutionId}`},
+      ${`fixture:${institutionId}`}, '{}'::jsonb
     )
   `;
   if (options.monitorableCoverage !== false) {
@@ -176,6 +193,7 @@ async function addNativeMonitorableCoverage(institutionId: string) {
   const sourceId = randomUUID();
   const opportunityId = randomUUID();
   const versionId = randomUUID();
+  const snapshotId = randomUUID();
   trackedSourceIds.add(sourceId);
   trackedOpportunityIds.add(opportunityId);
   await runtime.client.begin(async (transaction) => {
@@ -191,6 +209,22 @@ async function addNativeMonitorableCoverage(institutionId: string) {
       insert into source_monitor_configs (
         source_id, collection_strategy, monitoring_profile, is_enabled
       ) values (${sourceId}, 'HTTP', 'STANDARD_SEASONAL', true)
+    `;
+    await transaction`
+      insert into source_snapshots (
+        id, source_id, captured_at, content_hash, normalized_text, mime_type
+      ) values (
+        ${snapshotId}, ${sourceId}, ${now.toISOString()},
+        ${`hash-${snapshotId}`}, 'signup evidence fixture', 'text/html'
+      )
+    `;
+    const [observation] = await transaction<{ id: string }[]>`
+      insert into source_observations (
+        source_id, observed_at, outcome, http_status, final_url, snapshot_id
+      ) values (
+        ${sourceId}, ${now.toISOString()}, 'SUCCESS', 200,
+        ${`https://signup-source.example.test/${sourceId}`}, ${snapshotId}
+      ) returning id::text
     `;
     await transaction`
       insert into opportunities (
@@ -211,8 +245,12 @@ async function addNativeMonitorableCoverage(institutionId: string) {
     `;
     await transaction`
       insert into opportunity_version_evidence (
-        opportunity_version_id, source_id, evidence_role
-      ) values (${versionId}, ${sourceId}, 'PRIMARY')
+        opportunity_version_id, source_id, source_observation_id,
+        source_snapshot_id, evidence_role
+      ) values (
+        ${versionId}, ${sourceId}, ${observation!.id}::bigint,
+        ${snapshotId}, 'PRIMARY'
+      )
     `;
   });
 }
@@ -288,8 +326,13 @@ async function clearFixtures(): Promise<void> {
         await transaction`delete from opportunities
           where id in ${transaction(opportunityIds)}`;
       }
+      await transaction`delete from institution_registry_identities where institution_id in ${transaction(institutionIds)}`;
       await transaction`delete from institutions where id in ${transaction(institutionIds)}`;
       if (trackedSourceIds.size > 0) {
+        await transaction`delete from source_observations
+          where source_id in ${transaction([...trackedSourceIds])}`;
+        await transaction`delete from source_snapshots
+          where source_id in ${transaction([...trackedSourceIds])}`;
         await transaction`delete from source_monitor_configs
           where source_id in ${transaction([...trackedSourceIds])}`;
         await transaction`delete from sources
@@ -406,11 +449,14 @@ describe("CompleteSignup", () => {
       signupContext(userId),
       signupInput({
         email: "  Parent.Person@Example.COM  ",
-        childBirthYear: 2020,
         interestRegions: [" seoul ", "SEOUL", " gyeonggi_do "],
         interestCategories: ["ENGLISH_KINDERGARTEN", "INTERNATIONAL_SCHOOL"],
       }),
-      { transactionManager: runtime.transactionManager, tracker },
+      {
+        transactionManager: runtime.transactionManager,
+        tracker,
+        isLegalPublicationReady: () => true,
+      },
     );
 
     expect(result).toEqual({ userId, userState: "ACTIVE", follow: null });
@@ -442,7 +488,7 @@ describe("CompleteSignup", () => {
     });
     await expect(
       runtime.client`select child_birth_year from user_profiles where user_id = ${userId}`,
-    ).resolves.toEqual([{ child_birth_year: 2020 }]);
+    ).resolves.toEqual([{ child_birth_year: 2018 }]);
     await expect(
       runtime.client`
         select region_code from user_interest_regions
@@ -527,7 +573,11 @@ describe("CompleteSignup", () => {
       completeSignup(
         signupContext(userId),
         signupInput({ serviceEmailUpdatesConsent: false }),
-        { transactionManager: runtime.transactionManager, tracker },
+        {
+          transactionManager: runtime.transactionManager,
+          tracker,
+          isLegalPublicationReady: () => true,
+        },
       ),
     ).resolves.toEqual({ userId, userState: "ACTIVE", follow: null });
 
@@ -568,6 +618,7 @@ describe("CompleteSignup", () => {
     await expect(
       completeSignup(signupContext(userId), signupInput(invalid), {
         transactionManager: runtime.transactionManager,
+        isLegalPublicationReady: () => true,
         tracker: new TestAnalyticsTracker(),
       }),
     ).rejects.toMatchObject({ code: "VALIDATION_ERROR" });
@@ -591,6 +642,7 @@ describe("CompleteSignup", () => {
         signupInput({ childBirthYear: year }),
         {
           transactionManager: runtime.transactionManager,
+          isLegalPublicationReady: () => true,
           tracker: new TestAnalyticsTracker(),
         },
       ),
@@ -604,7 +656,7 @@ describe("CompleteSignup", () => {
   });
 
   it.each([2008, 2026])(
-    "accepts inclusive child birth year boundary %i",
+    "rejects formerly accepted child birth year boundary %i",
     async (year) => {
       const userId = await createUserFixture();
 
@@ -614,13 +666,14 @@ describe("CompleteSignup", () => {
           signupInput({ childBirthYear: year }),
           {
             transactionManager: runtime.transactionManager,
+            isLegalPublicationReady: () => true,
             tracker: new TestAnalyticsTracker(),
           },
         ),
-      ).resolves.toEqual({ userId, userState: "ACTIVE", follow: null });
+      ).rejects.toMatchObject({ code: "VALIDATION_ERROR" });
       await expect(
         runtime.client`select child_birth_year from user_profiles where user_id = ${userId}`,
-      ).resolves.toEqual([{ child_birth_year: year }]);
+      ).resolves.toEqual([]);
     },
   );
 
@@ -646,6 +699,7 @@ describe("CompleteSignup", () => {
         }),
         {
           transactionManager: runtime.transactionManager,
+          isLegalPublicationReady: () => true,
           tracker: new TestAnalyticsTracker(),
         },
       ),
@@ -682,12 +736,12 @@ describe("CompleteSignup", () => {
         signupContext(userId),
         signupInput({
           email: "rollback@example.test",
-          childBirthYear: 2021,
           interestRegions: ["SEOUL"],
           interestCategories: ["ENGLISH_KINDERGARTEN"],
         }),
         {
           transactionManager: runtime.transactionManager,
+          isLegalPublicationReady: () => true,
           tracker,
           persistence: {
             ...defaultCompleteSignupPersistence,
@@ -721,6 +775,7 @@ describe("CompleteSignup", () => {
       signupInput({ serviceEmailUpdatesConsent: false }),
       {
         transactionManager: runtime.transactionManager,
+        isLegalPublicationReady: () => true,
         tracker: new TestAnalyticsTracker(),
       },
     );
@@ -770,6 +825,7 @@ describe("CompleteSignup", () => {
         signupInput({ email: onboarding.defaults.email }),
         {
           transactionManager: runtime.transactionManager,
+          isLegalPublicationReady: () => true,
           tracker: new TestAnalyticsTracker(),
         },
       );
@@ -814,6 +870,7 @@ describe("CompleteSignup", () => {
       signupInput({ email: " Changed.Parent@Example.COM " }),
       {
         transactionManager: runtime.transactionManager,
+        isLegalPublicationReady: () => true,
         tracker: new TestAnalyticsTracker(),
       },
     );
@@ -846,12 +903,20 @@ describe("CompleteSignup", () => {
     await completeSignup(
       signupContext(firstUserId),
       signupInput({ email: " Shared.Parent@Example.COM " }),
-      { transactionManager: runtime.transactionManager, tracker },
+      {
+        transactionManager: runtime.transactionManager,
+        tracker,
+        isLegalPublicationReady: () => true,
+      },
     );
     await completeSignup(
       signupContext(secondUserId),
       signupInput({ email: "shared.parent@example.com" }),
-      { transactionManager: runtime.transactionManager, tracker },
+      {
+        transactionManager: runtime.transactionManager,
+        tracker,
+        isLegalPublicationReady: () => true,
+      },
     );
 
     await expect(
@@ -873,6 +938,7 @@ describe("CompleteSignup", () => {
     const userId = await createUserFixture();
     const dependencies = {
       transactionManager: runtime.transactionManager,
+      isLegalPublicationReady: () => true,
       tracker: new TestAnalyticsTracker(),
     };
     await completeSignup(signupContext(userId), signupInput(), dependencies);
@@ -905,6 +971,7 @@ describe("CompleteSignup", () => {
     const ctx = signupContext(userId);
     const dependencies = {
       transactionManager: runtime.transactionManager,
+      isLegalPublicationReady: () => true,
       tracker,
       persistence,
     };
@@ -965,10 +1032,9 @@ describe("CompleteSignup", () => {
       signupContext(userId),
       signupInput({
         email: "atomic@example.test",
-        childBirthYear: 2020,
         interestRegions: ["SEOUL"],
       }),
-      { transactionManager, tracker },
+      { transactionManager, tracker, isLegalPublicationReady: () => true },
       { pendingFollow: { institutionId } },
     );
 
@@ -1012,7 +1078,7 @@ describe("CompleteSignup", () => {
     });
   });
 
-  it("commits signup but omits a source-less pending Institution", async () => {
+  it("commits signup and the saved public Institution without monitor coverage", async () => {
     const userId = await createUserFixture();
     const institutionId = await createInstitutionFixture({
       monitorableCoverage: false,
@@ -1023,19 +1089,24 @@ describe("CompleteSignup", () => {
       completeSignup(
         signupContext(userId),
         signupInput(),
-        { transactionManager: runtime.transactionManager, tracker },
+        {
+          transactionManager: runtime.transactionManager,
+          tracker,
+          isLegalPublicationReady: () => true,
+        },
         { pendingFollow: { institutionId } },
       ),
-    ).resolves.toEqual({ userId, userState: "ACTIVE", follow: null });
+    ).resolves.toMatchObject({ userId, userState: "ACTIVE", follow: { institutionId, state: "ACTIVE" } });
     await expect(
       runtime.client`select status from users where id = ${userId}`,
     ).resolves.toEqual([{ status: "ACTIVE" }]);
     expect(await followStateForUser(userId)).toEqual({
-      follows: [],
-      episodes: [],
+      follows: [expect.objectContaining({ institution_id: institutionId, status: "ACTIVE" })],
+      episodes: [expect.objectContaining({ deactivated_at: null })],
     });
     expect(tracker.snapshot()).toEqual([
       { name: "signup_complete", properties: { context: "MY_PREPPY" } },
+      { name: "follow_created", properties: { institutionId, followCount: 1 } },
     ]);
   });
 
@@ -1053,12 +1124,12 @@ describe("CompleteSignup", () => {
         signupContext(userId),
         signupInput({
           email: "must-rollback@example.test",
-          childBirthYear: 2021,
           interestRegions: ["SEOUL"],
           interestCategories: ["ENGLISH_KINDERGARTEN"],
         }),
         {
           transactionManager: runtime.transactionManager,
+          isLegalPublicationReady: () => true,
           tracker,
           followPersistence: {
             ...defaultActivateFollowPersistence,
@@ -1095,6 +1166,7 @@ describe("CompleteSignup", () => {
           : await createInstitutionFixture();
       if (targetState === "deleted") {
         await removeInstitutionCoverage(institutionId);
+        await runtime.client`delete from institution_registry_identities where institution_id = ${institutionId}`;
         await runtime.client`delete from institutions where id = ${institutionId}`;
       } else if (targetState === "unpublished") {
         await runtime.client`
@@ -1113,7 +1185,11 @@ describe("CompleteSignup", () => {
         completeSignup(
           signupContext(userId),
           signupInput(),
-          { transactionManager: runtime.transactionManager, tracker },
+          {
+            transactionManager: runtime.transactionManager,
+            tracker,
+            isLegalPublicationReady: () => true,
+          },
           { pendingFollow: { institutionId } },
         ),
       ).resolves.toEqual({ userId, userState: "ACTIVE", follow: null });
@@ -1155,7 +1231,11 @@ describe("CompleteSignup", () => {
         completeSignup(
           context,
           input,
-          { transactionManager: runtime.transactionManager, tracker },
+          {
+            transactionManager: runtime.transactionManager,
+            tracker,
+            isLegalPublicationReady: () => true,
+          },
           serverInput,
         ),
       now: () => now,
@@ -1212,6 +1292,7 @@ describe("CompleteSignup", () => {
     const tracker = new TestAnalyticsTracker();
     const dependencies = {
       transactionManager: runtime.transactionManager,
+      isLegalPublicationReady: () => true,
       tracker,
     };
     const serverInput = { pendingFollow: { institutionId } };
@@ -1297,6 +1378,8 @@ describe("ACTIVE Kakao pending Follow continuation", () => {
           (candidateId) => findInstitutionById(runtime.executor, candidateId),
           (candidateId) =>
             hasMonitorableSourceCoverage(runtime.executor, candidateId),
+          (candidateId) =>
+            hasInstitutionIsiIdentity(runtime.executor, candidateId),
         ),
       activateFollow: (context, input) =>
         activateFollow(context, input, {
@@ -1365,10 +1448,10 @@ describe("onboarding query", () => {
     });
 
     expect(state).toEqual({
+      legalPublicationReady: true,
       userState: "PENDING",
       defaults: {
         email: "provider@example.test",
-        childBirthYear: 2018,
         interestRegions: ["BUSAN"],
         interestCategories: ["PRIVATE_ELEMENTARY"],
         serviceEmailUpdatesConsent: false,
@@ -1456,6 +1539,7 @@ describe("onboarding query", () => {
       );
       if (_label === "deleted") {
         await removeInstitutionCoverage(institutionId);
+        await runtime.client`delete from institution_registry_identities where institution_id = ${institutionId}`;
       }
       await runtime.client.unsafe(mutationSql, [institutionId]);
 

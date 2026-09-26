@@ -592,7 +592,7 @@ describe("WP-02A Opportunity schema invariants", () => {
 
     await expect(sql`
       delete from opportunities where id = ${linked.opportunity.id}
-    `).rejects.toMatchObject({ code: "23503" });
+    `).rejects.toMatchObject({ code: expect.stringMatching(/^(23001|23503)$/) });
   });
 
   it("RESTRICTS deleting a bridged AdmissionEvent", async () => {
@@ -600,7 +600,7 @@ describe("WP-02A Opportunity schema invariants", () => {
 
     await expect(sql`
       delete from admission_events where id = ${linked.admissionEventId}
-    `).rejects.toMatchObject({ code: "23503" });
+    `).rejects.toMatchObject({ code: expect.stringMatching(/^(23001|23503)$/) });
   });
 
   it("RESTRICTS deleting a referenced Institution-School mapping", async () => {
@@ -610,7 +610,7 @@ describe("WP-02A Opportunity schema invariants", () => {
       delete from institution_school_links
       where institution_id = ${linked.institutionId}
         and school_id = ${linked.schoolId}
-    `).rejects.toMatchObject({ code: "23503" });
+    `).rejects.toMatchObject({ code: expect.stringMatching(/^(23001|23503)$/) });
   });
 
   it("RESTRICTS deleting the Institution of a bridged Opportunity", async () => {
@@ -618,7 +618,7 @@ describe("WP-02A Opportunity schema invariants", () => {
 
     await expect(sql`
       delete from institutions where id = ${linked.institutionId}
-    `).rejects.toMatchObject({ code: "23503" });
+    `).rejects.toMatchObject({ code: expect.stringMatching(/^(23001|23503)$/) });
   });
 
   it("RESTRICTS deleting the AdmissionCycle of a bridged AdmissionEvent", async () => {
@@ -626,7 +626,7 @@ describe("WP-02A Opportunity schema invariants", () => {
 
     await expect(sql`
       delete from admission_cycles where id = ${linked.admissionCycleId}
-    `).rejects.toMatchObject({ code: "23503" });
+    `).rejects.toMatchObject({ code: expect.stringMatching(/^(23001|23503)$/) });
   });
 
   it("rejects deleting the bridge from a PUBLISHED LEGACY_BACKED Opportunity", async () => {

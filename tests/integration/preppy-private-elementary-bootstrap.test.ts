@@ -14,6 +14,7 @@ import { persistPrivateElementarySchool } from "@/src/modules/institution-detail
 import { inspectBootstrapSchema } from "@/src/modules/institution-detail-bootstrap/schema-preflight.server";
 import { buildRegistryBaselineFacts } from "@/src/modules/institution-detail-bootstrap/fact-extractor";
 import { getInstitutionBySlug } from "@/src/modules/public/institution-query.server";
+import { getOpportunityBySlug } from "@/src/modules/public/opportunity-query.server";
 import { assertDedicatedTestDatabaseUrl } from "@/tests/support/test-database";
 
 const databaseUrl = process.env.TEST_DATABASE_URL;
@@ -252,6 +253,65 @@ afterAll(async () => {
 });
 
 describe("private elementary per-school atomic persistence", () => {
+  it("stores supporting admission evidence as SUPPORTING alongside its canonical binding", async () => {
+    const institution = await insertInstitution();
+    const input = collection(institution);
+    const result = await persistPrivateElementarySchool(input, {
+      transactionManager: runtime.transactionManager,
+      supportsOfficialRegistrySourceType: false,
+      supportsRegistryIdentityBindingRole: false,
+      correction: {
+        admissions: [
+          {
+            key: "main",
+            admission: input.admission!,
+            sourceUrls: input.pages.map((page) => page.url),
+          },
+        ],
+        factSourceUrls: {},
+        retireFacts: [],
+      },
+    });
+    const rows = await runtime.client<
+      Array<{ bindingRole: string; evidenceRole: string }>
+    >`
+      select binding.role as "bindingRole",
+        evidence.evidence_role as "evidenceRole"
+      from opportunity_versions version
+      join opportunity_version_evidence evidence
+        on evidence.opportunity_version_id=version.id
+      join opportunity_source_bindings binding
+        on binding.opportunity_id=version.opportunity_id
+        and binding.source_id=evidence.source_id
+      where version.opportunity_id=${result.opportunityId!}
+        and version.is_current=true
+      order by binding.role
+    `;
+    expect(rows).toEqual([
+      { bindingRole: "PRIMARY_NOTICE", evidenceRole: "PRIMARY" },
+      { bindingRole: "SUPPORTING", evidenceRole: "SUPPORTING" },
+    ]);
+    const [opportunity] = await runtime.client<Array<{ slug: string }>>`
+      select slug from opportunities where id=${result.opportunityId!}
+    `;
+    const publicDetail = await getOpportunityBySlug(
+      runtime.executor,
+      opportunity!.slug,
+    );
+    expect((publicDetail.officialSources ?? []).map((source) => source.url)).toEqual([
+      "https://fixture-school.example/admissions/2027",
+      "https://fixture-school.example/",
+    ]);
+    expect(publicDetail.officialSource?.url).toBe(
+      "https://fixture-school.example/admissions/2027",
+    );
+    expect(publicDetail.lastCollectedAt).toBe("2026-08-30T03:04:05.000Z");
+    expect(publicDetail.summary).toBe(input.admission!.proposal.summary);
+    expect(publicDetail.targetAudience).toBe(
+      input.admission!.proposal.targetAudience,
+    );
+  });
+
   it("reuses one registry Source when two school transactions bootstrap the same registry URL concurrently", async () => {
     const institutions = [await insertInstitution(), await insertInstitution()];
     const results = await Promise.all(

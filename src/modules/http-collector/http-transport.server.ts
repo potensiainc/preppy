@@ -266,7 +266,6 @@ async function requestPinned(
   return new Promise((resolve) => {
     let settled = false;
     let connectTimer: NodeJS.Timeout | undefined;
-    let totalTimer: NodeJS.Timeout | undefined;
     const finish = (result: OneRequestResult) => {
       if (settled) return;
       settled = true;
@@ -350,7 +349,7 @@ async function requestPinned(
       const mapped = mapRequestError(error);
       finish({ ok: false, ...mapped, response: null, actualResponseBytes: 0 });
     });
-    totalTimer = setTimeout(() => {
+    const totalTimer = setTimeout(() => {
       request.destroy();
       finish({
         ok: false,

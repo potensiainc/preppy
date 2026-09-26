@@ -12,21 +12,21 @@ const repositoryRoot = resolve(import.meta.dirname, "../..");
 async function importPages() {
   try {
     return await Promise.all([
-      vi.importActual<typeof import("@/app/admin/(protected)/operations/page")>(
-        "@/app/admin/(protected)/operations/page",
+      vi.importActual<typeof import("@/app/admin/(protected)/operations/page-content")>(
+        "@/app/admin/(protected)/operations/page-content",
       ),
       vi.importActual<
-        typeof import("@/app/admin/(protected)/operations/outbox/page")
-      >("@/app/admin/(protected)/operations/outbox/page"),
+        typeof import("@/app/admin/(protected)/operations/outbox/page-content")
+      >("@/app/admin/(protected)/operations/outbox/page-content"),
       vi.importActual<
-        typeof import("@/app/admin/(protected)/operations/deliveries/page")
-      >("@/app/admin/(protected)/operations/deliveries/page"),
+        typeof import("@/app/admin/(protected)/operations/deliveries/page-content")
+      >("@/app/admin/(protected)/operations/deliveries/page-content"),
       vi.importActual<
-        typeof import("@/app/admin/(protected)/operations/audit/page")
-      >("@/app/admin/(protected)/operations/audit/page"),
+        typeof import("@/app/admin/(protected)/operations/audit/page-content")
+      >("@/app/admin/(protected)/operations/audit/page-content"),
       vi.importActual<
-        typeof import("@/app/admin/(protected)/operations/health/page")
-      >("@/app/admin/(protected)/operations/health/page"),
+        typeof import("@/app/admin/(protected)/operations/health/page-content")
+      >("@/app/admin/(protected)/operations/health/page-content"),
     ] as const);
   } catch {
     return null;
@@ -268,7 +268,7 @@ describe("WP-11/WP-12B Operations UI", () => {
     const adminHealthPage = await readFile(
       resolve(
         repositoryRoot,
-        "app/admin/(protected)/operations/health/page.tsx",
+        "app/admin/(protected)/operations/health/page-content.tsx",
       ),
       "utf8",
     );
