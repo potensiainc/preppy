@@ -1,3 +1,4 @@
+import { publicRegionLabel } from "@/app/_lib/public-region-label";
 import Link from "next/link";
 import type { PublicOpportunityDTO } from "@/src/modules/public/dto";
 import { isProvisionalAdmissionGuidance } from "@/src/modules/live-admissions/guidance";
@@ -100,7 +101,9 @@ export function OpportunityDetailView({
                   <dl className={styles.audienceRows}>
                     <div>
                       <dt>기관 소재 지역</dt>
-                      <dd>{opportunity.institution.region}</dd>
+                      <dd>
+                        {publicRegionLabel(opportunity.institution.region)}
+                      </dd>
                     </div>
                   </dl>
                 ) : null}

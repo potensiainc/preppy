@@ -1,3 +1,4 @@
+import { publicRegionLabel } from "@/app/_lib/public-region-label";
 import Link from "next/link";
 import { publicAdmissionText } from "@/src/modules/public/admission-copy";
 import { publicProse } from "@/src/modules/public/ux-writing";
@@ -245,7 +246,9 @@ export function InstitutionDetailView({
               <h1>{institution.name}</h1>
               <p className="institution-detail__meta">
                 {categoryLabel(institution.category)}
-                {institution.region ? ` · ${institution.region}` : ""}
+                {institution.region
+                  ? ` · ${publicRegionLabel(institution.region)}`
+                  : ""}
               </p>
               {institution.currentAdmissionsState ? (
                 <StateBadge state={institution.currentAdmissionsState} />

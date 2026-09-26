@@ -671,7 +671,7 @@ describe("WP-06A Institution public query", () => {
     ).rejects.toBeInstanceOf(NotFoundError);
   });
 
-  it("projects a public source-less Institution as not followable", async () => {
+  it("projects public Institutions as followable regardless of source coverage", async () => {
     const name = `${prefix} Coverage list`;
     const sourceLess = await createInstitution({
       name,
@@ -696,8 +696,8 @@ describe("WP-06A Institution public query", () => {
       list.items.map((item) => [item.id, item.followable]),
     );
 
-    expect(detail.institution.followable).toBe(false);
-    expect(followableById.get(sourceLess.id)).toBe(false);
+    expect(detail.institution.followable).toBe(true);
+    expect(followableById.get(sourceLess.id)).toBe(true);
     expect(followableById.get(covered.id)).toBe(true);
   });
 

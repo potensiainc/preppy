@@ -34,6 +34,7 @@ describe("WP-15A migration ledger comparison", () => {
       "0014_aspiring_deathbird",
       "0015_smart_king_bedlam",
       "0016_english_kindergarten_profiles",
+      "0017_account_deletion",
     ]);
     expect(manifest.every((row) => /^[a-f0-9]{64}$/.test(row.hash))).toBe(true);
   });

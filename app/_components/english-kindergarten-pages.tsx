@@ -1,3 +1,5 @@
+import { publicRegionLabel } from "@/app/_lib/public-region-label";
+import { FollowCta } from "@/app/_components/follow-cta";
 import Link from "next/link";
 
 import {
@@ -289,7 +291,10 @@ function EnglishKindergartenCard({
       <header className="ek-card__header">
         <div>
           <p className="ek-card__region">
-            {institution.district ?? institution.region ?? "지역 확인 중"}
+            {institution.district ??
+              (institution.region
+                ? publicRegionLabel(institution.region)
+                : "지역 확인 중")}
           </p>
           <h2>
             <Link href={`/institutions/${institution.slug}`}>
@@ -300,9 +305,12 @@ function EnglishKindergartenCard({
             <p className="ek-card__address">{institution.address}</p>
           ) : null}
         </div>
-        <span aria-hidden="true" className="ek-card__arrow">
-          ↗
-        </span>
+        <FollowCta
+          institutionId={institution.id}
+          followable={institution.followable}
+          context="INSTITUTION"
+          returnPath={`/institutions/${institution.slug}`}
+        />
       </header>
       <SummaryGrid summary={summary} />
       {summary.lastContentCheckedAt ? (
@@ -1059,10 +1067,17 @@ export function EnglishKindergartenDetailView({
         <header className="ek-detail__hero">
           <p className="eyebrow">영어유치원 정보</p>
           <h1>{institution.name}</h1>
+          <FollowCta
+            institutionId={institution.id}
+            followable={institution.followable}
+            context="INSTITUTION"
+            returnPath={`/institutions/${institution.slug}`}
+          />
           <p>
             {institution.address ??
-              institution.region ??
-              "기관 위치를 확인하고 있어요."}
+              (institution.region
+                ? publicRegionLabel(institution.region)
+                : "기관 위치를 확인하고 있어요.")}
           </p>
           <SummaryGrid summary={profile} />
           {profile.lastContentCheckedAt ? (

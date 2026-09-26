@@ -2914,3 +2914,34 @@ h3 {
     transform: none;
   }
 }
+
+/* Favorite hearts: save state only, independent of email readiness. */
+.follow-cta { min-width: 0; }
+.favorite-heart-wrap { display: inline-flex; }
+.favorite-heart, .follow-cta .favorite-heart, .my-preppy-card .favorite-heart {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 48px; height: 48px; min-width: 48px; min-height: 48px;
+  padding: 0; border: 1px solid #d7dfda; border-radius: 50%;
+  background: #fff; color: #68756f; cursor: pointer;
+  transition: color 140ms ease, background-color 140ms ease, transform 140ms ease;
+}
+.favorite-heart[aria-pressed="true"], .follow-cta .favorite-heart[aria-pressed="true"], .my-preppy-card .favorite-heart[aria-pressed="true"] {
+  color: #c74862; border-color: #edc8d0; background: #fff3f5;
+}
+.favorite-heart:hover:not(:disabled) { transform: scale(1.05); }
+.favorite-heart:focus-visible { outline: 3px solid #285d4c; outline-offset: 3px; }
+.favorite-heart:disabled { opacity: .5; cursor: wait; }
+.favorite-heart svg { flex: none; }
+.institution-card { position: relative; }
+.institution-card > .follow-cta { position: absolute; right: 16px; top: 16px; z-index: 2; }
+.institution-card .card-kicker, .institution-card h3, .institution-card h4 { padding-right: 56px; }
+.ek-card__header > .follow-cta { flex: none; }
+.ek-detail__hero { position: relative; }
+.ek-detail__hero > h1 { padding-right: 64px; }
+.ek-detail__hero > .follow-cta { position: absolute; top: 24px; right: 0; }
+.my-preppy-card { position: relative; }
+.my-preppy-card__identity { padding-right: 56px; }
+.my-preppy-card__actions { position: absolute; top: 20px; right: 20px; border: 0; padding: 0; }
+@media (prefers-reduced-motion: reduce) { .favorite-heart { transition: none; } }
+
+.my-preppy-card__truth { padding-right: 56px; }

@@ -40,7 +40,7 @@ async function clearWp03Fixtures() {
   await sql`truncate table notification_delivery_attempts, notification_deliveries,
     notifications, follow_episodes, follows, notification_preferences,
     consent_decisions, user_interest_categories, user_interest_regions,
-    user_profiles, user_emails, auth_identities, users`;
+    user_profiles, user_emails, auth_identities, users cascade`;
   await sql`delete from institutions where slug like ${`${prefix}%`}`;
   await sql`delete from subscribers where email_normalized like ${`${prefix}%`}`;
 }

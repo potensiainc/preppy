@@ -51,77 +51,86 @@ describe("WP-09 My Preppy UI and private route", () => {
     expect(markup).toContain("기관 둘러보기");
   });
 
-  it("shows an editorial card with canonical truth, freshness, change context, and no delivery claim", () => {
-    const markup = renderToStaticMarkup(
-      createElement(MyPreppyView, {
-        data: {
-          ...emptyData(),
-          readiness: {
-            ready: true,
-            label: "이메일 업데이트 준비됨",
-            analyticsState: "ENABLED",
-          },
-          cards: [
-            {
-              followId: "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
-              followedAt: "2026-08-20T00:00:00.000Z",
-              institution: {
-                id: institutionId,
-                slug: "native-kindergarten",
-                name: "네이티브 영유",
-                category: "ENGLISH_KINDERGARTEN",
-                region: "SEOUL",
-              },
-              currentAdmissionsState: "OPEN",
-              currentOpportunities: [
-                {
-                  id: "7ba7b810-9dad-11d1-80b4-00c04fd430c8",
-                  slug: "native-kindergarten-open",
-                  title: "2027 원아 모집",
-                  state: "OPEN",
-                  keyDate: "2026-09-01T00:00:00.000Z",
-                  lastVerifiedAt: "2026-08-22T00:00:00.000Z",
-                },
-              ],
-              upcomingOpportunities: [
-                {
-                  id: "8ba7b810-9dad-11d1-80b4-00c04fd430c8",
-                  slug: "native-kindergarten-upcoming",
-                  title: "입학 설명회",
-                  state: "UPCOMING",
-                  keyDate: "2026-10-01T00:00:00.000Z",
-                  lastVerifiedAt: "2026-08-21T00:00:00.000Z",
-                },
-              ],
-              recentChanges: [
-                {
-                  opportunityId: "7ba7b810-9dad-11d1-80b4-00c04fd430c8",
-                  summary: "접수 마감일이 변경되었습니다.",
-                  publishedAt: "2026-08-22T01:00:00.000Z",
-                },
-              ],
-              lastVerifiedAt: "2026-08-22T00:00:00.000Z",
-              readiness: {
-                ready: true,
-                label: "이메일 업데이트 준비됨",
-                analyticsState: "ENABLED",
-              },
+  it.each([
+    ["SEOUL", "서울"],
+    ["11", "서울"],
+    ["41", "경기"],
+  ])(
+    "shows a readable %s region with canonical truth and no delivery claim",
+    (region, regionName) => {
+      const markup = renderToStaticMarkup(
+        createElement(MyPreppyView, {
+          data: {
+            ...emptyData(),
+            readiness: {
+              ready: true,
+              label: "이메일 업데이트 준비됨",
+              analyticsState: "ENABLED",
             },
-          ],
-        },
-      }),
-    );
-    expect(markup).toContain("네이티브 영유");
-    expect(markup).toContain("영어유치원");
-    expect(markup).toContain("서울");
-    expect(markup).toContain("모집 중");
-    expect(markup).toContain("2027 원아 모집");
-    expect(markup).toContain("입학 설명회");
-    expect(markup).toContain("접수 마감일이 변경됐어요.");
-    expect(markup).toContain("내용 확인");
-    expect(markup).toContain("이메일 업데이트 준비됨");
-    expect(markup).not.toMatch(/실시간|발송 중|전송 완료/);
-  });
+            cards: [
+              {
+                followId: "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
+                followedAt: "2026-08-20T00:00:00.000Z",
+                institution: {
+                  id: institutionId,
+                  slug: "native-kindergarten",
+                  name: "네이티브 영유",
+                  category: "ENGLISH_KINDERGARTEN",
+                  region,
+                },
+                currentAdmissionsState: "OPEN",
+                currentOpportunities: [
+                  {
+                    id: "7ba7b810-9dad-11d1-80b4-00c04fd430c8",
+                    slug: "native-kindergarten-open",
+                    title: "2027 원아 모집",
+                    state: "OPEN",
+                    keyDate: "2026-09-01T00:00:00.000Z",
+                    lastVerifiedAt: "2026-08-22T00:00:00.000Z",
+                  },
+                ],
+                upcomingOpportunities: [
+                  {
+                    id: "8ba7b810-9dad-11d1-80b4-00c04fd430c8",
+                    slug: "native-kindergarten-upcoming",
+                    title: "입학 설명회",
+                    state: "UPCOMING",
+                    keyDate: "2026-10-01T00:00:00.000Z",
+                    lastVerifiedAt: "2026-08-21T00:00:00.000Z",
+                  },
+                ],
+                recentChanges: [
+                  {
+                    opportunityId: "7ba7b810-9dad-11d1-80b4-00c04fd430c8",
+                    summary: "접수 마감일이 변경되었습니다.",
+                    publishedAt: "2026-08-22T01:00:00.000Z",
+                  },
+                ],
+                lastVerifiedAt: "2026-08-22T00:00:00.000Z",
+                readiness: {
+                  ready: true,
+                  label: "이메일 업데이트 준비됨",
+                  analyticsState: "ENABLED",
+                },
+              },
+            ],
+          },
+        }),
+      );
+      expect(markup).toContain("네이티브 영유");
+      expect(markup).toContain("영어유치원");
+      expect(markup).toContain(regionName);
+      expect(markup).toContain("모집 중");
+      expect(markup).toContain("2027 원아 모집");
+      expect(markup).toContain("입학 설명회");
+      expect(markup).toContain("접수 마감일이 변경됐어요.");
+      expect(markup).toContain("내용 확인");
+      expect(markup).not.toContain("이메일 업데이트 준비됨");
+      expect(markup).not.toContain("이메일 수신 준비 상태");
+      expect(markup).toContain('aria-pressed="true"');
+      expect(markup).not.toMatch(/실시간|발송 중|전송 완료/);
+    },
+  );
 
   it("shows ACTIVE header access plus logout, exact anonymous copy, and never renders email", () => {
     const active = renderToStaticMarkup(
@@ -145,7 +154,7 @@ describe("WP-09 My Preppy UI and private route", () => {
     expect(anonymous).toContain('href="/auth/kakao/start"');
   });
 
-  it("requires confirmation and removes only after authoritative 204", async () => {
+  it("offers a direct heart action and verifies the server deletion", async () => {
     const initial = renderToStaticMarkup(
       createElement(UnfollowPresentation, {
         state: "idle",
@@ -157,19 +166,9 @@ describe("WP-09 My Preppy UI and private route", () => {
       }),
     );
     expect(initial).toContain("관심기관 해제");
-    const confirming = renderToStaticMarkup(
-      createElement(UnfollowPresentation, {
-        state: "confirming",
-        institutionName: "네이티브 영유",
-        onRequest: () => undefined,
-        onConfirm: () => undefined,
-        onCancel: () => undefined,
-        onRetry: () => undefined,
-      }),
-    );
-    expect(confirming).toContain("관심기관에서 해제할까요?");
-    expect(confirming).toContain("관심기관 해제");
-    expect(confirming).toContain("관심기관 유지");
+    expect(initial).toContain('aria-pressed="true"');
+    expect(initial).not.toContain("해제할까요");
+    expect(initial).not.toContain("관심기관 유지");
 
     const committed = vi.fn();
     const fetcher = vi

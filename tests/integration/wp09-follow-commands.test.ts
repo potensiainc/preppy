@@ -400,7 +400,7 @@ describe("WP-09 Follow commands", () => {
   });
 
   it.each(["NONE", "DISCOVERY_ONLY", "PAUSED", "MONITOR_DISABLED"] as const)(
-    "rejects an otherwise public Institution with %s source coverage",
+    "saves an otherwise public Institution with %s source coverage",
     async (coverage) => {
       const userId = await createUser();
       const institutionId = await createInstitution({ coverage });
@@ -412,21 +412,21 @@ describe("WP-09 Follow commands", () => {
           { institutionId },
           dependencies(tracker),
         ),
-      ).rejects.toMatchObject({ code: "NOT_ELIGIBLE" });
+      ).resolves.toMatchObject({ state: "ACTIVE" });
       await expect(
         runtime.client`
         select id from follows
         where user_id = ${userId} and institution_id = ${institutionId}
       `,
-      ).resolves.toHaveLength(0);
+      ).resolves.toHaveLength(1);
       await expect(
         runtime.client`
         select episode.id from follow_episodes episode
         join follows follow on follow.id = episode.follow_id
         where follow.user_id = ${userId}
       `,
-      ).resolves.toHaveLength(0);
-      expect(tracker.snapshot()).toEqual([]);
+      ).resolves.toHaveLength(1);
+      expect(tracker.snapshot()).toHaveLength(1);
     },
   );
 

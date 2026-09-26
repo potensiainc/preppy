@@ -408,7 +408,6 @@ export function planInstitutionSeedImport(
         registryKey(seed.registry_name, seed.registry_external_id),
       ) ?? [];
     let existingInstitution: SeedInventoryInstitutionRow | undefined;
-    let existingIdentity: SeedInventoryRegistryIdentityRow | undefined;
 
     if (identityRows.length > 1) {
       conflicts.push({
@@ -419,7 +418,7 @@ export function planInstitutionSeedImport(
       increment(counts, "CONFLICT_EXISTING_IDENTITY");
       continue;
     }
-    existingIdentity = identityRows[0];
+    const existingIdentity = identityRows[0];
     if (existingIdentity) {
       existingInstitution = institutionById.get(existingIdentity.institutionId);
       if (!existingInstitution) {

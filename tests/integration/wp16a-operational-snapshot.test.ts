@@ -231,7 +231,7 @@ describe("WP-16A operational snapshot", () => {
     const snapshot = await getOperationalSnapshot(runtime.executor, { now });
     expect(snapshot.migration).toEqual({
       status: "MATCH",
-      latest: "0016_english_kindergarten_profiles",
+      latest: "0017_account_deletion",
     });
     expect(snapshot.outbox).toMatchObject({
       pending: baseline.outbox.pending + 1,

@@ -479,7 +479,9 @@ describe("English-kindergarten public experience", () => {
         $(element).text().includes("기관 공식 홈페이지 열기"),
       ),
     ).toHaveLength(1);
-    expect($("button[disabled], a[href='']")).toHaveLength(0);
+    expect($("button[disabled]:not(.favorite-heart), a[href='']")).toHaveLength(
+      0,
+    );
     for (const internalTerm of [
       "Evidence",
       "VERIFIED",

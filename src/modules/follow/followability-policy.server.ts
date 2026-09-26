@@ -19,9 +19,10 @@ export type FollowabilityInstitution = {
   hasIsiIdentity: boolean;
 };
 
+/** Saving a public institution is independent of monitoring and email readiness. */
 export function isInstitutionFollowable(
   institution: FollowabilityInstitution,
-  hasMonitorableSourceCoverage: boolean,
+  _hasMonitorableSourceCoverage?: boolean,
 ): boolean {
   return (
     isInternationalSchoolPubliclyEligible({
@@ -29,9 +30,7 @@ export function isInstitutionFollowable(
       publicationState: institution.publicationState,
       operationalState: institution.operationalState,
       hasIsiIdentity: institution.hasIsiIdentity,
-    }) &&
-    institution.operationalState !== "CLOSED" &&
-    hasMonitorableSourceCoverage
+    }) && institution.operationalState !== "CLOSED"
   );
 }
 

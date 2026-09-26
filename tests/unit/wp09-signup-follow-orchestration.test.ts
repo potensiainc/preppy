@@ -19,6 +19,8 @@ import {
   USER_SESSION_COOKIE_NAME,
 } from "@/src/modules/auth/session.server";
 
+import { ConsentPolicyUpdatedError } from "@/src/application/errors";
+
 const appBaseUrl = "https://preppy.example";
 const stateSecret = "state-secret-that-is-at-least-thirty-two-characters";
 const followSecret = "follow-secret-that-is-at-least-thirty-two-characters";
@@ -137,6 +139,8 @@ function onboardingRequest(
       body: new URLSearchParams({
         termsPolicyVersion: "2026-08-23",
         privacyPolicyVersion: "2026-08-23",
+        serviceEmailUpdatesPolicyVersion: "2026-09-25",
+        adultConfirmed: "on",
         termsConsent: "on",
         privacyConsent: "on",
         ...hostileAuthority,
@@ -146,6 +150,37 @@ function onboardingRequest(
 }
 
 describe("WP-09 signup and pending Follow HTTP orchestration", () => {
+  it("rejects discontinued child data in form posts without invoking signup", async () => {
+    const completeSignup = vi.fn();
+    const handler = createOnboardingCompleteHandler({
+      appBaseUrl,
+      sessionSecret,
+      followIntentSecret: followSecret,
+      completeSignup,
+      now: () => now,
+    });
+    const response = await handler(
+      onboardingRequest(validIntent(), { childBirthYear: "" }),
+    );
+    expect(response.status).toBe(400);
+    expect(completeSignup).not.toHaveBeenCalled();
+  });
+  it("identifies stale consent so the form can request new agreement", async () => {
+    const handler = createOnboardingCompleteHandler({
+      appBaseUrl,
+      sessionSecret,
+      followIntentSecret: followSecret,
+      completeSignup: async () => {
+        throw new ConsentPolicyUpdatedError();
+      },
+      now: () => now,
+    });
+    const response = await handler(onboardingRequest(validIntent()));
+    expect(response.status).toBe(409);
+    expect(await response.json()).toMatchObject({
+      error: { code: "CONSENT_POLICY_UPDATED" },
+    });
+  });
   it("passes only the protected pending target to signup and clears intent after committed Follow completion", async () => {
     // Mutation caught: trusting form target data, clearing before completion,
     // or redirecting a committed Follow anywhere except My Preppy.
@@ -153,6 +188,10 @@ describe("WP-09 signup and pending Follow HTTP orchestration", () => {
     const completeSignup = vi.fn(async (context, input, serverInput) => {
       phases.push("signup-resolved");
       expect(context).toMatchObject({ userId });
+      expect(input).toMatchObject({
+        adultConfirmed: true,
+        serviceEmailUpdatesPolicyVersion: "2026-09-25",
+      });
       expect(input).not.toHaveProperty("userId");
       expect(input).not.toHaveProperty("institutionId");
       expect(serverInput).toEqual({ pendingFollow: { institutionId } });

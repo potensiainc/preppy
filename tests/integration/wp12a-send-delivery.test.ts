@@ -1,3 +1,7 @@
+import {
+  requestAccountDeletion,
+  eraseRequestedLocalAccount,
+} from "@/src/modules/account-deletion/repository.server";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
@@ -98,6 +102,84 @@ describe("WP-12A crash-safe email delivery", () => {
     await lockClient.end({ timeout: 5 });
     await sql.end({ timeout: 5 });
     await client.end({ timeout: 5 });
+  });
+
+  it("suppresses a recipient revoked after preparation but before provider handoff", async () => {
+    const fixture = await queuedDelivery();
+    let providerCalls = 0;
+    const result = await processEmailDelivery(
+      transactions,
+      {
+        eventId: fixture.sendEvent.id,
+        deliveryId: fixture.deliveryId,
+        workerId: "worker-send",
+        now: new Date("2026-08-24T02:03:00.000Z"),
+      },
+      {
+        sender: {
+          provider: "FAKE",
+          send: async () => {
+            providerCalls++;
+            return { kind: "ACCEPTED", provider: "FAKE" };
+          },
+        },
+        tracker: new TestAnalyticsTracker(),
+        afterAttemptStarted: async () => {
+          await sql`update users set status='DELETION_PENDING' where id=${fixture.follower.userId}`;
+        },
+      },
+    );
+    expect(providerCalls).toBe(0);
+    expect(result).toEqual({ kind: "SUPPRESSED", reason: "USER_INACTIVE" });
+    expect(
+      await persisted(fixture.deliveryId, fixture.sendEvent.id),
+    ).toMatchObject({
+      delivery_status: "SUPPRESSED",
+      event_status: "PROCESSED",
+      attempt_status: "FAILED_TERMINAL",
+    });
+  });
+  it("erases only events from the same provider when message IDs collide", async () => {
+    const fixture = await queuedDelivery();
+    const messageId = `deletion-collision-${Date.now()}`;
+    await processEmailDelivery(
+      transactions,
+      {
+        eventId: fixture.sendEvent.id,
+        deliveryId: fixture.deliveryId,
+        workerId: "worker-send",
+        now: new Date("2026-08-24T02:03:00.000Z"),
+      },
+      {
+        sender: new FakeEmailSender([
+          { kind: "ACCEPTED", provider: "FAKE", providerMessageId: messageId },
+        ]),
+        tracker: new TestAnalyticsTracker(),
+      },
+    );
+    for (const provider of ["FAKE", "OTHER"]) {
+      await sql`insert into email_provider_events(provider,provider_event_id,provider_message_id,event_type,payload_hash) values(${provider},${messageId},${messageId},'email.sent',${"sha256:" + "0".repeat(64)})`;
+    }
+    await sql`insert into auth_identities(user_id,provider,provider_subject,status) values(${fixture.follower.userId},'KAKAO',${String(Date.now())},'ACTIVE')`;
+    const deletionDb = {
+      executor: {
+        scope: "runtime" as const,
+        drizzle: database,
+        raw: database.execute.bind(database),
+      },
+      transactionManager: transactions,
+    };
+    const job = await requestAccountDeletion(
+      deletionDb,
+      fixture.follower.userId,
+      "ab".repeat(32),
+    );
+    await eraseRequestedLocalAccount(deletionDb, job.receiptId);
+    const survivors =
+      await sql`select provider from email_provider_events where provider_message_id=${messageId}`;
+    expect(survivors.map((row) => row.provider)).toEqual(["OTHER"]);
+    await sql`delete from email_provider_events where provider_message_id=${messageId}`;
+    await sql`delete from account_deletion_jobs where id=${job.receiptId}`;
   });
 
   it.each([

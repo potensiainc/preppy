@@ -26,7 +26,7 @@ import {
 describe("WP-05 command contexts", () => {
   it("keeps correlation IDs server-owned across user, admin, and system contexts", () => {
     // Mutation caught: accepting a client-controlled correlation ID in a derived context.
-    const occurredAt = new Date("2026-08-23T00:00:00.000Z");
+    const occurredAt = new Date("2026-09-26T00:00:00.000Z");
     const user = createUserCommandContext({
       userId: "user-1",
       occurredAt,
@@ -92,33 +92,33 @@ describe("WP-05 legal policies", () => {
     ]);
     expect(getCurrentLegalPolicy("TERMS_OF_SERVICE")).toEqual({
       type: "TERMS_OF_SERVICE",
-      version: "2026-08-23",
-      effectiveAt: "2026-08-23T00:00:00+09:00",
-      contentReference: "legal/terms/2026-08-23",
+      version: "2026-09-26",
+      effectiveAt: "2026-09-26",
+      contentReference: "/terms",
     });
     expect(getCurrentLegalPolicy("PRIVACY_POLICY")).toEqual({
       type: "PRIVACY_POLICY",
-      version: "2026-08-23",
-      effectiveAt: "2026-08-23T00:00:00+09:00",
-      contentReference: "legal/privacy/2026-08-23",
+      version: "2026-09-26",
+      effectiveAt: "2026-09-26",
+      contentReference: "/privacy",
     });
     expect(getCurrentLegalPolicy("SERVICE_EMAIL_UPDATES")).toEqual({
       type: "SERVICE_EMAIL_UPDATES",
-      version: "2026-08-23",
-      effectiveAt: "2026-08-23T00:00:00+09:00",
-      contentReference: "legal/service-email-updates/2026-08-23",
+      version: "2026-09-26",
+      effectiveAt: "2026-09-26",
+      contentReference: "/privacy#email-updates",
     });
     expect(getCurrentLegalPolicyVersions()).toEqual({
-      TERMS_OF_SERVICE: "2026-08-23",
-      PRIVACY_POLICY: "2026-08-23",
-      SERVICE_EMAIL_UPDATES: "2026-08-23",
+      TERMS_OF_SERVICE: "2026-09-26",
+      PRIVACY_POLICY: "2026-09-26",
+      SERVICE_EMAIL_UPDATES: "2026-09-26",
     });
   });
 
   it("accepts only current legal policy versions", () => {
     // Mutation caught: version checks accepting a stale or blank version.
     expect(() =>
-      assertCurrentLegalPolicyVersion("TERMS_OF_SERVICE", "2026-08-23"),
+      assertCurrentLegalPolicyVersion("TERMS_OF_SERVICE", "2026-09-26"),
     ).not.toThrow();
     expect(() =>
       assertCurrentLegalPolicyVersion("TERMS_OF_SERVICE", "2026-08-22"),
@@ -127,7 +127,7 @@ describe("WP-05 legal policies", () => {
       ConsentPolicyUpdatedError,
     );
     expect(() =>
-      assertCurrentLegalPolicyVersion("UNKNOWN_POLICY", "2026-08-23"),
+      assertCurrentLegalPolicyVersion("UNKNOWN_POLICY", "2026-09-26"),
     ).toThrow(ConsentPolicyUpdatedError);
   });
 
@@ -142,7 +142,7 @@ describe("WP-05 legal policies", () => {
       "SERVICE_EMAIL_UPDATES",
     ]);
     expect(() =>
-      assertCurrentLegalPolicyVersion("UNKNOWN_POLICY", "2026-08-23"),
+      assertCurrentLegalPolicyVersion("UNKNOWN_POLICY", "2026-09-26"),
     ).toThrow(ConsentPolicyUpdatedError);
   });
 
@@ -154,10 +154,10 @@ describe("WP-05 legal policies", () => {
     returnedPolicy.version = "1999-01-01";
 
     expect(getCurrentLegalPolicy("TERMS_OF_SERVICE").version).toBe(
-      "2026-08-23",
+      "2026-09-26",
     );
     expect(() =>
-      assertCurrentLegalPolicyVersion("TERMS_OF_SERVICE", "2026-08-23"),
+      assertCurrentLegalPolicyVersion("TERMS_OF_SERVICE", "2026-09-26"),
     ).not.toThrow();
   });
 

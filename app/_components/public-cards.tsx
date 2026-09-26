@@ -1,3 +1,5 @@
+import { publicRegionLabel } from "@/app/_lib/public-region-label";
+import { FollowCta } from "@/app/_components/follow-cta";
 import Link from "next/link";
 import { publicAdmissionText } from "@/src/modules/public/admission-copy";
 import { publicProse } from "@/src/modules/public/ux-writing";
@@ -78,9 +80,15 @@ export function InstitutionCard({
   const Heading = headingLevel === 4 ? "h4" : "h3";
   const region =
     institution.district ||
-    (institution.region === "KR-11" ? "서울" : institution.region);
+    (institution.region ? publicRegionLabel(institution.region) : null);
   return (
     <article className="public-card institution-card public-card--linked">
+      <FollowCta
+        institutionId={institution.id}
+        followable={institution.followable}
+        context="INSTITUTION"
+        returnPath={`/institutions/${institution.slug}`}
+      />
       <div className="card-kicker">
         <span>{categoryLabel(institution.category)}</span>
         {institution.currentAdmissionsState ? (

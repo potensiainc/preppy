@@ -178,11 +178,7 @@ describe("WP-09 authoritative Follow CTA island", () => {
         }),
       ).resolves.toBe("following");
 
-      expect(order).toEqual([
-        "fetch:/api/me/follows",
-        "committed",
-        "navigate:/my-preppy",
-      ]);
+      expect(order).toEqual(["fetch:/api/me/follows", "committed"]);
       expect(fetcher).toHaveBeenCalledWith("/api/me/follows", {
         method: "POST",
         credentials: "same-origin",
@@ -275,9 +271,11 @@ describe("WP-09 authoritative Follow CTA island", () => {
 
     expect(render("anonymous")).toContain("카카오 로그인");
     const followed = render("following");
-    expect(followed).toContain("관심기관 등록됨");
+    expect(followed).toContain('aria-pressed="true"');
+    expect(followed).toContain("<svg");
+    expect(followed).not.toContain("관심기관 등록됨");
     expect(followed).not.toContain("업데이트 받는 중");
-    expect(followed).toContain('href="/my-preppy"');
+    expect(followed).not.toContain('href="/my-preppy"');
     const error = render("error");
     expect(error).toContain('role="alert"');
     expect(error).toContain("관심기관 상태 다시 확인");

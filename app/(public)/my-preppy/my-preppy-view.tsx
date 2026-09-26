@@ -1,3 +1,8 @@
+"use client";
+
+import { publicRegionLabel } from "@/app/_lib/public-region-label";
+
+import { useState } from "react";
 import Link from "next/link";
 
 import {
@@ -18,9 +23,7 @@ const categoryLabels = {
 } as const;
 
 function regionLabel(region: string | null): string {
-  if (region === null) return "지역 미확인";
-  if (region === "SEOUL" || region === "KR-11") return "서울";
-  return region;
+  return region === null ? "지역 미확인" : publicRegionLabel(region);
 }
 
 function OpportunityList({
@@ -54,26 +57,26 @@ function OpportunityList({
 }
 
 export function MyPreppyView({ data }: { data: MyPreppyData }) {
+  const [removed, setRemoved] = useState<string[]>([]);
+  const [removalError, setRemovalError] = useState(false);
+  const cards = data.cards.filter(
+    (card) => !removed.includes(card.institution.id),
+  );
   return (
     <div className="page-container my-preppy-page">
       <header className="my-preppy-page__intro">
         <div>
           <p className="eyebrow">관심기관</p>
           <h1>내 프레피</h1>
-          <p>
-            관심기관의 입학정보와 이메일 수신 준비 상태를 한곳에서 확인할 수
-            있어요.
-          </p>
-        </div>
-        <div
-          className={`my-preppy-readiness my-preppy-readiness--${data.readiness.ready ? "ready" : "attention"}`}
-        >
-          <span>이메일 수신 준비 상태</span>
-          <strong>{data.readiness.label}</strong>
+          <Link href="/my-preppy/settings">계정 설정</Link>
+          <p>관심기관의 입학정보를 한곳에서 확인할 수 있어요.</p>
         </div>
       </header>
 
-      {data.cards.length === 0 ? (
+      {removalError ? (
+        <p role="alert">해제 결과를 확인하지 못했어요. 다시 시도해 주세요.</p>
+      ) : null}
+      {cards.length === 0 ? (
         <section
           className="empty-state"
           aria-labelledby="my-preppy-empty-title"
@@ -89,7 +92,7 @@ export function MyPreppyView({ data }: { data: MyPreppyData }) {
         </section>
       ) : (
         <section className="my-preppy-list" aria-label="관심기관">
-          {data.cards.map((card) => (
+          {cards.map((card) => (
             <article className="my-preppy-card" key={card.followId}>
               <div className="my-preppy-card__identity">
                 <p className="card-kicker">
@@ -106,11 +109,6 @@ export function MyPreppyView({ data }: { data: MyPreppyData }) {
                   {card.currentAdmissionsState
                     ? opportunityStateLabel(card.currentAdmissionsState)
                     : "미확인"}
-                </p>
-                <p
-                  className={`my-preppy-card__readiness my-preppy-card__readiness--${card.readiness.ready ? "ready" : "attention"}`}
-                >
-                  {card.readiness.label}
                 </p>
               </div>
 
@@ -161,6 +159,16 @@ export function MyPreppyView({ data }: { data: MyPreppyData }) {
                 <UnfollowControl
                   institutionId={card.institution.id}
                   institutionName={card.institution.name}
+                  onRemove={() => {
+                    setRemovalError(false);
+                    setRemoved((ids) => [...ids, card.institution.id]);
+                  }}
+                  onRestore={() => {
+                    setRemoved((ids) =>
+                      ids.filter((id) => id !== card.institution.id),
+                    );
+                    setRemovalError(true);
+                  }}
                 />
               </footer>
             </article>

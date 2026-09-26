@@ -320,11 +320,7 @@ describe("WP-16A real non-production backup/restore drill", () => {
       sourceDatabaseUrl: sourceUrl.toString(),
       targetDatabaseUrl: targetUrl.toString(),
       appBaseUrl: "https://preppy.example",
-      toolMode: {
-        kind: "DOCKER_COMPOSE_LOCAL",
-        service: "postgres",
-        databaseUser: "admissionradar",
-      },
+      toolMode: { kind: "DIRECT" },
       sideEffects: {
         workerEnabled: false,
         emailSendEnabled: false,
@@ -339,7 +335,7 @@ describe("WP-16A real non-production backup/restore drill", () => {
       externalSideEffectsEnabled: false,
       sourceDatabaseLabel: sourceName,
       artifactPathClass: "OS_TEMP/WP16A",
-      migrationLatest: "0016_english_kindergarten_profiles",
+      migrationLatest: "0017_account_deletion",
       criticalTableCountsMatch: true,
       invariants: "PASS",
       readSmoke: "PASS",

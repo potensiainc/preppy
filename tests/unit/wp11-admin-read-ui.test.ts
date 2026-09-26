@@ -146,26 +146,26 @@ describe("WP-11 Admin read input boundaries", () => {
 async function importReadPages() {
   try {
     return await Promise.all([
-      vi.importActual<typeof import("@/app/admin/(protected)/page")>(
-        "@/app/admin/(protected)/page",
+      vi.importActual<typeof import("@/app/admin/(protected)/page-content")>(
+        "@/app/admin/(protected)/page-content",
       ),
       vi.importActual<
-        typeof import("@/app/admin/(protected)/institutions/page")
-      >("@/app/admin/(protected)/institutions/page"),
+        typeof import("@/app/admin/(protected)/institutions/page-content")
+      >("@/app/admin/(protected)/institutions/page-content"),
       vi.importActual<
-        typeof import("@/app/admin/(protected)/opportunities/page")
-      >("@/app/admin/(protected)/opportunities/page"),
-      vi.importActual<typeof import("@/app/admin/(protected)/sources/page")>(
-        "@/app/admin/(protected)/sources/page",
+        typeof import("@/app/admin/(protected)/opportunities/page-content")
+      >("@/app/admin/(protected)/opportunities/page-content"),
+      vi.importActual<typeof import("@/app/admin/(protected)/sources/page-content")>(
+        "@/app/admin/(protected)/sources/page-content",
       ),
-      vi.importActual<typeof import("@/app/admin/(protected)/articles/page")>(
-        "@/app/admin/(protected)/articles/page",
+      vi.importActual<typeof import("@/app/admin/(protected)/articles/page-content")>(
+        "@/app/admin/(protected)/articles/page-content",
       ),
       vi.importActual<
-        typeof import("@/app/admin/(protected)/notifications/page")
-      >("@/app/admin/(protected)/notifications/page"),
-      vi.importActual<typeof import("@/app/admin/(protected)/users/page")>(
-        "@/app/admin/(protected)/users/page",
+        typeof import("@/app/admin/(protected)/notifications/page-content")
+      >("@/app/admin/(protected)/notifications/page-content"),
+      vi.importActual<typeof import("@/app/admin/(protected)/users/page-content")>(
+        "@/app/admin/(protected)/users/page-content",
       ),
     ] as const);
   } catch {
@@ -177,14 +177,14 @@ async function importDetailPages() {
   try {
     return await Promise.all([
       vi.importActual<
-        typeof import("@/app/admin/(protected)/institutions/[id]/page")
-      >("@/app/admin/(protected)/institutions/[id]/page"),
+        typeof import("@/app/admin/(protected)/institutions/[id]/page-content")
+      >("@/app/admin/(protected)/institutions/[id]/page-content"),
       vi.importActual<
-        typeof import("@/app/admin/(protected)/opportunities/[id]/page")
-      >("@/app/admin/(protected)/opportunities/[id]/page"),
+        typeof import("@/app/admin/(protected)/opportunities/[id]/page-content")
+      >("@/app/admin/(protected)/opportunities/[id]/page-content"),
       vi.importActual<
-        typeof import("@/app/admin/(protected)/sources/[id]/page")
-      >("@/app/admin/(protected)/sources/[id]/page"),
+        typeof import("@/app/admin/(protected)/sources/[id]/page-content")
+      >("@/app/admin/(protected)/sources/[id]/page-content"),
     ] as const);
   } catch {
     return null;

@@ -19,10 +19,13 @@ const userSessionSchema = z
     userId: z.uuid().transform((value) => value.toLowerCase()),
     issuedAt: z.number().int().safe().nonnegative(),
     expiresAt: z.number().int().safe().positive(),
+    oauthAuthenticatedAt: z.number().int().safe().nonnegative().optional(),
   })
   .strict()
   .refine(
     (session) =>
+      (session.oauthAuthenticatedAt === undefined ||
+        session.oauthAuthenticatedAt <= session.issuedAt) &&
       session.expiresAt > session.issuedAt &&
       session.expiresAt - session.issuedAt === USER_SESSION_TTL_SECONDS,
     { message: "Session timestamps are invalid" },
@@ -44,7 +47,12 @@ export type ClearUserSessionCookieDescriptor = {
 
 export function createUserSessionCookie(
   userId: string,
-  options: { secret: string; now?: Date; production?: boolean },
+  options: {
+    secret: string;
+    now?: Date;
+    production?: boolean;
+    oauthAuthenticatedAt?: number;
+  },
 ): UserSessionCookieDescriptor {
   const canonicalUserId = z.uuid().parse(userId).toLowerCase();
   const issuedAt = Math.floor((options.now ?? new Date()).getTime() / 1_000);
@@ -53,6 +61,9 @@ export function createUserSessionCookie(
     userId: canonicalUserId,
     issuedAt,
     expiresAt: issuedAt + USER_SESSION_TTL_SECONDS,
+    ...(options.oauthAuthenticatedAt === undefined
+      ? {}
+      : { oauthAuthenticatedAt: options.oauthAuthenticatedAt }),
   });
 
   return {

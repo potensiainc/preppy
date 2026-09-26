@@ -83,6 +83,7 @@ function signupContext(userId: string, occurredAt: Date = now) {
 
 function signupInput(overrides: Record<string, unknown> = {}) {
   return {
+    adultConfirmed: true,
     consents: [
       {
         type: "TERMS_OF_SERVICE",
@@ -95,6 +96,7 @@ function signupInput(overrides: Record<string, unknown> = {}) {
         policyVersion: policyVersions.PRIVACY_POLICY,
       },
     ],
+    serviceEmailUpdatesPolicyVersion: policyVersions.SERVICE_EMAIL_UPDATES,
     serviceEmailUpdatesConsent: true,
     ...overrides,
   };
@@ -447,11 +449,14 @@ describe("CompleteSignup", () => {
       signupContext(userId),
       signupInput({
         email: "  Parent.Person@Example.COM  ",
-        childBirthYear: 2020,
         interestRegions: [" seoul ", "SEOUL", " gyeonggi_do "],
         interestCategories: ["ENGLISH_KINDERGARTEN", "INTERNATIONAL_SCHOOL"],
       }),
-      { transactionManager: runtime.transactionManager, tracker },
+      {
+        transactionManager: runtime.transactionManager,
+        tracker,
+        isLegalPublicationReady: () => true,
+      },
     );
 
     expect(result).toEqual({ userId, userState: "ACTIVE", follow: null });
@@ -483,7 +488,7 @@ describe("CompleteSignup", () => {
     });
     await expect(
       runtime.client`select child_birth_year from user_profiles where user_id = ${userId}`,
-    ).resolves.toEqual([{ child_birth_year: 2020 }]);
+    ).resolves.toEqual([{ child_birth_year: 2018 }]);
     await expect(
       runtime.client`
         select region_code from user_interest_regions
@@ -568,7 +573,11 @@ describe("CompleteSignup", () => {
       completeSignup(
         signupContext(userId),
         signupInput({ serviceEmailUpdatesConsent: false }),
-        { transactionManager: runtime.transactionManager, tracker },
+        {
+          transactionManager: runtime.transactionManager,
+          tracker,
+          isLegalPublicationReady: () => true,
+        },
       ),
     ).resolves.toEqual({ userId, userState: "ACTIVE", follow: null });
 
@@ -609,6 +618,7 @@ describe("CompleteSignup", () => {
     await expect(
       completeSignup(signupContext(userId), signupInput(invalid), {
         transactionManager: runtime.transactionManager,
+        isLegalPublicationReady: () => true,
         tracker: new TestAnalyticsTracker(),
       }),
     ).rejects.toMatchObject({ code: "VALIDATION_ERROR" });
@@ -632,6 +642,7 @@ describe("CompleteSignup", () => {
         signupInput({ childBirthYear: year }),
         {
           transactionManager: runtime.transactionManager,
+          isLegalPublicationReady: () => true,
           tracker: new TestAnalyticsTracker(),
         },
       ),
@@ -645,7 +656,7 @@ describe("CompleteSignup", () => {
   });
 
   it.each([2008, 2026])(
-    "accepts inclusive child birth year boundary %i",
+    "rejects formerly accepted child birth year boundary %i",
     async (year) => {
       const userId = await createUserFixture();
 
@@ -655,13 +666,14 @@ describe("CompleteSignup", () => {
           signupInput({ childBirthYear: year }),
           {
             transactionManager: runtime.transactionManager,
+            isLegalPublicationReady: () => true,
             tracker: new TestAnalyticsTracker(),
           },
         ),
-      ).resolves.toEqual({ userId, userState: "ACTIVE", follow: null });
+      ).rejects.toMatchObject({ code: "VALIDATION_ERROR" });
       await expect(
         runtime.client`select child_birth_year from user_profiles where user_id = ${userId}`,
-      ).resolves.toEqual([{ child_birth_year: year }]);
+      ).resolves.toEqual([]);
     },
   );
 
@@ -687,6 +699,7 @@ describe("CompleteSignup", () => {
         }),
         {
           transactionManager: runtime.transactionManager,
+          isLegalPublicationReady: () => true,
           tracker: new TestAnalyticsTracker(),
         },
       ),
@@ -723,12 +736,12 @@ describe("CompleteSignup", () => {
         signupContext(userId),
         signupInput({
           email: "rollback@example.test",
-          childBirthYear: 2021,
           interestRegions: ["SEOUL"],
           interestCategories: ["ENGLISH_KINDERGARTEN"],
         }),
         {
           transactionManager: runtime.transactionManager,
+          isLegalPublicationReady: () => true,
           tracker,
           persistence: {
             ...defaultCompleteSignupPersistence,
@@ -762,6 +775,7 @@ describe("CompleteSignup", () => {
       signupInput({ serviceEmailUpdatesConsent: false }),
       {
         transactionManager: runtime.transactionManager,
+        isLegalPublicationReady: () => true,
         tracker: new TestAnalyticsTracker(),
       },
     );
@@ -811,6 +825,7 @@ describe("CompleteSignup", () => {
         signupInput({ email: onboarding.defaults.email }),
         {
           transactionManager: runtime.transactionManager,
+          isLegalPublicationReady: () => true,
           tracker: new TestAnalyticsTracker(),
         },
       );
@@ -855,6 +870,7 @@ describe("CompleteSignup", () => {
       signupInput({ email: " Changed.Parent@Example.COM " }),
       {
         transactionManager: runtime.transactionManager,
+        isLegalPublicationReady: () => true,
         tracker: new TestAnalyticsTracker(),
       },
     );
@@ -887,12 +903,20 @@ describe("CompleteSignup", () => {
     await completeSignup(
       signupContext(firstUserId),
       signupInput({ email: " Shared.Parent@Example.COM " }),
-      { transactionManager: runtime.transactionManager, tracker },
+      {
+        transactionManager: runtime.transactionManager,
+        tracker,
+        isLegalPublicationReady: () => true,
+      },
     );
     await completeSignup(
       signupContext(secondUserId),
       signupInput({ email: "shared.parent@example.com" }),
-      { transactionManager: runtime.transactionManager, tracker },
+      {
+        transactionManager: runtime.transactionManager,
+        tracker,
+        isLegalPublicationReady: () => true,
+      },
     );
 
     await expect(
@@ -914,6 +938,7 @@ describe("CompleteSignup", () => {
     const userId = await createUserFixture();
     const dependencies = {
       transactionManager: runtime.transactionManager,
+      isLegalPublicationReady: () => true,
       tracker: new TestAnalyticsTracker(),
     };
     await completeSignup(signupContext(userId), signupInput(), dependencies);
@@ -946,6 +971,7 @@ describe("CompleteSignup", () => {
     const ctx = signupContext(userId);
     const dependencies = {
       transactionManager: runtime.transactionManager,
+      isLegalPublicationReady: () => true,
       tracker,
       persistence,
     };
@@ -1006,10 +1032,9 @@ describe("CompleteSignup", () => {
       signupContext(userId),
       signupInput({
         email: "atomic@example.test",
-        childBirthYear: 2020,
         interestRegions: ["SEOUL"],
       }),
-      { transactionManager, tracker },
+      { transactionManager, tracker, isLegalPublicationReady: () => true },
       { pendingFollow: { institutionId } },
     );
 
@@ -1053,7 +1078,7 @@ describe("CompleteSignup", () => {
     });
   });
 
-  it("commits signup but omits a source-less pending Institution", async () => {
+  it("commits signup and the saved public Institution without monitor coverage", async () => {
     const userId = await createUserFixture();
     const institutionId = await createInstitutionFixture({
       monitorableCoverage: false,
@@ -1064,19 +1089,24 @@ describe("CompleteSignup", () => {
       completeSignup(
         signupContext(userId),
         signupInput(),
-        { transactionManager: runtime.transactionManager, tracker },
+        {
+          transactionManager: runtime.transactionManager,
+          tracker,
+          isLegalPublicationReady: () => true,
+        },
         { pendingFollow: { institutionId } },
       ),
-    ).resolves.toEqual({ userId, userState: "ACTIVE", follow: null });
+    ).resolves.toMatchObject({ userId, userState: "ACTIVE", follow: { institutionId, state: "ACTIVE" } });
     await expect(
       runtime.client`select status from users where id = ${userId}`,
     ).resolves.toEqual([{ status: "ACTIVE" }]);
     expect(await followStateForUser(userId)).toEqual({
-      follows: [],
-      episodes: [],
+      follows: [expect.objectContaining({ institution_id: institutionId, status: "ACTIVE" })],
+      episodes: [expect.objectContaining({ deactivated_at: null })],
     });
     expect(tracker.snapshot()).toEqual([
       { name: "signup_complete", properties: { context: "MY_PREPPY" } },
+      { name: "follow_created", properties: { institutionId, followCount: 1 } },
     ]);
   });
 
@@ -1094,12 +1124,12 @@ describe("CompleteSignup", () => {
         signupContext(userId),
         signupInput({
           email: "must-rollback@example.test",
-          childBirthYear: 2021,
           interestRegions: ["SEOUL"],
           interestCategories: ["ENGLISH_KINDERGARTEN"],
         }),
         {
           transactionManager: runtime.transactionManager,
+          isLegalPublicationReady: () => true,
           tracker,
           followPersistence: {
             ...defaultActivateFollowPersistence,
@@ -1155,7 +1185,11 @@ describe("CompleteSignup", () => {
         completeSignup(
           signupContext(userId),
           signupInput(),
-          { transactionManager: runtime.transactionManager, tracker },
+          {
+            transactionManager: runtime.transactionManager,
+            tracker,
+            isLegalPublicationReady: () => true,
+          },
           { pendingFollow: { institutionId } },
         ),
       ).resolves.toEqual({ userId, userState: "ACTIVE", follow: null });
@@ -1197,7 +1231,11 @@ describe("CompleteSignup", () => {
         completeSignup(
           context,
           input,
-          { transactionManager: runtime.transactionManager, tracker },
+          {
+            transactionManager: runtime.transactionManager,
+            tracker,
+            isLegalPublicationReady: () => true,
+          },
           serverInput,
         ),
       now: () => now,
@@ -1254,6 +1292,7 @@ describe("CompleteSignup", () => {
     const tracker = new TestAnalyticsTracker();
     const dependencies = {
       transactionManager: runtime.transactionManager,
+      isLegalPublicationReady: () => true,
       tracker,
     };
     const serverInput = { pendingFollow: { institutionId } };
@@ -1409,10 +1448,10 @@ describe("onboarding query", () => {
     });
 
     expect(state).toEqual({
+      legalPublicationReady: true,
       userState: "PENDING",
       defaults: {
         email: "provider@example.test",
-        childBirthYear: 2018,
         interestRegions: ["BUSAN"],
         interestCategories: ["PRIVATE_ELEMENTARY"],
         serviceEmailUpdatesConsent: false,

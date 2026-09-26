@@ -4,9 +4,11 @@ import { randomUUID } from "node:crypto";
 
 import { z } from "zod";
 
+import { DELETION_RECEIPT_COOKIE } from "@/src/modules/account-deletion/receipt-cookie";
 import type { AnalyticsTracker } from "@/src/analytics/tracker";
-import { ApplicationError } from "@/src/application/errors";
+import { ApplicationError, ValidationError } from "@/src/application/errors";
 import type { UserCommandContext } from "@/src/application/context";
+import { SignupExpiredError } from "@/src/modules/auth/complete-signup.server";
 import type {
   CompleteSignupResult,
   CompleteSignupServerInput,
@@ -18,6 +20,7 @@ import type {
 } from "@/src/modules/auth/kakao-provider.server";
 import {
   createOAuthState,
+  readOAuthReturnTo,
   OAUTH_STATE_COOKIE_NAME,
   OAUTH_STATE_TTL_SECONDS,
   oauthStateCookieAttributes,
@@ -69,7 +72,6 @@ type OnboardingHttpSource = {
   userState: "PENDING";
   defaults: {
     email: string | null;
-    childBirthYear: number | null;
     interestRegions: readonly string[];
     interestCategories: readonly string[];
     serviceEmailUpdatesConsent: boolean;
@@ -438,6 +440,10 @@ export function createKakaoStartHandler(dependencies: {
       issued = createOAuthState({
         secret: dependencies.oauthStateSecret,
         now,
+        ...(new URL(request.url).searchParams.get("returnTo") ===
+        "/my-preppy/settings"
+          ? { returnTo: "/my-preppy/settings" as const }
+          : {}),
       });
     } catch {
       return safeMutationFailure(503);
@@ -573,7 +579,12 @@ export function createKakaoCallbackHandler(dependencies: {
       );
       const identity = await dependencies.provider.resolveIdentity(grant);
       const user = await dependencies.resolveIdentity(identity);
+      const returnTo = readOAuthReturnTo(
+        readCookie(request, OAUTH_STATE_COOKIE_NAME),
+        { secret: dependencies.oauthStateSecret, now },
+      );
       const session = createUserSessionCookie(user.id, {
+        oauthAuthenticatedAt: Math.floor(now.getTime() / 1000),
         secret: dependencies.sessionSecret,
         now,
         production,
@@ -598,7 +609,7 @@ export function createKakaoCallbackHandler(dependencies: {
         });
       }
       let completedActiveFollow = false;
-      if (user.status === "ACTIVE" && validPendingIntent) {
+      if (user.status === "ACTIVE" && validPendingIntent && !returnTo) {
         await dependencies.activateFollow(
           {
             userId: user.id,
@@ -617,9 +628,11 @@ export function createKakaoCallbackHandler(dependencies: {
         location:
           user.status === "PENDING"
             ? "/onboarding"
-            : completedActiveFollow
-              ? "/my-preppy"
-              : "/",
+            : returnTo
+              ? returnTo
+              : completedActiveFollow
+                ? "/my-preppy"
+                : "/",
       });
       headers.append(
         "set-cookie",
@@ -635,6 +648,14 @@ export function createKakaoCallbackHandler(dependencies: {
       headers.append(
         "set-cookie",
         serializeCookie(session.name, session.value, session.attributes),
+      );
+      headers.append(
+        "set-cookie",
+        serializeCookie(
+          DELETION_RECEIPT_COOKIE,
+          "",
+          clearCookieAttributes(session.attributes),
+        ),
       );
       if (shouldClearPendingIntent) {
         headers.append(
@@ -699,8 +720,9 @@ function onboardingInput(
 ): unknown {
   if (!form) return value;
   const email = form.get("email")?.trim();
-  const childBirthYear = form.get("childBirthYear")?.trim();
+  if (form.has("childBirthYear")) throw ValidationError.invalidRequest();
   return {
+    adultConfirmed: form.get("adultConfirmed") === "on",
     consents: [
       ...(form.has("termsConsent")
         ? [
@@ -721,9 +743,10 @@ function onboardingInput(
           ]
         : []),
     ],
+    serviceEmailUpdatesPolicyVersion:
+      form.get("serviceEmailUpdatesPolicyVersion") ?? "",
     serviceEmailUpdatesConsent: form.has("serviceEmailUpdatesConsent"),
     ...(email ? { email } : {}),
-    ...(childBirthYear ? { childBirthYear: Number(childBirthYear) } : {}),
     interestRegions: form.getAll("interestRegions").filter(Boolean),
     interestCategories: form.getAll("interestCategories").filter(Boolean),
   };
@@ -785,6 +808,7 @@ export function createOnboardingCompleteHandler(dependencies: {
         },
       );
       const refreshed = createUserSessionCookie(result.userId, {
+        oauthAuthenticatedAt: session.oauthAuthenticatedAt,
         secret: dependencies.sessionSecret,
         now,
         production: dependencies.production,
@@ -824,6 +848,24 @@ export function createOnboardingCompleteHandler(dependencies: {
         ? Response.json(responseBody, { status: 200, headers })
         : new Response(null, { status: 303, headers });
     } catch (error) {
+      if (error instanceof SignupExpiredError) {
+        return jsonResponse({ error: { code: "SIGNUP_EXPIRED" } }, 403);
+      }
+      if (
+        error instanceof ApplicationError &&
+        error.code === "CONSENT_POLICY_UPDATED"
+      ) {
+        return jsonResponse(
+          {
+            error: {
+              code: error.code,
+              message:
+                "약관이 변경됐어요. 새 내용을 확인하고 다시 동의해 주세요.",
+            },
+          },
+          409,
+        );
+      }
       return safeMutationFailure(applicationErrorStatus(error));
     }
   };

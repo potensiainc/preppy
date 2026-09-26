@@ -3,8 +3,8 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
 import { ArticleProse } from "@/app/_components/article-prose";
-import { AdminArticleListView } from "@/app/admin/(protected)/articles/page";
-import { AdminArticlePreviewView } from "@/app/admin/(protected)/articles/[articleId]/preview/page";
+import { AdminArticleListView } from "@/app/admin/(protected)/articles/page-content";
+import { AdminArticlePreviewView } from "@/app/admin/(protected)/articles/[articleId]/preview/page-content";
 import type { AdminArticleDetailDTO } from "@/src/modules/admin/read-model/contracts";
 
 const article: AdminArticleDetailDTO = {

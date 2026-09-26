@@ -189,7 +189,8 @@ describe("WP-07 public UI foundation", () => {
     );
 
     expect(markup).toContain("관심기관 상태 확인 중");
-    expect(markup).toContain("관심기관 등록 여부를 확인하고 있어요.");
+    expect(markup).toContain('class="favorite-heart"');
+    expect(markup).not.toContain("관심기관 등록 여부를 확인하고 있어요.");
     expect(markup).toContain("550e8400-e29b-41d4-a716-446655440000");
     expect(markup).not.toMatch(/팔로우 완료|등록되었습니다/);
   });
@@ -220,7 +221,10 @@ describe("WP-07 public UI foundation", () => {
     expect(source).toContain('"use client"');
     expect(
       imports.filter(
-        (specifier) => specifier !== "react" && specifier !== "next/link",
+        (specifier) =>
+          specifier !== "react" &&
+          specifier !== "next/link" &&
+          specifier !== "@/app/_components/favorite-heart",
       ),
     ).toEqual([]);
   });

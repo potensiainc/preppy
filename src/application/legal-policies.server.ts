@@ -13,28 +13,28 @@ export type LegalPolicyType = (typeof legalPolicyTypes)[number];
 export type LegalPolicy = {
   readonly type: LegalPolicyType;
   readonly version: string;
-  readonly effectiveAt: string;
+  readonly effectiveAt: string | null;
   readonly contentReference: string;
 };
 
 const currentLegalPolicies = Object.freeze({
   TERMS_OF_SERVICE: Object.freeze({
     type: "TERMS_OF_SERVICE",
-    version: "2026-08-23",
-    effectiveAt: "2026-08-23T00:00:00+09:00",
-    contentReference: "legal/terms/2026-08-23",
+    version: "2026-09-26",
+    effectiveAt: "2026-09-26",
+    contentReference: "/terms",
   }),
   PRIVACY_POLICY: Object.freeze({
     type: "PRIVACY_POLICY",
-    version: "2026-08-23",
-    effectiveAt: "2026-08-23T00:00:00+09:00",
-    contentReference: "legal/privacy/2026-08-23",
+    version: "2026-09-26",
+    effectiveAt: "2026-09-26",
+    contentReference: "/privacy",
   }),
   SERVICE_EMAIL_UPDATES: Object.freeze({
     type: "SERVICE_EMAIL_UPDATES",
-    version: "2026-08-23",
-    effectiveAt: "2026-08-23T00:00:00+09:00",
-    contentReference: "legal/service-email-updates/2026-08-23",
+    version: "2026-09-26",
+    effectiveAt: "2026-09-26",
+    contentReference: "/privacy#email-updates",
   }),
 } satisfies Record<LegalPolicyType, LegalPolicy>);
 
@@ -68,4 +68,15 @@ export function assertCurrentLegalPolicyVersion(
 
 function isLegalPolicyType(type: string): type is LegalPolicyType {
   return Object.hasOwn(currentLegalPolicies, type);
+}
+
+/** Publication tracks the effective documents, independently of optional feature rollout. */
+export function getLegalPublicationState(): {
+  readonly ready: boolean;
+  readonly blockers: readonly string[];
+} {
+  const blockers = legalPolicyTypes.filter(
+    (type) => !currentLegalPolicies[type].effectiveAt,
+  );
+  return { ready: blockers.length === 0, blockers };
 }
