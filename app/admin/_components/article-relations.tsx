@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import { ARTICLE_FIELD_LIMITS } from "@/app/admin/_lib/article-labels";
+
 import type { ArticleRelationOptionDTO } from "@/src/modules/admin/read-model/contracts";
 
 const staleMessage =
@@ -27,8 +29,18 @@ type RelationProps = Readonly<{
 export function ArticleRelations(props: RelationProps) {
   const [message, setMessage] = useState("");
   const [isStale, setIsStale] = useState(false);
+  const [queries, setQueries] = useState({ Institution: "", Opportunity: "" });
   const toggle = (kind: "institutionIds" | "opportunityIds", id: string) => {
     const current = props[kind];
+    if (
+      !current.includes(id) &&
+      current.length >= ARTICLE_FIELD_LIMITS.relations
+    ) {
+      setMessage(
+        `기관과 입학정보는 각각 최대 ${ARTICLE_FIELD_LIMITS.relations}개까지 연결할 수 있어요.`,
+      );
+      return;
+    }
     const next = current.includes(id)
       ? current.filter((item) => item !== id)
       : [...current, id];
@@ -89,10 +101,46 @@ export function ArticleRelations(props: RelationProps) {
               : props.opportunityIds;
           const kind =
             label === "Institution" ? "institutionIds" : "opportunityIds";
+          const title = label === "Opportunity" ? "입학정보" : "기관";
+          const query = queries[label].trim().toLocaleLowerCase("ko-KR");
+          const matches = (option: ArticleRelationOptionDTO) =>
+            query === "" ||
+            option.label.toLocaleLowerCase("ko-KR").includes(query) ||
+            option.slug.includes(query);
+          const selectedOptions = options.filter((option) =>
+            selected.includes(option.id),
+          );
+          const otherOptions = options.filter(
+            (option) => !selected.includes(option.id) && matches(option),
+          );
+          const visible = [
+            ...selectedOptions,
+            ...otherOptions.slice(0, query === "" ? 20 : 60),
+          ];
           return (
             <fieldset key={label}>
-              <legend>{label === "Opportunity" ? "입학정보" : "기관"}</legend>
-              {options.map((option) => (
+              <legend>
+                {title} ({selected.length}/{ARTICLE_FIELD_LIMITS.relations})
+              </legend>
+              <input
+                type="search"
+                className="admin-article-relation-search"
+                aria-label={`${title} 검색`}
+                placeholder={`${title} 이름으로 검색 (전체 ${options.length}개)`}
+                value={queries[label]}
+                onChange={(event) =>
+                  setQueries((current) => ({
+                    ...current,
+                    [label]: event.target.value,
+                  }))
+                }
+              />
+              {query !== "" && otherOptions.length === 0 ? (
+                <p className="admin-article-relation-empty">
+                  검색 결과가 없어요.
+                </p>
+              ) : null}
+              {visible.map((option) => (
                 <label key={option.id}>
                   <input
                     type="checkbox"

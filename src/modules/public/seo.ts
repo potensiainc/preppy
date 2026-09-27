@@ -11,6 +11,16 @@ import type {
   PublicOpportunityDTO,
 } from "@/src/modules/public/dto";
 
+export const SITE_NAME = "PREPPY 프레피";
+export const OG_IMAGE_SIZE = { width: 1200, height: 630 } as const;
+
+type OrganizationJsonLd = Readonly<{
+  "@type": "Organization";
+  name: string;
+  url: string;
+  logo?: Readonly<{ "@type": "ImageObject"; url: string }>;
+}>;
+
 export type ArticleJsonLd = Readonly<{
   "@context": "https://schema.org";
   "@type": "Article";
@@ -19,7 +29,12 @@ export type ArticleJsonLd = Readonly<{
   mainEntityOfPage: string;
   datePublished: string;
   dateModified: string;
-  image?: string;
+  inLanguage: "ko-KR";
+  articleSection: string;
+  author: OrganizationJsonLd;
+  publisher: OrganizationJsonLd;
+  image: readonly string[];
+  keywords?: string;
 }>;
 
 export type ArticleBreadcrumbJsonLd = Readonly<{
@@ -35,11 +50,26 @@ export type ArticleBreadcrumbJsonLd = Readonly<{
     Readonly<{
       "@type": "ListItem";
       position: 2;
+      name: "입학 가이드";
+      item: string;
+    }>,
+    Readonly<{
+      "@type": "ListItem";
+      position: 3;
       name: string;
       item: string;
     }>,
   ];
 }>;
+
+const ARTICLE_SECTION_LABELS: Readonly<
+  Record<PublicArticleDTO["category"], string>
+> = {
+  ENGLISH_KINDERGARTEN: "영어유치원",
+  PRIVATE_ELEMENTARY: "사립초등학교",
+  INTERNATIONAL_SCHOOL: "국제학교",
+  ADMISSIONS_GENERAL: "입학 일반",
+};
 
 function origin(appBaseUrl: string): string {
   const url = new URL(appBaseUrl);
@@ -87,13 +117,142 @@ function safeAbsoluteImage(value: string | null): string | null {
   }
 }
 
-export function buildHomeMetadata(appBaseUrl: string): Metadata {
+function organization(appBaseUrl: string): OrganizationJsonLd {
   return {
-    title: "PREPPY | 입학정보를 더 차분하게",
-    description:
-      "학교와 기관의 공식 안내를 바탕으로 입학 일정과 지원 조건을 한곳에서 확인해 보세요.",
+    "@type": "Organization",
+    name: SITE_NAME,
+    url: canonical(appBaseUrl, "/"),
+    logo: { "@type": "ImageObject", url: canonical(appBaseUrl, "/og/logo") },
+  };
+}
+
+/** Versioned so share caches refetch after every Article update. */
+export function articleOgImageUrl(
+  dto: Pick<PublicArticleDTO, "slug" | "updatedAt">,
+  appBaseUrl: string,
+): string {
+  const version = Date.parse(dto.updatedAt);
+  return canonical(
+    appBaseUrl,
+    `/og/articles/${dto.slug}${Number.isFinite(version) ? `?v=${version}` : ""}`,
+  );
+}
+
+export function defaultOgImage(appBaseUrl: string) {
+  return {
+    url: canonical(appBaseUrl, "/og/default"),
+    ...OG_IMAGE_SIZE,
+    alt: "PREPPY 프레피 — 영어유치원·사립초·국제학교 입학정보",
+  };
+}
+
+/**
+ * Site-wide defaults. Statically prerendered pages (404, terms, privacy) also
+ * inherit these at build time, so nothing here may carry an absolute URL or a
+ * runtime secret; URL-bearing defaults live in `websiteOpenGraph`.
+ */
+export function buildRootMetadata(appBaseUrl: string): Metadata {
+  return {
+    metadataBase: new URL(origin(appBaseUrl)),
+    applicationName: SITE_NAME,
+    twitter: { card: "summary_large_image" },
+  };
+}
+
+/** Default share card for dynamic, non-Article pages. */
+function websiteOpenGraph(
+  appBaseUrl: string,
+  path: string,
+  title: string,
+  description: string,
+): Pick<Metadata, "openGraph" | "twitter"> {
+  const image = defaultOgImage(appBaseUrl);
+  return {
+    openGraph: {
+      title,
+      description,
+      url: canonical(appBaseUrl, path),
+      siteName: SITE_NAME,
+      locale: "ko_KR",
+      type: "website",
+      images: [image],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [image.url],
+    },
+  };
+}
+
+/** Search-console ownership tags, read at request time on the home page. */
+export function siteVerification(
+  environment: Record<string, string | undefined> = process.env,
+): Pick<Metadata, "verification"> {
+  const google = environment.GOOGLE_SITE_VERIFICATION?.trim();
+  const naver = environment.NAVER_SITE_VERIFICATION?.trim();
+  if (!google && !naver) return {};
+  return {
+    verification: {
+      ...(google ? { google } : {}),
+      ...(naver ? { other: { "naver-site-verification": naver } } : {}),
+    },
+  };
+}
+
+export function buildArticleListMetadata(
+  appBaseUrl: string,
+  page: number,
+  hasArticles: boolean,
+): Metadata {
+  const path = page > 1 ? `/articles?page=${page}` : "/articles";
+  const title =
+    page > 1 ? `입학 가이드 ${page}페이지 | PREPPY` : "입학 가이드 | PREPPY";
+  const description =
+    "영어유치원·사립초·국제학교 입학 일정과 준비 방법을 공식 안내를 바탕으로 정리했어요.";
+  return {
+    title,
+    description,
+    alternates: { canonical: canonical(appBaseUrl, path) },
+    robots: { index: hasArticles, follow: true },
+    ...websiteOpenGraph(appBaseUrl, path, title, description),
+  };
+}
+
+export function buildArticleTagMetadata(
+  appBaseUrl: string,
+  tag: string,
+  page: number,
+  indexable: boolean,
+): Metadata {
+  const base = `/articles/tag/${encodeURIComponent(tag)}`;
+  const path = page > 1 ? `${base}?page=${page}` : base;
+  const title = `${tag} 입학정보 모아보기${page > 1 ? ` ${page}페이지` : ""} | PREPPY`;
+  const description = `‘${tag}’ 관련 입학 일정과 준비 방법을 모아봤어요.`;
+  return {
+    title,
+    description,
+    alternates: { canonical: canonical(appBaseUrl, path) },
+    robots: { index: indexable, follow: true },
+    ...websiteOpenGraph(appBaseUrl, path, title, description),
+  };
+}
+
+export function buildHomeMetadata(
+  appBaseUrl: string,
+  environment: Record<string, string | undefined> = process.env,
+): Metadata {
+  const title = "PREPPY | 입학정보를 더 차분하게";
+  const description =
+    "학교와 기관의 공식 안내를 바탕으로 입학 일정과 지원 조건을 한곳에서 확인해 보세요.";
+  return {
+    title,
+    description,
     alternates: { canonical: canonical(appBaseUrl, "/") },
     robots: { index: true, follow: true },
+    ...websiteOpenGraph(appBaseUrl, "/", title, description),
+    ...siteVerification(environment),
   };
 }
 
@@ -101,12 +260,15 @@ export function buildInstitutionListMetadata(
   appBaseUrl: string,
   hasFilters: boolean,
 ): Metadata {
+  const title = "기관 찾기 | PREPPY";
+  const description =
+    "관심 있는 학교와 기관을 찾고, 공개된 입학 일정과 지원 조건을 확인해 보세요.";
   return {
-    title: "기관 찾기 | PREPPY",
-    description:
-      "관심 있는 학교와 기관을 찾고, 공개된 입학 일정과 지원 조건을 확인해 보세요.",
+    title,
+    description,
     alternates: { canonical: canonical(appBaseUrl, "/institutions") },
     robots: { index: !hasFilters, follow: true },
+    ...websiteOpenGraph(appBaseUrl, "/institutions", title, description),
   };
 }
 
@@ -114,13 +276,15 @@ export function buildInstitutionMetadata(
   dto: InstitutionDetailDTO,
   appBaseUrl: string,
 ): Metadata {
+  const title = `${dto.institution.name} | PREPPY`;
+  const description = `${dto.institution.name}의 기관 정보와 공식 안내를 확인해 보세요.`;
+  const path = `/institutions/${dto.institution.slug}`;
   return {
-    title: `${dto.institution.name} | PREPPY`,
-    description: `${dto.institution.name}의 기관 정보와 공식 안내를 확인해 보세요.`,
-    alternates: {
-      canonical: canonical(appBaseUrl, `/institutions/${dto.institution.slug}`),
-    },
+    title,
+    description,
+    alternates: { canonical: canonical(appBaseUrl, path) },
     robots: robots(dto.indexability),
+    ...websiteOpenGraph(appBaseUrl, path, title, description),
   };
 }
 
@@ -128,15 +292,17 @@ export function buildOpportunityMetadata(
   dto: PublicOpportunityDTO,
   appBaseUrl: string,
 ): Metadata {
+  const title = `${dto.title} | PREPPY`;
+  const description =
+    publicProse(publicAdmissionText(dto.summary)) ??
+    `${dto.institution.name}의 입학 안내를 확인해 보세요.`;
+  const path = `/opportunities/${dto.slug}`;
   return {
-    title: `${dto.title} | PREPPY`,
-    description:
-      publicProse(publicAdmissionText(dto.summary)) ??
-      `${dto.institution.name}의 입학 안내를 확인해 보세요.`,
-    alternates: {
-      canonical: canonical(appBaseUrl, `/opportunities/${dto.slug}`),
-    },
+    title,
+    description,
+    alternates: { canonical: canonical(appBaseUrl, path) },
     robots: robots(dto.indexability),
+    ...websiteOpenGraph(appBaseUrl, path, title, description),
   };
 }
 
@@ -144,20 +310,40 @@ export function buildArticleMetadata(
   dto: PublicArticleDTO,
   appBaseUrl: string,
 ): Metadata {
-  const image = safeAbsoluteImage(dto.featuredImageUrl);
+  const title = dto.seoTitle ?? dto.title;
+  const description =
+    publicProse(dto.seoDescription ?? dto.excerpt) ?? undefined;
+  const url = canonical(appBaseUrl, `/articles/${dto.slug}`);
+  const tags = [...(dto.tags ?? [])];
+  const image = {
+    url: articleOgImageUrl(dto, appBaseUrl),
+    ...OG_IMAGE_SIZE,
+    alt: dto.featuredImageAlt ?? dto.title,
+  };
   return {
-    title: dto.seoTitle ?? dto.title,
-    description: publicProse(dto.seoDescription ?? dto.excerpt) ?? undefined,
-    alternates: {
-      canonical: canonical(appBaseUrl, `/articles/${dto.slug}`),
-    },
+    title,
+    description,
+    ...(tags.length > 0 ? { keywords: tags } : {}),
+    alternates: { canonical: url },
     robots: robots(dto.indexability, dto.robotsFollow),
     openGraph: {
-      title: dto.seoTitle ?? dto.title,
-      description: publicProse(dto.seoDescription ?? dto.excerpt) ?? undefined,
+      title,
+      description,
       type: "article",
-      url: canonical(appBaseUrl, `/articles/${dto.slug}`),
-      ...(image === null ? {} : { images: [image] }),
+      url,
+      siteName: SITE_NAME,
+      locale: "ko_KR",
+      ...(dto.publishedAt ? { publishedTime: dto.publishedAt } : {}),
+      modifiedTime: dto.updatedAt,
+      section: ARTICLE_SECTION_LABELS[dto.category],
+      ...(tags.length > 0 ? { tags } : {}),
+      images: [image],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [image.url],
     },
   };
 }
@@ -195,7 +381,8 @@ export function buildArticleJsonLd(
 ): ArticleJsonLd | null {
   const eligible = articleStructuredDataEligibility(dto, appBaseUrl);
   if (!eligible) return null;
-  const image = safeAbsoluteImage(dto.featuredImageUrl);
+  const featured = safeAbsoluteImage(dto.featuredImageUrl);
+  const tags = dto.tags ?? [];
   return {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -204,7 +391,15 @@ export function buildArticleJsonLd(
     mainEntityOfPage: eligible.canonical,
     datePublished: dto.publishedAt!,
     dateModified: dto.updatedAt,
-    ...(image === null ? {} : { image }),
+    inLanguage: "ko-KR",
+    articleSection: ARTICLE_SECTION_LABELS[dto.category],
+    author: organization(appBaseUrl),
+    publisher: organization(appBaseUrl),
+    image: [
+      articleOgImageUrl(dto, appBaseUrl),
+      ...(featured === null ? [] : [featured]),
+    ],
+    ...(tags.length > 0 ? { keywords: tags.join(", ") } : {}),
   };
 }
 
@@ -227,6 +422,12 @@ export function buildArticleBreadcrumbJsonLd(
       {
         "@type": "ListItem",
         position: 2,
+        name: "입학 가이드",
+        item: canonical(appBaseUrl, "/articles"),
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
         name: dto.title,
         item: eligible.canonical,
       },

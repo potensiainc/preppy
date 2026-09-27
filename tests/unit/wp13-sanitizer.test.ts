@@ -58,9 +58,39 @@ describe("WP-13 Article HTML sanitizer", () => {
         "<table><tr><td>cell</td></tr></table>",
     );
 
-    expect(result.html).toBe("<p>Safe</p>submitcell");
+    expect(result.html).toBe(
+      "<p>Safe</p>submit<table><tr><td>cell</td></tr></table>",
+    );
     expect(result.html).not.toMatch(
-      /script|style|iframe|object|embed|form|input|button|video|audio|img|table|onerror|onclick|class=|id=|data-/i,
+      /script|style|iframe|object|embed|form|input|button|video|audio|img|onerror|onclick|class=|id=|data-/i,
+    );
+  });
+
+  it("keeps editorial tables with bounded cell spans only", () => {
+    const result = sanitize(
+      '<table style="min-width:50px"><colgroup><col style="min-width:25px"></colgroup><tbody>' +
+        '<tr><th colspan="1" rowspan="1"><p>학교</p></th><th colspan="2" onclick="x()"><p>일정</p></th></tr>' +
+        '<tr><td rowspan="999" class="c"><p>리라초</p></td><td colspan="0">11/6</td></tr>' +
+        "</tbody></table>",
+    );
+
+    expect(result.html).toBe(
+      "<table><colgroup><col /></colgroup><tbody>" +
+        '<tr><th><p>학교</p></th><th colspan="2"><p>일정</p></th></tr>' +
+        "<tr><td><p>리라초</p></td><td>11/6</td></tr>" +
+        "</tbody></table>",
+    );
+  });
+
+  it("keeps only credential-free HTTPS images with alt text and lazy loading", () => {
+    const result = sanitize(
+      '<p>a</p><img src="https://cdn.example/a.png" alt="설명" onerror="x()" width="3">' +
+        '<img src="http://cdn.example/a.png"><img src="javascript:alert(1)">' +
+        '<img src="https://user:pass@cdn.example/a.png"><img src="/local.png"><img>',
+    );
+
+    expect(result.html).toBe(
+      '<p>a</p><img src="https://cdn.example/a.png" alt="설명" loading="lazy" />',
     );
   });
 

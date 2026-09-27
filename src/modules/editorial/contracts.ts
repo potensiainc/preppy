@@ -11,6 +11,11 @@ import {
 
 import { ARTICLE_CANONICAL_SLUG } from "./article-links.server";
 import { ARTICLE_HTML_MAX_BYTES } from "./sanitizer.server";
+import {
+  ARTICLE_TAG_MAX_ITEMS,
+  normalizeArticleTag,
+  normalizeArticleTags,
+} from "./tags";
 
 const ARTICLE_SLUG_MAX_CHARACTERS = 120;
 const ARTICLE_TITLE_MAX_CODE_POINTS = 160;
@@ -155,6 +160,19 @@ const relationIds = z
   .transform((values) => [...new Set(values)].sort())
   .refine((values) => values.length <= ARTICLE_RELATION_MAX_ITEMS);
 
+const articleTagsSchema = z
+  .array(z.string().max(200))
+  .max(ARTICLE_TAG_MAX_ITEMS * 3)
+  .refine((values) =>
+    values.every(
+      (value) => value.trim() === "" || normalizeArticleTag(value) !== null,
+    ),
+  )
+  .transform((values) => normalizeArticleTags(values))
+  .refine((values) => values.length <= ARTICLE_TAG_MAX_ITEMS)
+  .optional()
+  .transform((values) => values ?? []);
+
 const articleDraftCandidateSchema = z
   .object({
     title: normalizedText(ARTICLE_TITLE_MAX_CODE_POINTS, false),
@@ -175,6 +193,7 @@ const articleDraftCandidateSchema = z
     robotsFollow: z.boolean(),
     featuredImageUrl: nullableHttpUrlSchema,
     featuredImageAlt: normalizedNullableText(ARTICLE_IMAGE_ALT_MAX_CODE_POINTS),
+    tags: articleTagsSchema,
   })
   .strict();
 
@@ -243,6 +262,7 @@ export type ArticleDraftCandidate = Readonly<{
   robotsFollow: boolean;
   featuredImageUrl: string | null;
   featuredImageAlt: string | null;
+  tags: readonly string[];
 }>;
 
 export type ArticlePublishCandidate = ArticleDraftCandidate &

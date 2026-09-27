@@ -20,6 +20,55 @@ export function ArticleEditorToolbar({ editor }: Readonly<{ editor: Editor }>) {
     if (href.trim() === "") editor.chain().focus().unsetLink().run();
     else editor.chain().focus().extendMarkRange("link").setLink({ href }).run();
   };
+  const image = () => {
+    const src = window.prompt(
+      "https://로 시작하는 이미지 주소를 입력해 주세요.",
+      "",
+    );
+    if (src === null || src.trim() === "") return;
+    if (!/^https:\/\//iu.test(src.trim())) {
+      window.alert("이미지 주소는 https://로 시작해야 해요.");
+      return;
+    }
+    const alt = window.prompt(
+      "이미지를 설명하는 대체 텍스트를 입력해 주세요. (예: 2027 리라초 모집요강 표)",
+      "",
+    );
+    editor
+      .chain()
+      .focus()
+      .setImage({ src: src.trim(), alt: alt?.trim() ?? "" })
+      .run();
+  };
+  const inTable = editor.isActive("table");
+  const tableActions: readonly ToolbarAction[] = inTable
+    ? [
+        {
+          label: "아래에 행 추가",
+          run: () => void editor.chain().focus().addRowAfter().run(),
+        },
+        {
+          label: "오른쪽에 열 추가",
+          run: () => void editor.chain().focus().addColumnAfter().run(),
+        },
+        {
+          label: "행 삭제",
+          run: () => void editor.chain().focus().deleteRow().run(),
+        },
+        {
+          label: "열 삭제",
+          run: () => void editor.chain().focus().deleteColumn().run(),
+        },
+        {
+          label: "제목 행 전환",
+          run: () => void editor.chain().focus().toggleHeaderRow().run(),
+        },
+        {
+          label: "표 삭제",
+          run: () => void editor.chain().focus().deleteTable().run(),
+        },
+      ]
+    : [];
   const actions: readonly ToolbarAction[] = [
     {
       label: "문단",
@@ -81,6 +130,18 @@ export function ArticleEditorToolbar({ editor }: Readonly<{ editor: Editor }>) {
       run: () => void editor.chain().focus().setHorizontalRule().run(),
     },
     { label: "링크 추가", active: editor.isActive("link"), run: link },
+    {
+      label: "표 삽입",
+      disabled: inTable,
+      run: () =>
+        void editor
+          .chain()
+          .focus()
+          .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
+          .run(),
+    },
+    { label: "이미지 (URL)", run: image },
+    ...tableActions,
     {
       label: "링크 제거",
       disabled: !editor.isActive("link"),

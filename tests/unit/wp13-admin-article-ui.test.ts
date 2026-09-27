@@ -11,6 +11,7 @@ async function source(file: string): Promise<string> {
 
 describe("WP-13 Admin Article editor UI contract", () => {
   it("uses the approved Admin-only StarterKit editor surface and bounded toolbar", async () => {
+    // 2026-09-27 Owner decision: tables and HTTPS image URLs are allowed in articles.
     const editor = await source("app/admin/_components/article-editor.tsx");
     const toolbar = await source(
       "app/admin/_components/article-editor-toolbar.tsx",
@@ -20,9 +21,10 @@ describe("WP-13 Admin Article editor UI contract", () => {
     expect(editor).toContain("StarterKit.configure");
     expect(combined).toMatch(/@tiptap\/react/);
     expect(combined).toMatch(/@tiptap\/starter-kit/);
-    expect(combined).not.toMatch(
-      /extension-image|extension-table|Collaboration|autosave/i,
-    );
+    expect(combined).toMatch(/@tiptap\/extension-table/);
+    expect(combined).toMatch(/@tiptap\/extension-image/);
+    expect(combined).toContain("allowBase64: false");
+    expect(combined).not.toMatch(/Collaboration|autosave/i);
     for (const command of [
       "setParagraph",
       "toggleHeading",
@@ -40,11 +42,17 @@ describe("WP-13 Admin Article editor UI contract", () => {
       "unsetLink",
       "undo",
       "redo",
+      "insertTable",
+      "addRowAfter",
+      "addColumnAfter",
+      "deleteRow",
+      "deleteColumn",
+      "toggleHeaderRow",
+      "deleteTable",
+      "setImage",
     ])
       expect(combined).toContain(command);
-    expect(combined).not.toMatch(
-      /level:\s*1|setImage|insertTable|youtube|video/i,
-    );
+    expect(combined).not.toMatch(/level:\s*1|youtube|video/i);
   });
 
   it("keeps sanitized initial HTML and explicit visual/source synchronization", async () => {
@@ -56,6 +64,15 @@ describe("WP-13 Admin Article editor UI contract", () => {
     );
     expect(editor).toContain("안전하지 않은 HTML 요소가 제거될 수 있어요");
     expect(editor).not.toMatch(/iframe|dangerouslySetInnerHTML/);
+  });
+
+  it("warns before leaving with unsaved changes and explains publish requirements", async () => {
+    const editor = await source("app/admin/_components/article-editor.tsx");
+    expect(editor).toContain("beforeunload");
+    expect(editor).toContain("요약 또는 검색 설명 중 하나를 입력해 주세요.");
+    expect(editor).toContain("NOT_ELIGIBLE");
+    expect(editor).toContain("ARTICLE_TYPE_OPTIONS");
+    expect(editor).not.toMatch(/<option>GUIDE<\/option>/);
   });
 
   it("submits only candidates/expected tokens and keeps lifecycle actions explicit", async () => {

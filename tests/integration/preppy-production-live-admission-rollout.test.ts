@@ -320,7 +320,7 @@ describe("one-time production five-school rollout on disposable PostgreSQL", () 
       mode: "inspect",
       migration: {
         status: "MATCH",
-        latest: "0017_account_deletion",
+        latest: "0018_article_tags",
       },
       records: [{ state: "READY", stage: "PREPARE" }],
     });

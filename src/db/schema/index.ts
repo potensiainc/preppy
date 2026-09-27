@@ -3184,6 +3184,10 @@ export const articles = pgTable(
     robotsFollow: boolean("robots_follow").notNull(),
     featuredImageUrl: text("featured_image_url"),
     featuredImageAlt: text("featured_image_alt"),
+    tags: text("tags")
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
     authorAdminId: uuid("author_admin_id").references(() => adminUsers.id, {
       onDelete: "restrict",
     }),
@@ -3214,6 +3218,10 @@ export const articles = pgTable(
     check(
       "articles_status_check",
       sql`${table.status} in ('DRAFT', 'PUBLISHED', 'UNPUBLISHED', 'ARCHIVED')`,
+    ),
+    check(
+      "articles_tags_cardinality_check",
+      sql`cardinality(${table.tags}) <= 10`,
     ),
     check(
       "articles_published_completeness_check",

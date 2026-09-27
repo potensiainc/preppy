@@ -23,6 +23,7 @@ export function toPublicArticleDTO(
     publishedAt: article.publishedAt,
     featuredImageUrl: article.featuredImageUrl,
     featuredImageAlt: article.featuredImageAlt,
+    tags: article.tags ?? [],
     indexability: getIndexability({
       entity: "ARTICLE",
       status: "PUBLISHED",

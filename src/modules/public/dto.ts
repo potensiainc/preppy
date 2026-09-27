@@ -291,6 +291,7 @@ export type ArticleCardDTO = {
 
 export type PublicArticleDTO = ArticleCardDTO & {
   updatedAt: string;
+  tags?: readonly string[];
   seoTitle: string | null;
   seoDescription: string | null;
   canonicalUrl: string | null;

@@ -566,7 +566,8 @@ describe("WP-07 Opportunity and Article detail pages", () => {
     expect(markup).not.toContain("<script>");
     expect(markup).not.toContain('alert("unsafe")');
     expect(markup).not.toContain("NOINDEX");
-    expect(markup).not.toContain("2026년 8월 22일");
+    // The modified date is shown when it differs from the published date.
+    expect(markup).toContain('수정 <time dateTime="2026-08-22T03:30:00.000Z">');
   });
 
   it("omits opportunity fields that the DTO does not provide", () => {

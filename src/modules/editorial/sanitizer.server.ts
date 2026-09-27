@@ -6,7 +6,7 @@ import sanitizeHtml from "sanitize-html";
 
 import { classifyArticleHref } from "./article-links.server";
 
-export const ARTICLE_SANITIZER_POLICY_VERSION = "v1" as const;
+export const ARTICLE_SANITIZER_POLICY_VERSION = "v2" as const;
 export const ARTICLE_HTML_MAX_BYTES = 128 * 1024;
 
 export type SanitizedArticleHtml = Readonly<{
@@ -14,7 +14,7 @@ export type SanitizedArticleHtml = Readonly<{
   text: string;
   nonWhitespaceCodePoints: number;
   fingerprint: `sha256:${string}`;
-  policyVersion: "v1";
+  policyVersion: typeof ARTICLE_SANITIZER_POLICY_VERSION;
 }>;
 
 export type ArticleHtmlSanitizationErrorCategory =
@@ -52,7 +52,42 @@ const ALLOWED_TAGS = [
   "br",
   "hr",
   "a",
+  "table",
+  "colgroup",
+  "col",
+  "thead",
+  "tbody",
+  "tr",
+  "th",
+  "td",
+  "img",
 ] as const;
+
+const TABLE_SPAN_PATTERN = /^[1-9][0-9]?$/u;
+
+function tableCellAttributes(
+  attributes: Record<string, string>,
+): Record<string, string> {
+  const result: Record<string, string> = {};
+  for (const key of ["colspan", "rowspan"] as const) {
+    const value = attributes[key];
+    if (value !== undefined && TABLE_SPAN_PATTERN.test(value) && value !== "1")
+      result[key] = value;
+  }
+  return result;
+}
+
+/** Article images must be absolute HTTPS URLs without credentials. */
+function safeImageSource(value: string | undefined): string | null {
+  if (!value) return null;
+  try {
+    const url = new URL(value);
+    if (url.protocol !== "https:" || url.username || url.password) return null;
+    return url.href;
+  } catch {
+    return null;
+  }
+}
 
 const NON_TEXT_TAGS = [
   "script",
@@ -97,13 +132,40 @@ export function sanitizeArticleHtmlV1(
     allowedTags: [...ALLOWED_TAGS],
     allowedAttributes: {
       a: ["href", "target", "rel"],
+      th: ["colspan", "rowspan"],
+      td: ["colspan", "rowspan"],
+      img: ["src", "alt", "loading"],
     },
     allowedSchemes: ["http", "https"],
+    allowedSchemesByTag: { img: ["https"] },
     allowProtocolRelative: false,
     disallowedTagsMode: "discard",
     nonTextTags: [...NON_TEXT_TAGS],
     parseStyleAttributes: false,
     transformTags: {
+      th: (_tagName, attributes) => ({
+        tagName: "th",
+        attribs: tableCellAttributes(attributes),
+      }),
+      td: (_tagName, attributes) => ({
+        tagName: "td",
+        attribs: tableCellAttributes(attributes),
+      }),
+      img(
+        _tagName,
+        attributes,
+      ): { tagName: string; attribs: Record<string, string> } {
+        const src = safeImageSource(attributes.src);
+        if (src === null) return { tagName: "img", attribs: {} };
+        return {
+          tagName: "img",
+          attribs: {
+            src,
+            alt: (attributes.alt ?? "").slice(0, 300),
+            loading: "lazy",
+          },
+        };
+      },
       a(
         _tagName,
         attributes,
@@ -137,7 +199,9 @@ export function sanitizeArticleHtmlV1(
       },
     },
     exclusiveFilter(frame) {
-      return frame.tag === "a" && !frame.attribs.href ? "excludeTag" : false;
+      if (frame.tag === "a" && !frame.attribs.href) return "excludeTag";
+      if (frame.tag === "img" && !frame.attribs.src) return true;
+      return false;
     },
   });
 

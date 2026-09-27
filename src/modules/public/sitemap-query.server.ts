@@ -7,6 +7,11 @@ import { articles, institutions, opportunities } from "@/src/db/schema";
 import type { DatabaseExecutor } from "@/src/infrastructure/db/runtime.server";
 import { findRedirectBySourcePath } from "@/src/modules/editorial/repository.server";
 import { sanitizeArticleHtmlV1 } from "@/src/modules/editorial/sanitizer.server";
+import { articleTagPath } from "@/src/modules/editorial/tags";
+import {
+  ARTICLE_TAG_INDEX_MIN_ARTICLES,
+  listPublishedArticleTags,
+} from "@/src/modules/public/article-list-query.server";
 import { getIndexability } from "@/src/modules/public/indexability";
 import { getInstitutionBySlug } from "@/src/modules/public/institution-query.server";
 import { internationalSchoolPublicEligibilitySql } from "@/src/modules/public/international-school-publication-policy";
@@ -201,6 +206,23 @@ export async function listPublicSitemapEntries(
   ];
   await appendInstitutions(executor, origin, output);
   await appendOpportunities(executor, origin, output);
+  const articleStart = output.length;
   await appendArticles(executor, origin, output);
+  if (output.length > articleStart) {
+    const newest = output
+      .slice(articleStart)
+      .map((entry) => entry.lastModified)
+      .filter((value): value is string => value !== undefined)
+      .sort()
+      .at(-1);
+    output.push({
+      url: `${origin}/articles`,
+      ...(newest ? { lastModified: newest } : {}),
+    });
+    for (const { tag, count } of await listPublishedArticleTags(executor)) {
+      if (count >= ARTICLE_TAG_INDEX_MIN_ARTICLES)
+        output.push({ url: `${origin}${articleTagPath(tag)}` });
+    }
+  }
   return output;
 }

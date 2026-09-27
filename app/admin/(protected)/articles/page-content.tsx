@@ -6,10 +6,14 @@ import {
   AdminPageHeader,
   AdminPagination,
   AdminStateChip,
-  formatAdminCode,
   formatAdminDate,
 } from "@/app/admin/_components/read-ui";
 import { getAdminExecutor } from "@/app/admin/_lib/admin-page.server";
+import {
+  articleCategoryLabel,
+  articleStatusLabel,
+  articleTypeLabel,
+} from "@/app/admin/_lib/article-labels";
 import type {
   AdminArticleDTO,
   AdminPageDTO,
@@ -65,9 +69,9 @@ export function AdminArticleListView({
                     </Link>
                     <span className="admin-record-id">{item.slug}</span>
                   </th>
-                  <td>{formatAdminCode(item.type)}</td>
-                  <td>{formatAdminCode(item.category)}</td>
-                  <td>{formatAdminCode(item.status)}</td>
+                  <td>{articleTypeLabel(item.type)}</td>
+                  <td>{articleCategoryLabel(item.category)}</td>
+                  <td>{articleStatusLabel(item.status)}</td>
                   <td>{formatAdminDate(item.publishedAt)}</td>
                   <td>
                     {item.institutionRelationCount} 기관 ·{" "}

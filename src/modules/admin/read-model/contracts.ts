@@ -193,6 +193,7 @@ export type AdminArticleDetailDTO = AdminArticleDTO &
     robotsFollow: boolean;
     featuredImageUrl: string | null;
     featuredImageAlt: string | null;
+    tags: readonly string[];
     institutionIds: readonly string[];
     opportunityIds: readonly string[];
     updatedAt: string;

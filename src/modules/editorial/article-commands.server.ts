@@ -287,6 +287,7 @@ export function updateArticleDraft(
         robotsFollow: input.candidate.robotsFollow,
         featuredImageUrl: input.candidate.featuredImageUrl,
         featuredImageAlt: input.candidate.featuredImageAlt,
+        tags: [...input.candidate.tags],
         updatedAt: parsedContext.occurredAt,
       });
 
@@ -312,6 +313,7 @@ export function updateArticleDraft(
               "ROBOTS_FOLLOW",
               "FEATURED_IMAGE_URL",
               "FEATURED_IMAGE_ALT",
+              "TAGS",
             ],
             contentFingerprint: sanitized.fingerprint,
           },
@@ -460,6 +462,7 @@ export function publishArticle(
         robotsFollow: input.candidate.robotsFollow,
         featuredImageUrl: input.candidate.featuredImageUrl,
         featuredImageAlt: input.candidate.featuredImageAlt,
+        tags: [...input.candidate.tags],
         status: "PUBLISHED",
         publishedAt: current.publishedAt ?? parsedContext.occurredAt,
         unpublishedAt: null,
@@ -488,6 +491,7 @@ export function publishArticle(
               "ROBOTS_FOLLOW",
               "FEATURED_IMAGE_URL",
               "FEATURED_IMAGE_ALT",
+              "TAGS",
               "STATUS",
               "PUBLISHED_AT",
               "UNPUBLISHED_AT",

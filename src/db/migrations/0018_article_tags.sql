@@ -1,0 +1,2 @@
+ALTER TABLE "articles" ADD COLUMN "tags" text[] DEFAULT '{}'::text[] NOT NULL;--> statement-breakpoint
+ALTER TABLE "articles" ADD CONSTRAINT "articles_tags_cardinality_check" CHECK (cardinality("articles"."tags") <= 10);

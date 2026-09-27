@@ -6,9 +6,11 @@ import {
   AdminStateChip,
 } from "@/app/admin/_components/read-ui";
 import { getAdminExecutor } from "@/app/admin/_lib/admin-page.server";
+import { articleStatusLabel } from "@/app/admin/_lib/article-labels";
 import { getAdminLogoutConfig } from "@/src/modules/admin/auth/config.server";
 import type {
   AdminArticleDetailDTO,
+  AdminPageDTO,
   ArticleRelationOptionDTO,
 } from "@/src/modules/admin/read-model/contracts";
 import {
@@ -16,6 +18,25 @@ import {
   listAdminArticleInstitutionOptions,
   listAdminArticleOpportunityOptions,
 } from "@/src/modules/admin/read-model/article-query.server";
+
+const RELATION_OPTION_PAGE_SIZE = 50;
+const RELATION_OPTION_MAX_PAGES = 40;
+
+/** Relation pickers search locally, so load every option page (bounded). */
+async function loadAllRelationOptions(
+  load: (input: {
+    page: number;
+    pageSize: number;
+  }) => Promise<AdminPageDTO<ArticleRelationOptionDTO>>,
+): Promise<ArticleRelationOptionDTO[]> {
+  const items: ArticleRelationOptionDTO[] = [];
+  for (let page = 1; page <= RELATION_OPTION_MAX_PAGES; page += 1) {
+    const result = await load({ page, pageSize: RELATION_OPTION_PAGE_SIZE });
+    items.push(...result.items);
+    if (!result.pagination.hasNext) break;
+  }
+  return items;
+}
 
 export function AdminArticleDetailView({
   data,
@@ -33,9 +54,15 @@ export function AdminArticleDetailView({
         title={data.title}
         description={`주소 이름(slug): ${data.slug}`}
       />
-      <AdminStateChip>{data.status}</AdminStateChip>
+      <AdminStateChip>{articleStatusLabel(data.status)}</AdminStateChip>
       <p>
-        <a href={`/admin/articles/${data.id}/preview`}>저장된 내용 미리보기</a>
+        <a
+          href={`/admin/articles/${data.id}/preview`}
+          target="_blank"
+          rel="noopener"
+        >
+          저장된 내용 미리보기
+        </a>
       </p>
       <AdminArticleEditor
         article={data}
@@ -59,15 +86,19 @@ export default async function AdminArticleDetailPage({
       articleId,
       getAdminLogoutConfig().APP_BASE_URL,
     ),
-    listAdminArticleInstitutionOptions(executor, { page: 1, pageSize: 50 }),
-    listAdminArticleOpportunityOptions(executor, { page: 1, pageSize: 50 }),
+    loadAllRelationOptions((input) =>
+      listAdminArticleInstitutionOptions(executor, input),
+    ),
+    loadAllRelationOptions((input) =>
+      listAdminArticleOpportunityOptions(executor, input),
+    ),
   ]);
   if (!data) notFound();
   return (
     <AdminArticleDetailView
       data={data}
-      institutionOptions={institutionOptions.items}
-      opportunityOptions={opportunityOptions.items}
+      institutionOptions={institutionOptions}
+      opportunityOptions={opportunityOptions}
     />
   );
 }

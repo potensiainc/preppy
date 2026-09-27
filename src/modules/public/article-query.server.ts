@@ -137,6 +137,31 @@ export async function getRelatedOpportunities(
   );
 }
 
+export type ArticleOgSource = Readonly<{
+  title: string;
+  category: typeof articles.$inferSelect.category;
+  featuredImageUrl: string | null;
+  updatedAt: Date;
+}>;
+
+/** Minimal published projection for the Open Graph image route. */
+export async function getArticleOgSource(
+  executor: DatabaseExecutor,
+  slug: string,
+): Promise<ArticleOgSource | null> {
+  const [row] = await executor.drizzle
+    .select({
+      title: articles.title,
+      category: articles.category,
+      featuredImageUrl: articles.featuredImageUrl,
+      updatedAt: articles.updatedAt,
+    })
+    .from(articles)
+    .where(and(eq(articles.slug, slug), eq(articles.status, "PUBLISHED")))
+    .limit(1);
+  return row ?? null;
+}
+
 /** Server-only public Article detail; stored HTML remains explicitly unsafe. */
 export async function getArticleBySlug(
   executor: DatabaseExecutor,
@@ -153,6 +178,7 @@ export async function getArticleBySlug(
       publishedAt: articles.publishedAt,
       featuredImageUrl: articles.featuredImageUrl,
       featuredImageAlt: articles.featuredImageAlt,
+      tags: articles.tags,
       updatedAt: articles.updatedAt,
       seoTitle: articles.seoTitle,
       seoDescription: articles.seoDescription,
@@ -179,6 +205,7 @@ export async function getArticleBySlug(
     publishedAt: article.publishedAt?.toISOString() ?? null,
     featuredImageUrl: article.featuredImageUrl,
     featuredImageAlt: article.featuredImageAlt,
+    tags: article.tags,
     indexability: "NOINDEX",
     updatedAt: article.updatedAt.toISOString(),
     seoTitle: article.seoTitle,

@@ -1,13 +1,27 @@
 "use client";
 
+import Image from "@tiptap/extension-image";
+import { TableKit } from "@tiptap/extension-table";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { ArticleEditorToolbar } from "@/app/admin/_components/article-editor-toolbar";
 import { ArticleLifecycleActions } from "@/app/admin/_components/article-lifecycle-actions";
 import { ArticleRelations } from "@/app/admin/_components/article-relations";
+import {
+  ARTICLE_CATEGORY_OPTIONS,
+  ARTICLE_FIELD_LIMITS,
+  ARTICLE_TYPE_OPTIONS,
+} from "@/app/admin/_lib/article-labels";
+import {
+  ARTICLE_TAG_MAX_CODE_POINTS,
+  ARTICLE_TAG_MAX_ITEMS,
+  normalizeArticleTag,
+  normalizeArticleTags,
+  parseArticleTagInput,
+} from "@/src/modules/editorial/tags";
 import type {
   AdminArticleDetailDTO,
   ArticleRelationOptionDTO,
@@ -33,9 +47,73 @@ type Candidate = Readonly<{
   robotsFollow: boolean;
   featuredImageUrl: string | null;
   featuredImageAlt: string | null;
+  tags: readonly string[];
 }>;
 
 const nullable = (value: string) => (value.trim() === "" ? null : value);
+
+const codePointLength = (value: string) => [...value].length;
+
+function htmlTextLength(html: string): number {
+  if (typeof DOMParser === "undefined") return 0;
+  const text =
+    new DOMParser().parseFromString(html, "text/html").body.textContent ?? "";
+  return [...text].filter((character) => !/\s/u.test(character)).length;
+}
+
+type ErrorPayload = { error?: { code?: string } };
+
+async function responseErrorCode(response: Response): Promise<string | null> {
+  try {
+    return ((await response.json()) as ErrorPayload).error?.code ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function SearchPreview({
+  title,
+  description,
+  slug,
+}: Readonly<{ title: string; description: string; slug: string }>) {
+  const cut = (value: string, max: number) =>
+    codePointLength(value) > max
+      ? `${[...value].slice(0, max - 1).join("")}…`
+      : value;
+  return (
+    <div className="admin-search-preview" aria-label="검색 결과 미리보기">
+      <small>구글 검색 결과 미리보기 (대략)</small>
+      <span className="admin-search-preview__url">
+        PREPPY › articles › {slug}
+      </span>
+      <strong className="admin-search-preview__title">
+        {cut(title.trim() || "제목을 입력해 주세요", 34)}
+      </strong>
+      <span className="admin-search-preview__description">
+        {cut(
+          description.trim() || "검색 설명이나 요약을 입력하면 여기에 보여요.",
+          90,
+        )}
+      </span>
+    </div>
+  );
+}
+
+function FieldCounter({
+  value,
+  max,
+}: Readonly<{ value: string; max: number }>) {
+  const length = codePointLength(value);
+  return (
+    <small
+      className={
+        length > max ? "admin-field-counter is-over" : "admin-field-counter"
+      }
+    >
+      {length}/{max}
+    </small>
+  );
+}
 
 export function AdminNewArticleEditor() {
   const router = useRouter();
@@ -57,8 +135,11 @@ export function AdminNewArticleEditor() {
           }),
         });
         if (!response.ok) {
+          const code = await responseErrorCode(response);
           setMessage(
-            "초안을 만들지 못했어요. 입력 내용을 확인한 뒤 다시 시도해 주세요.",
+            code === "CONFLICT"
+              ? "같은 주소 이름(slug)의 아티클이 이미 있어요. 다른 주소 이름을 입력해 주세요."
+              : "초안을 만들지 못했어요. 주소 이름은 영문 소문자·숫자·하이픈(-)만 쓸 수 있어요.",
           );
           return;
         }
@@ -70,27 +151,38 @@ export function AdminNewArticleEditor() {
     >
       <label>
         주소 이름(slug)
-        <input name="slug" required pattern="[a-z0-9]+(?:-[a-z0-9]+)*" />
+        <input
+          name="slug"
+          required
+          maxLength={120}
+          pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
+          placeholder="예: 2027-private-elementary-schedule"
+          title="영문 소문자, 숫자, 하이픈(-)만 쓸 수 있어요."
+        />
+        <small>글 주소가 돼요: /articles/주소-이름</small>
       </label>
       <label>
         제목
-        <input name="title" required maxLength={160} />
+        <input name="title" required maxLength={ARTICLE_FIELD_LIMITS.title} />
       </label>
       <label>
         유형
         <select name="type" defaultValue="GUIDE">
-          <option>GUIDE</option>
-          <option>UPDATE</option>
-          <option>ROUNDUP</option>
+          {ARTICLE_TYPE_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
         </select>
       </label>
       <label>
         분류
         <select name="category" defaultValue="ADMISSIONS_GENERAL">
-          <option>ADMISSIONS_GENERAL</option>
-          <option>ENGLISH_KINDERGARTEN</option>
-          <option>PRIVATE_ELEMENTARY</option>
-          <option>INTERNATIONAL_SCHOOL</option>
+          {ARTICLE_CATEGORY_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
         </select>
       </label>
       <button type="submit">초안 만들기</button>
@@ -133,25 +225,47 @@ export function AdminArticleEditor({
     robotsFollow: article.robotsFollow,
     featuredImageUrl: article.featuredImageUrl ?? "",
     featuredImageAlt: article.featuredImageAlt ?? "",
+    tags: article.tags.join(", "),
   });
   const [message, setMessage] = useState("");
   const [isStale, setIsStale] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
         heading: { levels: [2, 3, 4] },
         link: { openOnClick: false, autolink: false },
       }),
+      TableKit.configure({ table: { resizable: false } }),
+      Image.configure({ inline: false, allowBase64: false }),
     ],
     content: initialSanitizedContentHtml,
     immediatelyRender: false,
-    onUpdate: ({ editor: current }) => setSourceHtml(current.getHTML()),
+    shouldRerenderOnTransaction: true,
+    onUpdate: ({ editor: current }) => {
+      setSourceHtml(current.getHTML());
+      setIsDirty(true);
+    },
   });
+
+  useEffect(() => {
+    if (!isDirty) return;
+    const warn = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [isDirty]);
 
   const switchMode = (next: "visual" | "source") => {
     if (!editor) return;
+    const wasDirty = isDirty;
     if (next === "source") setSourceHtml(editor.getHTML());
     else editor.commands.setContent(sourceHtml, { emitUpdate: true });
+    // Switching modes only re-renders the same content; keep the dirty flag.
+    setIsDirty(wasDirty);
     setMode(next);
   };
   const candidate = (): Candidate => ({
@@ -168,10 +282,70 @@ export function AdminArticleEditor({
     robotsFollow: fields.robotsFollow,
     featuredImageUrl: nullable(fields.featuredImageUrl),
     featuredImageAlt: nullable(fields.featuredImageAlt),
+    tags: normalizeArticleTags(parseArticleTagInput(fields.tags)),
   });
+  const publishProblems = (): string[] => {
+    const current = candidate();
+    const problems: string[] = [];
+    if (current.title.trim() === "") problems.push("제목을 입력해 주세요.");
+    if (current.excerpt === null && current.seoDescription === null)
+      problems.push("요약 또는 검색 설명 중 하나를 입력해 주세요.");
+    const bodyLength = htmlTextLength(current.contentHtml);
+    if (bodyLength < ARTICLE_FIELD_LIMITS.minBodyCharacters)
+      problems.push(
+        `본문을 공백 제외 ${ARTICLE_FIELD_LIMITS.minBodyCharacters}자 이상 써 주세요. (현재 ${bodyLength}자)`,
+      );
+    if (
+      current.canonicalUrl !== null &&
+      !current.canonicalUrl
+        .replace(/\/$/u, "")
+        .endsWith(`/articles/${article.slug}`)
+    )
+      problems.push(
+        "대표 URL은 비워 두세요. 비워 두면 이 글 주소로 자동 설정돼요.",
+      );
+    return problems;
+  };
+  const fieldProblems = (): string[] => {
+    const limits: Array<[string, string, number]> = [
+      ["제목", fields.title, ARTICLE_FIELD_LIMITS.title],
+      ["요약", fields.excerpt, ARTICLE_FIELD_LIMITS.excerpt],
+      ["검색 제목", fields.seoTitle, ARTICLE_FIELD_LIMITS.seoTitle],
+      ["검색 설명", fields.seoDescription, ARTICLE_FIELD_LIMITS.seoDescription],
+      [
+        "대표 이미지 대체 텍스트",
+        fields.featuredImageAlt,
+        ARTICLE_FIELD_LIMITS.imageAlt,
+      ],
+    ];
+    const problems = limits
+      .filter(([, value, max]) => codePointLength(value) > max)
+      .map(([label, , max]) => `${label}은(는) ${max}자 이하로 줄여 주세요.`);
+    const rawTags = parseArticleTagInput(fields.tags);
+    const invalid = rawTags.filter((tag) => normalizeArticleTag(tag) === null);
+    if (invalid.length > 0)
+      problems.push(
+        `태그를 확인해 주세요: ${invalid.join(", ")} (글자·숫자·공백만, ${ARTICLE_TAG_MAX_CODE_POINTS}자 이하)`,
+      );
+    if (normalizeArticleTags(rawTags).length > ARTICLE_TAG_MAX_ITEMS)
+      problems.push(`태그는 최대 ${ARTICLE_TAG_MAX_ITEMS}개까지 쓸 수 있어요.`);
+    return problems;
+  };
   const submit = async (intent: "SAVE_DRAFT" | "PUBLISH") => {
+    if (isSaving) return;
     const publish = intent === "PUBLISH";
+    const problems = [
+      ...fieldProblems(),
+      ...(publish ? publishProblems() : []),
+    ];
+    if (problems.length > 0) {
+      setMessage(
+        `${publish ? "발행" : "저장"}하려면 확인이 필요해요. ${problems.join(" ")}`,
+      );
+      return;
+    }
     setIsStale(false);
+    setIsSaving(true);
     const response = await fetch(
       `/api/admin/articles/${article.id}/${publish ? "publish" : "draft"}`,
       {
@@ -184,27 +358,61 @@ export function AdminArticleEditor({
             : candidate(),
         }),
       },
-    );
+    )
+      .catch(() => null)
+      .finally(() => setIsSaving(false));
+    if (response === null) {
+      setMessage(
+        "네트워크 연결을 확인한 뒤 다시 시도해 주세요. 입력 내용은 화면에 남아 있어요.",
+      );
+      return;
+    }
     if (response.status === 409) {
       setMessage(staleMessage);
       setIsStale(true);
       return;
     }
     if (!response.ok) {
+      const code = await responseErrorCode(response);
       setMessage(
-        "입력 내용을 저장하지 못했어요. 입력값과 현재 발행 상태를 확인해 주세요.",
+        code === "NOT_ELIGIBLE"
+          ? publish
+            ? "발행 조건을 확인해 주세요. 본문 공백 제외 40자 이상, 요약 또는 검색 설명 입력, 대표 URL은 비워 두기, 연결 기관·입학정보는 공개된 항목만 가능해요."
+            : "현재 상태에서는 초안으로 저장할 수 없어요. 발행된 글은 ‘변경 내용 발행’으로 저장해 주세요."
+          : code === "VALIDATION_ERROR"
+            ? "입력 형식을 확인해 주세요. 글자 수 제한과 이미지 URL(https://로 시작) 형식을 확인해 주세요."
+            : "입력 내용을 저장하지 못했어요. 잠시 후 다시 시도해 주세요.",
       );
       return;
     }
     const payload = (await response.json()) as { data: { updatedAt: string } };
     setUpdatedAt(payload.data.updatedAt);
-    setMessage("입력 내용을 저장했어요.");
+    setIsDirty(false);
+    setMessage(publish ? "발행했어요." : "입력 내용을 저장했어요.");
     router.refresh();
   };
+  const saveShortcut = useRef(submit);
+  useEffect(() => {
+    saveShortcut.current = submit;
+  });
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") {
+        event.preventDefault();
+        if (article.status === "DRAFT" || article.status === "UNPUBLISHED")
+          void saveShortcut.current("SAVE_DRAFT");
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [article.status]);
   const set = <K extends keyof typeof fields>(
     key: K,
     value: (typeof fields)[K],
-  ) => setFields((current) => ({ ...current, [key]: value }));
+  ) => {
+    setFields((current) => ({ ...current, [key]: value }));
+    setIsDirty(true);
+  };
 
   return (
     <div className="admin-article-workbench">
@@ -215,6 +423,7 @@ export function AdminArticleEditor({
             value={fields.title}
             onChange={(event) => set("title", event.target.value)}
           />
+          <FieldCounter value={fields.title} max={ARTICLE_FIELD_LIMITS.title} />
         </label>
         <label>
           유형
@@ -224,9 +433,11 @@ export function AdminArticleEditor({
               set("type", event.target.value as typeof fields.type)
             }
           >
-            <option>GUIDE</option>
-            <option>UPDATE</option>
-            <option>ROUNDUP</option>
+            {ARTICLE_TYPE_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
           </select>
         </label>
         <label>
@@ -237,10 +448,11 @@ export function AdminArticleEditor({
               set("category", event.target.value as typeof fields.category)
             }
           >
-            <option>ADMISSIONS_GENERAL</option>
-            <option>ENGLISH_KINDERGARTEN</option>
-            <option>PRIVATE_ELEMENTARY</option>
-            <option>INTERNATIONAL_SCHOOL</option>
+            {ARTICLE_CATEGORY_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
           </select>
         </label>
         <label>
@@ -249,12 +461,20 @@ export function AdminArticleEditor({
             value={fields.excerpt}
             onChange={(event) => set("excerpt", event.target.value)}
           />
+          <FieldCounter
+            value={fields.excerpt}
+            max={ARTICLE_FIELD_LIMITS.excerpt}
+          />
         </label>
         <label>
           검색 제목
           <input
             value={fields.seoTitle}
             onChange={(event) => set("seoTitle", event.target.value)}
+          />
+          <FieldCounter
+            value={fields.seoTitle}
+            max={ARTICLE_FIELD_LIMITS.seoTitle}
           />
         </label>
         <label>
@@ -263,12 +483,17 @@ export function AdminArticleEditor({
             value={fields.seoDescription}
             onChange={(event) => set("seoDescription", event.target.value)}
           />
+          <FieldCounter
+            value={fields.seoDescription}
+            max={ARTICLE_FIELD_LIMITS.seoDescription}
+          />
         </label>
         <label>
           대표 URL
           <input
             type="url"
             value={fields.canonicalUrl}
+            placeholder="비워 두면 이 글 주소로 자동 설정돼요"
             onChange={(event) => set("canonicalUrl", event.target.value)}
           />
         </label>
@@ -277,6 +502,7 @@ export function AdminArticleEditor({
           <input
             type="url"
             value={fields.featuredImageUrl}
+            placeholder="https://로 시작하는 이미지 주소"
             onChange={(event) => set("featuredImageUrl", event.target.value)}
           />
         </label>
@@ -286,7 +512,30 @@ export function AdminArticleEditor({
             value={fields.featuredImageAlt}
             onChange={(event) => set("featuredImageAlt", event.target.value)}
           />
+          <small>
+            공유 이미지는 1200×630으로 자동 변환돼요. 원본이 잘리지 않도록
+            가운데에 맞춰 넣어요.
+          </small>
         </label>
+        <label>
+          태그
+          <input
+            value={fields.tags}
+            placeholder="예: 강남 영유, 추가모집, 레벨테스트"
+            onChange={(event) => set("tags", event.target.value)}
+          />
+          <small>
+            쉼표로 구분해요. 최대 {ARTICLE_TAG_MAX_ITEMS}개 · 태그마다 모아보기
+            페이지가 생겨요. (
+            {normalizeArticleTags(parseArticleTagInput(fields.tags)).length}/
+            {ARTICLE_TAG_MAX_ITEMS})
+          </small>
+        </label>
+        <SearchPreview
+          title={fields.seoTitle || fields.title}
+          description={fields.seoDescription || fields.excerpt}
+          slug={article.slug}
+        />
         <label className="admin-article-check">
           <input
             type="checkbox"
@@ -339,7 +588,10 @@ export function AdminArticleEditor({
             <textarea
               className="admin-article-source"
               value={sourceHtml}
-              onChange={(event) => setSourceHtml(event.target.value)}
+              onChange={(event) => {
+                setSourceHtml(event.target.value);
+                setIsDirty(true);
+              }}
             />
             <small>저장할 때 안전하지 않은 HTML 요소가 제거될 수 있어요.</small>
           </label>
@@ -347,14 +599,19 @@ export function AdminArticleEditor({
       </section>
       <div className="admin-article-submit-actions">
         {article.status !== "PUBLISHED" && article.status !== "ARCHIVED" ? (
-          <button type="button" onClick={() => void submit("SAVE_DRAFT")}>
-            초안 저장
+          <button
+            type="button"
+            disabled={isSaving}
+            onClick={() => void submit("SAVE_DRAFT")}
+          >
+            초안 저장 (Ctrl+S)
           </button>
         ) : null}
         {article.status !== "ARCHIVED" ? (
           <button
             className="admin-article-primary"
             type="button"
+            disabled={isSaving}
             onClick={() => void submit("PUBLISH")}
           >
             {article.status === "PUBLISHED" ? "변경 내용 발행" : "아티클 발행"}
@@ -362,7 +619,9 @@ export function AdminArticleEditor({
         ) : null}
       </div>
       <p className="admin-form-status" role="status" aria-live="polite">
-        {message}
+        {isDirty && message === ""
+          ? "저장하지 않은 변경 내용이 있어요."
+          : message}
       </p>
       {isStale ? (
         <button type="button" onClick={() => window.location.reload()}>

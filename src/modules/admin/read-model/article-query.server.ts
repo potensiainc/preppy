@@ -151,6 +151,7 @@ export async function getAdminArticleDetail(
       robotsFollow: articles.robotsFollow,
       featuredImageUrl: articles.featuredImageUrl,
       featuredImageAlt: articles.featuredImageAlt,
+      tags: articles.tags,
       updatedAt: articles.updatedAt,
     })
     .from(articles)
@@ -195,6 +196,7 @@ export async function getAdminArticleDetail(
     robotsFollow: row.robotsFollow,
     featuredImageUrl: row.featuredImageUrl,
     featuredImageAlt: row.featuredImageAlt,
+    tags: row.tags,
     institutionIds: institutionRows.map((item) => item.id),
     opportunityIds: opportunityRows.map((item) => item.id),
     updatedAt: iso(row.updatedAt)!,

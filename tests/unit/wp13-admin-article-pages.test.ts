@@ -26,6 +26,7 @@ const article: AdminArticleDetailDTO = {
   robotsFollow: true,
   featuredImageUrl: null,
   featuredImageAlt: null,
+  tags: [],
   institutionIds: [],
   opportunityIds: [],
   updatedAt: "2026-08-25T07:00:00.000Z",

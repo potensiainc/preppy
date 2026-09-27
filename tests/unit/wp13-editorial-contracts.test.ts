@@ -49,6 +49,7 @@ describe("WP-13 Article command contracts", () => {
         seoTitle: "First guide SEO",
         seoDescription: null,
         featuredImageAlt: "Students applying",
+        tags: [],
       },
     });
   });
@@ -85,7 +86,8 @@ describe("WP-13 Article command contracts", () => {
     ["correlationId", ARTICLE_ID],
     ["eventType", "CACHE_REVALIDATION_REQUESTED"],
     ["paths", ["/admin"]],
-    ["tags", ["articles"]],
+    // Article topic tags are operator-owned since 0018; invalid ones still fail.
+    ["tags", ["a/b"]],
   ])("rejects the server-owned candidate field %s", (field, value) => {
     expect(() =>
       parseUpdateArticleDraftInput({

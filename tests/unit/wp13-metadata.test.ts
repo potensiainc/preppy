@@ -135,7 +135,19 @@ describe("WP-13 public metadata", () => {
         canonical: "https://preppy.example/articles/complete-guide",
       },
       robots: { index: true, follow: true },
-      openGraph: { images: ["https://images.example/guide.jpg"] },
+      openGraph: {
+        type: "article",
+        siteName: "PREPPY 프레피",
+        locale: "ko_KR",
+        images: [
+          {
+            url: `https://preppy.example/og/articles/complete-guide?v=${Date.parse(article.updatedAt)}`,
+            width: 1200,
+            height: 630,
+          },
+        ],
+      },
+      twitter: { card: "summary_large_image" },
     });
   });
 
@@ -149,6 +161,7 @@ describe("WP-13 public metadata", () => {
       appBaseUrl,
     );
     expect(metadata.robots).toMatchObject({ index: false, follow: true });
-    expect(metadata.openGraph).not.toHaveProperty("images");
+    // The share image is always the generated, versioned PREPPY card.
+    expect(JSON.stringify(metadata)).not.toContain("javascript:");
   });
 });

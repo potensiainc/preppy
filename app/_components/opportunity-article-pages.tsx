@@ -1,8 +1,11 @@
+import Link from "next/link";
+
 import type { PublicArticleDTO } from "@/src/modules/public/dto";
 import { publicProse } from "@/src/modules/public/ux-writing";
 
 import { TrackedFollowCta as FollowCta } from "@/app/_components/tracked-follow-cta";
 import { ArticleProse } from "@/app/_components/article-prose";
+import { ArticleTagList } from "@/app/_components/article-list-pages";
 import {
   InstitutionCard,
   OpportunityCard,
@@ -15,6 +18,18 @@ import {
 } from "@/app/_lib/presentation";
 
 export { OpportunityDetailView } from "./admissions-detail";
+
+function safeFeaturedImage(value: string | null): string | null {
+  if (value === null) return null;
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" && !url.username && !url.password
+      ? url.toString()
+      : null;
+  } catch {
+    return null;
+  }
+}
 
 function uniqueArticleInstitution(article: PublicArticleDTO) {
   const targets = new Map<
@@ -46,7 +61,9 @@ export function ArticleDetailView({ article }: { article: PublicArticleDTO }) {
     <PageContainer>
       <article className="article-detail">
         <header className="article-detail__hero">
-          <p className="eyebrow">입학 준비 아티클</p>
+          <p className="eyebrow">
+            <Link href="/articles">입학 가이드</Link>
+          </p>
           <h1>{article.title}</h1>
           <p className="article-detail__meta">
             {articleTypeLabel(article.articleType)} ·{" "}
@@ -59,17 +76,41 @@ export function ArticleDetailView({ article }: { article: PublicArticleDTO }) {
                 </time>
               </>
             ) : null}
+            {article.publishedAt &&
+            formatPublicDate(article.updatedAt) !==
+              formatPublicDate(article.publishedAt) ? (
+              <>
+                {" · 수정 "}
+                <time dateTime={article.updatedAt}>
+                  {formatPublicDate(article.updatedAt)}
+                </time>
+              </>
+            ) : null}
           </p>
           {article.excerpt ? (
             <p className="article-detail__excerpt">
               {publicProse(article.excerpt)}
             </p>
           ) : null}
+          {safeFeaturedImage(article.featuredImageUrl) ? (
+            // eslint-disable-next-line @next/next/no-img-element -- operator-supplied external URL
+            <img
+              className="article-detail__featured"
+              src={safeFeaturedImage(article.featuredImageUrl)!}
+              alt={article.featuredImageAlt ?? ""}
+              width={1200}
+              height={630}
+            />
+          ) : null}
         </header>
 
         <section className="article-detail__section" aria-label="본문">
           <ArticleProse sanitizedContentHtml={article.sanitizedContentHtml} />
         </section>
+
+        {article.tags && article.tags.length > 0 ? (
+          <ArticleTagList tags={article.tags} label="아티클 주제" />
+        ) : null}
 
         {article.relatedInstitutions.length > 0 ? (
           <section className="article-detail__section" aria-label="관련 기관">

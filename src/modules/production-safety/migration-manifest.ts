@@ -72,5 +72,12 @@ export const EXPECTED_REPOSITORY_MIGRATIONS = [
     identifier: "0016_english_kindergarten_profiles",
     hash: "d1c9c1b17e71c813db4dccedbf0054051df6895fb68c2d78d3bcc4ac4c70d47c",
   },
-  { identifier: "0017_account_deletion", hash: "e4ad10ea39af39346176bcbdaa0340ef3b1a71664106be2c3e6cf16762bca6c1" },
+  {
+    identifier: "0017_account_deletion",
+    hash: "e4ad10ea39af39346176bcbdaa0340ef3b1a71664106be2c3e6cf16762bca6c1",
+  },
+  {
+    identifier: "0018_article_tags",
+    hash: "c15754b2f47e236cf7f308f5e7a5d7c279eba015369efc4f5ef51c8b1d1120c6",
+  },
 ] as const satisfies readonly RepositoryMigration[];

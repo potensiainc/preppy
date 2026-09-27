@@ -31,7 +31,7 @@ const article: PublicArticleDTO = {
 };
 
 describe("WP-13 omission-first structured data", () => {
-  it("maps exact Article/Breadcrumb fields and never emits internal author or invented /articles crumb", () => {
+  it("maps exact Article/Breadcrumb fields with an Organization author and the /articles hub", () => {
     const jsonLd = buildArticleJsonLd(article, "https://preppy.example");
     expect(jsonLd).toMatchObject({
       "@context": "https://schema.org",
@@ -41,14 +41,35 @@ describe("WP-13 omission-first structured data", () => {
       datePublished: article.publishedAt,
       dateModified: article.updatedAt,
     });
-    expect(jsonLd).not.toHaveProperty("author");
+    // Never an internal admin identity: the publisher Organization only.
+    expect(jsonLd?.author).toEqual(jsonLd?.publisher);
+    expect(jsonLd?.author).toMatchObject({
+      "@type": "Organization",
+      name: "PREPPY 프레피",
+      url: "https://preppy.example/",
+    });
+    expect(jsonLd).toMatchObject({
+      inLanguage: "ko-KR",
+      articleSection: "입학 일반",
+      image: [
+        `https://preppy.example/og/articles/complete-guide?v=${Date.parse(article.updatedAt)}`,
+      ],
+    });
+    expect(jsonLd).not.toHaveProperty("keywords");
+    expect(
+      buildArticleJsonLd(
+        { ...article, tags: ["강남 영유", "추가모집"] },
+        "https://preppy.example",
+      )?.keywords,
+    ).toBe("강남 영유, 추가모집");
     const breadcrumb = buildArticleBreadcrumbJsonLd(
       article,
       "https://preppy.example",
     );
-    expect(breadcrumb?.itemListElement).toHaveLength(2);
+    expect(breadcrumb?.itemListElement).toHaveLength(3);
     expect(breadcrumb?.itemListElement.map((item) => item.item)).toEqual([
       "https://preppy.example/",
+      "https://preppy.example/articles",
       "https://preppy.example/articles/complete-guide",
     ]);
   });
