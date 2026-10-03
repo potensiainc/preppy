@@ -34,6 +34,7 @@ export default function RootLayout({
           name="naver-site-verification"
           content="27518e5cb7d1fce33c014d38d7af17215b451149"
         />
+        <meta name="msvalidate.01" content="494B757ACE3C4582ECB2450FC6CEB3D4" />
       </head>
       <body>{children}</body>
     </html>
