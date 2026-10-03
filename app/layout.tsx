@@ -29,6 +29,12 @@ export default function RootLayout({
 }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="ko" className={`${latinFont.variable} ${koreanFont.variable}`}>
+      <head>
+        <meta
+          name="naver-site-verification"
+          content="27518e5cb7d1fce33c014d38d7af17215b451149"
+        />
+      </head>
       <body>{children}</body>
     </html>
   );
