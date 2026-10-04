@@ -7,6 +7,7 @@ import {
 } from "@/app/admin/_components/read-ui";
 import { getAdminExecutor } from "@/app/admin/_lib/admin-page.server";
 import { getAdminLogoutConfig } from "@/src/modules/admin/auth/config.server";
+import { loadAllRelationOptions } from "@/src/modules/admin/read-model/all-relation-options";
 import type {
   AdminArticleDetailDTO,
   ArticleRelationOptionDTO,
@@ -59,14 +60,16 @@ export default async function AdminArticleDetailPage({
       articleId,
       getAdminLogoutConfig().APP_BASE_URL,
     ),
-    listAdminArticleInstitutionOptions(executor, { page: 1, pageSize: 50 }),
+    loadAllRelationOptions((input) =>
+      listAdminArticleInstitutionOptions(executor, input),
+    ),
     listAdminArticleOpportunityOptions(executor, { page: 1, pageSize: 50 }),
   ]);
   if (!data) notFound();
   return (
     <AdminArticleDetailView
       data={data}
-      institutionOptions={institutionOptions.items}
+      institutionOptions={institutionOptions}
       opportunityOptions={opportunityOptions.items}
     />
   );
