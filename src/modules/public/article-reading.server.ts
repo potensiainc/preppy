@@ -22,6 +22,13 @@ export function buildArticleReadingContent(html: string, slug: string) {
   }
   const $ = load(html, null, false);
   const sources = new Map<string, ArticleSourceReading>();
+  // The introduction can define the academic/calendar year, verification time,
+  // or shared caveats. Keep it with every extracted section, not just the article.
+  const introduction: string[] = [];
+  for (const node of $.root().contents().toArray()) {
+    if ($(node).is("h2")) break;
+    introduction.push($.html(node));
+  }
 
   $("a[href]").each((_, element) => {
     const anchor = $(element);
@@ -49,10 +56,12 @@ export function buildArticleReadingContent(html: string, slug: string) {
         href,
         label: anchor.text().trim() || url.hostname,
         hostname: url.hostname,
-        contextHtml: context
-          .toArray()
-          .map((node) => $.html(node))
-          .join(""),
+        contextHtml:
+          (heading.length ? introduction.join("") : "") +
+          context
+            .toArray()
+            .map((node) => $.html(node))
+            .join(""),
       });
     }
   });

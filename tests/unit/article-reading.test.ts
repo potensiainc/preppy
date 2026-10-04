@@ -43,10 +43,24 @@ describe("Article internal reading", () => {
     expect(hwarang.contextHtml).toContain("10월 27일 16:00");
     expect(hwarang.contextHtml).toContain("가족당 1명만 참석");
     expect(hwarang.contextHtml).toContain("중복으로 신청할 수 없어요");
+    expect(hwarang.contextHtml).toContain("행사 날짜는 모두 2026년이에요");
+    expect(hwarang.contextHtml).toContain(
+      "설명회 신청과 입학원서 접수는 별개예요",
+    );
     expect(hwarang.contextHtml).not.toContain("광운초");
     expect(hwarang.contextHtml).toContain(
       "/articles/hwarang-admissions-briefing-2027",
     );
+  });
+
+  it("keeps collection and verification timestamps and uncertainty in source context", () => {
+    const notice =
+      "자료 수집: 2026년 10월 4일 · 내용 확인: 2026년 10월 4일(한국 시간). 신청 상태는 확인한 시점의 정보예요. 정원과 취소석에 따라 달라질 수 있으니 신청 전 학교 안내를 다시 확인해 주세요.";
+    const { sources } = buildArticleReadingContent(
+      `<p>${notice}</p>${sanitized}`,
+      slug,
+    );
+    for (const source of sources) expect(source.contextHtml).toContain(notice);
   });
 
   it("uses stable source IDs, deduplicates URLs, and escapes source labels", () => {
