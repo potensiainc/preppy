@@ -32,6 +32,34 @@ describe("commute production route", () => {
     expect(html).not.toMatch(/class="wordmark"[^>]*data-action="home"/u);
   });
 
+  it("does not ship design-preview copy or a fabricated initial result count", async () => {
+    const html = await readFile(resolve(commuteRoot, "index.html"), "utf8");
+    expect(html).not.toMatch(
+      /mock[ -]?up|목업|PUBLIC DESIGN PREVIEW|\bMVP\b|preview-badge/iu,
+    );
+    expect(html).toContain('aria-label="통학 자료와 이용 안내"');
+    expect(html).toContain('id="result-count"></em>');
+    expect(html).toContain("통학 자료를 불러오고 있어요.");
+  });
+
+  it("keeps data provenance, uncertainty, time meaning, and actual storage limits", async () => {
+    const html = await readFile(resolve(commuteRoot, "index.html"), "utf8");
+    for (const fact of [
+      "2026년 8월 31일",
+      "제3자",
+      "실제 운행 여부",
+      "적용 학년도",
+      "정류장 연결선",
+      "상대시간",
+      "시간 미제공",
+      "중복될 수 있어요",
+      "새로고침하면 초기화돼요",
+      "관심기관과는 연동되지 않아요",
+      "https://deatemom-saripcho-map.vercel.app/",
+    ])
+      expect(html.replace(/\s+/g, " ")).toContain(fact);
+  });
+
   it("redirects the clean public URL to the static entry point and preserves filters", async () => {
     const response = await unstable_getResponseFromNextConfig({
       url: "https://preppy-web-production.up.railway.app/commute?area=서초구",
