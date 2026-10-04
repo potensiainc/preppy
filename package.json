@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "next dev",
     "prebuild": "node scripts/deploy/assert-header-auth-absence.mjs",
+    "deploy:preflight": "node scripts/deploy/check-release-baseline.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",

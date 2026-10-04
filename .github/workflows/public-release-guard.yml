@@ -1,0 +1,27 @@
+name: Public release guard
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  public-release-guard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          package-manager-cache: false
+      - run: npm ci --no-audit --no-fund
+      - run: npm run prebuild
+      - run: npm run test:unit
+      - run: npm run typecheck
