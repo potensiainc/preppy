@@ -7,7 +7,10 @@ export function SiteFooter() {
     <footer className="site-footer">
       <div className="site-footer__inner">
         <div className="site-footer__intro">
-          <p className="wordmark">PREPPY</p>
+          <p className="wordmark">
+            <span className="brand-icon" aria-hidden="true" />
+            PREPPY
+          </p>
           <p>입학 준비에 필요한 정보를 공식 출처와 함께 정리해요.</p>
         </div>
 

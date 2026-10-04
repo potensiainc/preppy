@@ -107,6 +107,8 @@ dialog{padding:0;border:1px solid #e5ebdf;border-radius:22px;background:#fff;col
 @media(max-width:760px){.wordmark,.site-header nav>button,.preview-badge{white-space:nowrap}.wordmark,.header-actions{flex-shrink:0}.selected-route-summary>button,.overview-return{min-height:44px}}
 @media(max-width:400px){.site-header{padding-inline:16px;gap:10px}.site-header nav{gap:9px}.site-header nav>button{font-size:10px;padding:0 2px}.wordmark{font-size:29px}.site-header nav>button>span:not(.nav-dot){margin-left:3px}.preview-badge{font-size:7px;letter-spacing:.3px;padding:6px}}
 .map-stop-label.morning{background:#318874;color:#fff}.map-stop-label.afternoon{background:#c7674a;color:#fff}.map-stop-label.selected{background:var(--ink)}
+.site-header .wordmark{display:inline-flex;align-items:center;gap:9px}
+.site-header .brand-icon{display:inline-block;flex:none;width:1em;height:1em;border-radius:7px;background:url('/preppy-app-icon.png') center/cover no-repeat}
 
 /* Match the shared public PREPPY wordmark while keeping the map header layout. */
 @font-face{font-family:'DM Sans';src:url('./vendor/DM-Sans-Latin.woff2') format('woff2');font-style:normal;font-weight:400 600;font-display:swap}
