@@ -3,7 +3,6 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const root = fileURLToPath(new URL("../../", import.meta.url));
 const approvedAssets = new Map([
   [
     "app/favicon.ico",
@@ -32,7 +31,8 @@ const approvedAssets = new Map([
 ]);
 
 export function assertBrandIcons(
-  read = (name) => readFileSync(path.join(root, name)),
+  read = (name) =>
+    readFileSync(path.join(/* turbopackIgnore: true */ process.cwd(), name)),
 ) {
   for (const [name, expected] of approvedAssets) {
     const digest = createHash("sha256").update(read(name)).digest("hex");
