@@ -5,6 +5,8 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
 import { FollowCta } from "@/app/_components/follow-cta";
+import { AuthControlPresentation } from "@/app/_components/auth-control";
+import { SiteHeader } from "@/app/_components/site-header";
 import { InstitutionDetailView } from "@/app/_components/institution-pages";
 import { ArticleDetailView } from "@/app/_components/opportunity-article-pages";
 import { OnboardingForm } from "@/app/(public)/onboarding/onboarding-form";
@@ -35,6 +37,26 @@ const detail: InstitutionDetailDTO = {
 };
 
 describe("WP-08 auth-aware public UI", () => {
+  it("hides the Kakao login navigation item until provider approval while preserving signed-in controls", () => {
+    const anonymousMarkup = renderToStaticMarkup(
+      createElement(AuthControlPresentation, {
+        authenticated: false,
+        onLogout: () => undefined,
+      }),
+    );
+    expect(anonymousMarkup).toBe("");
+
+    const authenticatedMarkup = renderToStaticMarkup(
+      createElement(AuthControlPresentation, {
+        authenticated: true,
+        onLogout: () => undefined,
+      }),
+    );
+    expect(authenticatedMarkup).toContain("내 프레피");
+    expect(authenticatedMarkup).toContain("로그아웃");
+    expect(authenticatedMarkup).not.toContain("카카오로 로그인");
+  });
+
   it("renders a real Follow CTA with canonical Institution inputs and no fake completion state", () => {
     // Mutation caught: dropping the canonical id/path or restoring the prototype/followed claim.
     const markup = renderToStaticMarkup(
@@ -176,8 +198,7 @@ describe("WP-08 auth-aware public UI", () => {
     expect(detailSource).toContain("returnPath=");
   });
 
-  it("keeps the server header session-independent and delegates private status to a small client control", async () => {
-    // Mutation caught: importing cookies/DB into the public header or exposing My Preppy.
+  it("keeps authentication controls out of the public header", async () => {
     const [headerSource, controlSource] = await Promise.all([
       readFile(
         new URL("../../app/_components/site-header.tsx", import.meta.url),
@@ -188,8 +209,11 @@ describe("WP-08 auth-aware public UI", () => {
         "utf8",
       ),
     ]);
-    expect(headerSource).toContain("<AuthControl");
-    expect(headerSource.match(/<AuthControl/g)).toHaveLength(1);
+    const markup = renderToStaticMarkup(createElement(SiteHeader));
+    expect(headerSource).not.toMatch(/AuthControl|auth-control|auth\/kakao\/start|카카오/);
+    expect(markup).not.toMatch(/auth-control|auth\/kakao\/start|카카오/);
+    expect(markup).toContain('aria-label="주요 메뉴"');
+    expect(markup).toContain('aria-label="모바일 주요 메뉴"');
     expect(headerSource).not.toMatch(
       /cookies\(|next\/headers|drizzle|getCurrentUser/,
     );
@@ -202,7 +226,7 @@ describe("WP-08 auth-aware public UI", () => {
     expect(controlSource).toContain("new URL(path, window.location.origin)");
     expect(controlSource).toContain('href="/my-preppy"');
     expect(controlSource).toContain("내 프레피");
-    expect(controlSource).toContain("카카오로 로그인");
+    expect(controlSource).not.toContain("카카오로 로그인");
     expect(controlSource).not.toMatch(/userEmail|emailAddress|@example/);
   });
 

@@ -76,4 +76,21 @@ describe("WP-13 Article link classification", () => {
     expect(ARTICLE_CANONICAL_SLUG.test("fall-2027-")).toBe(false);
     expect(ARTICLE_CANONICAL_SLUG.test("Fall-2027")).toBe(false);
   });
+
+  it("keeps production PREPPY URLs inside staging, without trusting lookalike hosts", () => {
+    for (const host of ["preppy.kr", "www.preppy.kr"]) {
+      expect(
+        classifyArticleHref(`https://${host}/articles/guide`, APP_BASE_URL),
+      ).toEqual({ kind: "INTERNAL", href: "/articles/guide" });
+      expect(
+        classifyArticleHref(`https://${host}/admin/users`, APP_BASE_URL),
+      ).toEqual({ kind: "REJECT" });
+    }
+    expect(
+      classifyArticleHref(
+        "https://preppy.kr.evil.example/articles/guide",
+        APP_BASE_URL,
+      ).kind,
+    ).toBe("EXTERNAL");
+  });
 });

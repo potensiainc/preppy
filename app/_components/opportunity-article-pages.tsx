@@ -68,7 +68,10 @@ export function ArticleDetailView({ article }: { article: PublicArticleDTO }) {
         </header>
 
         <section className="article-detail__section" aria-label="본문">
-          <ArticleProse sanitizedContentHtml={article.sanitizedContentHtml} />
+          <ArticleProse
+            articleSlug={article.slug}
+            sanitizedContentHtml={article.sanitizedContentHtml}
+          />
         </section>
 
         {article.relatedInstitutions.length > 0 ? (

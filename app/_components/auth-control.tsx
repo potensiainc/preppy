@@ -62,11 +62,8 @@ export function AuthControlPresentation({
     );
   }
   if (!authenticated) {
-    return (
-      <a className="auth-control" href="/auth/kakao/start">
-        카카오로 로그인
-      </a>
-    );
+    // Keep the provider hidden from public navigation until Kakao developer approval.
+    return null;
   }
 
   return (
@@ -132,9 +129,7 @@ export function AuthControl() {
     );
   }
   if (authenticated === null) {
-    return (
-      <span className="auth-control auth-control--pending">로그인 확인 중</span>
-    );
+    return null;
   }
   if (!authenticated) {
     return <AuthControlPresentation authenticated={false} onLogout={logout} />;

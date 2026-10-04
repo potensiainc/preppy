@@ -35,8 +35,6 @@ export default async function AccountSettingsPage() {
           주세요. 광고 수신 여부는 회원 기능 이용에 영향을 주지 않아요.
         </p>
         <a href="mailto:potensiainc@gmail.com">potensiainc@gmail.com</a>
-        <br />
-        <a href="tel:01046854725">010-4685-4725</a>
       </section>
       <section>
         <h2>회원 탈퇴</h2>
