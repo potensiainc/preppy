@@ -1,0 +1,42 @@
+{
+  "date": "2026-10-04",
+  "scope": {
+    "sourceFiles": 134,
+    "publicUrls": 323,
+    "sitemapEntries": 121,
+    "remainingDiscoveredUrls": 0,
+    "checked": ["공개 화면 및 오류·빈 상태 문구", "접근성 이름과 메타데이터", "정적 HTML·스크립트·JSON", "아티클·기관·입학정보 서버 렌더링", "통학 탐색 팝업", "이메일 템플릿 코드"],
+    "notChecked": ["로그인 계정의 개인화 화면 직접 조작", "실제 이메일 발송", "외부 학교 신청 제출", "관리자 전용 화면의 개발 문구", "모든 가능한 검색 조건 조합"],
+    "rawEvidence": "test-results/public-release-audit.json"
+  },
+  "fixed": [
+    {"file": "public/commute/index.html", "before": "MOCKUP 배지 / 목업과 데이터 안내 / PUBLIC DESIGN PREVIEW / 인터랙티브 목업 소개", "after": "배지 제거 / 통학 자료와 이용 안내 / 실제 탐색·비교 기능 설명"},
+    {"file": "public/commute/index.html", "before": "데이터 로딩 전 결과 수 12 고정", "after": "자료를 불러온 후 실제 결과 수 표시"},
+    {"file": "public/commute/data.json", "before": "내부 디자인 목업", "after": "학교 공식 확인 전 자료 및 수집일 안내", "preservation": "notice 필드 외 JSON 데이터 동일: 학교 38곳, 노선 827개, 정류장 6575개"},
+    {"file": "public/commute/styles.css", "after": "사용하지 않는 목업 배지 스타일 제거"}
+  ],
+  "separateFindings": [
+    {
+      "priority": "P1",
+      "status": "수정 필요 — 이번 긴급 웹 문구 수정에 포함하지 않음",
+      "file": "src/modules/notification/email-renderer.server.ts",
+      "finding": "알림 설정 링크가 실제 페이지 /my-preppy/settings가 아닌 /me/settings를 사용함. APP_BASE_URL 미설정 시 http://localhost:3000으로 대체함.",
+      "evidence": "이메일 템플릿 코드와 기존 이메일 단위 테스트의 기대값 확인. 실제 발송 여부는 검증하지 않음.",
+      "nextAction": "경로 수정, 잘못된 origin 설정 차단, 발송·재조정 테스트 후 메일 워커 별도 배포 검토"
+    },
+    {
+      "priority": "P2",
+      "status": "기능 개선 검토 필요 — 현재 동작과 한계를 명확히 안내",
+      "file": "public/commute/app.js",
+      "finding": "관심학교와 비교 선택이 메모리에만 저장되어 새로고침하면 초기화되고 내 프레피와 연동되지 않음.",
+      "nextAction": "계정 관심기관과의 연동 범위를 정해 실제 저장 기능을 개선. 저장된다고 오인시키는 문구로 제한을 감추지 않음."
+    }
+  ],
+  "validation": {
+    "targetedTests": "39 passed across 3 files",
+    "liveScan": "323개 공개 URL에서 개발용 문구·빈 링크·HTTP 오류 0건",
+    "dataIntegrity": "원본 git 객체와 비교해 $.notice 한 필드만 변경 확인",
+    "prevention": "public-release-readiness.test.ts가 공개 UI 문자열·정적 자료 및 숨겨진 팝업/접근성 이름의 개발용 문구 재유입을 검사함. 기존 release-image 워크플로의 test:unit 단계에 포함됨.",
+    "uxWriting": "PASS — 수정한 공개 문구 범위. 출처, 수집일, 미확인 상태, 상대시간·정차시각 구분, 실제 저장 제한을 보존함. 서비스 전체 기능 완성 판정이 아님."
+  }
+}
