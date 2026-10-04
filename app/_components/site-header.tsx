@@ -1,7 +1,5 @@
 import Link from "next/link";
 
-import { AuthControl } from "@/app/_components/auth-control";
-
 const navigation = [
   { href: "/institutions", label: "기관 찾기" },
   { href: "/commute", label: "통학지도" },
@@ -33,7 +31,6 @@ export function SiteHeader() {
           <NavigationLinks />
         </nav>
         <div className="site-header__actions">
-          <AuthControl />
           <details className="mobile-navigation">
             <summary aria-label="메뉴 열고 닫기">메뉴</summary>
             <nav aria-label="모바일 주요 메뉴">

@@ -132,7 +132,7 @@ describe("WP-09 My Preppy UI and private route", () => {
     },
   );
 
-  it("shows ACTIVE header access plus logout, exact anonymous copy, and never renders email", () => {
+  it("keeps private account controls available without restoring public Kakao login", () => {
     const active = renderToStaticMarkup(
       createElement(AuthControlPresentation, {
         authenticated: true,
@@ -150,8 +150,7 @@ describe("WP-09 My Preppy UI and private route", () => {
         onLogout: () => undefined,
       }),
     );
-    expect(anonymous).toContain("카카오로 로그인");
-    expect(anonymous).toContain('href="/auth/kakao/start"');
+    expect(anonymous).toBe("");
   });
 
   it("offers a direct heart action and verifies the server deletion", async () => {

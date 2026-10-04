@@ -6,6 +6,7 @@ import { describe, expect, it } from "vitest";
 
 import { FollowCta } from "@/app/_components/follow-cta";
 import { AuthControlPresentation } from "@/app/_components/auth-control";
+import { SiteHeader } from "@/app/_components/site-header";
 import { InstitutionDetailView } from "@/app/_components/institution-pages";
 import { ArticleDetailView } from "@/app/_components/opportunity-article-pages";
 import { OnboardingForm } from "@/app/(public)/onboarding/onboarding-form";
@@ -197,8 +198,7 @@ describe("WP-08 auth-aware public UI", () => {
     expect(detailSource).toContain("returnPath=");
   });
 
-  it("keeps the server header session-independent and delegates private status to a small client control", async () => {
-    // Mutation caught: importing cookies/DB into the public header or exposing My Preppy.
+  it("keeps authentication controls out of the public header", async () => {
     const [headerSource, controlSource] = await Promise.all([
       readFile(
         new URL("../../app/_components/site-header.tsx", import.meta.url),
@@ -209,8 +209,11 @@ describe("WP-08 auth-aware public UI", () => {
         "utf8",
       ),
     ]);
-    expect(headerSource).toContain("<AuthControl");
-    expect(headerSource.match(/<AuthControl/g)).toHaveLength(1);
+    const markup = renderToStaticMarkup(createElement(SiteHeader));
+    expect(headerSource).not.toMatch(/AuthControl|auth-control|auth\/kakao\/start|카카오/);
+    expect(markup).not.toMatch(/auth-control|auth\/kakao\/start|카카오/);
+    expect(markup).toContain('aria-label="주요 메뉴"');
+    expect(markup).toContain('aria-label="모바일 주요 메뉴"');
     expect(headerSource).not.toMatch(
       /cookies\(|next\/headers|drizzle|getCurrentUser/,
     );
