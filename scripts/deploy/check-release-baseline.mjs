@@ -40,6 +40,11 @@ export function checkReleaseBaseline() {
     [path.join(root, "scripts/deploy/assert-header-auth-absence.mjs")],
     { cwd: root, stdio: "inherit" },
   );
+  execFileSync(
+    process.execPath,
+    [path.join(root, "scripts/deploy/assert-brand-icons.mjs")],
+    { cwd: root, stdio: "inherit" },
+  );
   const release = {
     gitSha: git("rev-parse", "HEAD"),
     mainSha: git("rev-parse", "origin/main"),
