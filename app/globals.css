@@ -111,12 +111,24 @@ h3 {
 }
 
 .wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
   color: var(--deep-green);
   font-family: inherit;
   font-size: 1.18rem;
   font-weight: 600;
   letter-spacing: 0.16em;
   text-decoration: none;
+}
+
+.brand-icon {
+  display: inline-block;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: url("/preppy-app-icon.png") center / cover no-repeat;
 }
 
 .site-navigation {

@@ -26,6 +26,7 @@ export function SiteHeader() {
     <header className="site-header">
       <div className="site-header__inner">
         <Link className="wordmark" href="/" aria-label="PREPPY 홈">
+          <span className="brand-icon" aria-hidden="true" />
           PREPPY
         </Link>
         <nav className="site-navigation" aria-label="주요 메뉴">
