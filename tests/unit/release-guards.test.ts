@@ -1,6 +1,8 @@
+import { readFileSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { describe, expect, it } from "vitest";
 import { assertHeaderAuthAbsence } from "../../scripts/deploy/assert-header-auth-absence.mjs";
+import { assertBrandIcons } from "../../scripts/deploy/assert-brand-icons.mjs";
 import { assertReleaseBaseline } from "../../scripts/deploy/check-release-baseline.mjs";
 
 describe("public release regression guards", () => {
@@ -29,6 +31,20 @@ describe("public release regression guards", () => {
     }
   });
 
+  it("keeps the approved icon assets and install manifest together", () => {
+    expect(() => assertBrandIcons()).not.toThrow();
+  });
+
+  it("blocks a missing or replaced approved icon", () => {
+    expect(() =>
+      assertBrandIcons((name: string) =>
+        name === "app/icon.png"
+          ? Buffer.from("replacement")
+          : readFileSync(name),
+      ),
+    ).toThrow("approved PREPPY icon");
+  });
+
   it("blocks a clean but outdated release branch", () => {
     expect(() =>
       assertReleaseBaseline({ dirty: false, includesMain: false }),
@@ -49,8 +65,11 @@ describe("public release regression guards", () => {
     const read = (file: string) =>
       readFile(new URL(`../../${file}`, import.meta.url), "utf8");
     const pkg = JSON.parse(await read("package.json"));
-    expect(pkg.scripts.prebuild).toBe(
+    expect(pkg.scripts.prebuild).toContain(
       "node scripts/deploy/assert-header-auth-absence.mjs",
+    );
+    expect(pkg.scripts.prebuild).toContain(
+      "node scripts/deploy/assert-brand-icons.mjs",
     );
     expect(pkg.scripts["deploy:preflight"]).toBe(
       "node scripts/deploy/check-release-baseline.mjs",
