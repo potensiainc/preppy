@@ -106,7 +106,11 @@ export function classifyArticleHref(
     return reject();
   }
 
-  if (url.origin === parseTrustedAppOrigin(appBaseUrl)) {
+  if (
+    url.origin === parseTrustedAppOrigin(appBaseUrl) ||
+    url.origin === "https://preppy.kr" ||
+    url.origin === "https://www.preppy.kr"
+  ) {
     if (
       url.search !== "" ||
       url.hash !== "" ||
