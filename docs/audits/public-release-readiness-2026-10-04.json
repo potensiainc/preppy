@@ -21,7 +21,7 @@
       "status": "수정 필요 — 이번 긴급 웹 문구 수정에 포함하지 않음",
       "file": "src/modules/notification/email-renderer.server.ts",
       "finding": "알림 설정 링크가 실제 페이지 /my-preppy/settings가 아닌 /me/settings를 사용함. APP_BASE_URL 미설정 시 http://localhost:3000으로 대체함.",
-      "evidence": "이메일 템플릿 코드와 기존 이메일 단위 테스트의 기대값 확인. 실제 발송 여부는 검증하지 않음.",
+      "evidence": "이메일 템플릿 코드와 기존 이메일 단위 테스트의 기대값 확인. 운영 /me/settings의 HTTP 404 확인. 실제 발송 여부는 검증하지 않음.",
       "nextAction": "경로 수정, 잘못된 origin 설정 차단, 발송·재조정 테스트 후 메일 워커 별도 배포 검토"
     },
     {
@@ -34,6 +34,9 @@
   ],
   "validation": {
     "targetedTests": "39 passed across 3 files",
+    "typecheck": "npm run typecheck 통과",
+    "browser": "computer-use로 운영 통학 탐색의 데스크톱 및 390×844 모바일 화면, 안내 팝업 확인. MOCKUP 미노출 및 안내 문구 확인",
+    "deployment": "staging/production 웹 배포 완료 후 양쪽 공개 HTML에서 개발 문구 미노출, data.json의 수정된 notice, deployment-health HTTP 200 확인",
     "liveScan": "323개 공개 URL에서 개발용 문구·빈 링크·HTTP 오류 0건",
     "dataIntegrity": "원본 git 객체와 비교해 $.notice 한 필드만 변경 확인",
     "prevention": "public-release-readiness.test.ts가 공개 UI 문자열·정적 자료 및 숨겨진 팝업/접근성 이름의 개발용 문구 재유입을 검사함. 기존 release-image 워크플로의 test:unit 단계에 포함됨.",
