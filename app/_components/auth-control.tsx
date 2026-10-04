@@ -129,9 +129,7 @@ export function AuthControl() {
     );
   }
   if (authenticated === null) {
-    return (
-      <span className="auth-control auth-control--pending">로그인 확인 중</span>
-    );
+    return null;
   }
   if (!authenticated) {
     return <AuthControlPresentation authenticated={false} onLogout={logout} />;
