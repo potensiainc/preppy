@@ -16,9 +16,8 @@ describe("public business information", () => {
     expect(markup).toContain(businessInformation.registrationNumber);
     expect(markup).toContain(businessInformation.address);
     expect(markup).toContain(`mailto:${businessInformation.email}`);
-    expect(markup).toContain(
-      `tel:${businessInformation.phone.replaceAll("-", "")}`,
-    );
+    expect(markup).not.toContain("010-4685-4725");
+    expect(markup).not.toContain("tel:");
   });
 
   it("matches the business information already published in legal documents", () => {
@@ -28,10 +27,12 @@ describe("public business information", () => {
       businessInformation.registrationNumber,
       businessInformation.address,
       businessInformation.email,
-      businessInformation.phone,
     ]) {
       expect(termsContent).toContain(value);
       expect(privacyContent).toContain(value);
     }
+
+    expect(termsContent).not.toContain("010-4685-4725");
+    expect(privacyContent).not.toContain("010-4685-4725");
   });
 });

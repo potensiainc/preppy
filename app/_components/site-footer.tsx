@@ -39,12 +39,6 @@ export function SiteFooter() {
                 <a href={`mailto:${businessInformation.email}`}>
                   {businessInformation.email}
                 </a>
-                <span aria-hidden="true"> · </span>
-                <a
-                  href={`tel:${businessInformation.phone.replaceAll("-", "")}`}
-                >
-                  {businessInformation.phone}
-                </a>
               </dd>
             </div>
           </dl>
