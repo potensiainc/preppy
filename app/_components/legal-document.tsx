@@ -67,7 +67,6 @@ export function LegalDocument({
       <footer className={styles.contact}>
         <h2>문의</h2>
         <a href="mailto:potensiainc@gmail.com">potensiainc@gmail.com</a>
-        <a href="tel:01046854725">010-4685-4725</a>
         <Link href="/">홈으로 이동</Link>
       </footer>
     </article>

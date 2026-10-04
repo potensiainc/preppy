@@ -5,6 +5,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
 import { FollowCta } from "@/app/_components/follow-cta";
+import { AuthControlPresentation } from "@/app/_components/auth-control";
 import { InstitutionDetailView } from "@/app/_components/institution-pages";
 import { ArticleDetailView } from "@/app/_components/opportunity-article-pages";
 import { OnboardingForm } from "@/app/(public)/onboarding/onboarding-form";
@@ -35,6 +36,26 @@ const detail: InstitutionDetailDTO = {
 };
 
 describe("WP-08 auth-aware public UI", () => {
+  it("hides the Kakao login navigation item until provider approval while preserving signed-in controls", () => {
+    const anonymousMarkup = renderToStaticMarkup(
+      createElement(AuthControlPresentation, {
+        authenticated: false,
+        onLogout: () => undefined,
+      }),
+    );
+    expect(anonymousMarkup).toBe("");
+
+    const authenticatedMarkup = renderToStaticMarkup(
+      createElement(AuthControlPresentation, {
+        authenticated: true,
+        onLogout: () => undefined,
+      }),
+    );
+    expect(authenticatedMarkup).toContain("내 프레피");
+    expect(authenticatedMarkup).toContain("로그아웃");
+    expect(authenticatedMarkup).not.toContain("카카오로 로그인");
+  });
+
   it("renders a real Follow CTA with canonical Institution inputs and no fake completion state", () => {
     // Mutation caught: dropping the canonical id/path or restoring the prototype/followed claim.
     const markup = renderToStaticMarkup(
@@ -202,7 +223,7 @@ describe("WP-08 auth-aware public UI", () => {
     expect(controlSource).toContain("new URL(path, window.location.origin)");
     expect(controlSource).toContain('href="/my-preppy"');
     expect(controlSource).toContain("내 프레피");
-    expect(controlSource).toContain("카카오로 로그인");
+    expect(controlSource).not.toContain("카카오로 로그인");
     expect(controlSource).not.toMatch(/userEmail|emailAddress|@example/);
   });
 
