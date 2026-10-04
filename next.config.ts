@@ -5,10 +5,23 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/commute",
-        destination: "/commute/index.html",
-        permanent: false,
+        destination: "/schoolmap",
+        permanent: true,
+      },
+      {
+        source: "/commute/index.html",
+        destination: "/schoolmap",
+        permanent: true,
+      },
+      {
+        source: "/schoolmap/index.html",
+        destination: "/schoolmap",
+        permanent: true,
       },
     ];
+  },
+  async rewrites() {
+    return [{ source: "/schoolmap", destination: "/commute/index.html" }];
   },
 };
 

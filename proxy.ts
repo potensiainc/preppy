@@ -2,7 +2,15 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { isStagingEnvironment } from "@/src/config/deployment-environment";
 
-export function proxy(_request: NextRequest): NextResponse {
+export function proxy(request: NextRequest): NextResponse {
+  if (
+    request.nextUrl.pathname === "/schoolmap" &&
+    request.nextUrl.searchParams.get("area") === ""
+  ) {
+    const canonical = request.nextUrl.clone();
+    canonical.searchParams.delete("area");
+    return NextResponse.redirect(canonical, 308);
+  }
   const response = NextResponse.next();
   if (isStagingEnvironment()) {
     response.headers.set("X-Robots-Tag", "noindex, nofollow");

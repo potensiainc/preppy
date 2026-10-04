@@ -198,6 +198,8 @@ export async function listPublicSitemapEntries(
   const output: PublicSitemapEntryDTO[] = [
     { url: `${origin}/` },
     { url: `${origin}/institutions` },
+    { url: `${origin}/articles` },
+    { url: `${origin}/opportunities` },
   ];
   await appendInstitutions(executor, origin, output);
   await appendOpportunities(executor, origin, output);

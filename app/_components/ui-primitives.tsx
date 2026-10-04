@@ -13,17 +13,20 @@ export function SectionHeader({
   title,
   description,
   action,
+  headingLevel = 2,
 }: {
   eyebrow?: string;
   title: string;
   description?: string;
   action?: ReactNode;
+  headingLevel?: 1 | 2;
 }) {
+  const Heading = headingLevel === 1 ? "h1" : "h2";
   return (
     <header className="section-header">
       <div>
         {eyebrow ? <p className="eyebrow">{eyebrow}</p> : null}
-        <h2>{title}</h2>
+        <Heading>{title}</Heading>
         {description ? (
           <p className="section-description">{description}</p>
         ) : null}
@@ -53,7 +56,7 @@ export function Pagination({
   pagination,
   hrefForPage,
 }: {
-  pagination: PaginationDTO;
+  pagination: Pick<PaginationDTO, "page" | "hasNext">;
   hrefForPage: (page: number) => string;
 }) {
   if (pagination.page <= 1 && !pagination.hasNext) return null;

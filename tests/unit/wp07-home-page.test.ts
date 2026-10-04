@@ -147,7 +147,7 @@ describe("WP-07 Home page", () => {
     expect(markup).not.toMatch(/프레피가 알려드려요|놓치지 않도록/);
     expect(markup).toContain('href="/institutions"');
     expect(markup).toContain("기관 둘러보기");
-    expect(markup).toContain('href="/#current-opportunities"');
+    expect(markup).toContain('href="/opportunities"');
     expect(markup).toContain("현재 모집·입학정보 보기");
     expect(markup).toContain(
       'href="/institutions?category=ENGLISH_KINDERGARTEN"',

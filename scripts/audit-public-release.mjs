@@ -131,7 +131,9 @@ async function auditLive(baseUrl) {
     .map((_, el) => sitemap(el).text())
     .get();
   const extra = [
-    "/commute/index.html",
+    "/schoolmap",
+    "/articles",
+    "/opportunities",
     "/privacy",
     "/terms",
     "/my-preppy",
