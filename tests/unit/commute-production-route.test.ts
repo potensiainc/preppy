@@ -28,7 +28,7 @@ describe("commute production route", () => {
     const html = await readFile(resolve(commuteRoot, "index.html"), "utf8");
 
     expect(html).toMatch(
-      /<a\s+class="wordmark"\s+href="\/"\s+aria-label="PREPPY 홈">\s*PREPPY\s*<\/a>/u,
+      /<a\s+class="wordmark"\s+href="\/"\s+aria-label="PREPPY 홈"\s*>\s*<span\s+class="brand-icon"\s+aria-hidden="true"><\/span>PREPPY<\/a\s*>/u,
     );
     expect(html).not.toMatch(/class="wordmark"[^>]*data-action="home"/u);
   });

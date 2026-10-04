@@ -18,7 +18,7 @@ COPY scripts ./scripts
 COPY public ./public
 COPY types ./types
 
-RUN npm run build && ! grep -R -q 'preppy-build.invalid' .next
+RUN node scripts/deploy/assert-header-auth-absence.mjs && npm run build && ! grep -R -q 'preppy-build.invalid' .next
 
 FROM node:22-bookworm-slim AS runtime
 
