@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 
 import {
   getRedirectUrl,
+  getRewrittenUrl,
   unstable_getResponseFromNextConfig,
 } from "next/experimental/testing/server";
 import { createElement } from "react";
@@ -19,7 +20,7 @@ describe("commute production route", () => {
   it("offers the commute map from both desktop and mobile public navigation", () => {
     const markup = renderToStaticMarkup(createElement(SiteHeader));
 
-    expect(markup.match(/href="\/commute"/g)).toHaveLength(2);
+    expect(markup.match(/href="\/schoolmap"/g)).toHaveLength(2);
     expect(markup.match(/>통학지도<\/a>/g)).toHaveLength(2);
   });
 
@@ -60,15 +61,29 @@ describe("commute production route", () => {
       expect(html.replace(/\s+/g, " ")).toContain(fact);
   });
 
-  it("redirects the clean public URL to the static entry point and preserves filters", async () => {
+  it.each(["/commute", "/commute/index.html", "/schoolmap/index.html"])(
+    "redirects legacy %s to schoolmap and preserves filters",
+    async (path) => {
+      const response = await unstable_getResponseFromNextConfig({
+        url: `https://preppy-web-production.up.railway.app${path}?area=서초구&school=test-school`,
+        nextConfig,
+      });
+
+      expect(response.status).toBe(308);
+      expect(getRedirectUrl(response)).toBe(
+        "https://preppy-web-production.up.railway.app/schoolmap?area=%EC%84%9C%EC%B4%88%EA%B5%AC&school=test-school",
+      );
+    },
+  );
+
+  it("serves the static map without exposing index.html in the address bar", async () => {
     const response = await unstable_getResponseFromNextConfig({
-      url: "https://preppy-web-production.up.railway.app/commute?area=서초구",
+      url: "https://preppy.kr/schoolmap",
       nextConfig,
     });
-
-    expect(response.status).toBe(307);
-    expect(getRedirectUrl(response)).toBe(
-      "https://preppy-web-production.up.railway.app/commute/index.html?area=%EC%84%9C%EC%B4%88%EA%B5%AC",
+    expect(getRedirectUrl(response)).toBeNull();
+    expect(getRewrittenUrl(response)).toBe(
+      "https://preppy.kr/commute/index.html",
     );
   });
 
@@ -78,13 +93,13 @@ describe("commute production route", () => {
     const map = await readFile(resolve(commuteRoot, "map.js"), "utf8");
     const styles = await readFile(resolve(commuteRoot, "styles.css"), "utf8");
 
-    expect(html).toContain('href="./styles.css"');
-    expect(html).toContain('src="./app.js"');
+    expect(html).toContain('href="/commute/styles.css"');
+    expect(html).toContain('src="/commute/app.js"');
     expect(html).toContain("2026년 8월 31일");
     expect(html).toContain("실제 운행 여부");
     expect(html).not.toContain("LOCAL ONLY");
     expect(html).not.toContain("운영 서비스와 연결되어 있지 않습니다");
-    expect(app).toContain("fetch('./data.json')");
+    expect(app).toContain("fetch(new URL('./data.json', import.meta.url))");
     expect(app).not.toContain("이 컴퓨터에서만 열 수 있습니다");
     expect(`${html}\n${app}\n${map}`).not.toMatch(/[가-힣]+니다/u);
     expect(styles).toContain("url('./vendor/SUIT-Variable.woff2')");

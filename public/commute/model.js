@@ -49,7 +49,7 @@ export function search(data,query) {
 }
 export function readUrl(data,href) {
   const q=new URL(href).searchParams;
-  const region=q.has('area')?(data.regions.some(r=>r.name===q.get('area'))?q.get('area'):''):'서초구';
+  const region=data.regions.some(r=>r.name===q.get('area'))?q.get('area'):'';
   const neighborhood=data.neighborhoods.find(n=>n.code===q.get('dong')&&n.district===region)?.code||'';
   const school=data.schools.find(s=>s.id===q.get('school'));
   const way=q.get('way')==='하교'?'하교':'등교';

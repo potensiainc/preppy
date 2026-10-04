@@ -66,8 +66,10 @@ async function getFeaturedInstitutions(
   });
 }
 
-async function getLatestArticles(
+export async function getLatestArticles(
   executor: DatabaseExecutor,
+  limit = HOME_SECTION_LIMIT,
+  offset = 0,
 ): Promise<ArticleCardDTO[]> {
   const rows = await executor.drizzle
     .select({
@@ -85,7 +87,8 @@ async function getLatestArticles(
     .from(articles)
     .where(eq(articles.status, "PUBLISHED"))
     .orderBy(desc(articles.publishedAt), asc(articles.id))
-    .limit(HOME_SECTION_LIMIT);
+    .limit(limit)
+    .offset(offset);
   return rows.map((article) => ({
     id: article.id,
     slug: article.slug,

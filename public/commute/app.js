@@ -6,7 +6,7 @@ import {buildRouteView,getRouteVariants} from './route-view.js';
 const $=id=>document.getElementById(id);
 document.querySelectorAll('[data-icon]').forEach(el=>el.innerHTML=icon(el.dataset.icon));
 let data;
-try {const r=await fetch('./data.json');if(!r.ok)throw Error('data');data=await r.json();}
+try {const r=await fetch(new URL('./data.json', import.meta.url));if(!r.ok)throw Error('data');data=await r.json();}
 catch {$('results').innerHTML='<div class="empty-state"><h3>자료를 불러오지 못했어요.</h3><p>잠시 후 새로고침해 주세요.</p></div>';throw Error('Commute dataset unavailable');}
 const initial=readUrl(data,location.href);
 const state={...initial,sort:'coverage',saved:new Set(),compared:[],savedOnly:false,mapMode:'schools',selectedStop:null,mobileMap:!!initial.schoolId,routeSheet:initial.routeId?'timeline':'summary',routePeek:false};
@@ -24,11 +24,12 @@ function normalizeSelection(){
   if(state.routeId&&!getRouteVariants(school).some(v=>v.routeId===state.routeId&&v.direction===state.way&&(state.routeScope==='all'||v.direction===state.routeScope))){state.routeId='';state.selectedStop=null;state.routeSheet='summary';state.routePeek=false;}
 }
 function writeUrl(){
-  const q=new URLSearchParams({area:state.region});
+  const q=new URLSearchParams();
+  if(state.region)q.set('area',state.region);
   if(state.neighborhood)q.set('dong',state.neighborhood);
   if(state.schoolId){q.set('school',state.schoolId);q.set('scope',state.routeScope);if(state.routeId){q.set('way',state.way);q.set('route',state.routeId);}}
   if(state.direction!=='all')q.set('filter',state.direction);
-  const url=`${location.pathname}?${q}`;if(url!==location.pathname+location.search)history.pushState({},'',url);
+  const url=`/schoolmap${q.size ? `?${q}` : ''}`;if(url!==location.pathname+location.search)history.pushState({},'',url);
 }
 function change(patch,{url=true}={}){Object.assign(state,patch);normalizeSelection();render();if(url)writeUrl();}
 function openSchool(id){change({schoolId:id,routeId:'',routeScope:'all',selectedStop:null,mapMode:'schools',mobileMap:true,routeSheet:'summary',routePeek:false});$('school-detail').querySelector('button')?.focus({preventScroll:true});}

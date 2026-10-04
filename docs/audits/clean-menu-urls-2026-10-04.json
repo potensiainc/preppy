@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-04",
+  "scope": "공개 메뉴 주소 통일과 기존 링크 호환",
+  "routes": {
+    "institutions": "/institutions",
+    "articles": "/articles",
+    "opportunities": "/opportunities",
+    "schoolmap": "/schoolmap"
+  },
+  "compatibility": [
+    "기존 /#articles, /#current-opportunities는 브라우저에서 새 목록 주소로 replace 이동. JavaScript 비활성 시 기존 홈 섹션은 계속 사용 가능",
+    "/commute, /commute/index.html, /schoolmap/index.html은 /schoolmap으로 308 이동하며 쿼리 보존",
+    "빈 area는 제거하고 학교·노선 등 다른 선택값은 보존",
+    "학교지도 기본 범위는 서울·경기 전체. 지역 선택 시에만 area가 붙고 뒤로가기로 전체 지역 복원",
+    "정적 지도 파일 경로는 내부 구현으로 유지. CSS·JS·데이터 로딩 경로를 화면 주소와 분리",
+    "아티클 목록은 12개씩 페이지 이동. 입학정보는 기존 홈과 동일한 현재 모집·입학정보 선정 기준과 기관별 탐색 링크 사용"
+  ],
+  "validation": {
+    "unitTests": "163 files / 1573 tests passed",
+    "typecheck": "npm run typecheck 통과",
+    "lint": "변경된 TypeScript, 테스트 및 감사 스크립트 ESLint 통과",
+    "build": "Railway staging/production Next.js build 및 배포 성공",
+    "stagingBrowser": "데스크톱 메뉴 클릭, 아티클 빈 상태, 입학정보 실제 목록, 지도 렌더링, 지역 선택·뒤로가기, 기존 해시 주소 2개 이동, 390×844 모바일 메뉴 클릭·레이아웃 확인",
+    "productionBrowser": "390×844 모바일 아티클 목록의 실제 제목·요약·날짜와 새 주소 확인",
+    "http": "양쪽 환경의 새 목록·지도 HTTP 200, 구주소 308·선택값 보존 확인. production /institutions 및 deployment-health HTTP 200 확인",
+    "notRun": ["DB 쓰기를 수반하는 통합 테스트", "모든 학교·노선 조합의 브라우저 조작", "로그인·신청·메일 발송"]
+  },
+  "deployments": {
+    "staging": "06d9a9e4-90a1-4f60-bedd-756600009a74",
+    "production": "9cebc3b2-c1d2-462b-828c-b7f945d0c50d"
+  },
+  "uxWriting": {
+    "result": "PASS",
+    "impact": "주요 메뉴 목적지, 독립 페이지 제목, 목록 탐색·페이지 이동 및 빈 상태",
+    "copy": "기존 입학 준비 아티클 / 현재 모집·입학정보 제목과 설명 재사용. 아티클 전체 보기 / 입학정보 보기 / 기관별 입학정보 찾기는 실제 목적지와 일치",
+    "preserved": "학교별 일정·학년도·조건·예정/마감·수집일·확인일·출처 데이터는 수정하지 않음. 통학 자료의 미확인 안내 및 저장 제한 유지",
+    "limits": "메뉴 URL 변경 범위 판정이며 별도 기능 감사 항목 전체 해결을 의미하지 않음"
+  }
+}

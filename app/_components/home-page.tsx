@@ -33,17 +33,28 @@ const institutionGroups = [
   },
 ] as const;
 
-function OpportunitySection({
+export function OpportunitySection({
   opportunities,
+  standalone = false,
 }: {
   opportunities: HomePageDTO["currentOpportunities"];
+  standalone?: boolean;
 }) {
   return (
     <section id="current-opportunities" aria-label="현재 모집·입학정보">
       <SectionHeader
+        headingLevel={standalone ? 1 : 2}
         eyebrow="모집·입학"
         title="현재 모집·입학정보"
         description="공식 안내에서 확인한 모집과 입학 일정을 모았어요."
+        action={
+          <Link
+            className="text-link"
+            href={standalone ? "/institutions" : "/opportunities"}
+          >
+            {standalone ? "기관별 입학정보 찾기" : "입학정보 보기"}
+          </Link>
+        }
       />
       {opportunities.length > 0 ? (
         <div className="home-card-grid">
@@ -147,17 +158,27 @@ function InstitutionSection({
   );
 }
 
-function ArticleSection({
+export function ArticleSection({
   articles,
+  standalone = false,
 }: {
   articles: HomePageDTO["latestArticles"];
+  standalone?: boolean;
 }) {
   return (
     <section id="articles" aria-label="입학 준비 아티클">
       <SectionHeader
         eyebrow="입학 준비"
+        headingLevel={standalone ? 1 : 2}
         title="입학 준비 아티클"
         description="기관을 비교하고 입학을 준비할 때 참고할 내용을 정리했어요."
+        action={
+          standalone ? undefined : (
+            <Link className="text-link" href="/articles">
+              아티클 전체 보기
+            </Link>
+          )
+        }
       />
       {articles.length > 0 ? (
         <div className="home-card-grid">
@@ -204,7 +225,7 @@ export function HomePageView({ data }: { data: HomePageDTO }) {
                 name: "hero_secondary_cta_click",
                 properties: { cta: "CURRENT_OPPORTUNITIES" },
               }}
-              href="/#current-opportunities"
+              href="/opportunities"
             >
               현재 모집·입학정보 보기
             </AnalyticsLink>
