@@ -6,6 +6,7 @@ export function inScope(stop,state) {
 export const scopeStops = (school,state) => allStops(school).filter(s=>inScope(s,state));
 export const regionLabel = (data,state) => data.neighborhoods.find(n=>n.code===state.neighborhood)?.name || state.region || '서울·경기 전체';
 export function timeLabel(s) {
+  if(s.timeNeedsReview) return `${s.time} · 확인 필요`;
   if(s.timeKind==='clock') return s.time;
   if(s.timeKind==='relative_minutes') return `+${s.duration}분`;
   if(s.timeKind==='route_reference') return `${s.time} 참조`;
@@ -15,7 +16,7 @@ export function summary(school,state) {
   const stops=scopeStops(school,state), morning=stops.filter(s=>s.direction==='등교'), afternoon=stops.filter(s=>s.direction==='하교');
   const clocks=morning.filter(s=>s.timeKind==='clock').sort((a,b)=>a.minutes-b.minutes);
   const first=clocks[0]?.time, last=clocks.at(-1)?.time;
-  return {stops,morning,afternoon,clockRange:first ? (first===last?first:`${first}–${last}`) : '시각 미제공',
+  return {stops,morning,afternoon,clockRange:morning.some(s=>s.timeNeedsReview) ? '시각 확인 필요' : first ? (first===last?first:`${first}–${last}`) : '시각 미제공',
     neighborhoods:[...new Set(stops.map(s=>s.neighborhood))],
     morningRoutes:school.routes.filter(r=>r.stops.some(s=>inScope(s,state)&&s.direction==='등교')).length,
     afternoonRoutes:school.routes.filter(r=>r.stops.some(s=>inScope(s,state)&&s.direction==='하교')).length};

@@ -1,5 +1,9 @@
 import type { PublicArticleDTO } from "@/src/modules/public/dto";
 import { publicProse } from "@/src/modules/public/ux-writing";
+import {
+  explicitAcademicYear,
+  isEarlierAcademicYear,
+} from "@/src/modules/public/article-academic-year";
 
 import { TrackedFollowCta as FollowCta } from "@/app/_components/tracked-follow-cta";
 import { ArticleProse } from "@/app/_components/article-prose";
@@ -42,6 +46,13 @@ function uniqueArticleInstitution(article: PublicArticleDTO) {
 
 export function ArticleDetailView({ article }: { article: PublicArticleDTO }) {
   const followTarget = uniqueArticleInstitution(article);
+  const academicYear = explicitAcademicYear(article.title);
+  const historical = article.relatedOpportunities.filter((item) =>
+    isEarlierAcademicYear(item.title, academicYear),
+  );
+  const current = article.relatedOpportunities.filter(
+    (item) => !isEarlierAcademicYear(item.title, academicYear),
+  );
   return (
     <PageContainer>
       <article className="article-detail">
@@ -80,6 +91,7 @@ export function ArticleDetailView({ article }: { article: PublicArticleDTO }) {
             <div className="detail-card-grid">
               {article.relatedInstitutions.map((institution) => (
                 <InstitutionCard
+                  admissionContextYear={academicYear}
                   analyticsEvent={{
                     name: "article_to_institution",
                     properties: {
@@ -95,14 +107,35 @@ export function ArticleDetailView({ article }: { article: PublicArticleDTO }) {
           </section>
         ) : null}
 
-        {article.relatedOpportunities.length > 0 ? (
+        {current.length > 0 ? (
           <section
             className="article-detail__section"
             aria-label="관련 모집·입학정보"
           >
             <SectionHeader title="관련 모집·입학정보" />
             <div className="detail-card-grid">
-              {article.relatedOpportunities.map((opportunity) => (
+              {current.map((opportunity) => (
+                <OpportunityCard
+                  key={opportunity.id}
+                  opportunity={opportunity}
+                />
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        {historical.length > 0 ? (
+          <section
+            className="article-detail__section"
+            aria-label="이전 학년도 자료"
+          >
+            <SectionHeader title="이전 학년도 자료" />
+            <p>
+              이 글에서 안내하는 학년도와 달라요. 해당 학년도의 기록으로 확인해
+              주세요.
+            </p>
+            <div className="detail-card-grid">
+              {historical.map((opportunity) => (
                 <OpportunityCard
                   key={opportunity.id}
                   opportunity={opportunity}

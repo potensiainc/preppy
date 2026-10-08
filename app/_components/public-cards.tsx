@@ -3,6 +3,7 @@ import { FollowCta } from "@/app/_components/follow-cta";
 import Link from "next/link";
 import { publicAdmissionText } from "@/src/modules/public/admission-copy";
 import { publicProse } from "@/src/modules/public/ux-writing";
+import { isEarlierAcademicYear } from "@/src/modules/public/article-academic-year";
 
 import { AnalyticsLink } from "@/app/_components/analytics-link";
 import type { CapturedAnalyticsEvent } from "@/src/analytics/events";
@@ -72,10 +73,12 @@ export function InstitutionCard({
   institution,
   analyticsEvent,
   headingLevel = 3,
+  admissionContextYear = null,
 }: {
   institution: InstitutionCardDTO;
   analyticsEvent?: CapturedAnalyticsEvent;
   headingLevel?: 3 | 4;
+  admissionContextYear?: number | null;
 }) {
   const Heading = headingLevel === 4 ? "h4" : "h3";
   const region =
@@ -116,6 +119,12 @@ export function InstitutionCard({
       {region ? <p className="card-region">{region}</p> : null}
       {institution.currentOpportunity ? (
         <p className="card-opportunity">
+          {isEarlierAcademicYear(
+            institution.currentOpportunity.title,
+            admissionContextYear,
+          ) ? (
+            <span>이전 학년도 자료 · </span>
+          ) : null}
           <Link
             className="card-secondary-link"
             href={`/opportunities/${institution.currentOpportunity.slug}`}
