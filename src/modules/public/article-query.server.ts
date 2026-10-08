@@ -20,9 +20,14 @@ import type { InstitutionCardDTO, OpportunityCardDTO } from "./dto";
 import {
   getPublicInstitutionCardsByIds,
   getPublicOpportunityCardsByIds,
+  getPublicOpportunityCardsByInstitutionIds,
 } from "./institution-query.server";
 import type { UnsafeStoredArticleDetailDTO } from "./article-detail.server";
 import { internationalSchoolPublicEligibilitySql } from "./international-school-publication-policy";
+import {
+  alignArticleAdmissions,
+  explicitAcademicYear,
+} from "./article-academic-year";
 
 const RELATED_TARGET_LIMIT = 12;
 
@@ -169,6 +174,21 @@ export async function getArticleBySlug(
     getRelatedInstitutions(executor, article.id),
     getRelatedOpportunities(executor, article.id),
   ]);
+  const year = explicitAcademicYear(article.title);
+  const aligned =
+    year === null
+      ? { relatedInstitutions, relatedOpportunities }
+      : alignArticleAdmissions(
+          relatedInstitutions,
+          relatedOpportunities,
+          await getPublicOpportunityCardsByInstitutionIds(executor, [
+            ...new Set([
+              ...relatedInstitutions.map((item) => item.id),
+              ...relatedOpportunities.map((item) => item.institution.id),
+            ]),
+          ]),
+          year,
+        );
   return {
     id: article.id,
     slug: article.slug,
@@ -186,8 +206,7 @@ export async function getArticleBySlug(
     canonicalUrl: article.canonicalUrl,
     robotsIndex: article.robotsIndex,
     robotsFollow: article.robotsFollow,
-    relatedInstitutions,
-    relatedOpportunities,
+    ...aligned,
     unsafeStoredContentHtml: article.unsafeStoredContentHtml,
   };
 }

@@ -265,7 +265,7 @@ async function getOpportunityTruths(
     | { institutionIds: readonly string[] }
     | { opportunityIds: readonly string[] }
     | { home: true },
-  projection: "CARD" | "DETAIL" | "HOME",
+  projection: "CARD" | "DETAIL" | "HOME" | "ARTICLE",
 ): Promise<OpportunityTruth[]> {
   if ("institutionIds" in target && target.institutionIds.length === 0)
     return [];
@@ -308,16 +308,20 @@ async function getOpportunityTruths(
       ? DETAIL_OPPORTUNITY_LIMIT
       : projection === "HOME"
         ? HOME_OPPORTUNITY_LIMIT
-        : 1;
+        : projection === "ARTICLE"
+          ? MAX_OPPORTUNITY_CARD_BATCH
+          : 1;
   const rankLimit = projection === "HOME" ? 1 : limit;
   const overallLimit =
     projection === "HOME" ? sql`limit ${HOME_OPPORTUNITY_LIMIT}` : sql``;
   const partition =
     projection === "HOME"
       ? sql`"institutionId", section`
-      : "opportunityIds" in target
-        ? sql`id, section`
-        : sql`"institutionId", section`;
+      : projection === "ARTICLE"
+        ? sql`"institutionId", kind, section`
+        : "opportunityIds" in target
+          ? sql`id, section`
+          : sql`"institutionId", section`;
   const rows = (await executor.raw(sql`
     with candidates as (
       select o.id, o.institution_id as "institutionId", o.slug, o.kind, v.id as "versionId", 'NATIVE' as mode, v.title, v.business_state as state, v.summary, v.target_audience as "targetAudience", v.action_url as "actionUrl", v.verified_at as "verifiedAt",
@@ -530,6 +534,23 @@ export async function getPublicOpportunityCardsByIds(
     return institution === undefined
       ? []
       : [opportunityCard(truth, institution)];
+  });
+}
+
+/** Reuses the same public truth/evidence boundary for bounded Article institutions. */
+export async function getPublicOpportunityCardsByInstitutionIds(
+  executor: DatabaseExecutor,
+  institutionIds: readonly string[],
+): Promise<OpportunityCardDTO[]> {
+  const truths = await getOpportunityTruths(
+    executor,
+    { institutionIds },
+    "ARTICLE",
+  );
+  const institutionsById = await getInstitutionsByIds(executor, institutionIds);
+  return truths.flatMap((truth) => {
+    const institution = institutionsById.get(truth.institutionId);
+    return institution ? [opportunityCard(truth, institution)] : [];
   });
 }
 
