@@ -56,12 +56,15 @@ def main() -> None:
         )
         assert any(f"gtag/js?id={MEASUREMENT_ID}" in url for url in requests)
         config = page.evaluate(
-            """measurementId => window.dataLayer.find(
+            """measurementId => Array.from(window.dataLayer.find(
               args => args[0] === 'config' && args[1] === measurementId
-            )""",
+            ))""",
             MEASUREMENT_ID,
         )
         assert config is not None
+        assert page.evaluate(
+            "Object.prototype.toString.call(window.dataLayer[0])"
+        ) == "[object Arguments]"
         assert config[2]["send_page_view"] is False
         assert config[2]["cookie_expires"] == 60 * 60 * 24 * 90
         assert config[2]["cookie_update"] is False

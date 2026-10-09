@@ -22,7 +22,7 @@ import { safeGa4LocationContext } from "@/src/analytics/url-guard";
 
 declare global {
   interface Window {
-    dataLayer?: unknown[][];
+    dataLayer?: Array<IArguments | unknown[]>;
     gtag?: (...args: unknown[]) => void;
     __PREPPY_GTAG_INITIALIZED__?: string;
     __PREPPY_ANALYTICS_CAPTURE__?: (event: CapturedAnalyticsEvent) => void;
@@ -32,7 +32,9 @@ declare global {
 function ensureGoogleInitialized(measurementId: string) {
   if (window.__PREPPY_GTAG_INITIALIZED__ === measurementId) return;
   window.dataLayer = window.dataLayer ?? [];
-  window.gtag = (...args: unknown[]) => window.dataLayer?.push(args);
+  window.gtag = function gtag() {
+    window.dataLayer?.push(arguments);
+  };
   const page = safeGa4LocationContext(window.location.href, document.referrer);
   window.gtag("js", new Date());
   window.gtag("config", measurementId, {
