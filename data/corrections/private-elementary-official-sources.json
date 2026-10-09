@@ -4,7 +4,9 @@
     {
       "institutionId": "1968cc29-a427-54e6-9326-6750e711d27a",
       "slug": "cau",
-      "urls": ["https://cau.sen.es.kr/122768/subMenu.do"]
+      "urls": [
+        "https://cau.sen.es.kr/122768/subMenu.do"
+      ]
     },
     {
       "institutionId": "98064bab-136b-5320-b7a4-894ff3e767fc",
@@ -90,7 +92,9 @@
     {
       "institutionId": "34c9f6bd-b46b-5fcc-aac8-a8cc77d3dc3e",
       "slug": "hongik",
-      "urls": ["https://hongik.sen.es.kr/199027/subMenu.do"]
+      "urls": [
+        "https://hongik.sen.es.kr/199027/subMenu.do"
+      ]
     },
     {
       "institutionId": "bbad0468-6d31-5061-8a48-dcc9acb50167",
@@ -124,7 +128,9 @@
     {
       "institutionId": "abcb72f0-a6aa-53b1-9104-77d318660f8a",
       "slug": "kbes",
-      "urls": ["https://www.kbes.kr/bbs/content.php?co_id=1_3"]
+      "urls": [
+        "https://www.kbes.kr/bbs/content.php?co_id=1_3"
+      ]
     },
     {
       "institutionId": "9550da3f-04eb-5eee-877d-877491461201",
@@ -139,7 +145,8 @@
         "https://www.kumsung.net/data/editor/2511/796b72a1a353cedcc4df4da80465948e_1763108631_2.jpg",
         "https://www.kumsung.net/data/editor/2511/796b72a1a353cedcc4df4da80465948e_1763108631_33.jpg",
         "https://www.kumsung.net/data/file/1_11_3/1994256923_0ojx3Cb1_b63968b12f18cea3319a349f75d7c153d7149d6c.jpg",
-        "https://www.kumsung.net/data/file/1_11_3/1994256923_vaZAxmzI_b63968b12f18cea3319a349f75d7c153d7149d6c.jpg"
+        "https://www.kumsung.net/data/file/1_11_3/1994256923_vaZAxmzI_b63968b12f18cea3319a349f75d7c153d7149d6c.jpg",
+        "https://www.kumsung.net/bbs/board.php?bo_table=1_11_3&wr_id=3176"
       ]
     },
     {
@@ -170,7 +177,9 @@
     {
       "institutionId": "9aa75c7b-e7de-55bc-ba67-03201af8cb6e",
       "slug": "lila",
-      "urls": ["https://www.lila.es.kr/kr/about/admission_guide.php"]
+      "urls": [
+        "https://www.lila.es.kr/kr/about/admission_guide.php"
+      ]
     },
     {
       "institutionId": "a65efc5c-8ebc-5fc8-9d2b-88ed461d39a3",
@@ -184,7 +193,12 @@
     {
       "institutionId": "4b732452-6f4b-5f7e-9303-456667250a67",
       "slug": "myongji",
-      "urls": ["http://www.myongji.net/subpage.php?p=m24"]
+      "urls": [
+        "http://www.myongji.net/subpage.php?p=m24",
+        "https://www.myongji.net/subpage.php?p=m24",
+        "https://www.myongji.net/data/cheditor4/2610/20261001112146_iwfqrbfz.jpg",
+        "https://www.myongji.net/bbs/board.php?bo_table=a_m24&wr_id=114"
+      ]
     },
     {
       "institutionId": "1d459c6d-cd3d-5f2d-98e5-a41e60079404",
@@ -365,7 +379,8 @@
       "institutionId": "626f9b01-1855-536f-b7cc-1608ab65eb9b",
       "slug": "younghoon",
       "urls": [
-        "http://www.younghoon.es.kr/younghoon_e/admission/typical-syllabus.do"
+        "http://www.younghoon.es.kr/younghoon_e/admission/typical-syllabus.do",
+        "https://www.younghoon.es.kr/younghoon_e/admission/admission-materials.do?articleNo=65762&mode=view"
       ]
     }
   ]

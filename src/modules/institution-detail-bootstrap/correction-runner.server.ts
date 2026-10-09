@@ -25,6 +25,7 @@ import { readBootstrapArtifactCounts } from "./artifact-runner.server";
 function schoolCollection(
   school: CorrectionSchool,
   target: PrivateElementaryBootstrapTarget,
+  preserveOtherAdmissions: boolean,
 ): {
   collection: CollectedPrivateElementarySchool;
   correction: SchoolTruthCorrection;
@@ -99,6 +100,7 @@ function schoolCollection(
       errors: [],
     },
     correction: {
+      preserveOtherAdmissions,
       admissions,
       factSourceUrls: Object.fromEntries(
         school.facts.map((f) => [f.factType, f.sourceUrls]),
@@ -174,6 +176,7 @@ export async function runCorrectionBundle(
         const { collection, correction } = schoolCollection(
           school,
           targets.find((t) => t.slug === school.target.slug)!,
+          bundle.correctionVersion === 2,
         );
         record.persisted = await persistPrivateElementarySchool(collection, {
           transactionManager: dependencies.transactionManager,
@@ -221,7 +224,7 @@ export async function runCorrectionBundle(
     return {
       mode: dependencies.mode,
       artifactChecksum: bundle.artifactChecksum,
-      schoolsValid: 41,
+      schoolsValid: bundle.schools.length,
       schoolsPersisted: records.filter((r) => r.status === "PERSISTED").length,
       schoolsFailed,
       databaseWrites: dependencies.mode === "dry-run" ? 0 : null,

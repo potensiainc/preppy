@@ -19,6 +19,8 @@ import { isStaleAdmissionCycle } from "./admission-extractor";
 import type { CorrectionSchool } from "./correction.server";
 
 export type SchoolTruthCorrection = Readonly<{
+  /** Partial refreshes upsert only reviewed records and preserve historical cycles. */
+  preserveOtherAdmissions?: boolean;
   admissions: readonly Readonly<{
     key: string;
     admission: NonNullable<CollectedPrivateElementarySchool["admission"]>;
@@ -1009,6 +1011,7 @@ export async function persistPrivateElementarySchool(
         "u",
       );
       for (const row of old) {
+        if (dependencies.correction.preserveOtherAdmissions) continue;
         if (retainedOpportunityIds.includes(row.id) || !identity.test(row.slug))
           continue;
         await executor.raw(

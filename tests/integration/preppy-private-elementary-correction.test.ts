@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { resolve } from "node:path";
+import { readFile } from "node:fs/promises";
 import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { migrateDatabase } from "@/src/db/migrate";
@@ -19,6 +20,7 @@ import {
 import { artifactTestCollection } from "@/tests/support/private-elementary-artifact";
 import { readBootstrapArtifactCounts } from "@/src/modules/institution-detail-bootstrap/artifact-runner.server";
 import { getInstitutionBySlug } from "@/src/modules/public/institution-query.server";
+import { getArticleBySlug } from "@/src/modules/public/article-query.server";
 import { assertDedicatedTestDatabaseUrl } from "@/tests/support/test-database";
 import { runCorrectionBundle } from "@/src/modules/institution-detail-bootstrap/correction-runner.server";
 import {
@@ -664,5 +666,95 @@ describe("school-atomic truth correction", () => {
     });
     const detail = await getInstitutionBySlug(runtime.executor, "kumsung");
     expect(detail.reviewedAdmissions).toHaveLength(14);
+  });
+  it("applies the captured v2 subset twice without retiring prior cycles or unrelated schools", async () => {
+    const bundle = JSON.parse(
+      await readFile(
+        resolve(
+          "data/corrections/PREPPY_PRIVATE_ELEMENTARY_REFRESH_20261008.json",
+        ),
+        "utf8",
+      ),
+    );
+    const manifest = JSON.parse(
+      await readFile(
+        resolve("data/corrections/private-elementary-official-sources.json"),
+        "utf8",
+      ),
+    );
+    for (const target of loaded.targets) {
+      const trusted = manifest.schools.find(
+        (s: { slug: string }) => s.slug === target.slug,
+      );
+      trusted.institutionId = target.institutionId;
+      const reviewed = bundle.schools.find(
+        (s: { target: { slug: string } }) => s.target.slug === target.slug,
+      );
+      if (reviewed) reviewed.target.institutionId = target.institutionId;
+    }
+    bundle.artifactChecksum = correctionChecksum(bundle);
+    const historical = collection("kumsung");
+    const prior = await persist({
+      ...historical,
+      facts: [],
+      admission: {
+        ...historical.admission!,
+        proposal: {
+          ...historical.admission!.proposal,
+          academicYearLabel: "2026학년도",
+          title: "2026학년도 신입생 모집",
+        },
+      },
+    });
+    const historicalId = prior.opportunityId!;
+    const deps = {
+      executor: runtime.executor,
+      transactionManager: runtime.transactionManager,
+      allowlist: loaded.targets,
+      seedSha256: loaded.seedSha256,
+      trustedManifest: manifest,
+      expectedArtifactChecksum: bundle.artifactChecksum,
+      now: () => new Date(bundle.generatedAt),
+    };
+    const before = await readBootstrapArtifactCounts(runtime.executor);
+    expect(
+      await runCorrectionBundle(bundle, { ...deps, mode: "dry-run" }),
+    ).toMatchObject({ schoolsValid: 4, databaseWrites: 0 });
+    expect(await readBootstrapArtifactCounts(runtime.executor)).toEqual(before);
+    const report = await runCorrectionBundle(bundle, {
+      ...deps,
+      mode: "apply",
+    });
+    expect(report).toMatchObject({ schoolsPersisted: 4, schoolsFailed: 0 });
+    expect(
+      (
+        await runtime.client`select publication_state from opportunities where id=${historicalId}`
+      )[0]!.publication_state,
+    ).toBe("PUBLISHED");
+    const after = await readBootstrapArtifactCounts(runtime.executor);
+    expect(
+      await runCorrectionBundle(bundle, { ...deps, mode: "apply" }),
+    ).toMatchObject({ schoolsPersisted: 4, schoolsFailed: 0 });
+    expect(await readBootstrapArtifactCounts(runtime.executor)).toEqual(after);
+    const articleId = randomUUID();
+    const articleSlug = `refresh-${articleId}`;
+    await runtime.client`insert into articles (id,slug,type,category,status,title,content_html,published_at,robots_index,robots_follow) values (${articleId},${articleSlug},'GUIDE','ADMISSIONS_GENERAL','PUBLISHED','2027학년도 입학 안내','<p>확인한 안내예요.</p>',now(),false,true)`;
+    await runtime.client`insert into article_opportunities (article_id,opportunity_id) values (${articleId},${historicalId})`;
+    const article = await getArticleBySlug(runtime.executor, articleSlug);
+    expect(
+      article.relatedOpportunities.some((item) => item.id === historicalId),
+    ).toBe(true);
+    expect(
+      article.relatedOpportunities.some(
+        (item) =>
+          item.title.includes("2027학년도") && item.kind === "RECRUITMENT",
+      ),
+    ).toBe(true);
+    expect(
+      article.relatedOpportunities.every((item) => item.kind === "RECRUITMENT"),
+    ).toBe(true);
+    expect(
+      await runtime.client`select opportunity_id from article_opportunities where article_id=${articleId}`,
+    ).toHaveLength(1);
   });
 });
