@@ -18,15 +18,10 @@ function parseEnabledProduction(environment: AnalyticsEnvironment) {
   const enabled =
     parsed.NODE_ENV === "production" && parsed.ANALYTICS_ENABLED === "true";
   if (!enabled) return null;
-  if (!environment.GA4_MEASUREMENT_ID || !environment.GA4_API_SECRET) {
-    throw new Error(
-      "Production analytics requires GA4_MEASUREMENT_ID and GA4_API_SECRET",
-    );
+  if (!environment.GA4_MEASUREMENT_ID) {
+    throw new Error("Production analytics requires GA4_MEASUREMENT_ID");
   }
-  return {
-    measurementId: measurementIdSchema.parse(environment.GA4_MEASUREMENT_ID),
-    apiSecret: apiSecretSchema.parse(environment.GA4_API_SECRET),
-  };
+  return measurementIdSchema.parse(environment.GA4_MEASUREMENT_ID);
 }
 
 export type ClientAnalyticsConfig =
@@ -43,17 +38,20 @@ export type ServerAnalyticsConfig =
 export function parseClientAnalyticsConfig(
   environment: AnalyticsEnvironment,
 ): ClientAnalyticsConfig {
-  const enabled = parseEnabledProduction(environment);
-  return enabled
-    ? { mode: "GA4", measurementId: enabled.measurementId }
-    : { mode: "NOOP" };
+  const measurementId = parseEnabledProduction(environment);
+  return measurementId ? { mode: "GA4", measurementId } : { mode: "NOOP" };
 }
 
 export function parseServerAnalyticsConfig(
   environment: AnalyticsEnvironment,
 ): ServerAnalyticsConfig {
-  const enabled = parseEnabledProduction(environment);
-  return enabled ? { mode: "GA4", ...enabled } : { mode: "NOOP" };
+  const measurementId = parseEnabledProduction(environment);
+  if (!measurementId || !environment.GA4_API_SECRET) return { mode: "NOOP" };
+  return {
+    mode: "GA4",
+    measurementId,
+    apiSecret: apiSecretSchema.parse(environment.GA4_API_SECRET),
+  };
 }
 
 export function getClientAnalyticsConfig(): ClientAnalyticsConfig {

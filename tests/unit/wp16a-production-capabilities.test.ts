@@ -72,6 +72,15 @@ describe("WP-16A production capability configuration", () => {
     ).not.toThrow();
   });
 
+  it("accepts browser-only analytics without a Measurement Protocol secret", () => {
+    const matrix = validateProductionCapabilityConfig({
+      ANALYTICS_ENABLED: "true",
+      GA4_MEASUREMENT_ID: "G-J8C7HH3YJ3",
+    });
+    expect(matrix.sideEffects.analytics).toBe(true);
+    expect(matrix.secrets.ga4Server.configured).toBe(false);
+  });
+
   it("rejects configured cross-domain secret reuse without exposing values", () => {
     const repeated = "shared-secret-that-must-never-be-reused-123";
     let failure: unknown;
