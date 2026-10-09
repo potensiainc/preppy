@@ -26,8 +26,8 @@ const currentLegalPolicies = Object.freeze({
   }),
   PRIVACY_POLICY: Object.freeze({
     type: "PRIVACY_POLICY",
-    version: "2026-09-26",
-    effectiveAt: "2026-09-26",
+    version: "2026-10-10",
+    effectiveAt: "2026-10-10",
     contentReference: "/privacy",
   }),
   SERVICE_EMAIL_UPDATES: Object.freeze({
