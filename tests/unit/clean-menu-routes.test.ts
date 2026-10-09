@@ -4,6 +4,7 @@ import ts from "typescript";
 import { NextRequest } from "next/server";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
+import { load } from "cheerio";
 import { describe, expect, it } from "vitest";
 import { SiteHeader } from "@/app/_components/site-header";
 import {
@@ -16,15 +17,16 @@ import { proxy } from "@/proxy";
 describe("clean public menu routes", () => {
   it("uses the same clean paths in desktop and mobile navigation", () => {
     const markup = renderToStaticMarkup(createElement(SiteHeader));
-    for (const path of [
-      "/institutions",
-      "/schoolmap",
-      "/articles",
-      "/opportunities",
-    ]) {
-      expect(markup.split(`href="${path}"`)).toHaveLength(3);
+    const $ = load(markup);
+    const paths = ["/", "/institutions", "/curation/calendar", "/commute"];
+    for (const label of ["주요 메뉴", "모바일 주요 메뉴"]) {
+      expect(
+        $(`nav[aria-label="${label}"] a`)
+          .map((_, link) => $(link).attr("href"))
+          .get(),
+      ).toEqual(paths);
     }
-    expect(markup).not.toMatch(/href="[^\"]*(?:#|index\.html|\/commute)/);
+    expect(markup).not.toMatch(/href="[^"]*(?:#|index\.html)/);
   });
 
   it("maps only the two legacy home menu fragments", () => {
