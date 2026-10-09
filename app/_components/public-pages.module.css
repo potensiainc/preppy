@@ -1,0 +1,443 @@
+/* Public templates share the approved editorial mockup palette. */
+.pages {
+  color-scheme: dark;
+  min-height: 100vh;
+  --paper: #1b2420;
+  --surface: #26352d;
+  --accent-hover: #d3e4d6;
+  --deep-green: #bfd5c3;
+  --bronze: #e4b28e;
+  --ek-ink: #d3e4d6;
+  --ek-soft: #28372e;
+  --ek-warm: #3b392d;
+  --open: #b5d7bf;
+  --upcoming: #e4c399;
+  --closed: #b3bcb6;
+  --cancelled: #ecb3af;
+  --ink: #e5eee7;
+  --accent: #bfd5c3;
+  --muted-ink: #afbeb4;
+  --rule: #39463d;
+  --secondary-surface: #28372e;
+  color: var(--ink);
+}
+.pages :global(.page-container) {
+  padding-block: 32px 64px;
+}
+.pages :global(.ek-list), .pages :global(.ek-detail) {
+  --ek-ink: #d3e4d6;
+  --ek-soft: #28372e;
+  --ek-warm: #3b392d;
+}
+.pages :global(.institution-filters button),
+.pages :global(.ek-filters button),
+.pages :global(.onboarding-form button),
+.pages :global(.button-link:not(.button-link--secondary)),
+.pages :global(.ek-district-grid a[aria-current]) {
+  background: #bfd5c3;
+  color: #1b3025;
+}
+.pages :global(.ek-district-grid a[aria-current] span) {
+  color: #1b3025;
+}
+.pages :global(.ek-caution) {
+  color: #ead1a3;
+}
+.pages :global(.favorite-heart) {
+  background: #28372e;
+  color: #bed4c2;
+  border-color: #526557;
+}
+.pages :global(.favorite-heart[aria-pressed="true"]) {
+  background: #4a303a;
+  color: #ffc0cf;
+}
+.pages :global(.site-footer) {
+  background: #1b2420;
+  color: #afbeb4;
+  border-color: #39463d;
+}
+.pages :global(.article-prose pre),
+.pages :global(.ek-fact-panel) {
+  background: #26352d;
+}
+.pages :global(.state-badge) {
+  background: #28372e;
+}
+.pages :global(a:focus-visible),
+.pages :global(button:focus-visible),
+.pages :global(summary:focus-visible) {
+  outline: 2px solid #e4b28e;
+  outline-offset: 4px;
+}
+.pages :global(.institution-list),
+.pages :global(.institution-detail),
+.pages :global(.ek-list),
+.pages :global(.ek-detail),
+.pages :global(.article-detail) {
+  display: grid;
+  gap: 24px;
+  min-width: 0;
+}
+.pages :global(.institution-list__intro),
+.pages :global(.ek-list__intro),
+.pages :global(.my-preppy-page__intro),
+.pages :global(.onboarding-page__intro) {
+  padding: 0;
+  border: 0;
+  margin: 0;
+}
+.pages :global(.institution-list__intro h1),
+.pages :global(.ek-list__intro h1),
+.pages :global(.institution-detail__hero h1),
+.pages :global(.ek-detail__hero h1),
+.pages :global(.article-detail__hero h1),
+.pages :global(.my-preppy-page__intro h1),
+.pages :global(.onboarding-page__intro h1) {
+  font-size: clamp(26px, 3vw, 36px);
+  line-height: 1.35;
+  letter-spacing: -0.045em;
+  margin: 8px 0 12px;
+}
+.pages :global(.eyebrow) {
+  color: #e4b28e;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+}
+.pages :global(.institution-list__intro > p:last-child),
+.pages :global(.ek-list__intro > p:last-child) {
+  font-size: 14px;
+  color: #afbeb4;
+  margin: 0;
+}
+.pages :global(.category-navigation),
+.pages :global(.page-navigation),
+.pages :global(.ek-anchor-nav) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 0;
+  border: 0;
+  margin: 0;
+  background: #1b2420;
+  position: static;
+}
+.pages :global(.category-navigation a),
+.pages :global(.page-navigation a),
+.pages :global(.ek-anchor-nav a) {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 15px;
+  background: #28372e;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: #bfd5c3;
+  font-size: 13px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.pages :global(.category-navigation a[aria-current]),
+.pages :global(.category-navigation a:hover),
+.pages :global(.page-navigation a:hover),
+.pages :global(.ek-anchor-nav a:hover) {
+  background: #bfd5c3;
+  color: #1b3025;
+}
+.pages :global(.page-back) {
+  font-size: 13px;
+  color: #afbeb4;
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+.pages :global(.filter-disclosure) {
+  border: 1px solid #39463d;
+  background: #253129;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.pages :global(.filter-disclosure summary) {
+  cursor: pointer;
+  padding: 15px 20px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.pages :global(.filter-disclosure summary span) {
+  color: #afbeb4;
+  font-size: 12px;
+  font-weight: 400;
+  margin-left: 12px;
+}
+.pages :global(.institution-filters),
+.pages :global(.ek-filters) {
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+  padding: 8px 20px 20px;
+  margin: 0;
+  gap: 14px;
+}
+.pages :global(.institution-filters input),
+.pages :global(.institution-filters select),
+.pages :global(.ek-filters input:not([type="checkbox"])),
+.pages :global(.ek-filters select) {
+  min-height: 44px;
+  background: #26352d;
+  border: 1px solid #435047;
+  border-radius: 8px;
+  font-size: 14px;
+  width: 100%;
+  min-width: 0;
+}
+.pages :global(.institution-list__cards) {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.pages :global(.institution-detail__cards),
+.pages :global(.detail-card-grid) {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.pages :global(.public-card),
+.pages :global(.ek-card),
+.pages :global(.my-preppy-card) {
+  border: 1px solid #39463d;
+  border-radius: 12px;
+  box-shadow: none;
+  padding: 22px;
+  background: #26352d;
+  min-width: 0;
+}
+.pages :global(.public-card h3),
+.pages :global(.ek-card h3) {
+  font-size: 20px;
+  letter-spacing: -0.035em;
+  line-height: 1.45;
+}
+.pages :global(.section-header h2),
+.pages :global(.ek-result-heading h2),
+.pages :global(.ek-section-heading h2) {
+  font-size: 22px;
+  letter-spacing: -0.035em;
+}
+.pages :global(.section-header) {
+  margin-bottom: 18px;
+}
+.pages :global(.institution-detail__hero),
+.pages :global(.ek-detail__hero),
+.pages :global(.article-detail__hero) {
+  background: #28372e;
+  border: 0;
+  border-radius: 14px;
+  padding: 28px;
+  margin: 0;
+}
+.pages :global(.institution-detail__section),
+.pages :global(.ek-detail__section),
+.pages :global(.article-detail__section) {
+  border-top: 1px solid #39463d;
+  padding-top: 24px;
+  margin: 0;
+  min-width: 0;
+}
+.pages :global([id]) {
+  scroll-margin-top: 24px;
+}
+.pages :global(.admission-group) {
+  display: grid;
+  gap: 24px;
+}
+.pages :global(.institution-facts > div) {
+  padding: 18px;
+  border-radius: 10px;
+  background: #253129;
+  border: 0;
+}
+.pages :global(.institution-facts) {
+  gap: 12px;
+}
+.pages :global(.ek-card-list) {
+  gap: 16px;
+}
+.pages :global(.ek-district-picker) {
+  padding: 18px 20px;
+  background: #3b392d;
+  border: 0;
+  border-radius: 12px;
+}
+.pages :global(.ek-summary-grid) {
+  background: #253129;
+  border-radius: 10px;
+  padding: 12px;
+  gap: 12px;
+}
+.pages :global(.ek-detail__hero .ek-summary-grid) {
+  background: #26352d;
+}
+.pages :global(.ek-detail__sections) {
+  gap: 24px;
+}
+.pages :global(.ek-fact-panel),
+.pages :global(.ek-review-panel),
+.pages :global(.ek-session-card) {
+  border-radius: 10px;
+  box-shadow: none;
+}
+.pages :global(.article-detail) {
+  max-width: 860px;
+  margin-inline: auto;
+}
+.pages :global(.article-detail__excerpt) {
+  font-size: 16px;
+  line-height: 1.75;
+  margin-bottom: 0;
+}
+.pages :global(.article-detail__section) {
+  line-height: 1.85;
+}
+.pages :global(.article-prose img) {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+}
+.pages :global(.article-prose table) {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+}
+.pages :global(.onboarding-page) {
+  max-width: 720px;
+}
+.pages :global(.onboarding-form) {
+  padding: 24px;
+  border: 1px solid #39463d;
+  border-radius: 14px;
+  box-shadow: none;
+  background: #253129;
+}
+.pages :global(.my-preppy-page) {
+  gap: 24px;
+}
+.pages :global(.empty-state),
+.pages :global(.status-surface) {
+  border: 1px solid #39463d;
+  border-radius: 14px;
+  background: #253129;
+  padding: 28px;
+  box-shadow: none;
+}
+.pages :global(.status-surface h1) {
+  font-size: 28px;
+}
+@media (max-width: 900px) {
+  .pages :global(.institution-list__cards) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 759px) {
+  .pages :global(.institution-detail__hero-content) {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .pages :global(.institution-detail__hero-content > div:first-child) {
+    min-width: 0;
+  }
+  .pages :global(.institution-detail__hero-content > .follow-cta) {
+    flex-shrink: 0;
+  }
+  .pages :global(.ek-detail__hero > .follow-cta) {
+    right: 16px;
+  }
+  .pages :global(.ek-district-picker) {
+    padding: 14px;
+  }
+  .pages :global(.ek-district-picker__intro) {
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .pages :global(.ek-district-picker__intro .eyebrow) {
+    display: none;
+  }
+  .pages :global(.ek-district-picker__intro h2) {
+    font-size: 17px;
+    margin: 0;
+  }
+  .pages :global(.ek-district-picker__intro > p) {
+    font-size: 12px;
+    margin: 0;
+  }
+  .pages :global(.ek-summary-value) {
+    padding: 10px;
+  }
+  .pages :global(.ek-summary-grid) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .pages :global(.ek-detail__hero .ek-summary-grid) {
+    margin-top: 18px;
+    gap: 6px;
+    padding: 6px;
+  }
+  .pages :global(.page-container) {
+    width: calc(100% - 40px);
+    padding-block: 22px 40px;
+  }
+  .pages :global(.institution-list),
+  .pages :global(.institution-detail),
+  .pages :global(.ek-list),
+  .pages :global(.ek-detail),
+  .pages :global(.article-detail) {
+    gap: 18px;
+  }
+  .pages :global(.institution-list__cards),
+  .pages :global(.institution-detail__cards),
+  .pages :global(.detail-card-grid) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .pages :global(.institution-detail__hero),
+  .pages :global(.ek-detail__hero),
+  .pages :global(.article-detail__hero) {
+    padding: 20px;
+  }
+  .pages :global(.category-navigation),
+  .pages :global(.page-navigation),
+  .pages :global(.ek-anchor-nav) {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    max-width: 100%;
+    padding-bottom: 8px;
+  }
+  .pages :global(.category-navigation a),
+  .pages :global(.page-navigation a),
+  .pages :global(.ek-anchor-nav a) {
+    flex-shrink: 0;
+    padding-inline: 12px;
+  }
+  .pages :global(.filter-disclosure summary) {
+    padding: 14px;
+  }
+  .pages :global(.filter-disclosure summary span) {
+    margin-left: 6px;
+    font-size: 11px;
+  }
+  .pages :global(.institution-filters),
+  .pages :global(.ek-filters) {
+    padding: 4px 14px 16px;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .pages :global(.public-card),
+  .pages :global(.ek-card),
+  .pages :global(.my-preppy-card),
+  .pages :global(.onboarding-form) {
+    padding: 18px;
+  }
+  .pages :global(.section-header h2),
+  .pages :global(.ek-result-heading h2),
+  .pages :global(.ek-section-heading h2) {
+    font-size: 20px;
+  }
+}

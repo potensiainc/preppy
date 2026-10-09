@@ -6,6 +6,8 @@ import { RouteScrollToTop } from "@/app/_components/route-scroll-to-top";
 import { SiteFooter } from "@/app/_components/site-footer";
 import { SiteHeader } from "@/app/_components/site-header";
 import { getClientAnalyticsConfig } from "@/src/analytics/config.server";
+import styles from "@/app/_components/curation.module.css";
+import pages from "@/app/_components/public-pages.module.css";
 
 export const metadata: Metadata = {
   title: "PREPPY | 입학정보를 더 차분하게",
@@ -18,10 +20,12 @@ export default function PublicLayout({
   const analyticsConfig = getClientAnalyticsConfig();
   return (
     <AnalyticsProvider config={analyticsConfig}>
-      <SiteHeader />
-      <RouteScrollToTop />
-      <main>{children}</main>
-      <SiteFooter />
+      <div className={`${styles.publicShell} ${pages.pages}`}>
+        <SiteHeader />
+        <RouteScrollToTop />
+        <main>{children}</main>
+        <SiteFooter />
+      </div>
     </AnalyticsProvider>
   );
 }

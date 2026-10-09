@@ -78,7 +78,6 @@ const admissionSchema = z
     kind: z.enum([
       "RECRUITMENT",
       "INFORMATION_SESSION",
-      "OPEN_HOUSE",
       "LOTTERY",
       "RESULT_ANNOUNCEMENT",
     ]),
@@ -137,16 +136,13 @@ const schoolSchema = z
   .strict();
 export const correctionBundleSchema = z
   .object({
-    correctionVersion: z.union([z.literal(1), z.literal(2)]),
+    correctionVersion: z.literal(1),
     generatedAt: artifactDate,
     seedSha256: hash,
-    schools: z.array(schoolSchema).min(1).max(41),
+    schools: z.array(schoolSchema).length(41),
     artifactChecksum: hash,
   })
-  .strict()
-  .refine(
-    (bundle) => bundle.correctionVersion === 2 || bundle.schools.length === 41,
-  );
+  .strict();
 const manifestSchema = z
   .object({
     manifestVersion: z.literal(1),
@@ -209,10 +205,8 @@ export function validateCorrectionBundle(
   )
     reject("target scope");
   if (
-    new Set(bundle.schools.map((s) => s.target.slug)).size !==
-      bundle.schools.length ||
-    new Set(bundle.schools.map((s) => s.target.institutionId)).size !==
-      bundle.schools.length ||
+    new Set(bundle.schools.map((s) => s.target.slug)).size !== 41 ||
+    new Set(bundle.schools.map((s) => s.target.institutionId)).size !== 41 ||
     new Set(manifest.data.schools.map((s) => s.slug)).size !== 41
   )
     reject("duplicate identity");
@@ -301,9 +295,7 @@ export function validateCorrectionBundle(
       if (admission.academicYearLabel !== main.academicYearLabel)
         reject("mixed admission cycle");
       const rawYear = admission.rawAcademicYear?.match(
-        bundle.correctionVersion === 2
-          ? /^(20\d{2})\s*(?:학년도|년도|신입생)$/u
-          : /^(20\d{2})\s*(?:학년도|년도)$/u,
+        /^(20\d{2})\s*(?:학년도|년도)$/u,
       )?.[1];
       if (
         admission.academicYearLabel === null
@@ -332,14 +324,11 @@ export function validateCorrectionBundle(
           : hasDates || admission.businessState !== "UNKNOWN"
       )
         reject("knowledge semantics");
-      const supportsBookingWindow =
-        bundle.correctionVersion === 2 &&
-        ["INFORMATION_SESSION", "OPEN_HOUSE"].includes(admission.kind);
       if (
         admission.kind !== "RECRUITMENT" &&
-        (!admission.eventStartAt ||
-          (!supportsBookingWindow &&
-            (admission.applicationOpenAt || admission.applicationCloseAt)))
+        (admission.applicationOpenAt ||
+          admission.applicationCloseAt ||
+          !admission.eventStartAt)
       )
         reject("event semantics");
       if (admission.key !== "main" && admission.kind === "RECRUITMENT")
