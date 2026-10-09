@@ -87,13 +87,56 @@ function safeAbsoluteImage(value: string | null): string | null {
   }
 }
 
-export function buildHomeMetadata(appBaseUrl: string): Metadata {
+const SOCIAL_IMAGE_ALT = "PREPPY: 입학 준비에 필요한 정보, 한곳에서";
+
+export function buildSocialMetadata(
+  appBaseUrl: string,
+  path: string,
+  title: string,
+  description: string | undefined,
+): Pick<Metadata, "openGraph" | "twitter"> {
   return {
-    title: "PREPPY | 입학정보를 더 차분하게",
-    description:
-      "학교와 기관의 공식 안내를 바탕으로 입학 일정과 지원 조건을 한곳에서 확인해 보세요.",
+    openGraph: {
+      title,
+      description,
+      url: canonical(appBaseUrl, path),
+      siteName: "PREPPY",
+      locale: "ko_KR",
+      type: "website",
+      images: [
+        {
+          url: canonical(appBaseUrl, "/preppy-social-og.png"),
+          width: 1200,
+          height: 630,
+          alt: SOCIAL_IMAGE_ALT,
+          type: "image/png",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [
+        {
+          url: canonical(appBaseUrl, "/preppy-social-x.png"),
+          alt: SOCIAL_IMAGE_ALT,
+        },
+      ],
+    },
+  };
+}
+
+export function buildHomeMetadata(appBaseUrl: string): Metadata {
+  const title = "PREPPY | 입학정보를 더 차분하게";
+  const description =
+    "학교와 기관의 공식 안내를 바탕으로 입학 일정과 지원 조건을 한곳에서 확인해 보세요.";
+  return {
+    title,
+    description,
     alternates: { canonical: canonical(appBaseUrl, "/") },
     robots: { index: true, follow: true },
+    ...buildSocialMetadata(appBaseUrl, "/", title, description),
   };
 }
 
@@ -101,12 +144,15 @@ export function buildInstitutionListMetadata(
   appBaseUrl: string,
   hasFilters: boolean,
 ): Metadata {
+  const title = "기관 찾기 | PREPPY";
+  const description =
+    "관심 있는 학교와 기관을 찾고, 공개된 입학 일정과 지원 조건을 확인해 보세요.";
   return {
-    title: "기관 찾기 | PREPPY",
-    description:
-      "관심 있는 학교와 기관을 찾고, 공개된 입학 일정과 지원 조건을 확인해 보세요.",
+    title,
+    description,
     alternates: { canonical: canonical(appBaseUrl, "/institutions") },
     robots: { index: !hasFilters, follow: true },
+    ...buildSocialMetadata(appBaseUrl, "/institutions", title, description),
   };
 }
 
@@ -114,13 +160,17 @@ export function buildInstitutionMetadata(
   dto: InstitutionDetailDTO,
   appBaseUrl: string,
 ): Metadata {
+  const title = `${dto.institution.name} | PREPPY`;
+  const description = `${dto.institution.name}의 기관 정보와 공식 안내를 확인해 보세요.`;
+  const path = `/institutions/${dto.institution.slug}`;
   return {
-    title: `${dto.institution.name} | PREPPY`,
-    description: `${dto.institution.name}의 기관 정보와 공식 안내를 확인해 보세요.`,
+    title,
+    description,
     alternates: {
-      canonical: canonical(appBaseUrl, `/institutions/${dto.institution.slug}`),
+      canonical: canonical(appBaseUrl, path),
     },
     robots: robots(dto.indexability),
+    ...buildSocialMetadata(appBaseUrl, path, title, description),
   };
 }
 
@@ -128,15 +178,19 @@ export function buildOpportunityMetadata(
   dto: PublicOpportunityDTO,
   appBaseUrl: string,
 ): Metadata {
+  const title = `${dto.title} | PREPPY`;
+  const description =
+    publicProse(publicAdmissionText(dto.summary)) ??
+    `${dto.institution.name}의 입학 안내를 확인해 보세요.`;
+  const path = `/opportunities/${dto.slug}`;
   return {
-    title: `${dto.title} | PREPPY`,
-    description:
-      publicProse(publicAdmissionText(dto.summary)) ??
-      `${dto.institution.name}의 입학 안내를 확인해 보세요.`,
+    title,
+    description,
     alternates: {
-      canonical: canonical(appBaseUrl, `/opportunities/${dto.slug}`),
+      canonical: canonical(appBaseUrl, path),
     },
     robots: robots(dto.indexability),
+    ...buildSocialMetadata(appBaseUrl, path, title, description),
   };
 }
 
@@ -144,20 +198,40 @@ export function buildArticleMetadata(
   dto: PublicArticleDTO,
   appBaseUrl: string,
 ): Metadata {
-  const image = safeAbsoluteImage(dto.featuredImageUrl);
+  const title = dto.seoTitle ?? dto.title;
+  const description =
+    publicProse(dto.seoDescription ?? dto.excerpt) ?? undefined;
+  const path = `/articles/${dto.slug}`;
+  const social = buildSocialMetadata(appBaseUrl, path, dto.title, description);
   return {
-    title: dto.seoTitle ?? dto.title,
-    description: publicProse(dto.seoDescription ?? dto.excerpt) ?? undefined,
+    title,
+    description,
     alternates: {
-      canonical: canonical(appBaseUrl, `/articles/${dto.slug}`),
+      canonical: canonical(appBaseUrl, path),
     },
     robots: robots(dto.indexability, dto.robotsFollow),
+    ...social,
     openGraph: {
-      title: dto.seoTitle ?? dto.title,
-      description: publicProse(dto.seoDescription ?? dto.excerpt) ?? undefined,
+      ...social.openGraph,
       type: "article",
-      url: canonical(appBaseUrl, `/articles/${dto.slug}`),
-      ...(image === null ? {} : { images: [image] }),
+      images: [
+        {
+          url: canonical(appBaseUrl, `${path}/og.png`),
+          width: 1200,
+          height: 630,
+          alt: `${dto.title} | PREPPY 입학 준비 아티클`,
+          type: "image/png",
+        },
+      ],
+    },
+    twitter: {
+      ...social.twitter,
+      images: [
+        {
+          url: canonical(appBaseUrl, `${path}/x.png`),
+          alt: `${dto.title} | PREPPY 입학 준비 아티클`,
+        },
+      ],
     },
   };
 }

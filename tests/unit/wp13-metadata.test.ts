@@ -102,9 +102,26 @@ describe("WP-13 public metadata", () => {
     expect(opportunity.slug).toBe("open-admission");
   });
   it("builds exact canonical home/list metadata and noindexes filtered Institution variants", () => {
-    expect(buildHomeMetadata(appBaseUrl).alternates?.canonical).toBe(
-      "https://preppy.example/",
-    );
+    const home = buildHomeMetadata(appBaseUrl);
+    expect(home.alternates?.canonical).toBe("https://preppy.example/");
+    expect(home).toMatchObject({
+      openGraph: {
+        url: "https://preppy.example/",
+        siteName: "PREPPY",
+        images: [
+          {
+            url: "https://preppy.example/preppy-social-og.png",
+            width: 1200,
+            height: 630,
+            type: "image/png",
+          },
+        ],
+      },
+      twitter: {
+        card: "summary_large_image",
+        images: [{ url: "https://preppy.example/preppy-social-x.png" }],
+      },
+    });
     expect(buildInstitutionListMetadata(appBaseUrl, false)).toMatchObject({
       alternates: { canonical: "https://preppy.example/institutions" },
       robots: { index: true, follow: true },
@@ -135,11 +152,25 @@ describe("WP-13 public metadata", () => {
         canonical: "https://preppy.example/articles/complete-guide",
       },
       robots: { index: true, follow: true },
-      openGraph: { images: ["https://images.example/guide.jpg"] },
+      openGraph: {
+        title: "Complete guide",
+        images: [
+          {
+            url: "https://preppy.example/articles/complete-guide/og.png",
+            alt: "Complete guide | PREPPY 입학 준비 아티클",
+          },
+        ],
+      },
+      twitter: {
+        title: "Complete guide",
+        images: [
+          { url: "https://preppy.example/articles/complete-guide/x.png" },
+        ],
+      },
     });
   });
 
-  it("omits an unsafe legacy OG image and follows the central NOINDEX decision", () => {
+  it("always uses the article-title image route, even when a legacy image is unsafe", () => {
     const metadata = buildArticleMetadata(
       {
         ...article,
@@ -149,6 +180,13 @@ describe("WP-13 public metadata", () => {
       appBaseUrl,
     );
     expect(metadata.robots).toMatchObject({ index: false, follow: true });
-    expect(metadata.openGraph).not.toHaveProperty("images");
+    expect(metadata.openGraph).toMatchObject({
+      images: [
+        { url: "https://preppy.example/articles/complete-guide/og.png" },
+      ],
+    });
+    expect(metadata.twitter).toMatchObject({
+      images: [{ url: "https://preppy.example/articles/complete-guide/x.png" }],
+    });
   });
 });

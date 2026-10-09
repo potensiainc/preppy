@@ -20,6 +20,7 @@ vi.mock("@/src/modules/public/institution-query.server", () => ({
 }));
 vi.mock("@/src/modules/public/seo", () => ({
   getSeoAppBaseUrl: () => "https://preppy.kr",
+  buildSocialMetadata: () => ({}),
 }));
 vi.mock("next/navigation", () => ({
   notFound: () => {
