@@ -1,5 +1,6 @@
 import { publicRegionLabel } from "@/app/_lib/public-region-label";
 import Link from "next/link";
+import { CategoryNavigation, PageNavigation } from "./page-navigation";
 import { publicAdmissionText } from "@/src/modules/public/admission-copy";
 import { publicProse } from "@/src/modules/public/ux-writing";
 import { admissionReadingItems } from "@/app/_lib/admissions-readability";
@@ -124,64 +125,75 @@ export function InstitutionListView({
       <div className="institution-list">
         <header className="institution-list__intro">
           <p className="eyebrow">기관 탐색</p>
-          <h1>기관 찾기</h1>
+          <h1>학교·기관 알아보기</h1>
           <p>학교와 기관을 찾고, 입학 일정과 지원 조건을 살펴보세요.</p>
         </header>
 
-        <form
-          action="/institutions"
-          method="get"
-          className="institution-filters"
+        <CategoryNavigation selected={filters.category} />
+        <details
+          className="filter-disclosure"
+          open={Boolean(
+            filters.query || filters.region || filters.recruitmentState,
+          )}
         >
-          <div>
-            <label htmlFor="institution-category">기관 유형</label>
-            <select
-              id="institution-category"
-              name="category"
-              defaultValue={filters.category ?? ""}
-            >
-              <option value="">전체 유형</option>
-              {categories.map((category) => (
-                <option key={category.value} value={category.value}>
-                  {category.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label htmlFor="institution-region">지역</label>
-            <input
-              id="institution-region"
-              name="region"
-              defaultValue={filters.region ?? ""}
-            />
-          </div>
-          <div>
-            <label htmlFor="institution-recruitment-state">모집 상태</label>
-            <select
-              id="institution-recruitment-state"
-              name="recruitmentState"
-              defaultValue={filters.recruitmentState ?? ""}
-            >
-              <option value="">전체 상태</option>
-              {states.map((state) => (
-                <option key={state} value={state}>
-                  {opportunityStateLabel(state)}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label htmlFor="institution-query">기관명 검색</label>
-            <input
-              id="institution-query"
-              name="query"
-              defaultValue={filters.query ?? ""}
-              type="search"
-            />
-          </div>
-          <button type="submit">기관 검색</button>
-        </form>
+          <summary>
+            검색 조건 <span>지역 · 모집 상태 · 기관명</span>
+          </summary>
+          <form
+            action="/institutions"
+            method="get"
+            className="institution-filters"
+          >
+            <div>
+              <label htmlFor="institution-category">기관 유형</label>
+              <select
+                id="institution-category"
+                name="category"
+                defaultValue={filters.category ?? ""}
+              >
+                <option value="">전체 유형</option>
+                {categories.map((category) => (
+                  <option key={category.value} value={category.value}>
+                    {category.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label htmlFor="institution-region">지역</label>
+              <input
+                id="institution-region"
+                name="region"
+                defaultValue={filters.region ?? ""}
+              />
+            </div>
+            <div>
+              <label htmlFor="institution-recruitment-state">모집 상태</label>
+              <select
+                id="institution-recruitment-state"
+                name="recruitmentState"
+                defaultValue={filters.recruitmentState ?? ""}
+              >
+                <option value="">전체 상태</option>
+                {states.map((state) => (
+                  <option key={state} value={state}>
+                    {opportunityStateLabel(state)}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label htmlFor="institution-query">기관명 검색</label>
+              <input
+                id="institution-query"
+                name="query"
+                defaultValue={filters.query ?? ""}
+                type="search"
+              />
+            </div>
+            <button type="submit">기관 검색</button>
+          </form>
+        </details>
 
         <section aria-label="공개 기관">
           <SectionHeader
@@ -239,6 +251,12 @@ export function InstitutionDetailView({
   return (
     <PageContainer>
       <article className="institution-detail">
+        <Link
+          className="page-back"
+          href={`/institutions?category=${institution.category}`}
+        >
+          ← {categoryLabel(institution.category)} 목록
+        </Link>
         <header className="institution-detail__hero">
           <p className="eyebrow">기관 정보</p>
           <div className="institution-detail__hero-content">
@@ -263,31 +281,42 @@ export function InstitutionDetailView({
           </div>
         </header>
 
-        <ReviewedAdmissions admissions={data.reviewedAdmissions} />
+        <PageNavigation
+          items={[
+            { id: "school-admissions", label: "모집·입학정보" },
+            { id: "school-facts", label: "기관 정보" },
+            ...(officialSources.length
+              ? [{ id: "school-sources", label: "공식 출처" }]
+              : []),
+          ]}
+        />
+        <div id="school-admissions" className="admission-group">
+          <ReviewedAdmissions admissions={data.reviewedAdmissions} />
 
-        {current.length || !reviewedIds.size ? (
-          <OpportunityGroup
-            title="현재 모집·입학정보"
-            opportunities={current}
-            emptyMessage="프레피에 공개된 모집·입학정보가 아직 없어요. 학교 공식 안내도 함께 확인해 주세요."
-          />
-        ) : null}
-        {upcoming.length > 0 ? (
-          <OpportunityGroup
-            title="예정된 모집·입학정보"
-            opportunities={upcoming}
-            emptyMessage="프레피에 공개된 예정 일정이 아직 없어요."
-          />
-        ) : null}
-        {recent.length > 0 ? (
-          <OpportunityGroup
-            title="최근 모집·입학정보"
-            opportunities={recent}
-            emptyMessage="프레피에 공개된 최근 입학정보가 없어요."
-          />
-        ) : null}
-
+          {current.length || !reviewedIds.size ? (
+            <OpportunityGroup
+              title="현재 모집·입학정보"
+              opportunities={current}
+              emptyMessage="프레피에 공개된 모집·입학정보가 아직 없어요. 학교 공식 안내도 함께 확인해 주세요."
+            />
+          ) : null}
+          {upcoming.length > 0 ? (
+            <OpportunityGroup
+              title="예정된 모집·입학정보"
+              opportunities={upcoming}
+              emptyMessage="프레피에 공개된 예정 일정이 아직 없어요."
+            />
+          ) : null}
+          {recent.length > 0 ? (
+            <OpportunityGroup
+              title="최근 모집·입학정보"
+              opportunities={recent}
+              emptyMessage="프레피에 공개된 최근 입학정보가 없어요."
+            />
+          ) : null}
+        </div>
         <section
+          id="school-facts"
           className="institution-detail__section"
           aria-label="확인된 기관 정보"
         >
@@ -317,6 +346,7 @@ export function InstitutionDetailView({
 
         {officialSources.length > 0 ? (
           <section
+            id="school-sources"
             className="institution-detail__section"
             aria-label="공식 출처"
           >

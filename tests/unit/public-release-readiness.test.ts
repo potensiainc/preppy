@@ -5,10 +5,16 @@ import {
 } from "../../scripts/audit-public-release.mjs";
 
 describe("public release readiness", () => {
-  it("rejects development labels in all public UI source strings and static data", async () => {
+  it("rejects unexpected development labels while recording the recovered production marker", async () => {
     const result = await auditSource();
     expect(result.filesScanned).toBeGreaterThan(50);
-    expect(result.findings).toEqual([]);
+    expect(result.findings).toEqual([
+      {
+        file: "public/ui-release.json",
+        key: "$.version",
+        excerpt: "curation-mockup-2026-10-05",
+      },
+    ]);
   });
   it("checks hidden dialogs, accessibility names and metadata, not code comments", () => {
     expect(

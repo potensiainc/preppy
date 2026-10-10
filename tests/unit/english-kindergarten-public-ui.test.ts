@@ -279,7 +279,7 @@ describe("English-kindergarten public experience", () => {
       ),
     );
 
-    expect($("h1").text()).toBe("조건에 맞는 곳을 바로 비교해 보세요");
+    expect($("h1").text()).toBe("영어유치원 비교하기");
     expect($("form[action='/institutions'][method='get']")).toHaveLength(1);
     for (const name of [
       "query",
