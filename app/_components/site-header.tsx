@@ -1,50 +1,49 @@
 import Link from "next/link";
-
-const navigation = [
-  { href: "/institutions", label: "기관 찾기" },
-  { href: "/schoolmap", label: "통학지도" },
-  { href: "/opportunities", label: "입학정보" },
-  { href: "/articles", label: "아티클" },
-];
-
-function NavigationLinks() {
-  return (
-    <>
-      {navigation.map((item) =>
-        item.href === "/schoolmap" ? (
-          <a href={item.href} key={item.href}>
-            {item.label}
-          </a>
-        ) : (
-          <Link href={item.href} key={item.href}>
-            {item.label}
-          </Link>
-        ),
-      )}
-    </>
-  );
-}
+import { PublicNavigation, SiteMenu } from "./site-menu";
+import styles from "./curation.module.css";
 
 export function SiteHeader() {
   return (
-    <header className="site-header">
-      <div className="site-header__inner">
-        <Link className="wordmark" href="/" aria-label="PREPPY 홈">
-          <span className="brand-icon" aria-hidden="true" />
-          PREPPY
-        </Link>
-        <nav className="site-navigation" aria-label="주요 메뉴">
-          <NavigationLinks />
-        </nav>
-        <div className="site-header__actions">
-          <details className="mobile-navigation">
-            <summary aria-label="메뉴 열고 닫기">메뉴</summary>
-            <nav aria-label="모바일 주요 메뉴">
-              <NavigationLinks />
-            </nav>
-          </details>
+    <>
+      <header className={styles.header}>
+        <div className={styles.headerInner}>
+          <Link className={styles.brand} href="/" aria-label="PREPPY 홈">
+            preppy<span>.</span>
+          </Link>
+          <PublicNavigation />
+          <div className={styles.tools}>
+            <span className={styles.issue}>
+              {new Intl.DateTimeFormat("en", {
+                month: "long",
+                timeZone: "Asia/Seoul",
+              })
+                .format(new Date())
+                .toUpperCase()}{" "}
+              EDIT
+            </span>
+            <Link
+              className={styles.iconButton}
+              href="/institutions"
+              aria-label="학교·기관 검색"
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                aria-hidden="true"
+              >
+                <circle cx="10.5" cy="10.5" r="6.5" />
+                <path d="m16 16 5 5" />
+              </svg>
+            </Link>
+            <SiteMenu />
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+      <PublicNavigation mobile />
+    </>
   );
 }

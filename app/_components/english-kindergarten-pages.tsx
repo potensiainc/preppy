@@ -1,6 +1,7 @@
 import { publicRegionLabel } from "@/app/_lib/public-region-label";
 import { FollowCta } from "@/app/_components/follow-cta";
 import Link from "next/link";
+import { CategoryNavigation } from "./page-navigation";
 
 import {
   formatPublicDate,
@@ -345,97 +346,106 @@ export function EnglishKindergartenListView({
 
   return (
     <PageContainer>
-      <main className="ek-list">
+      <div className="ek-list">
         <header className="ek-list__intro">
           <p className="eyebrow">영어유치원 비교</p>
-          <h1>조건에 맞는 곳을 바로 비교해 보세요</h1>
+          <h1>영어유치원 비교하기</h1>
           <p>
             원비, 운영 연령, 셔틀과 입학설명회 일정을 한 화면에서 살펴볼 수
             있어요.
           </p>
         </header>
 
+        <CategoryNavigation selected="ENGLISH_KINDERGARTEN" />
         <DistrictPicker data={data} filters={filters} />
 
-        <form action="/institutions" method="get" className="ek-filters">
-          <input type="hidden" name="category" value="ENGLISH_KINDERGARTEN" />
-          <input
-            type="hidden"
-            name="region"
-            value={filters.region ?? "KR-11"}
-          />
-          {filters.district ? (
-            <input type="hidden" name="district" value={filters.district} />
-          ) : null}
-          <div className="ek-filter ek-filter--search">
-            <label htmlFor="ek-query">기관명</label>
+        <details
+          className="filter-disclosure"
+          open={Boolean(hasNarrowingCondition)}
+        >
+          <summary>
+            비교 조건 <span>기관명 · 연령 · 셔틀 · 설명회</span>
+          </summary>
+          <form action="/institutions" method="get" className="ek-filters">
+            <input type="hidden" name="category" value="ENGLISH_KINDERGARTEN" />
             <input
-              id="ek-query"
-              type="search"
-              name="query"
-              defaultValue={filters.query ?? ""}
-              placeholder="기관명을 입력해 주세요"
+              type="hidden"
+              name="region"
+              value={filters.region ?? "KR-11"}
             />
-          </div>
-          <div className="ek-filter">
-            <label htmlFor="ek-age">자녀 나이</label>
-            <select
-              id="ek-age"
-              name="minAge"
-              defaultValue={filters.minAge ?? ""}
-            >
-              <option value="">전체 연령</option>
-              {[3, 4, 5, 6, 7].map((age) => (
-                <option value={age} key={age}>
-                  {age}세
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="ek-filter">
-            <label htmlFor="ek-sort">정렬</label>
-            <select
-              id="ek-sort"
-              name="sort"
-              defaultValue={filters.sort ?? "NAME_ASC"}
-            >
-              <option value="NAME_ASC">가나다순</option>
-              <option value="TUITION_ASC">월 원비 낮은 순</option>
-              <option value="INFO_SESSION_ASC">설명회 빠른 순</option>
-            </select>
-          </div>
-          <fieldset className="ek-filter-options">
-            <legend>비교 조건</legend>
-            <label>
+            {filters.district ? (
+              <input type="hidden" name="district" value={filters.district} />
+            ) : null}
+            <div className="ek-filter ek-filter--search">
+              <label htmlFor="ek-query">기관명</label>
               <input
-                type="checkbox"
-                name="hasConfirmedTuition"
-                value="true"
-                defaultChecked={filters.hasConfirmedTuition}
+                id="ek-query"
+                type="search"
+                name="query"
+                defaultValue={filters.query ?? ""}
+                placeholder="기관명을 입력해 주세요"
               />
-              확인된 원비
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                name="transport"
-                value="AVAILABLE"
-                defaultChecked={filters.transport === "AVAILABLE"}
-              />
-              셔틀 운영
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                name="hasUpcomingInfoSession"
-                value="true"
-                defaultChecked={filters.hasUpcomingInfoSession}
-              />
-              예정 설명회
-            </label>
-          </fieldset>
-          <button type="submit">조건 적용</button>
-        </form>
+            </div>
+            <div className="ek-filter">
+              <label htmlFor="ek-age">자녀 나이</label>
+              <select
+                id="ek-age"
+                name="minAge"
+                defaultValue={filters.minAge ?? ""}
+              >
+                <option value="">전체 연령</option>
+                {[3, 4, 5, 6, 7].map((age) => (
+                  <option value={age} key={age}>
+                    {age}세
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="ek-filter">
+              <label htmlFor="ek-sort">정렬</label>
+              <select
+                id="ek-sort"
+                name="sort"
+                defaultValue={filters.sort ?? "NAME_ASC"}
+              >
+                <option value="NAME_ASC">가나다순</option>
+                <option value="TUITION_ASC">월 원비 낮은 순</option>
+                <option value="INFO_SESSION_ASC">설명회 빠른 순</option>
+              </select>
+            </div>
+            <fieldset className="ek-filter-options">
+              <legend>비교 조건</legend>
+              <label>
+                <input
+                  type="checkbox"
+                  name="hasConfirmedTuition"
+                  value="true"
+                  defaultChecked={filters.hasConfirmedTuition}
+                />
+                확인된 원비
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="transport"
+                  value="AVAILABLE"
+                  defaultChecked={filters.transport === "AVAILABLE"}
+                />
+                셔틀 운영
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="hasUpcomingInfoSession"
+                  value="true"
+                  defaultChecked={filters.hasUpcomingInfoSession}
+                />
+                예정 설명회
+              </label>
+            </fieldset>
+            <button type="submit">조건 적용</button>
+          </form>
+        </details>
 
         <section aria-labelledby="ek-result-title">
           <div className="ek-result-heading">
@@ -486,7 +496,7 @@ export function EnglishKindergartenListView({
             hrefForPage={(page) => institutionListHref(filters, page)}
           />
         </section>
-      </main>
+      </div>
     </PageContainer>
   );
 }
@@ -1063,7 +1073,13 @@ export function EnglishKindergartenDetailView({
 
   return (
     <PageContainer>
-      <main className="ek-detail">
+      <article className="ek-detail">
+        <Link
+          className="page-back"
+          href="/institutions?category=ENGLISH_KINDERGARTEN"
+        >
+          ← 영어유치원 목록
+        </Link>
         <header className="ek-detail__hero">
           <p className="eyebrow">영어유치원 정보</p>
           <h1>{institution.name}</h1>
@@ -1146,7 +1162,7 @@ export function EnglishKindergartenDetailView({
             다른 영어유치원 비교하기
           </Link>
         </nav>
-      </main>
+      </article>
     </PageContainer>
   );
 }

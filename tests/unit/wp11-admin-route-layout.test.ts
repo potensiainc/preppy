@@ -189,7 +189,8 @@ describe("WP-11 public/Admin route and layout separation", () => {
       createElement(PublicLayout, null, createElement(publicNotFound.default)),
     );
     for (const publicMarkup of [publicErrorMarkup, publicNotFoundMarkup]) {
-      expect(publicMarkup).toContain('class="site-header"');
+      expect(publicMarkup).toContain('<header class=');
+      expect(publicMarkup).toContain('aria-label="주요 메뉴"');
       expect(publicMarkup).toContain('class="site-footer"');
     }
     expect(publicErrorMarkup).toContain(

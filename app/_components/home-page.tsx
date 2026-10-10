@@ -1,38 +1,14 @@
 import Link from "next/link";
-
-import { AnalyticsLink } from "@/app/_components/analytics-link";
-import type { HomePageDTO } from "@/src/modules/public/dto";
-
+import { OpportunityCard } from "./public-cards";
+import { EmptyState, SectionHeader } from "./ui-primitives";
+import { AnalyticsLink } from "./analytics-link";
+import type { HomePageDTO, OpportunityCardDTO } from "@/src/modules/public/dto";
+import { ArticleCard, StateBadge, VerifiedAt } from "./public-cards";
 import {
-  ArticleCard,
-  InstitutionCard,
-  OpportunityCard,
-} from "@/app/_components/public-cards";
-import {
-  EmptyState,
-  PageContainer,
-  SectionHeader,
-} from "@/app/_components/ui-primitives";
-import { homeCategoryLabel } from "@/app/_lib/presentation";
-
-const institutionGroups = [
-  {
-    category: "ENGLISH_KINDERGARTEN",
-    id: "home-english-kindergartens",
-    description: "지역별로 기관을 찾고, 확인된 원비와 운영 정보를 살펴보세요.",
-  },
-  {
-    category: "PRIVATE_ELEMENTARY",
-    id: "home-private-elementary",
-    description: "학교별로 확인된 모집 일정과 입학 안내를 살펴보세요.",
-  },
-  {
-    category: "INTERNATIONAL_SCHOOL",
-    id: "home-international-schools",
-    description: "학교별 기본 정보와 확인된 입학 안내를 살펴보세요.",
-  },
-] as const;
-
+  formatPublicDate,
+  opportunityKindLabel,
+} from "@/app/_lib/presentation";
+import styles from "./curation.module.css";
 export function OpportunitySection({
   opportunities,
   standalone = false,
@@ -72,91 +48,6 @@ export function OpportunitySection({
   );
 }
 
-function InstitutionSection({
-  institutions,
-}: {
-  institutions: HomePageDTO["featuredInstitutions"];
-}) {
-  const groups = institutionGroups
-    .map((group) => ({
-      ...group,
-      label: homeCategoryLabel(group.category),
-      institutions: institutions.filter(
-        (item) => item.category === group.category,
-      ),
-    }))
-    .filter((group) => group.institutions.length > 0);
-
-  return (
-    <section id="featured-institutions" aria-label="살펴볼 기관">
-      <SectionHeader
-        eyebrow="기관"
-        title="살펴볼 기관"
-        description="기관 유형별로 나누어 살펴보세요."
-        action={
-          <Link className="text-link" href="/institutions">
-            기관 전체 보기
-          </Link>
-        }
-      />
-      {groups.length > 0 ? (
-        <>
-          {groups.length > 1 ? (
-            <nav
-              className="home-institution-jumps"
-              aria-label="살펴볼 기관 유형별 이동"
-            >
-              {groups.map((group) => (
-                <Link key={group.category} href={`/#${group.id}`}>
-                  {group.label}
-                  <span aria-hidden="true">↓</span>
-                </Link>
-              ))}
-            </nav>
-          ) : null}
-          <div className="home-institution-groups">
-            {groups.map((group) => (
-              <section
-                key={group.category}
-                id={group.id}
-                className="home-institution-group"
-                data-category={group.category}
-                aria-labelledby={`${group.id}-title`}
-              >
-                <header className="home-institution-group__header">
-                  <div>
-                    <h3 id={`${group.id}-title`}>{group.label}</h3>
-                    <p>{group.description}</p>
-                  </div>
-                  <Link
-                    className="home-institution-group__all"
-                    href={`/institutions?category=${group.category}`}
-                  >
-                    {group.label} 전체 보기<span aria-hidden="true">→</span>
-                  </Link>
-                </header>
-                <div className="home-institution-group__cards">
-                  {group.institutions.map((institution) => (
-                    <InstitutionCard
-                      key={institution.id}
-                      institution={institution}
-                      headingLevel={4}
-                    />
-                  ))}
-                </div>
-              </section>
-            ))}
-          </div>
-        </>
-      ) : (
-        <EmptyState
-          title="PREPPY에 공개된 기관 정보가 없어요"
-          description="찾는 기관의 공식 홈페이지에서 정보를 확인해 주세요."
-        />
-      )}
-    </section>
-  );
-}
 
 export function ArticleSection({
   articles,
@@ -196,84 +87,196 @@ export function ArticleSection({
   );
 }
 
+export function CampusIllustration() {
+  return (
+    <div className={styles.campus} aria-hidden="true">
+      <span className={styles.sun} />
+      <span className={styles.hill} />
+      <span className={styles.hall}>
+        <i />
+        <i />
+        <i />
+        <i />
+        <i />
+      </span>
+      <span className={styles.tree} />
+      <span className={styles.treeSmall} />
+    </div>
+  );
+}
+export function ScheduleRow({
+  opportunity,
+}: {
+  opportunity: OpportunityCardDTO;
+}) {
+  const date = opportunity.keyDate ? new Date(opportunity.keyDate) : null;
+  const parts =
+    date && !Number.isNaN(date.getTime())
+      ? new Intl.DateTimeFormat("ko-KR", {
+          timeZone: "Asia/Seoul",
+          year: "numeric",
+          month: "numeric",
+          day: "numeric",
+        }).formatToParts(date)
+      : [];
+  const part = (type: string) =>
+    parts.find((item) => item.type === type)?.value;
+  return (
+    <article className={styles.scheduleRow}>
+      <div className={styles.scheduleDate} aria-hidden="true">
+        {parts.length ? (
+          <>
+            {part("month")}월<strong>{part("day")}</strong>
+          </>
+        ) : (
+          <span>
+            날짜
+            <br />
+            미확인
+          </span>
+        )}
+      </div>
+      <div className={styles.scheduleContent}>
+        <p className={styles.scheduleType}>{opportunity.institution.name}</p>
+        <p className={styles.scheduleType}>
+          {opportunityKindLabel(opportunity.kind)}
+        </p>
+        <h3>
+          <Link href={`/opportunities/${opportunity.slug}`}>
+            {opportunity.title}
+          </Link>
+        </h3>
+        {opportunity.keyDate && (
+          <p className={styles.date}>
+            일정{" "}
+            <time dateTime={opportunity.keyDate}>
+              {formatPublicDate(opportunity.keyDate)}
+            </time>
+          </p>
+        )}
+        <VerifiedAt verifiedAt={opportunity.lastVerifiedAt} />
+      </div>
+      <StateBadge state={opportunity.businessState} />
+    </article>
+  );
+}
 export function HomePageView({ data }: { data: HomePageDTO }) {
   return (
-    <div className="home-page">
-      <section className="home-hero" aria-labelledby="home-title">
-        <PageContainer>
-          <p className="eyebrow">PREPPY 입학정보 가이드</p>
-          <h1 id="home-title">입학 준비에 필요한 정보, 한곳에서</h1>
-          <p className="home-hero__copy">
-            영어유치원·사립초등학교·국제학교의 입학정보를 공식 출처와 함께
-            살펴볼 수 있어요. 관심기관을 등록하면 내 프레피에서 모아 볼 수
-            있어요.
-          </p>
-          <div className="home-hero__actions">
-            <AnalyticsLink
-              className="button-link button-link--primary"
-              event={{
-                name: "hero_primary_cta_click",
-                properties: { cta: "INSTITUTIONS" },
-              }}
-              href="/institutions"
-            >
-              기관 둘러보기
-            </AnalyticsLink>
-            <AnalyticsLink
-              className="button-link button-link--secondary"
-              event={{
-                name: "hero_secondary_cta_click",
-                properties: { cta: "CURRENT_OPPORTUNITIES" },
-              }}
-              href="/opportunities"
-            >
-              현재 모집·입학정보 보기
-            </AnalyticsLink>
-          </div>
-        </PageContainer>
-      </section>
-
-      <PageContainer>
-        <section className="home-categories" aria-label="유형별 기관 찾기">
-          <SectionHeader
-            eyebrow="탐색"
-            title="유형별 기관 찾기"
-            description="관심 있는 기관 유형을 선택해 주세요."
-          />
-          <ul className="category-list" aria-label="기관 유형">
-            {data.categories.map((category) => (
-              <li key={category.category}>
-                <Link href={category.href}>
-                  <span>{homeCategoryLabel(category.category)}</span>
-                  <span aria-hidden="true">→</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <OpportunitySection opportunities={data.currentOpportunities} />
-        <InstitutionSection institutions={data.featuredInstitutions} />
-        <ArticleSection articles={data.latestArticles} />
-
-        <section
-          className="monitoring-value"
-          aria-labelledby="monitoring-title"
-        >
-          <p className="eyebrow">관심기관</p>
-          <h2 id="monitoring-title">관심기관의 입학정보 모아보기</h2>
-          <p>
-            관심기관을 등록하면 내 프레피에서 확인된 입학정보와 최근 변경 내용을
-            함께 볼 수 있어요.
-          </p>
-          <Link
-            className="button-link button-link--primary"
-            href="/institutions"
+    <div className={styles.home}>
+      <div className={styles.welcome}>
+        <div>
+          <p className={styles.kicker}>PREPPY CURATION</p>
+          <h1 id="home-title">지금, 알아두면 좋은 입학정보</h1>
+        </div>
+        <span className={styles.edition} aria-hidden="true">
+          {new Intl.DateTimeFormat("en", {
+            month: "2-digit",
+            timeZone: "Asia/Seoul",
+          }).format(new Date())}
+        </span>
+      </div>
+      <div className={styles.homeGrid}>
+        <div>
+          <AnalyticsLink
+            className={styles.hero}
+            event={{
+              name: "hero_primary_cta_click",
+              properties: { cta: "INSTITUTIONS" },
+            }}
+            href="/institutions?category=INTERNATIONAL_SCHOOL"
           >
-            관심기관 찾기
-          </Link>
+            <div className={styles.heroCopy}>
+              <span className={styles.heroTag}>국제학교 · 입학 안내</span>
+              <h2>
+                우리 아이에게 맞는
+                <br />
+                국제학교 알아보기
+              </h2>
+              <p>학교별 입학 안내와 지원 조건을 살펴보세요.</p>
+            </div>
+            <CampusIllustration />
+            <span className={styles.heroAction}>
+              국제학교 살펴보기 <span aria-hidden="true">↗</span>
+            </span>
+          </AnalyticsLink>
+          <div className={styles.storyGrid}>
+            <Link className={styles.story} href="/curation/briefings">
+              <span>학교를 직접 알아보는 시간</span>
+              <h2>
+                학교 설명회
+                <br />
+                일정과 참석 안내
+              </h2>
+              <p>
+                설명회 살펴보기 <b aria-hidden="true">↗</b>
+              </p>
+            </Link>
+            <Link
+              className={`${styles.story} ${styles.storyGreen}`}
+              href="/curation/guides"
+            >
+              <span>입학을 준비한다면</span>
+              <h2>
+                알아두면 좋은
+                <br />
+                입학 준비 아티클
+              </h2>
+              <p>
+                아티클 살펴보기 <b aria-hidden="true">↗</b>
+              </p>
+            </Link>
+          </div>
+        </div>
+        <aside
+          className={styles.agenda}
+          id="current-opportunities"
+          aria-labelledby="agenda-title"
+        >
+          <div className={styles.sectionHeading}>
+            <h2 id="agenda-title">모집·입학 일정</h2>
+            <Link href="/curation/calendar">모음 보기 →</Link>
+          </div>
+          {data.currentOpportunities.length ? (
+            data.currentOpportunities
+              .slice(0, 3)
+              .map((item) => <ScheduleRow key={item.id} opportunity={item} />)
+          ) : (
+            <p className={styles.empty}>
+              현재 PREPPY에 공개된 모집·입학 일정이 없어요. 학교별 공식 안내를
+              확인해 주세요.
+            </p>
+          )}
+          <p className={styles.trust}>
+            학교별 상세 안내에서 공식 출처와 내용 확인일을 살펴볼 수 있어요.
+          </p>
+        </aside>
+      </div>
+      <nav className={styles.categoryBar} aria-label="유형별 기관 찾기">
+        <Link href="/institutions">학교·기관 전체 보기</Link>
+        <Link href="/institutions?category=PRIVATE_ELEMENTARY">
+          사립초등학교 ↗
+        </Link>
+        <Link href="/institutions?category=INTERNATIONAL_SCHOOL">
+          국제학교 ↗
+        </Link>
+        <Link href="/institutions?category=ENGLISH_KINDERGARTEN">
+          영어유치원 ↗
+        </Link>
+        <Link href="/commute">통학지도 ↗</Link>
+      </nav>
+      {data.latestArticles.length > 0 && (
+        <section id="articles" className={styles.articles}>
+          <div className={styles.sectionHeading}>
+            <h2>입학 준비, 함께 읽어요</h2>
+            <Link href="/curation/guides">모음 보기 →</Link>
+          </div>
+          <div className={styles.articleGrid}>
+            {data.latestArticles.slice(0, 3).map((article) => (
+              <ArticleCard key={article.id} article={article} />
+            ))}
+          </div>
         </section>
-      </PageContainer>
+      )}
     </div>
   );
 }

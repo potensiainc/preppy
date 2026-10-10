@@ -1,5 +1,6 @@
 import { publicRegionLabel } from "@/app/_lib/public-region-label";
 import Link from "next/link";
+import { PageNavigation } from "./page-navigation";
 import type { PublicOpportunityDTO } from "@/src/modules/public/dto";
 import { isProvisionalAdmissionGuidance } from "@/src/modules/live-admissions/guidance";
 import {
@@ -64,7 +65,7 @@ export function OpportunityDetailView({
           <span aria-hidden="true">/</span>
           <span>{opportunityKindLabel(opportunity.kind)}</span>
         </nav>
-        <header className={styles.hero}>
+        <header id="admission-overview" className={styles.hero}>
           <div className={styles.heroHeading}>
             <div>
               <p className={styles.kicker}>
@@ -118,6 +119,15 @@ export function OpportunityDetailView({
             </p>
           ) : null}
         </header>
+        <PageNavigation
+          items={[
+            { id: "admission-overview", label: "일정·지원 대상" },
+            ...(sections.length || guideSections.length
+              ? [{ id: "current-admission-guide", label: "모집·입학 안내" }]
+              : []),
+            { id: "admission-sources", label: "공식 출처·바로가기" },
+          ]}
+        />
         <div className={styles.bodyGrid}>
           <div className={styles.content}>
             <AdmissionSessions
