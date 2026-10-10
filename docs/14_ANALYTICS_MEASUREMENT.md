@@ -15,21 +15,33 @@ The public layout initializes analytics; the Admin layout never does.
 | --- | --- | --- |
 | development/test | any value | Noop or injected Test capture; Google is never loaded |
 | production | `false` | Noop |
-| production | `true` | GA4, only when both credentials validate |
+| production | `true`, valid measurement ID | GA4 browser tag and client-owned events after the visitor permits analysis |
+| production | `true`, valid measurement ID and API secret | Consented browser events plus server-owned events |
 
 Production configuration:
 
 ```text
 ANALYTICS_ENABLED=true
 GA4_MEASUREMENT_ID=G-XXXXXXXX
+# Optional until server-owned events are enabled:
 GA4_API_SECRET=<Measurement Protocol secret>
 ```
 
 `GA4_MEASUREMENT_ID` is the only analytics configuration allowed in the
 browser. The API secret is server-only and must never use a `NEXT_PUBLIC_`
-name, client prop, response, log, or built asset. Missing/invalid enabled
-production credentials fail closed during runtime construction. Blank
-credentials are permitted only while analytics is disabled or non-production.
+name, client prop, response, log, or built asset. An enabled production runtime
+requires a valid measurement ID and fails closed without it. If the API secret
+is absent, server-owned events use Noop while browser tagging remains active.
+An invalid supplied API secret fails validation. Development/test never loads
+Google, even with credentials present.
+
+The public site asks for a browser analysis choice before loading Google. A
+denial leaves the tag unloaded; withdrawing permission disables future sends
+and clears first-party GA cookies. The footer reopens the setting. This choice
+controls browser events only; server-owned events need a separate product
+decision before their API secret is configured because they cannot read this
+browser-local choice. GA cookies expire after at most 90 days without a
+renewal on return visits.
 
 Non-production Test capture uses the bounded
 `window.__PREPPY_ANALYTICS_CAPTURE__` hook installed before hydration. It
@@ -128,9 +140,11 @@ because provider/privacy behavior can inflate or suppress them.
 
 1. Create one GA4 property and Web data stream for the production PREPPY
    origin. Set the property reporting time zone to `Asia/Seoul`.
-2. Create a Measurement Protocol API secret. Store the measurement ID and
-   secret only in the server production environment, then set
-   `ANALYTICS_ENABLED=true`.
+2. Store the measurement ID in the production web environment and set
+   `ANALYTICS_ENABLED=true` for consented browser tagging. To enable server-owned
+   events in a later release, review their consent basis, create a Measurement
+   Protocol API secret, and store it in the server environment. Until then,
+   server-owned events are not sent to GA4.
 3. Disable all Enhanced Measurement events for this stream. PREPPY owns its
    page/action contract and sets `send_page_view=false`; automatic page views,
    site search, form, and outbound-link events would bypass the typed registry.

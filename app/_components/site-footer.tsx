@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { AnalyticsSettingsButton } from "@/app/_components/analytics-settings-button";
 import { businessInformation } from "@/src/config/business-information";
 
 export function SiteFooter() {
@@ -51,6 +52,7 @@ export function SiteFooter() {
           <nav aria-label="약관과 개인정보 안내">
             <Link href="/terms">이용약관</Link>
             <Link href="/privacy">개인정보 처리방침</Link>
+            <AnalyticsSettingsButton />
           </nav>
           <p className="site-footer__copyright">© 2026 PREPPY</p>
         </div>

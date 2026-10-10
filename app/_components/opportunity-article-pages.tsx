@@ -1,4 +1,6 @@
 import type { PublicArticleDTO } from "@/src/modules/public/dto";
+import Link from "next/link";
+import { PageNavigation } from "./page-navigation";
 import { publicProse } from "@/src/modules/public/ux-writing";
 import {
   explicitAcademicYear,
@@ -56,6 +58,9 @@ export function ArticleDetailView({ article }: { article: PublicArticleDTO }) {
   return (
     <PageContainer>
       <article className="article-detail">
+        <Link className="page-back" href="/curation/guides">
+          ← 입학 준비 아티클
+        </Link>
         <header className="article-detail__hero">
           <p className="eyebrow">입학 준비 아티클</p>
           <h1>{article.title}</h1>
@@ -78,7 +83,25 @@ export function ArticleDetailView({ article }: { article: PublicArticleDTO }) {
           ) : null}
         </header>
 
-        <section className="article-detail__section" aria-label="본문">
+        <PageNavigation
+          items={[
+            { id: "article-body", label: "본문" },
+            ...(article.relatedInstitutions.length
+              ? [{ id: "article-schools", label: "관련 기관" }]
+              : []),
+            ...(current.length
+              ? [{ id: "article-admissions", label: "관련 입학정보" }]
+              : []),
+            ...(historical.length
+              ? [{ id: "article-history", label: "이전 학년도 자료" }]
+              : []),
+          ]}
+        />
+        <section
+          id="article-body"
+          className="article-detail__section"
+          aria-label="본문"
+        >
           <ArticleProse
             articleSlug={article.slug}
             sanitizedContentHtml={article.sanitizedContentHtml}
@@ -86,7 +109,11 @@ export function ArticleDetailView({ article }: { article: PublicArticleDTO }) {
         </section>
 
         {article.relatedInstitutions.length > 0 ? (
-          <section className="article-detail__section" aria-label="관련 기관">
+          <section
+            id="article-schools"
+            className="article-detail__section"
+            aria-label="관련 기관"
+          >
             <SectionHeader title="관련 기관" />
             <div className="detail-card-grid">
               {article.relatedInstitutions.map((institution) => (
@@ -109,6 +136,7 @@ export function ArticleDetailView({ article }: { article: PublicArticleDTO }) {
 
         {current.length > 0 ? (
           <section
+            id="article-admissions"
             className="article-detail__section"
             aria-label="관련 모집·입학정보"
           >
@@ -126,6 +154,7 @@ export function ArticleDetailView({ article }: { article: PublicArticleDTO }) {
 
         {historical.length > 0 ? (
           <section
+            id="article-history"
             className="article-detail__section"
             aria-label="이전 학년도 자료"
           >

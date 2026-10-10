@@ -1,0 +1,84 @@
+/* Shared visual language, without changing the map's viewport or event hooks. */
+:root {
+  --paper: #fff;
+  --ink: #203c33;
+  --accent: #a85232;
+  --accent-dark: #894126;
+  --sage: #f0f3ed;
+  --line: #e5eae4;
+}
+.site-header .wordmark {
+  font:
+    700 36px/1 Georgia,
+    serif;
+  letter-spacing: -1.7px;
+  text-transform: none;
+  color: #254d3d;
+}
+.wordmark span {
+  color: #a85232;
+}
+.page-intro h1 {
+  font-size: clamp(25px, 3vw, 36px);
+  letter-spacing: -0.045em;
+}
+.page-intro .eyebrow {
+  color: #a85232;
+}
+.global-menu {
+  position: relative;
+}
+.global-menu summary {
+  cursor: pointer;
+  list-style: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  font-size: 24px;
+  color: #254d3d;
+}
+.global-menu summary::-webkit-details-marker {
+  display: none;
+}
+.site-header .global-menu nav {
+  position: absolute;
+  right: 0;
+  top: 48px;
+  z-index: 100;
+  width: 260px;
+  display: grid;
+  gap: 4px;
+  padding: 16px;
+  border: 1px solid #e5eae4;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 12px 32px #203c331a;
+}
+.global-menu a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 12px;
+  color: #254d3d;
+  text-decoration: none;
+  border-radius: 8px;
+}
+.global-menu a:hover {
+  background: #f0f3ed;
+}
+@media (max-width: 759px) {
+  .site-header .wordmark {
+    font-size: 30px;
+  }
+  .page-intro {
+    padding-block: 20px;
+  }
+}
+@media (max-width: 360px) {
+  .site-header { padding-inline: 10px; gap: 6px; }
+  .site-header .wordmark { font-size: 26px; }
+  .site-header > nav { gap: 5px; }
+  .header-actions { gap: 2px; }
+  .preview-badge { padding-inline: 4px; font-size: 8px; }
+}

@@ -98,8 +98,8 @@ describe("WP-05 legal policies", () => {
     });
     expect(getCurrentLegalPolicy("PRIVACY_POLICY")).toEqual({
       type: "PRIVACY_POLICY",
-      version: "2026-09-26",
-      effectiveAt: "2026-09-26",
+      version: "2026-10-10",
+      effectiveAt: "2026-10-10",
       contentReference: "/privacy",
     });
     expect(getCurrentLegalPolicy("SERVICE_EMAIL_UPDATES")).toEqual({
@@ -110,7 +110,7 @@ describe("WP-05 legal policies", () => {
     });
     expect(getCurrentLegalPolicyVersions()).toEqual({
       TERMS_OF_SERVICE: "2026-09-26",
-      PRIVACY_POLICY: "2026-09-26",
+      PRIVACY_POLICY: "2026-10-10",
       SERVICE_EMAIL_UPDATES: "2026-09-26",
     });
   });
@@ -120,6 +120,12 @@ describe("WP-05 legal policies", () => {
     expect(() =>
       assertCurrentLegalPolicyVersion("TERMS_OF_SERVICE", "2026-09-26"),
     ).not.toThrow();
+    expect(() =>
+      assertCurrentLegalPolicyVersion("PRIVACY_POLICY", "2026-10-10"),
+    ).not.toThrow();
+    expect(() =>
+      assertCurrentLegalPolicyVersion("PRIVACY_POLICY", "2026-09-26"),
+    ).toThrow(ConsentPolicyUpdatedError);
     expect(() =>
       assertCurrentLegalPolicyVersion("TERMS_OF_SERVICE", "2026-08-22"),
     ).toThrow(ConsentPolicyUpdatedError);

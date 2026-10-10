@@ -26,7 +26,7 @@ describe("WP-14 analytics configuration", () => {
     ).toEqual({ mode: "NOOP" });
   });
 
-  it("enables production only with a valid measurement ID and server API secret", () => {
+  it("enables production client and server analytics with both credentials", () => {
     const environment = {
       NODE_ENV: "production",
       ANALYTICS_ENABLED: "true",
@@ -47,7 +47,20 @@ describe("WP-14 analytics configuration", () => {
     ).not.toContain("server-only-secret");
   });
 
-  it("fails closed when production analytics is enabled without either credential", () => {
+  it("enables client tagging without a server API secret", () => {
+    const environment = {
+      NODE_ENV: "production",
+      ANALYTICS_ENABLED: "true",
+      GA4_MEASUREMENT_ID: "G-J8C7HH3YJ3",
+    };
+    expect(parseClientAnalyticsConfig(environment)).toEqual({
+      mode: "GA4",
+      measurementId: "G-J8C7HH3YJ3",
+    });
+    expect(parseServerAnalyticsConfig(environment)).toEqual({ mode: "NOOP" });
+  });
+
+  it("fails closed when production analytics is enabled without a valid measurement ID", () => {
     expect(() =>
       parseClientAnalyticsConfig({
         NODE_ENV: "production",
@@ -55,10 +68,10 @@ describe("WP-14 analytics configuration", () => {
       }),
     ).toThrow();
     expect(() =>
-      parseServerAnalyticsConfig({
+      parseClientAnalyticsConfig({
         NODE_ENV: "production",
         ANALYTICS_ENABLED: "true",
-        GA4_MEASUREMENT_ID: "G-ABC12345",
+        GA4_MEASUREMENT_ID: "invalid",
       }),
     ).toThrow();
   });

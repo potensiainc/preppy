@@ -1,18 +1,18 @@
 .admissions,
 .reviewedCard {
-  color: #1d2d28;
+  color: #e5eee7;
   word-break: keep-all;
   overflow-wrap: anywhere;
   line-height: 1.8;
 }
 .admissions h1 {
-  font-size: clamp(29px, 3.3vw, 43px);
+  font-size: clamp(25px, 3vw, 36px);
   line-height: 1.35;
   margin: 10px 0 0;
   max-width: 850px;
 }
 .admissions h2 {
-  font-size: 25px;
+  font-size: 22px;
   line-height: 1.4;
   margin-bottom: 20px;
 }
@@ -26,12 +26,14 @@
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  color: #596963;
+  color: #afbeb4;
   font-size: 12px;
   margin-bottom: 26px;
 }
 .hero {
-  padding-bottom: 30px;
+  padding: 26px;
+  background: #28372e;
+  border-radius: 14px;
 }
 .heroHeading {
   display: flex;
@@ -42,12 +44,12 @@
 .kicker {
   font-size: 12px;
   letter-spacing: 0.07em;
-  color: #285747;
+  color: #e4b28e;
   margin-bottom: 10px;
   font-weight: 600;
 }
 .school {
-  color: #285747;
+  color: #bed4c2;
   font-size: 16px;
 }
 .status {
@@ -56,8 +58,8 @@
 }
 .notice {
   border-left: 3px solid #ba955b;
-  background: #faf2e2;
-  color: #785319;
+  background: #3b392d;
+  color: #ead1a3;
   padding: 14px 18px;
   border-radius: 0 7px 7px 0;
   font-size: 14px;
@@ -76,7 +78,7 @@
   grid-column: 1 / -1;
 }
 .datePanel {
-  background: #173d30;
+  background: #254d3d;
   border-radius: 14px;
   padding: 25px 28px;
   color: white;
@@ -121,7 +123,7 @@
 .supplement {
   margin: 12px 0 0;
   font-size: 13px;
-  color: #596963;
+  color: #afbeb4;
 }
 .supplement > div {
   display: flex;
@@ -132,21 +134,21 @@
   margin: 0;
 }
 .essentials {
-  border: 1px solid #dce3db;
+  border: 1px solid #435047;
   border-radius: 14px;
-  background: white;
+  background: #26352d;
   padding: 20px 24px;
   margin: 0;
 }
 .essentials > div + div {
-  border-top: 1px solid #dce3db;
+  border-top: 1px solid #435047;
   margin-top: 16px;
   padding-top: 16px;
 }
 .essentials dt,
 .essentials > span {
   font-size: 12px;
-  color: #596963;
+  color: #afbeb4;
 }
 .essentials dd {
   margin: 5px 0 0;
@@ -173,7 +175,7 @@
   scroll-margin-top: 96px;
 }
 .section + .section {
-  border-top: 1px solid #dce3db;
+  border-top: 1px solid #435047;
   padding-top: 32px;
   margin-top: 38px;
 }
@@ -183,7 +185,7 @@
 }
 .guideSection + .guideSection {
   padding-top: 25px;
-  border-top: 1px solid #dce3db;
+  border-top: 1px solid #435047;
 }
 .guideSection p,
 .guideDetails p {
@@ -198,10 +200,10 @@
 .readingGroup + .readingGroup {
   margin-top: 28px;
   padding-top: 26px;
-  border-top: 1px solid #dce3db;
+  border-top: 1px solid #435047;
 }
 .readingGroup h3 {
-  border-left: 3px solid #285747;
+  border-left: 3px solid #bed4c2;
   padding-left: 12px;
 }
 .readingList {
@@ -215,14 +217,14 @@
   margin-top: 12px;
 }
 .readingList li::marker {
-  color: #527564;
+  color: #b5cdbd;
 }
 .readingContext {
   margin-top: 16px;
   border-left: 2px solid #ba955b;
   padding: 8px 14px;
-  background: #faf2e2;
-  color: #694a1e;
+  background: #3b392d;
+  color: #ead1a3;
 }
 .readingContext p {
   font-size: 14px;
@@ -232,21 +234,21 @@
 }
 .audienceRows > div + div,
 .audienceRows + .audienceRows {
-  border-top: 1px solid #dce3db;
+  border-top: 1px solid #435047;
   margin-top: 14px;
   padding-top: 14px;
 }
 .audienceRows dt {
   font-size: 13px;
   font-weight: 600;
-  color: #285747;
+  color: #bed4c2;
 }
 .audienceRows dd {
   margin: 6px 0 0;
   line-height: 1.7;
 }
 .helper {
-  color: #596963;
+  color: #afbeb4;
   font-size: 13px;
   line-height: 1.7;
 }
@@ -267,33 +269,33 @@
 .sessionHeading > span {
   flex-shrink: 0;
   font-size: 13px;
-  color: #596963;
+  color: #afbeb4;
 }
 .pastHeading {
   margin: 18px 0 0;
   padding-top: 22px;
-  border-top: 1px solid #dce3db;
-  color: #596963;
+  border-top: 1px solid #435047;
+  color: #afbeb4;
 }
 .session {
   display: grid;
   grid-template-columns: minmax(150px, 0.8fr) minmax(0, 2fr);
-  background: white;
-  border: 1px solid #dce3db;
+  background: #26352d;
+  border: 1px solid #435047;
   border-radius: 10px;
   scroll-margin-top: 96px;
   overflow: hidden;
 }
 .session:target {
-  border: 2px solid #285747;
+  border: 2px solid #bed4c2;
 }
 .sessionWhen {
-  background: #eff4ee;
+  background: #28372e;
   padding: 22px 18px;
 }
 .sessionWhen > p:first-child {
   font-size: 13px;
-  color: #285747;
+  color: #bed4c2;
   margin: 0 0 12px;
 }
 .session .date {
@@ -305,7 +307,7 @@
 }
 .sessionEnd {
   font-size: 13px;
-  color: #596963;
+  color: #afbeb4;
   margin: 10px 0 14px;
 }
 .sessionBody {
@@ -326,13 +328,13 @@
   font-size: 14px;
   margin: 18px 0 0;
   padding-top: 16px;
-  border-top: 1px solid #dce3db;
+  border-top: 1px solid #435047;
 }
 .sessionRegistration > div + div {
   margin-top: 10px;
 }
 .sessionRegistration dt {
-  color: #596963;
+  color: #afbeb4;
   font-size: 12px;
 }
 .sessionRegistration dd {
@@ -340,14 +342,14 @@
 }
 .sessionSources {
   margin-top: 20px;
-  border-top: 1px solid #dce3db;
+  border-top: 1px solid #435047;
   font-size: 13px;
 }
 .sessionSources > summary {
   cursor: pointer;
   min-height: 44px;
   padding: 12px 0;
-  color: #285747;
+  color: #bed4c2;
 }
 .sessionSources .sourceCard {
   border: 0;
@@ -364,9 +366,9 @@
   scroll-margin-top: 96px;
 }
 .sourceCard {
-  border: 1px solid #dce3db;
+  border: 1px solid #435047;
   border-radius: 12px;
-  background: white;
+  background: #26352d;
   padding: 22px;
 }
 .sourceCard h2 {
@@ -375,7 +377,7 @@
 }
 .sourceLink {
   display: block;
-  border: 1px solid #dce3db;
+  border: 1px solid #435047;
   border-radius: 7px;
   padding: 12px;
   margin-top: 10px;
@@ -388,7 +390,7 @@
 }
 .sourceLink span {
   display: block;
-  color: #596963;
+  color: #afbeb4;
   font-size: 12px;
   margin-top: 4px;
 }
@@ -396,8 +398,8 @@
   display: inline-flex;
   min-height: 44px;
   align-items: center;
-  background: #285747;
-  color: white;
+  background: #bed4c2;
+  color: #1b3025;
   border-radius: 6px;
   padding: 10px 14px;
   font-size: 13px;
@@ -405,7 +407,7 @@
   margin-top: 12px;
 }
 .timestamps {
-  border-top: 1px solid #dce3db;
+  border-top: 1px solid #435047;
   padding-top: 16px;
   margin: 22px 0 16px;
 }
@@ -413,7 +415,7 @@
   margin-top: 12px;
 }
 .timestamps dt {
-  color: #596963;
+  color: #afbeb4;
   font-size: 11px;
 }
 .timestamps dd {
@@ -425,7 +427,7 @@
   padding-left: 20px;
 }
 .changes time {
-  color: #596963;
+  color: #afbeb4;
   font-size: 13px;
 }
 .reviewedList {
@@ -433,10 +435,10 @@
   gap: 24px;
 }
 .reviewedCard {
-  border: 1px solid #dce3db;
+  border: 1px solid #435047;
   padding: 28px;
   border-radius: 14px;
-  background: #f8f9f5;
+  background: #253129;
   min-width: 0;
 }
 .reviewedCard h3 a {
@@ -446,7 +448,7 @@
   margin: 24px 0;
 }
 .guideDetails {
-  border-bottom: 1px solid #dce3db;
+  border-bottom: 1px solid #435047;
   padding: 4px 0;
 }
 .guideDetails summary {
@@ -468,7 +470,7 @@
     align-items: center;
     gap: 8px;
     padding: 16px 18px;
-    border-bottom: 1px solid #dce3db;
+    border-bottom: 1px solid #435047;
   }
   .sessionWhen > p:first-child {
     margin: 0;
@@ -507,6 +509,16 @@
   }
 }
 @media (max-width: 780px) {
+  .hero {
+    padding: 18px;
+  }
+  .summaryGrid {
+    gap: 12px;
+    margin-top: 18px;
+  }
+  .admissions h2 {
+    font-size: 20px;
+  }
   .bodyGrid {
     grid-template-columns: 1fr;
     gap: 30px;
@@ -519,7 +531,7 @@
     gap: 14px;
   }
   .datePanel {
-    padding: 22px;
+    padding: 18px;
   }
   .reviewedCard {
     padding: 20px;
@@ -531,15 +543,31 @@
   }
   .dateWindow {
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 12px;
+  }
+  .dateWindow > div {
+    display: grid;
+    grid-template-columns: 60px minmax(0, 1fr);
+    gap: 8px;
+    align-items: baseline;
+  }
+  .dateWindow dt {
+    margin: 0;
+  }
+  .dateWindow .date {
+    font-size: 18px;
+  }
+  .dateWindow .clock {
+    font-size: 16px;
+    margin-top: 2px;
   }
   .dateWindow > div + div {
     border-left: 0;
     border-top: 1px solid #6c8879;
-    padding: 18px 0 0;
+    padding: 12px 0 0;
   }
   .date {
-    font-size: 26px;
+    font-size: 20px;
   }
   .sessions {
     grid-template-columns: 1fr;

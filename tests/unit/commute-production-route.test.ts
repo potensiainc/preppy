@@ -8,6 +8,7 @@ import {
 } from "next/experimental/testing/server";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
+import { load } from "cheerio";
 import { describe, expect, it } from "vitest";
 
 import { SiteHeader } from "@/app/_components/site-header";
@@ -20,15 +21,17 @@ describe("commute production route", () => {
   it("offers the commute map from both desktop and mobile public navigation", () => {
     const markup = renderToStaticMarkup(createElement(SiteHeader));
 
-    expect(markup.match(/href="\/schoolmap"/g)).toHaveLength(2);
-    expect(markup.match(/>통학지도<\/a>/g)).toHaveLength(2);
+    const $ = load(markup);
+    for (const label of ["주요 메뉴", "모바일 주요 메뉴"]) {
+      expect($(`nav[aria-label="${label}"] a[href="/commute"]`)).toHaveLength(1);
+    }
   });
 
   it("uses the public PREPPY wordmark as a real home link", async () => {
     const html = await readFile(resolve(commuteRoot, "index.html"), "utf8");
 
     expect(html).toMatch(
-      /<a\s+class="wordmark"\s+href="\/"\s+aria-label="PREPPY 홈"\s*>\s*<span\s+class="brand-icon"\s+aria-hidden="true"><\/span>PREPPY<\/a\s*>/u,
+      /<a\s+class="wordmark"\s+href="\/"\s+aria-label="PREPPY 홈"\s*>preppy<span>\.<\/span><\/a\s*>/u,
     );
     expect(html).not.toMatch(/class="wordmark"[^>]*data-action="home"/u);
   });
