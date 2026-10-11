@@ -36,6 +36,7 @@ const article: PublicArticleDTO = {
   sanitizedContentHtml:
     "<p>Meaningful complete Article body with enough detail for indexing.</p>",
 };
+const articleImageRevision = encodeURIComponent(article.updatedAt);
 const opportunity = {
   id: "opportunity",
   slug: "open-admission",
@@ -156,7 +157,7 @@ describe("WP-13 public metadata", () => {
         title: "Complete guide",
         images: [
           {
-            url: "https://preppy.example/articles/complete-guide/og.png",
+            url: `https://preppy.example/articles/complete-guide/og.png?v=${articleImageRevision}`,
             alt: "Complete guide | PREPPY 입학 준비 아티클",
           },
         ],
@@ -164,7 +165,9 @@ describe("WP-13 public metadata", () => {
       twitter: {
         title: "Complete guide",
         images: [
-          { url: "https://preppy.example/articles/complete-guide/x.png" },
+          {
+            url: `https://preppy.example/articles/complete-guide/x.png?v=${articleImageRevision}`,
+          },
         ],
       },
     });
@@ -182,11 +185,46 @@ describe("WP-13 public metadata", () => {
     expect(metadata.robots).toMatchObject({ index: false, follow: true });
     expect(metadata.openGraph).toMatchObject({
       images: [
-        { url: "https://preppy.example/articles/complete-guide/og.png" },
+        {
+          url: `https://preppy.example/articles/complete-guide/og.png?v=${articleImageRevision}`,
+        },
       ],
     });
     expect(metadata.twitter).toMatchObject({
-      images: [{ url: "https://preppy.example/articles/complete-guide/x.png" }],
+      images: [
+        {
+          url: `https://preppy.example/articles/complete-guide/x.png?v=${articleImageRevision}`,
+        },
+      ],
     });
+  });
+
+  it("changes both social image URLs when an article is republished under the same slug", () => {
+    const correctedTitle = "Corrected 2027 admissions guide";
+    const updatedAt = "2026-09-01T12:00:00.000Z";
+    const original = buildArticleMetadata(article, appBaseUrl);
+    const revised = buildArticleMetadata(
+      { ...article, title: correctedTitle, updatedAt },
+      appBaseUrl,
+    );
+
+    expect(revised.alternates).toEqual(original.alternates);
+    expect(revised.openGraph).toMatchObject({
+      title: correctedTitle,
+      images: [
+        {
+          url: `https://preppy.example/articles/complete-guide/og.png?v=${encodeURIComponent(updatedAt)}`,
+        },
+      ],
+    });
+    expect(revised.twitter).toMatchObject({
+      images: [
+        {
+          url: `https://preppy.example/articles/complete-guide/x.png?v=${encodeURIComponent(updatedAt)}`,
+        },
+      ],
+    });
+    expect(revised.openGraph?.images).not.toEqual(original.openGraph?.images);
+    expect(revised.twitter?.images).not.toEqual(original.twitter?.images);
   });
 });

@@ -203,6 +203,7 @@ export function buildArticleMetadata(
     publicProse(dto.seoDescription ?? dto.excerpt) ?? undefined;
   const path = `/articles/${dto.slug}`;
   const social = buildSocialMetadata(appBaseUrl, path, dto.title, description);
+  const imageRevision = encodeURIComponent(dto.updatedAt);
   return {
     title,
     description,
@@ -216,7 +217,7 @@ export function buildArticleMetadata(
       type: "article",
       images: [
         {
-          url: canonical(appBaseUrl, `${path}/og.png`),
+          url: canonical(appBaseUrl, `${path}/og.png?v=${imageRevision}`),
           width: 1200,
           height: 630,
           alt: `${dto.title} | PREPPY 입학 준비 아티클`,
@@ -228,7 +229,7 @@ export function buildArticleMetadata(
       ...social.twitter,
       images: [
         {
-          url: canonical(appBaseUrl, `${path}/x.png`),
+          url: canonical(appBaseUrl, `${path}/x.png?v=${imageRevision}`),
           alt: `${dto.title} | PREPPY 입학 준비 아티클`,
         },
       ],

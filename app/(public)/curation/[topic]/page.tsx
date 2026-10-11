@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getHomePage } from "@/src/modules/public/home-query.server";
+import { getCurrentInformationSessionCards } from "@/src/modules/public/institution-query.server";
 import { getPublicExecutor } from "@/app/_lib/public-page.server";
 import { ArticleCard, OpportunityCard } from "@/app/_components/public-cards";
 import styles from "@/app/_components/curation.module.css";
@@ -38,20 +39,29 @@ export async function generateMetadata({
 }
 export default async function CurationPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ topic: string }>;
+  searchParams: Promise<{ page?: string }>;
 }) {
   const { topic } = await params;
   if (!isTopic(topic)) notFound();
-  const data = await getHomePage(getPublicExecutor());
-  const items =
+  const requestedPage = Number((await searchParams).page ?? "1");
+  const page =
+    Number.isSafeInteger(requestedPage) &&
+    requestedPage >= 1 &&
+    requestedPage <= 1000
+      ? requestedPage
+      : 1;
+  const executor = getPublicExecutor();
+  const data = topic === "briefings" ? null : await getHomePage(executor);
+  const briefings =
     topic === "briefings"
-      ? data.currentOpportunities.filter(
-          (item) => item.kind === "INFORMATION_SESSION",
-        )
-      : data.currentOpportunities;
+      ? await getCurrentInformationSessionCards(executor, page)
+      : null;
+  const items = briefings?.items ?? data?.currentOpportunities ?? [];
   const empty =
-    topic === "guides" ? !data.latestArticles.length : !items.length;
+    topic === "guides" ? !data?.latestArticles.length : !items.length;
   return (
     <div className={styles.collection}>
       <Link className={styles.back} href="/">
@@ -73,28 +83,56 @@ export default async function CurationPage({
       </nav>
       {empty ? (
         <div className={styles.empty}>
-          <h2>현재 이 모음에 공개된 안내가 없어요</h2>
+          <h2>
+            {topic === "briefings" && page > 1
+              ? "이 페이지에 표시할 설명회가 없어요"
+              : "현재 이 모음에 공개된 안내가 없어요"}
+          </h2>
           <p>
             학교·기관별 상세 페이지에서 확인된 정보와 공식 안내를 살펴보세요.
           </p>
-          <Link href="/institutions">학교·기관 살펴보기 →</Link>
+          {topic === "briefings" && page > 1 ? (
+            <Link href="/curation/briefings">첫 페이지 보기 →</Link>
+          ) : (
+            <Link href="/institutions">학교·기관 살펴보기 →</Link>
+          )}
         </div>
       ) : (
         <>
           <p className={styles.trust}>
             {topic === "guides"
               ? "최근 공개된 아티클을 보여드려요."
-              : "홈에 소개된 공개 안내를 모은 목록이에요. 전체 학교의 모든 일정을 뜻하지 않아요."}
+              : topic === "briefings"
+                ? "현재 공개된 학교 설명회를 페이지별로 보여드려요."
+                : "홈에 소개된 공개 안내를 모은 목록이에요. 전체 학교의 모든 일정을 뜻하지 않아요."}
           </p>
           <div className={styles.articleGrid}>
             {topic === "guides"
-              ? data.latestArticles.map((item) => (
+              ? (data?.latestArticles ?? []).map((item) => (
                   <ArticleCard key={item.id} article={item} />
                 ))
               : items.map((item) => (
                   <OpportunityCard key={item.id} opportunity={item} />
                 ))}
           </div>
+          {briefings && (page > 1 || briefings.hasNext) ? (
+            <nav
+              className={styles.collectionNav}
+              aria-label="설명회 페이지 이동"
+            >
+              {page > 1 ? (
+                <Link href={`/curation/briefings?page=${page - 1}`}>
+                  이전 페이지
+                </Link>
+              ) : null}
+              <span>{page} 페이지</span>
+              {briefings.hasNext ? (
+                <Link href={`/curation/briefings?page=${page + 1}`}>
+                  다음 페이지
+                </Link>
+              ) : null}
+            </nav>
+          ) : null}
         </>
       )}
     </div>

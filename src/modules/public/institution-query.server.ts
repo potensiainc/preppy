@@ -52,6 +52,7 @@ import { getRelatedArticles } from "./opportunity-query.server";
 const DETAIL_OPPORTUNITY_LIMIT = 12;
 const REVIEWED_ADMISSION_LIMIT = 20;
 const HOME_OPPORTUNITY_LIMIT = 12;
+const BRIEFINGS_PAGE_LIMIT = 24;
 const MAX_OPPORTUNITY_CARD_BATCH = 50;
 const LEGACY_SOURCE_LIMIT = 24;
 const officialSourceTypes = [
@@ -265,7 +266,8 @@ async function getOpportunityTruths(
     | { institutionIds: readonly string[] }
     | { opportunityIds: readonly string[] }
     | { home: true },
-  projection: "CARD" | "DETAIL" | "HOME" | "ARTICLE",
+  projection: "CARD" | "DETAIL" | "HOME" | "ARTICLE" | "BRIEFINGS",
+  page = 1,
 ): Promise<OpportunityTruth[]> {
   if ("institutionIds" in target && target.institutionIds.length === 0)
     return [];
@@ -297,10 +299,14 @@ async function getOpportunityTruths(
       : "opportunityIds" in target
         ? sql`o.id in (${ids})`
         : sql`true`;
+  const kindCondition =
+    projection === "BRIEFINGS"
+      ? sql`and o.kind = 'INFORMATION_SESSION'`
+      : sql``;
   const section =
     projection === "DETAIL"
       ? sql`case state when 'OPEN' then 'CURRENT' when 'UPCOMING' then 'UPCOMING' when 'CLOSED' then 'RECENT' when 'COMPLETED' then 'RECENT' when 'CANCELLED' then 'RECENT' else null end`
-      : projection === "HOME"
+      : projection === "HOME" || projection === "BRIEFINGS"
         ? sql`case when state in ('OPEN', 'UPCOMING') then 'HOME' else null end`
         : sql`case when state='UNKNOWN' then null else 'CARD' end`;
   const limit =
@@ -308,20 +314,29 @@ async function getOpportunityTruths(
       ? DETAIL_OPPORTUNITY_LIMIT
       : projection === "HOME"
         ? HOME_OPPORTUNITY_LIMIT
-        : projection === "ARTICLE"
-          ? MAX_OPPORTUNITY_CARD_BATCH
-          : 1;
-  const rankLimit = projection === "HOME" ? 1 : limit;
+        : projection === "BRIEFINGS"
+          ? BRIEFINGS_PAGE_LIMIT + 1
+          : projection === "ARTICLE"
+            ? MAX_OPPORTUNITY_CARD_BATCH
+            : 1;
+  const rankLimit =
+    projection === "HOME" || projection === "BRIEFINGS" ? 1 : limit;
   const overallLimit =
-    projection === "HOME" ? sql`limit ${HOME_OPPORTUNITY_LIMIT}` : sql``;
+    projection === "HOME"
+      ? sql`limit ${HOME_OPPORTUNITY_LIMIT}`
+      : projection === "BRIEFINGS"
+        ? sql`limit ${BRIEFINGS_PAGE_LIMIT + 1} offset ${(page - 1) * BRIEFINGS_PAGE_LIMIT}`
+        : sql``;
   const partition =
     projection === "HOME"
       ? sql`"institutionId", section`
-      : projection === "ARTICLE"
-        ? sql`"institutionId", kind, section`
-        : "opportunityIds" in target
-          ? sql`id, section`
-          : sql`"institutionId", section`;
+      : projection === "BRIEFINGS"
+        ? sql`id, section`
+        : projection === "ARTICLE"
+          ? sql`"institutionId", kind, section`
+          : "opportunityIds" in target
+            ? sql`id, section`
+            : sql`"institutionId", section`;
   const rows = (await executor.raw(sql`
     with candidates as (
       select o.id, o.institution_id as "institutionId", o.slug, o.kind, v.id as "versionId", 'NATIVE' as mode, v.title, v.business_state as state, v.summary, v.target_audience as "targetAudience", v.action_url as "actionUrl", v.verified_at as "verifiedAt",
@@ -338,7 +353,7 @@ async function getOpportunityTruths(
           )
         ))
       join opportunity_versions v on v.opportunity_id=o.id and v.is_current=true and v.verification_state='VERIFIED'
-      where ${targetCondition} and o.publication_state='PUBLISHED' and o.truth_mode='NATIVE' and v.verified_at is not null
+      where ${targetCondition} ${kindCondition} and o.publication_state='PUBLISHED' and o.truth_mode='NATIVE' and v.verified_at is not null
         and (i.category <> 'INTERNATIONAL_SCHOOL' or exists (
           select 1
           from opportunity_version_evidence evidence
@@ -366,7 +381,7 @@ async function getOpportunityTruths(
           )
         ))
       join opportunity_admission_event_links l on l.opportunity_id=o.id join admission_events e on e.id=l.admission_event_id and e.is_public=true join admission_event_versions v on v.admission_event_id=e.id and v.is_current=true and v.verification_status='VERIFIED'
-      where ${targetCondition} and o.publication_state='PUBLISHED' and o.truth_mode='LEGACY_BACKED' and v.verified_at is not null
+      where ${targetCondition} ${kindCondition} and o.publication_state='PUBLISHED' and o.truth_mode='LEGACY_BACKED' and v.verified_at is not null
         and (i.category <> 'INTERNATIONAL_SCHOOL' or exists (
           select 1
           from event_version_evidence evidence
@@ -605,6 +620,34 @@ export async function getHomeCurrentOpportunityCards(
       },
     ];
   });
+}
+
+/** All current public information sessions, paged before card hydration. */
+export async function getCurrentInformationSessionCards(
+  executor: DatabaseExecutor,
+  page: number,
+): Promise<{ items: OpportunityCardDTO[]; hasNext: boolean }> {
+  if (!Number.isSafeInteger(page) || page < 1 || page > 1000) {
+    throw new RangeError("Invalid information session page.");
+  }
+  const truths = await getOpportunityTruths(
+    executor,
+    { home: true },
+    "BRIEFINGS",
+    page,
+  );
+  const visibleTruths = truths.slice(0, BRIEFINGS_PAGE_LIMIT);
+  const institutionsById = await getInstitutionsByIds(executor, [
+    ...new Set(visibleTruths.map((truth) => truth.institutionId)),
+  ]);
+  return {
+    items: visibleTruths.flatMap((truth) => {
+      const institution = institutionsById.get(truth.institutionId);
+      if (institution === undefined) return [];
+      return [opportunityCard(truth, institution)];
+    }),
+    hasNext: truths.length > BRIEFINGS_PAGE_LIMIT,
+  };
 }
 
 function compactOpportunityTitle(
