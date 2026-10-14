@@ -12,15 +12,6 @@ export function SiteHeader() {
           </Link>
           <PublicNavigation />
           <div className={styles.tools}>
-            <span className={styles.issue}>
-              {new Intl.DateTimeFormat("en", {
-                month: "long",
-                timeZone: "Asia/Seoul",
-              })
-                .format(new Date())
-                .toUpperCase()}{" "}
-              EDIT
-            </span>
             <Link
               className={styles.iconButton}
               href="/institutions"

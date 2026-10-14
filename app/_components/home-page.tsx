@@ -168,12 +168,6 @@ export function HomePageView({ data }: { data: HomePageDTO }) {
           <p className={styles.kicker}>PREPPY CURATION</p>
           <h1 id="home-title">지금, 알아두면 좋은 입학정보</h1>
         </div>
-        <span className={styles.edition} aria-hidden="true">
-          {new Intl.DateTimeFormat("en", {
-            month: "2-digit",
-            timeZone: "Asia/Seoul",
-          }).format(new Date())}
-        </span>
       </div>
       <div className={styles.homeGrid}>
         <div>
