@@ -1,12 +1,14 @@
 import { readFile } from "node:fs/promises";
 
+import { load } from "cheerio";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import type { HomePageDTO } from "@/src/modules/public/dto";
 
 import { HomePageView } from "@/app/_components/home-page";
+import { SiteHeader } from "@/app/_components/site-header";
 
 const homePage: HomePageDTO = {
   categories: [
@@ -83,6 +85,35 @@ const homePage: HomePageDTO = {
 };
 
 describe("WP-07 Home page", () => {
+  afterEach(() => vi.useRealTimers());
+
+  it.each([
+    ["2026-10-14T00:00:00.000Z", "OCTOBER EDIT"],
+    ["2026-11-14T00:00:00.000Z", "NOVEMBER EDIT"],
+  ])("omits month edit labels in the header on %s", (now, issue) => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(now));
+
+    const header = renderToStaticMarkup(createElement(SiteHeader));
+
+    expect(header).not.toContain(issue);
+  });
+
+  it.each([
+    ["2026-10-14T00:00:00.000Z", "10"],
+    ["2026-11-14T00:00:00.000Z", "11"],
+  ])("omits the decorative month number from home on %s", (now, month) => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(now));
+
+    const home = load(
+      renderToStaticMarkup(createElement(HomePageView, { data: homePage })),
+    );
+    const welcome = home("#home-title").parent().parent().text();
+
+    expect(welcome).not.toContain(month);
+  });
+
   it("keeps the recovered curation home while handling mixed institution data", () => {
     const markup = renderToStaticMarkup(
       createElement(HomePageView, {
