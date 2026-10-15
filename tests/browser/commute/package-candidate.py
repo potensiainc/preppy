@@ -22,4 +22,6 @@ with zipfile.ZipFile(out/'schoolmap-review-artifacts.zip','w',compression=zipfil
         for p in sorted(folder.rglob('*')):
             if p.is_file():archive.write(p,p.relative_to(out).as_posix())
     archive.write(out/'schoolmap-build.log','schoolmap-build.log')
+    if (out/'schoolmap-browser.log').exists():archive.write(out/'schoolmap-browser.log','schoolmap-browser.log')
+    if (out/'schoolmap-unit.log').exists():archive.write(out/'schoolmap-unit.log','schoolmap-unit.log')
 print(json.dumps({'package':str(package),'sha256':digest,'buildId':build_id,'reviewArtifacts':str(out/'schoolmap-review-artifacts.zip')}))

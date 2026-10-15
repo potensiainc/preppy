@@ -1,0 +1,9 @@
+import {escapeHtml as esc} from './icons.js';
+import {sourceUrl} from './provenance.js';
+const labels={published_timetable_read_not_live_verified:'공식 게시 시간표를 읽었어요',procurement_plan_read_not_live_verified:'공식 조달 계획을 읽었어요',official_notice_read_routes_inaccessible:'공지는 읽었지만 노선 원문은 읽지 못했어요',historical_official_reference_only:'과거 공식 참고자료가 있어요',primary_inaccessible_secondary_or_no_facts:'주요 공식 원문을 읽지 못했어요',no_current_commute_document_found:'조사 범위에서 현행 통학 문서를 찾지 못했어요'};
+const status={official_verified:'공식 문서 내용 확인 · 현재 운행 확인 전',official_older:'과거·대체된 공식 자료',secondary_unverified:'미검증 2차 자료',inaccessible:'원문 접근·판독 불가',not_found:'조사 범위에서 찾지 못함'};
+export function researchMarkup(research,schoolId){
+  const school=research?.schools?.find(s=>s.schoolId===schoolId);if(!school)return '';
+  const sources=school.sources.filter(s=>sourceUrl(s.url));
+  return `<details class="school-sources"><summary>학교 자료 조사 · ${sources.length}개 출처 기록</summary><p><strong>${esc(labels[school.coverage]||'자료 범위 확인 전')}</strong><br>조사 기준일: ${esc(research.researchDate)}<br>지도·시간표 원본 수집: 2026-08-31</p><ul>${school.notes.map(note=>`<li>${esc(note)}</li>`).join('')}</ul>${sources.map(source=>`<article><a href="${esc(sourceUrl(source.url))}" target="_blank" rel="noopener noreferrer">${esc(source.title)}</a><p>${esc(status[source.status]||'확인 전')}<br>${source.documentRole==='procurement'?'조달 계획 · 계약 이행 확인 전<br>':''}게시 날짜: ${esc(source.publicationDate||'미확인')}<br>첨부 개정일: ${esc(source.revisionDate||'미확인')}<br>적용 학년도: ${esc(source.schoolYear||'미확인')}<br>자료 조회: ${esc(source.fetchedDate||'미확인')}</p>${source.conditions.length||source.unresolved.length?`<details><summary>자료 조건과 확인이 필요한 내용</summary><ul>${[...source.conditions,...source.unresolved].map(note=>`<li>${esc(note)}</li>`).join('')}</ul></details>`:''}</article>`).join('')}</details>`;
+}

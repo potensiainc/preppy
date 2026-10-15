@@ -1,6 +1,6 @@
 # Schoolmap evidence contract
 
-`public/commute/provenance.json` is additive. It does not replace or silently correct `data.json`. Initially it contains no reviewed records. Existing third-party attribution and collection date remain visible.
+`public/commute/provenance.json` is additive. It does not replace or silently correct `data.json`. The reviewed 2026-10-15 research import adds 61 exact clock-field matches; `research-sources.json` separately exposes the 38-school/163-source audit. Existing third-party attribution and collection date remain visible. All current-operation verification flags remain false.
 
 ```json
 {
@@ -32,3 +32,5 @@ This is an illustrative schema, not factual evidence. Dates, URLs and values mus
 Allowed statuses: `unverified`, `document_reviewed`, `school_confirmed`, `conflicting`, `inaccessible`. A reachable official page alone does not prove a timetable current or school-confirmed. Record the specific field and conditions. Name/round/grade qualifiers must be preserved in the value and conditions. Publication date, document header date, attachment revision date, effective school year and operating/planned status are independent. Preserve conflicts (including an older document header inside a newer attachment) explicitly. Color-coded restrictions without an identified matching route/stop cannot mark individual records applicable or inapplicable. A future closure is not a present closure. The UI displays these separate fields and the complete conditions/conflicts, not a binary verified badge.
 
 Route and stop scopes are exact; `sourceStopIndex` is the original zero-based index within `data.json`'s route, before splitting directions. Stop-level records require route ID. School-level records omit route, direction and stop; they must not claim field-level verification of all school routes. Unknown IDs, unsupported statuses and unsafe URL schemes are rejected. Selected-stop sources display only for that exact selection. No evidence record grants permission to rewrite the dataset or account state.
+
+`scripts/data/build-commute-research-layer.mjs` is the deterministic adapter for the preserved Library archive. It matches only an exact unique original route name, direction, unique stop name, clock kind and exact clock text. No route/day/round aliases or coordinate correction are inferred. School sources retain original source status and plan/older/secondary distinctions. The importer and unit tests verify all archive manifest hashes; `.gitattributes` disables line-ending conversion for those byte-bound research files. `library-provenance.json` records the existing Library identity/version and archive hash without a signed URL or reupload.

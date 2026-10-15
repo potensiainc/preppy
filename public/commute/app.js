@@ -2,6 +2,7 @@ import {icon,escapeHtml as esc} from './icons.js';
 import {inScope,summary,visibleSchools,search,readUrl,regionLabel,timeLabel} from './model.js';
 import {readSaves,writeSaves} from './saves.js';
 import {parseProvenance,recordsFor,sourceUrl,verificationLabel} from './provenance.js';
+import {researchMarkup} from './research-view.js';
 import {buildRouteView,getRouteVariants} from './route-view.js';
 
 const $=id=>document.getElementById(id);
@@ -11,11 +12,12 @@ let data;
 try {const r=await fetch(new URL('./data.json', import.meta.url));if(!r.ok)throw Error('data');data=await r.json();}
 catch {$('results').innerHTML='<div class="empty-state"><h3>자료를 불러오지 못했어요.</h3><p>잠시 후 새로고침해 주세요.</p></div>';throw Error('Commute dataset unavailable');}
 const initial=readUrl(data,location.href);
-let provenance=[];
+let provenance=[],research=null;
 // Evidence failure must not prevent access to the existing list and timetable.
 fetch(new URL('./provenance.json',import.meta.url)).then(r=>r.ok?r.json():null).then(value=>{provenance=parseProvenance(value,data.schools);render();}).catch(()=>{});
+fetch(new URL('./research-sources.json',import.meta.url)).then(r=>r.ok?r.json():null).then(value=>{if(value?.schemaVersion===1)research=value;render();}).catch(()=>{});
 const state={...initial,sort:'name',saved:readSaves(safeStorage(),data.schools),compared:[],compareStops:{},savedOnly:false,mapMode:'schools',selectedStop:initial.selectedStop,mobileMap:!!initial.schoolId,routeSheet:initial.routeId?'timeline':'summary',routePeek:false};
-let searchItems=[],toastTimer,commuteMap,mapLoading=false,mapFailed=false;
+let searchItems=[],toastTimer,commuteMap,mapLoading=false,mapFailed=false,mapTask;
 function safeStorage(){try{return window.localStorage;}catch{return null;}}
 function gradeLabel(route,stop){return stop?.grade || route?.grade || '적용 학년 미확인';}
 function provenanceMarkup(school){
@@ -24,8 +26,10 @@ function provenanceMarkup(school){
   return `<details class="field-sources"><summary>선택한 항목의 출처와 조건 · ${records.length}건</summary>${records.map(r=>`<article><strong>${esc(r.field)} · ${esc(verificationLabel(r.verificationStatus))}</strong><p>게시 날짜: ${esc(r.sourcePublicationDate||'미확인')}<br>문서 표기 날짜: ${esc(r.documentDate||'미확인')}<br>첨부파일 개정 날짜: ${esc(r.attachmentRevisionDate||'미확인')}<br>적용 학년도: ${esc(r.effectiveSchoolYear||'미확인')}<br>운행 시점·계획 상태: ${esc(r.operatingStatus||'미확인')}<br>내용 확인: ${esc(r.reviewedAt||'미확인')}</p>${r.value===undefined?'':`<p>자료의 내용: ${esc(String(r.value))}</p>`}${r.conditions?.length?`<ul>${r.conditions.map(c=>`<li>${esc(c)}</li>`).join('')}</ul>`:''}${r.conflicts?.length?`<p>확인이 필요한 내용</p><ul>${r.conflicts.map(c=>`<li>${esc(c)}</li>`).join('')}</ul>`:''}<a href="${esc(sourceUrl(r.sourceUrl))}" target="_blank" rel="noopener noreferrer">${esc(r.sourceLabel||'원문 자료')} 열기</a></article>`).join('')}</details>`;
 }
 async function ensureMap(){
-  if(commuteMap||mapLoading||(!state.mobileMap&&window.innerWidth<=760))return;
+  if(commuteMap||(!state.mobileMap&&window.innerWidth<=760))return;
+  if(mapLoading)return mapTask;
   mapLoading=true;
+  mapTask=(async()=>{
   try {
     if(!window.maplibregl)await new Promise((resolve,reject)=>{
       const script=document.createElement('script');script.src='/commute/vendor/maplibre-gl.js';
@@ -39,6 +43,8 @@ async function ensureMap(){
     $('map-message').hidden=false;$('map-message').innerHTML='지도를 표시하지 못했어요. 학교 목록과 노선 시간표를 이용해 주세요. <button data-action="retry-map">지도 다시 시도</button>';
     announce('지도를 표시하지 못했어요. 목록과 시간표를 이용할 수 있어요.');
   }finally{mapLoading=false;render();}
+  })();
+  return mapTask;
 }
 
 const schoolById=id=>data.schools.find(s=>s.id===id);
@@ -94,6 +100,7 @@ function routeList(view){
   }).join('')}</section>`).join('');
 }
 function renderDetail(view){
+  const openSourceDetails=[...$('school-detail').querySelectorAll('.detail-sources>details[open]')].map(el=>el.className);
   const previousScroll=[...$('school-detail').querySelectorAll('.route-list,.timeline')].map(el=>[el.className,el.scrollTop]);
   const active=document.activeElement;
   const focusKey=active?.closest('#school-detail')?['id','data-action','data-stop','data-variant','data-scope'].map(key=>[key,active.getAttribute(key)]).find(([,value])=>value):null;
@@ -115,7 +122,8 @@ function renderDetail(view){
   panel.querySelectorAll('[data-action="route-list"],[data-action="expand-route"]').forEach(button=>{
     button.setAttribute('aria-expanded',String(state.routeSheet!=='summary'));button.setAttribute('aria-controls','school-detail');
   });
-  const sources=document.createElement('div');sources.className='detail-sources';sources.innerHTML=provenanceMarkup(school);scope.after(sources);
+  const sources=document.createElement('div');sources.className='detail-sources';sources.innerHTML=provenanceMarkup(school)+researchMarkup(research,school.id);scope.after(sources);
+  for(const cls of openSourceDetails){const detail=sources.getElementsByClassName(cls)[0];if(detail)detail.open=true;}
   panel.querySelectorAll('[data-stop]').forEach(button=>button.setAttribute('aria-pressed',String(Number(button.dataset.stop)===state.selectedStop)));
   if(state.region && (route?!local.length:!view.scopeRouteCount)){
     const warning=document.createElement('p');warning.className='scope-warning';warning.setAttribute('role','status');
@@ -177,6 +185,12 @@ function regionsDialog(){
 }
 function compareDialog(){
   const schools=state.compared.map(schoolById),stats=schools.map(s=>summary(s,state));
+  for(const school of schools){
+    const selection=state.compareStops[school.id];
+    const route=getRouteVariants(school).find(v=>v.routeId===selection?.routeId&&v.direction===selection?.direction);
+    const stop=route?.stops.find(p=>p.sourceStopIndex===selection?.index);
+    if(!stop||!inScope(stop,state))delete state.compareStops[school.id];
+  }
   const selectedRows=schools.map(s=>{
     const selection=state.compareStops[s.id];
     const route=getRouteVariants(s).find(v=>v.routeId===selection?.routeId&&v.direction===selection?.direction);
@@ -217,7 +231,7 @@ function selectStop(index){
   state.selectedStop=index;
   writeUrl();
   if(window.innerWidth<=760&&state.mobileMap&&!mapFailed){state.routePeek=true;state.routeSheet='summary';render();requestAnimationFrame(()=>{commuteMap?.resize();commuteMap?.focusStop(index);});}
-  else {document.querySelectorAll('[data-stop]').forEach(b=>{b.classList.toggle('active',Number(b.dataset.stop)===index);b.setAttribute('aria-pressed',String(Number(b.dataset.stop)===index));});document.querySelector(`[data-stop="${index}"]`)?.scrollIntoView({block:'nearest',behavior:'smooth'});$('school-detail').querySelector('.detail-sources').innerHTML=provenanceMarkup(selected());commuteMap?.focusStop(index);}
+  else {document.querySelectorAll('[data-stop]').forEach(b=>{b.classList.toggle('active',Number(b.dataset.stop)===index);b.setAttribute('aria-pressed',String(Number(b.dataset.stop)===index));});document.querySelector(`[data-stop="${index}"]`)?.scrollIntoView({block:'nearest',behavior:'smooth'});$('school-detail').querySelector('.detail-sources').innerHTML=provenanceMarkup(selected())+researchMarkup(research,state.schoolId);commuteMap?.focusStop(index);}
 }
 document.addEventListener('click',async e=>{
   const button=e.target.closest('button');if(!e.target.closest('.search-area'))hideSearch();if(!button)return;
@@ -258,7 +272,12 @@ document.addEventListener('click',async e=>{
     case 'fit-map':commuteMap?.fit();break;
     case 'zoom-in':commuteMap?.zoom(1);break;
     case 'zoom-out':commuteMap?.zoom(-1);break;
-    case 'peek-route':selectStop(state.selectedStop??stopsFor(selected())[0]?.sourceStopIndex);break;
+    case 'peek-route':{
+      const index=state.selectedStop??stopsFor(selected())[0]?.sourceStopIndex;
+      state.mobileMap=true;await ensureMap();render();
+      if(commuteMap&&!mapFailed)selectStop(index);
+      break;
+    }
     case 'expand-route':setRouteSheet('timeline');break;
     case 'route-list':setRouteSheet('list');break;
     case 'route-summary':setRouteSheet('summary');break;
@@ -298,6 +317,7 @@ function viewportChanged(){
   document.documentElement.style.setProperty('--visible-height',`${viewport?.height||window.innerHeight}px`);
   document.body.classList.toggle('keyboard-open',!!viewport&&window.innerHeight-viewport.height>150);
   commuteMap?.resize();
+  if(window.innerWidth>760&&!commuteMap&&!mapLoading&&!mapFailed)void ensureMap();
 }
 window.visualViewport?.addEventListener('resize',viewportChanged);
 window.addEventListener('resize',viewportChanged);viewportChanged();

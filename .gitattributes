@@ -8,3 +8,4 @@ src/db/migrations/*.sql text eol=lf
 data/snapshots/preppy/english-kindergarten/sg-ek-20260901-r01/*.ndjson text eol=lf
 data/snapshots/preppy/english-kindergarten/sg-ek-20260901-r01/*.json text eol=lf
 app/api/health/route.ts text eol=lf
+data/research/commute/2026-10-15/* -text

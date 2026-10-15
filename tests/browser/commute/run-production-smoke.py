@@ -10,6 +10,9 @@ OUTPUT=Path(os.environ.get('COMMUTE_SMOKE_OUTPUT','test-results/schoolmap'))
 OUTPUT.mkdir(parents=True,exist_ok=True)
 def no_overflow(page):
     assert page.evaluate('document.documentElement.scrollWidth-document.documentElement.clientWidth')<=1
+def touch_targets(page):
+    small=page.locator('button,select').evaluate_all("""items=>items.filter(e=>e.getClientRects().length&&getComputedStyle(e).visibility!=='hidden').map(e=>({label:e.getAttribute('aria-label')||e.textContent,rect:e.getBoundingClientRect()})).filter(x=>x.rect.width<43.9||x.rect.height<43.9).map(x=>({label:x.label,width:x.rect.width,height:x.rect.height}))""")
+    assert not small,small
 with sync_playwright() as p:
     browser=p.chromium.launch(headless=True,timeout=20000)
     errors=[]
@@ -35,6 +38,7 @@ with sync_playwright() as p:
         assert page.locator('.wordmark').get_attribute('href')=='/'
         assert '전체' in page.locator('#current-scope').inner_text()
         no_overflow(page)
+        if width<=760:touch_targets(page)
         page.screenshot(path=str(OUTPUT/f'list-{width}.png'))
         if width<=760:
             page.evaluate('window.scrollTo(0,1000)')
@@ -135,6 +139,42 @@ with sync_playwright() as p:
     text=page.locator('.field-sources').inner_text()
     for expected in ['2026-09-02','2025-09-01','2026-09-15','2027','TEST 적용 조건 전체 문장','TEST 날짜가 달라요.']:assert expected in text
     page.screenshot(path=str(OUTPUT/'evidence-synthetic-fixture-390.png'),full_page=True)
+    # Regression: scope changes clear a selected comparison stop outside the new scope.
+    page=browser.new_page(viewport={'width':390,'height':844},reduced_motion='reduce');configure(page)
+    page.goto(f'{BASE_URL}/schoolmap?area=양천구&school=kyonggi&route=kyonggi:0&way=등교&stop=0')
+    page.locator('.stop-row').first.wait_for();page.locator('.stop-row').first.click()
+    page.locator('.desktop-detail-action').click();page.locator('[data-action="compare-open"]').click()
+    assert page.locator('.compare-stop').input_value()=='kyonggi:0|등교|0'
+    page.locator('[data-close="compare-dialog"]').click()
+    page.locator('#region-button').click();page.locator('button[data-region="강서구"]').click()
+    page.locator('[data-action="compare-open"]').click()
+    assert page.locator('.compare-stop').input_value()==''
+    assert '선택 전' in page.locator('#compare-content').inner_text()
+    assert '목동 14단지' not in page.locator('#compare-content').inner_text()
+    page.screenshot(path=str(OUTPUT/'comparison-scope-cleared-390.png'),full_page=True)
+    # Regression: rotation out of the mobile list initializes the lazy map.
+    page=browser.new_page(viewport={'width':390,'height':844},reduced_motion='reduce');configure(page,False)
+    page.route('https://tiles.openfreemap.org/**',lambda route:route.abort())
+    page.goto(f'{BASE_URL}/schoolmap');page.locator('.school-card').first.wait_for()
+    assert page.locator('#map canvas').count()==0
+    page.set_viewport_size({'width':844,'height':390});page.locator('#map canvas').wait_for(state='visible')
+    no_overflow(page);page.screenshot(path=str(OUTPUT/'rotation-lazy-map-844.png'))
+    # Regression: explicit stop-map action from a list-opened route loads and focuses a map.
+    page=browser.new_page(viewport={'width':390,'height':844},reduced_motion='reduce');configure(page,False)
+    page.route('https://tiles.openfreemap.org/**',lambda route:route.abort())
+    page.goto(f'{BASE_URL}/schoolmap');page.locator('.school-open').first.click();page.locator('.mobile-detail-action').click()
+    option=page.locator('#detail-route option').evaluate_all('items=>items.map(o=>o.value).filter(Boolean)[0]')
+    page.locator('#detail-route').select_option(option)
+    page.locator('[data-action="peek-route"]').click();page.locator('#map canvas').wait_for(state='visible')
+    assert 'mobile-map' in page.locator('body').get_attribute('class')
+    assert page.locator('.stop-row.active').count()==1
+    touch_targets(page);no_overflow(page)
+    page.screenshot(path=str(OUTPUT/'list-route-stop-map-390.png'),full_page=True)
+    page=browser.new_page(viewport={'width':390,'height':844},reduced_motion='reduce');configure(page)
+    page.goto(f'{BASE_URL}/schoolmap?school=yale');page.locator('.school-sources summary').first.click()
+    assert '파란 표시' in page.locator('.school-sources').inner_text()
+    assert '조달 계획' in page.locator('.school-sources').inner_text()
+    page.screenshot(path=str(OUTPUT/'research-yale-390.png'),full_page=True)
     browser.close()
     assert not errors,errors
 print(f'PASS: five emulated viewports, reload saves, search, keyboard navigation, comparison, URL restore, map failure. Screenshots: {OUTPUT}')
