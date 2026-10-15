@@ -17,7 +17,7 @@ let provenance=[],research=null;
 fetch(new URL('./provenance.json',import.meta.url)).then(r=>r.ok?r.json():null).then(value=>{provenance=parseProvenance(value,data.schools);render();}).catch(()=>{});
 fetch(new URL('./research-sources.json',import.meta.url)).then(r=>r.ok?r.json():null).then(value=>{if(value?.schemaVersion===1)research=value;render();}).catch(()=>{});
 const state={...initial,sort:'name',saved:readSaves(safeStorage(),data.schools),compared:[],compareStops:{},savedOnly:false,mapMode:'schools',selectedStop:initial.selectedStop,mobileMap:!!initial.schoolId,routeSheet:initial.routeId?'timeline':'summary',routePeek:false};
-let searchItems=[],toastTimer,commuteMap,mapLoading=false,mapFailed=false,mapTask;
+let searchItems=[],toastTimer,commuteMap,mapLoading=false,mapFailed=false,mapTask,selectionRevision=0,mapFocusRequest=0;
 function safeStorage(){try{return window.localStorage;}catch{return null;}}
 function gradeLabel(route,stop){return stop?.grade || route?.grade || '적용 학년 미확인';}
 function provenanceMarkup(school){
@@ -67,7 +67,7 @@ function writeUrl(){
   if(state.direction!=='all')q.set('filter',state.direction);
   const url=`/schoolmap${q.size ? `?${q}` : ''}`;if(url!==location.pathname+location.search)history.pushState({},'',url);
 }
-function change(patch,{url=true}={}){Object.assign(state,patch);normalizeSelection();render();if(url)writeUrl();}
+function change(patch,{url=true}={}){selectionRevision++;Object.assign(state,patch);normalizeSelection();render();if(url)writeUrl();}
 function openSchool(id){change({schoolId:id,routeId:'',routeScope:'all',selectedStop:null,mapMode:'schools',mobileMap:state.mobileMap,routeSheet:'summary',routePeek:false});$('school-detail').querySelector('button')?.focus({preventScroll:true});}
 function openOverview(scope='all'){change({routeScope:scope,routeId:'',selectedStop:null,routeSheet:'summary',routePeek:false});$('school-detail').querySelector(`[data-scope="${scope}"]`)?.focus({preventScroll:true});}
 function openVariant(variantId,{sourceStopIndex,origin='list'}={}){
@@ -138,6 +138,8 @@ function renderTray(){
   $('compare-tray').innerHTML=`<span class="tray-counter">${icon('compare')}<b>${schools.length}</b> / 3</span><div class="tray-names">${schools.map(s=>`<span class="tray-school">${esc(s.name)}<button data-action="compare-add" data-id="${esc(s.id)}" aria-label="${esc(s.name)} 비교 해제">${icon('close')}</button></span>`).join('')}</div><button class="primary-button" data-action="compare-open">나란히 비교 ${icon('arrow')}</button>`;
 }
 function render(){
+  const focused=document.activeElement,focusRoot=focused?.closest('#results, #compare-tray')?.id;
+  const focusAction=focusRoot&&focused.dataset.action,focusId=focused?.dataset.id;
   const schools=visibleSchools(data,state),label=regionLabel(data,state),school=selected(),view=buildRouteView(school,state);
   $('region-name').textContent=state.region||'전체 지역';
   $('current-scope').textContent=`${regionLabel(data,state)} · ${state.direction==='all'?'등하교 전체':state.direction} · 학교 확인 전 자료`;
@@ -167,6 +169,7 @@ function render(){
     button.setAttribute('aria-label',label);button.setAttribute('title',label);button.setAttribute('aria-pressed',String(state.saved.has(school.id)));
   });
   commuteMap?.update({state,schools,school,routeView:view});
+  if(focusAction)$(focusRoot).querySelector(`[data-action="${CSS.escape(focusAction)}"]${focusId?`[data-id="${CSS.escape(focusId)}"]`:''}`)?.focus({preventScroll:true});
   if(!mapFailed&&!mapLoading&&!commuteMap)void ensureMap();
 }
 function showCandidates(items,anchor){
@@ -214,8 +217,9 @@ function toggleCompare(id){
   render();if($('compare-dialog').open){if(state.compared.length)compareDialog();else $('compare-dialog').close();}
 }
 function pickSearch(index){
+  if(!$('search').value.trim()||$('search-results').hidden)return;
   const item=searchItems[index];if(!item)return;
-  $('search').value='';hideSearch();
+  $('search').value='';searchItems=[];hideSearch();
   if(item.type==='region')setRegion(item.id);
   else if(item.type==='neighborhood'){const n=data.neighborhoods.find(n=>n.code===item.id);setRegion(n.district,n.code);}
   else if(item.type==='school'){setRegion('');openSchool(item.id);}
@@ -228,6 +232,7 @@ function pickSearch(index){
 function hideSearch(){$('search-results').hidden=true;$('search').setAttribute('aria-expanded','false');}
 function selectStop(index){
   if(!stopsFor(selected()).some(p=>p.sourceStopIndex===index))return;
+  selectionRevision++;
   state.selectedStop=index;
   writeUrl();
   if(window.innerWidth<=760&&state.mobileMap&&!mapFailed){state.routePeek=true;state.routeSheet='summary';render();requestAnimationFrame(()=>{commuteMap?.resize();commuteMap?.focusStop(index);});}
@@ -274,7 +279,12 @@ document.addEventListener('click',async e=>{
     case 'zoom-out':commuteMap?.zoom(-1);break;
     case 'peek-route':{
       const index=state.selectedStop??stopsFor(selected())[0]?.sourceStopIndex;
-      state.mobileMap=true;await ensureMap();render();
+      const revision=selectionRevision,request=++mapFocusRequest;
+      const {schoolId,routeId,way}=state;
+      state.mobileMap=true;await ensureMap();
+      // Loading the map must never replay a selection after later navigation.
+      if(request!==mapFocusRequest||revision!==selectionRevision||!state.mobileMap||schoolId!==state.schoolId||routeId!==state.routeId||way!==state.way)break;
+      render();
       if(commuteMap&&!mapFailed)selectStop(index);
       break;
     }
@@ -282,7 +292,7 @@ document.addEventListener('click',async e=>{
     case 'route-list':setRouteSheet('list');break;
     case 'route-summary':setRouteSheet('summary');break;
     case 'all-routes':openOverview();break;
-    case 'toggle-view':state.mobileMap=!state.mobileMap;render();void ensureMap();requestAnimationFrame(()=>{commuteMap?.resize();commuteMap?.fit();});break;
+    case 'toggle-view':selectionRevision++;state.mobileMap=!state.mobileMap;render();void ensureMap();requestAnimationFrame(()=>{commuteMap?.resize();commuteMap?.fit();});break;
     case 'share':try{await navigator.clipboard.writeText(location.href);announce('현재 지역과 노선 링크를 복사했어요.');}catch{announce('브라우저 주소창의 링크를 복사해 주세요.');}break;
   }
 });
@@ -308,7 +318,7 @@ document.addEventListener('keydown',e=>{
   }
   if(e.target.matches('.search-result')&&['ArrowUp','ArrowDown'].includes(e.key)){e.preventDefault();const next=e.key==='ArrowDown'?e.target.nextElementSibling:e.target.previousElementSibling;next?.focus();}
 });
-window.addEventListener('popstate',()=>{const parsed=readUrl(data,location.href);Object.assign(state,parsed,{savedOnly:false,routePeek:false,routeSheet:parsed.routeId?'timeline':'summary',mobileMap:!!parsed.schoolId});normalizeSelection();render();});
+window.addEventListener('popstate',()=>{selectionRevision++;document.querySelectorAll('dialog[open]').forEach(dialog=>dialog.close());const parsed=readUrl(data,location.href);Object.assign(state,parsed,{savedOnly:false,routePeek:false,routeSheet:parsed.routeId?'timeline':'summary',mobileMap:!!parsed.schoolId});normalizeSelection();render();});
 document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d){const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)d.close();}}));
 normalizeSelection();render();
 void ensureMap();
@@ -321,4 +331,4 @@ function viewportChanged(){
 }
 window.visualViewport?.addEventListener('resize',viewportChanged);
 window.addEventListener('resize',viewportChanged);viewportChanged();
-window.addEventListener('storage',event=>{if(event.key==='preppy.schoolmap.saved.v1'){state.saved=readSaves(safeStorage(),data.schools);render();}});
+window.addEventListener('storage',event=>{if(event.key===null||event.key==='preppy.schoolmap.saved.v1'){state.saved=readSaves(safeStorage(),data.schools);render();}});
