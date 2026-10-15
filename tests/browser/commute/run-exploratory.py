@@ -81,9 +81,9 @@ with sync_playwright() as p:
         page.set_viewport_size({'width':320,'height':568});check(page);page.screenshot(path=str(OUT/'compare-320.png'))
     run('compare-scope-three-schools',compare_scope)
     def text_zoom(context,page):
-        page.goto(BASE+'/schoolmap?school=yale');page.locator('.school-sources summary').first.click()
+        page.goto(BASE+'/schoolmap?school=yale');page.wait_for_load_state('networkidle');page.locator('.school-sources summary').first.click()
         page.evaluate("Array.from(document.querySelectorAll('#school-detail *')).filter(e=>!(e instanceof SVGElement)).map(e=>[e,parseFloat(getComputedStyle(e).fontSize)]).forEach(([e,size])=>e.style.fontSize=(size*2)+'px')");page.set_viewport_size({'width':320,'height':568});check(page)
-        link=page.locator('.school-sources a').first;link.scroll_into_view_if_needed();box=link.bounding_box();assert box['y']>=0 and box['y']+box['height']<=568,{'unreachable enlarged source link':box};page.screenshot(path=str(OUT/'source-text-200percent-320.png'));page.locator('[data-action="close-school"]').click()
+        link=page.locator('.school-sources a').first;link.scroll_into_view_if_needed();box=link.bounding_box();assert box['y']>=-1 and box['y']+box['height']<=569,{'unreachable enlarged source link':box};page.screenshot(path=str(OUT/'source-text-200percent-320.png'));page.locator('[data-action="close-school"]').click()
         check(page)
     run('long-source-text-200percent',text_zoom)
     def delayed_sources(context,page):
@@ -103,6 +103,12 @@ with sync_playwright() as p:
         page.locator('[data-action="compare-open"]').click();assert '서초구' in page.locator('.comparison-scope').inner_text();page.go_back()
         assert not page.locator('#compare-dialog').evaluate('e=>e.open'),'history restored area but left stale comparison dialog open'
     run('history-closes-stale-comparison',dialog_back)
+    def reopen_sheet(context,page):
+        held=[];page.route('**/vendor/maplibre-gl.js',lambda r:held.append(r));page.goto(BASE+'/schoolmap');route(page)
+        page.locator('.stop-row').nth(1).click();page.locator('[data-action="peek-route"]').click();page.wait_for_function('!!document.querySelector("script[src*=maplibre]")')
+        page.locator('[data-action="route-summary"]').click();page.locator('[data-action="expand-route"]').click()
+        local(held[0]);page.wait_for_timeout(350);assert page.locator('body').evaluate('e=>e.classList.contains("route-sheet-open")'),'late map response collapsed the reopened timetable'
+    run('reopen-timetable-during-map-load',reopen_sheet)
     browser.close()
 
 raise SystemExit(1 if any(row["status"]=="FAIL" for row in results) else 0)

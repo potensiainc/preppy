@@ -79,6 +79,7 @@ function openVariant(variantId,{sourceStopIndex,origin='list'}={}){
 }
 function setRouteSheet(sheet){
   if(!selected())return;
+  selectionRevision++;
   state.routeSheet=sheet==='summary'?'summary':state.routeId?'timeline':'list';
   state.routePeek=false;render();
   $('school-detail').querySelector(sheet==='summary'?(state.routeId?'[data-action="expand-route"]':'[data-action="route-list"]'):'.route-choice, .stop-row')?.focus({preventScroll:true});
