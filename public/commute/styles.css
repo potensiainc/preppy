@@ -127,7 +127,7 @@ dialog{padding:0;border:1px solid #e5ebdf;border-radius:22px;background:#fff;col
 .compare-stop{max-width:100%;width:220px;min-height:44px;white-space:normal;font:inherit;border:1px solid var(--line);border-radius:6px}
 .compare-tray{position:fixed;z-index:70}
 button,select,summary{min-height:44px}button.icon-button,.heart-button{min-width:44px;min-height:44px}
-button.card-route,button.compare-add,button.heart-button,.tray-school button,.direction-filter button,.school-open,.site-header nav>button,.map-school-marker,.map-stop-label,.maplibregl-ctrl-attrib-button{min-height:44px;min-width:44px}
+button.card-route,button.compare-add,button.heart-button,.tray-school button,.direction-filter button,.school-open,.site-header nav>button,.map-school-marker,.map-stop-label,.maplibregl-ctrl-attrib-button,.overview-return{min-height:44px;min-width:44px}
 button:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #28634b;outline-offset:2px}
 .map-unavailable .map-actions,.map-unavailable .map-mode,.map-unavailable .map-context,.map-unavailable #map,.map-unavailable .mobile-route-link{display:none!important}
 .map-unavailable .mobile-view-toggle{display:none!important}

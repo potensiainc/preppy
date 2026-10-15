@@ -159,6 +159,10 @@ with sync_playwright() as p:
     assert page.locator('#map canvas').count()==0
     page.set_viewport_size({'width':844,'height':390});page.locator('#map canvas').wait_for(state='visible')
     no_overflow(page);page.screenshot(path=str(OUTPUT/'rotation-lazy-map-844.png'))
+    page.locator('.school-open').first.click()
+    choice=page.locator('#detail-route option').evaluate_all('items=>items.map(o=>o.value).filter(Boolean)[0]')
+    page.locator('#detail-route').select_option(choice)
+    touch_targets(page) # Wide touch layout must retain 44px overview-return target.
     # Regression: explicit stop-map action from a list-opened route loads and focuses a map.
     page=browser.new_page(viewport={'width':390,'height':844},reduced_motion='reduce');configure(page,False)
     page.route('https://tiles.openfreemap.org/**',lambda route:route.abort())
