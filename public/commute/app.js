@@ -1,16 +1,46 @@
 import {icon,escapeHtml as esc} from './icons.js';
 import {inScope,summary,visibleSchools,search,readUrl,regionLabel,timeLabel} from './model.js';
-import {createCommuteMap} from './map.js';
+import {readSaves,writeSaves} from './saves.js';
+import {parseProvenance,recordsFor,sourceUrl,verificationLabel} from './provenance.js';
 import {buildRouteView,getRouteVariants} from './route-view.js';
 
 const $=id=>document.getElementById(id);
+document.querySelector('.entry-points').append($('mobile-view-toggle'));
 document.querySelectorAll('[data-icon]').forEach(el=>el.innerHTML=icon(el.dataset.icon));
 let data;
 try {const r=await fetch(new URL('./data.json', import.meta.url));if(!r.ok)throw Error('data');data=await r.json();}
 catch {$('results').innerHTML='<div class="empty-state"><h3>자료를 불러오지 못했어요.</h3><p>잠시 후 새로고침해 주세요.</p></div>';throw Error('Commute dataset unavailable');}
 const initial=readUrl(data,location.href);
-const state={...initial,sort:'coverage',saved:new Set(),compared:[],savedOnly:false,mapMode:'schools',selectedStop:null,mobileMap:!!initial.schoolId,routeSheet:initial.routeId?'timeline':'summary',routePeek:false};
-let searchItems=[],toastTimer,commuteMap;
+let provenance=[];
+// Evidence failure must not prevent access to the existing list and timetable.
+fetch(new URL('./provenance.json',import.meta.url)).then(r=>r.ok?r.json():null).then(value=>{provenance=parseProvenance(value,data.schools);render();}).catch(()=>{});
+const state={...initial,sort:'name',saved:readSaves(safeStorage(),data.schools),compared:[],compareStops:{},savedOnly:false,mapMode:'schools',selectedStop:initial.selectedStop,mobileMap:!!initial.schoolId,routeSheet:initial.routeId?'timeline':'summary',routePeek:false};
+let searchItems=[],toastTimer,commuteMap,mapLoading=false,mapFailed=false;
+function safeStorage(){try{return window.localStorage;}catch{return null;}}
+function gradeLabel(route,stop){return stop?.grade || route?.grade || '적용 학년 미확인';}
+function provenanceMarkup(school){
+  const records=recordsFor(provenance,school.id,state.routeId,state.way,state.selectedStop);
+  if(!records.length)return '<p class="source-status">2026년 8월 31일 수집한 제3자 자료예요. 선택한 항목의 공식 근거와 적용 학년은 확인 전이에요.</p>';
+  return `<details class="field-sources"><summary>선택한 항목의 출처와 조건 · ${records.length}건</summary>${records.map(r=>`<article><strong>${esc(r.field)} · ${esc(verificationLabel(r.verificationStatus))}</strong><p>게시 날짜: ${esc(r.sourcePublicationDate||'미확인')}<br>문서 표기 날짜: ${esc(r.documentDate||'미확인')}<br>첨부파일 개정 날짜: ${esc(r.attachmentRevisionDate||'미확인')}<br>적용 학년도: ${esc(r.effectiveSchoolYear||'미확인')}<br>운행 시점·계획 상태: ${esc(r.operatingStatus||'미확인')}<br>내용 확인: ${esc(r.reviewedAt||'미확인')}</p>${r.value===undefined?'':`<p>자료의 내용: ${esc(String(r.value))}</p>`}${r.conditions?.length?`<ul>${r.conditions.map(c=>`<li>${esc(c)}</li>`).join('')}</ul>`:''}${r.conflicts?.length?`<p>확인이 필요한 내용</p><ul>${r.conflicts.map(c=>`<li>${esc(c)}</li>`).join('')}</ul>`:''}<a href="${esc(sourceUrl(r.sourceUrl))}" target="_blank" rel="noopener noreferrer">${esc(r.sourceLabel||'원문 자료')} 열기</a></article>`).join('')}</details>`;
+}
+async function ensureMap(){
+  if(commuteMap||mapLoading||(!state.mobileMap&&window.innerWidth<=760))return;
+  mapLoading=true;
+  try {
+    if(!window.maplibregl)await new Promise((resolve,reject)=>{
+      const script=document.createElement('script');script.src='/commute/vendor/maplibre-gl.js';
+      script.onload=resolve;script.onerror=reject;document.head.append(script);
+    });
+    const {createCommuteMap}=await import('./map.js');
+    commuteMap=createCommuteMap($('map'),data,{onSchool:openSchool,onRegion:region=>{state.mapMode='schools';setRegion(region);},onStop:selectStop,onRoute:(id,options)=>openVariant(id,{...options,origin:'map'}),onCandidates:showCandidates});
+    mapFailed=false;document.body.classList.remove('map-unavailable');$('map-message').hidden=true;
+  }catch{
+    mapFailed=true;state.mobileMap=false;document.body.classList.add('map-unavailable');
+    $('map-message').hidden=false;$('map-message').innerHTML='지도를 표시하지 못했어요. 학교 목록과 노선 시간표를 이용해 주세요. <button data-action="retry-map">지도 다시 시도</button>';
+    announce('지도를 표시하지 못했어요. 목록과 시간표를 이용할 수 있어요.');
+  }finally{mapLoading=false;render();}
+}
+
 const schoolById=id=>data.schools.find(s=>s.id===id);
 const selected=()=>schoolById(state.schoolId);
 const routeFor=school=>getRouteVariants(school).find(v=>v.routeId===state.routeId&&v.direction===state.way);
@@ -27,17 +57,17 @@ function writeUrl(){
   const q=new URLSearchParams();
   if(state.region)q.set('area',state.region);
   if(state.neighborhood)q.set('dong',state.neighborhood);
-  if(state.schoolId){q.set('school',state.schoolId);q.set('scope',state.routeScope);if(state.routeId){q.set('way',state.way);q.set('route',state.routeId);}}
+  if(state.schoolId){q.set('school',state.schoolId);q.set('scope',state.routeScope);if(state.routeId){q.set('way',state.way);q.set('route',state.routeId);if(state.selectedStop!==null)q.set('stop',state.selectedStop);}}
   if(state.direction!=='all')q.set('filter',state.direction);
   const url=`/schoolmap${q.size ? `?${q}` : ''}`;if(url!==location.pathname+location.search)history.pushState({},'',url);
 }
 function change(patch,{url=true}={}){Object.assign(state,patch);normalizeSelection();render();if(url)writeUrl();}
-function openSchool(id){change({schoolId:id,routeId:'',routeScope:'all',selectedStop:null,mapMode:'schools',mobileMap:true,routeSheet:'summary',routePeek:false});$('school-detail').querySelector('button')?.focus({preventScroll:true});}
+function openSchool(id){change({schoolId:id,routeId:'',routeScope:'all',selectedStop:null,mapMode:'schools',mobileMap:state.mobileMap,routeSheet:'summary',routePeek:false});$('school-detail').querySelector('button')?.focus({preventScroll:true});}
 function openOverview(scope='all'){change({routeScope:scope,routeId:'',selectedStop:null,routeSheet:'summary',routePeek:false});$('school-detail').querySelector(`[data-scope="${scope}"]`)?.focus({preventScroll:true});}
 function openVariant(variantId,{sourceStopIndex,origin='list'}={}){
   const v=getRouteVariants(selected()).find(v=>v.variantId===variantId);if(!v)return;
   const stop=v.stops.find(p=>p.sourceStopIndex===sourceStopIndex);
-  change({routeId:v.routeId,way:v.direction,routeScope:state.routeScope==='all'?'all':v.direction,selectedStop:stop?.sourceStopIndex??null,mobileMap:true,routeSheet:origin==='map'?'summary':'timeline',routePeek:!!stop&&origin==='map'});
+  change({routeId:v.routeId,way:v.direction,routeScope:state.routeScope==='all'?'all':v.direction,selectedStop:stop?.sourceStopIndex??null,mobileMap:state.mobileMap,routeSheet:origin==='map'?'summary':'timeline',routePeek:!!stop&&origin==='map'});
   if(stop)requestAnimationFrame(()=>selectStop(stop.sourceStopIndex));
   else if(origin!=='map')$('detail-route')?.focus({preventScroll:true});
 }
@@ -60,21 +90,40 @@ function routeList(view){
   const groups=state.region?[[`${regionLabel(data,state)} 경유`,view.variants.filter(local)],['다른 지역 노선',view.variants.filter(v=>!local(v))]]:[['학교 전체 노선',view.variants]];
   return groups.filter(([,items])=>items.length).map(([label,items])=>`<section class="route-group"><h3>${esc(label)} <span>${items.length}</span></h3>${['등교','하교'].map(way=>{
     const routes=items.filter(v=>v.direction===way);if(!routes.length)return '';
-    return `<h4 class="way-label ${way==='등교'?'morning':'afternoon'}">${icon(way==='등교'?'sun':'moon')}${way} <span>${routes.length}</span></h4>${routes.map(v=>`<button class="route-choice" data-variant="${esc(v.variantId)}" aria-label="${esc(v.name)} · ${v.direction}, ${v.stops.length}개 정류장"><i class="route-swatch ${way==='등교'?'morning':'afternoon'}"></i><span><strong>${esc(v.name)}</strong><small>${v.direction} · ${v.stops.length}개 정류장${v.stops.length===1?' · 한 지점 기록':''}</small></span>${icon('arrow')}</button>`).join('')}`;
+    return `<h4 class="way-label ${way==='등교'?'morning':'afternoon'}">${icon(way==='등교'?'sun':'moon')}${way} <span>${routes.length}</span></h4>${routes.map(v=>`<button class="route-choice" data-variant="${esc(v.variantId)}" aria-label="${esc(v.name)} · ${v.direction}, ${v.stops.length}개 정류장"><i class="route-swatch ${way==='등교'?'morning':'afternoon'}"></i><span><strong>${esc(v.name)}</strong><small>${v.direction} · ${esc(gradeLabel(v))} · ${v.stops.length}개 정류장${v.stops.length===1?' · 한 지점 기록':''}</small></span>${icon('arrow')}</button>`).join('')}`;
   }).join('')}</section>`).join('');
 }
 function renderDetail(view){
+  const previousScroll=[...$('school-detail').querySelectorAll('.route-list,.timeline')].map(el=>[el.className,el.scrollTop]);
+  const active=document.activeElement;
+  const focusKey=active?.closest('#school-detail')?['id','data-action','data-stop','data-variant','data-scope'].map(key=>[key,active.getAttribute(key)]).find(([,value])=>value):null;
+
   const school=selected(),panel=$('school-detail');panel.hidden=!school;document.body.classList.toggle('detail-open',!!school);if(!school)return;
   const route=view.selected,stops=route?.stops||[],local=stops.filter(p=>inScope(p,state));
   panel.dataset.mode=route?'detail':'overview';panel.dataset.scope=state.routeScope;panel.dataset.routeCount=view.variants.length;
-  panel.innerHTML=`<div class="detail-top"><div class="detail-eyebrow"><span class="eyebrow">THE EVERYDAY JOURNEY</span><button class="icon-button" data-action="close-school" aria-label="학교 상세 닫기">${icon('close')}</button></div><div class="detail-school">${crest(school)}<div><h2>${esc(school.name)}</h2><p>${esc(school.district)} · 서울 사립초</p></div></div><p class="detail-address">${icon('pin')}${esc(school.address)}</p><span class="detail-review">${icon('info')} 학교 확인 전 자료</span><button class="sheet-collapse" data-action="route-summary" aria-label="지도로 돌아가기">${icon('down')} 지도로</button></div>
+  panel.innerHTML=`<div class="detail-top"><div class="detail-eyebrow"><span class="eyebrow">THE EVERYDAY JOURNEY</span><button class="icon-button" data-action="close-school" aria-label="학교 상세 닫기">${icon('close')}</button></div><div class="detail-school">${crest(school)}<div><h2>${esc(school.name)}</h2><p>${esc(school.district)} · 서울 사립초</p></div></div><p class="detail-address">${icon('pin')}${esc(school.address)}</p><span class="detail-review">${icon('info')} 학교 확인 전 자료 · 적용 학년 미확인</span><button class="sheet-collapse" data-action="route-summary" aria-label="학교 상세 접기" aria-expanded="true" aria-controls="school-detail">${icon('down')} 접기</button></div>
     <div class="detail-directions" role="group" aria-label="학교 전체 통학 방향">${[['all','전체',view.totals.all,'layers'],['등교','등교',view.totals.morning,'sun'],['하교','하교',view.totals.afternoon,'moon']].map(([scope,label,count,symbol])=>`<button class="${state.routeScope===scope?'active':''}" data-scope="${scope}" aria-pressed="${state.routeScope===scope}">${icon(symbol)}${label}<em>${count}</em></button>`).join('')}</div>
     ${view.variants.length?`<div class="detail-route-controls"><label for="detail-route">${route?'선택한 노선':'노선 자세히 보기'}<span>학교 전체 자료 기준</span></label><div class="select-wrap"><select id="detail-route" aria-label="통학 노선 선택"><option value="">현재 표시 범위의 모든 노선</option>${view.variants.map(v=>`<option value="${esc(v.variantId)}" ${v.variantId===route?.variantId?'selected':''}>${esc(v.name)} · ${v.direction}${state.region&&v.stops.some(p=>inScope(p,state))?' · 지역 경유':''}</option>`).join('')}</select>${icon('down')}</div>${route?`<div class="route-meta"><strong>${stops.length}개 정류장</strong><span>${state.region?`${esc(regionLabel(data,state))} ${local.length}개`:'원문 순서'}</span></div><button class="overview-return" data-action="all-routes">${icon('layers')} 전체 노선 보기</button><button class="mobile-route-link" data-action="peek-route">${icon('map')} 지도에서 정류장 보기</button>`:''}</div>
-    ${route?`<div class="selected-route-summary"><span class="way-label ${route.direction==='등교'?'morning':'afternoon'}">${icon(route.direction==='등교'?'sun':'moon')}${route.direction}</span><strong>${esc(route.name)}</strong><span>${stops.length}개 정류장</span><button data-action="all-routes" aria-label="전체 노선 보기">${icon('layers')}</button></div><div class="timeline" aria-label="정류장 순서">${stops.map((p,i)=>`<button class="stop-row${inScope(p,state)?' local':''}${p.sourceStopIndex===state.selectedStop?' active':''}" data-stop="${p.sourceStopIndex}" aria-label="${i+1}번 ${esc(p.name)} ${esc(timeLabel(p))}"><span class="stop-number">${i+1}</span><span class="stop-main"><strong>${esc(p.name)}</strong><small>${esc(p.district)} ${esc(p.neighborhood)}${p.approximate?' · 추정 위치':''}</small>${inScope(p,state)&&state.region?'<span class="local-badge">선택 지역</span>':''}</span><time class="${p.timeKind==='missing'?'missing':''}">${esc(timeLabel(p))}</time></button>`).join('')}</div>`:`<div class="overview-summary"><p><strong>${view.variants.length}<span>개 노선</span></strong><span>${view.stopRecords.toLocaleString()}개 정류장 기록</span></p><div>${state.region?`${esc(regionLabel(data,state))} 경유 <b>${view.scopeRouteCount}개</b> · 다른 지역도 함께 표시`:'학교의 등하교 통학 범위를 한눈에 확인하세요.'}</div>${state.region&&!view.scopeRouteCount?'<small>선택 지역 경유 기록이 없어 학교 전체 범위를 보여드려요.</small>':''}</div><div class="route-list" aria-label="통학 노선 목록">${routeList(view)}</div>`}
+    ${route?`<div class="selected-route-summary"><span class="way-label ${route.direction==='등교'?'morning':'afternoon'}">${icon(route.direction==='등교'?'sun':'moon')}${route.direction}</span><strong>${esc(route.name)}</strong><span>${stops.length}개 정류장</span><button data-action="all-routes" aria-label="전체 노선 보기">${icon('layers')}</button></div><div class="timeline" aria-label="정류장 순서">${stops.map((p,i)=>`<button class="stop-row${inScope(p,state)?' local':''}${p.sourceStopIndex===state.selectedStop?' active':''}" data-stop="${p.sourceStopIndex}" aria-label="${i+1}번 ${esc(p.name)} ${esc(timeLabel(p))}"><span class="stop-number">${i+1}</span><span class="stop-main"><strong>${esc(p.name)}</strong><small>${esc(p.district)} ${esc(p.neighborhood)}${p.approximate?' · 추정 위치':''} · ${esc(route.direction)} · ${esc(gradeLabel(route,p))}</small>${inScope(p,state)&&state.region?'<span class="local-badge">선택 지역</span>':''}</span><time class="${p.timeKind==='missing'?'missing':''}">${esc(timeLabel(p))}</time></button>`).join('')}</div>`:`<div class="overview-summary"><p><strong>${view.variants.length}<span>개 노선</span></strong><span>${view.stopRecords.toLocaleString()}개 정류장 기록</span></p><div>${state.region?`${esc(regionLabel(data,state))} 경유 <b>${view.scopeRouteCount}개</b> · 다른 지역도 함께 표시`:'학교의 등하교 통학 범위를 한눈에 확인하세요.'}</div>${state.region&&!view.scopeRouteCount?'<small>선택 지역 경유 기록이 없어 학교 전체 범위를 보여드려요.</small>':''}</div><div class="route-list" aria-label="통학 노선 목록">${routeList(view)}</div>`}
     <p class="route-note">${icon('info')} ${stops.some(p=>p.timeKind==='relative_minutes')?'+분은 출발 기준 상대시간이에요.':'노선 수는 방향·회차별 기록 기준이에요.'}<br>정류장 연결선이며 실제 도로 경로가 아니에요.${stops.some(p=>p.timeNeedsReview)?'<br>확인 필요로 표시된 시각은 앞뒤 정류장 시각과 맞지 않아요. 자료에 적힌 값을 그대로 표시했어요. 정확한 시각은 학교에 확인해 주세요.':''}${view.invalidCoordinates?'<br>위치가 없는 기록은 지도에서 제외했어요.':''}</p>`:`<div class="empty-state">${icon('bus')}<h3>${school.noBus?'통학버스 미운행 안내':'이 방향의 노선 자료가 없어요.'}</h3><p>${school.noBus?'원본에 미운행으로 표시되어 있어요. 현재 운영 여부는 학교에 확인해 주세요.':'실제 미운행을 의미하지 않아요. 다른 방향의 자료를 살펴보세요.'}</p></div>`}
     <div class="detail-foot"><button class="primary-button desktop-detail-action" data-action="compare-add" data-id="${esc(school.id)}">${icon('compare')}${state.compared.includes(school.id)?'비교에서 빼기':'비교에 담기'}</button>${view.variants.length?`<button class="primary-button mobile-detail-action" data-action="${route?'expand-route':'route-list'}">${icon('list')}${route?'전체 시간표 보기':`노선 목록 보기 · ${view.variants.length}`}</button>`:''}<button class="icon-button${state.saved.has(school.id)?' saved':''}" data-action="save" data-id="${esc(school.id)}" aria-label="${esc(school.name)} 관심학교 ${state.saved.has(school.id)?'해제':'저장'}">${icon('heart')}</button><button class="icon-button" data-action="share" aria-label="현재 탐색 링크 복사">${icon('share')}</button></div>`;
   const overviewSummary=panel.querySelector('.overview-summary');
-  if(overviewSummary)panel.querySelector('.detail-route-controls').before(overviewSummary);
+  if(overviewSummary)panel.querySelector('.detail-route-controls')?.before(overviewSummary);
+  const scope=document.createElement('p');scope.className='detail-scope';
+  scope.textContent=`지역: ${regionLabel(data,state)} · 방향: ${route?.direction|| (state.routeScope==='all'?'등하교 전체':state.routeScope)} · ${gradeLabel(route)} · 학교 확인 전 자료`;
+  panel.querySelector('.detail-top').after(scope);
+  panel.querySelectorAll('[data-action="route-list"],[data-action="expand-route"]').forEach(button=>{
+    button.setAttribute('aria-expanded',String(state.routeSheet!=='summary'));button.setAttribute('aria-controls','school-detail');
+  });
+  const sources=document.createElement('div');sources.className='detail-sources';sources.innerHTML=provenanceMarkup(school);scope.after(sources);
+  panel.querySelectorAll('[data-stop]').forEach(button=>button.setAttribute('aria-pressed',String(Number(button.dataset.stop)===state.selectedStop)));
+  if(state.region && (route?!local.length:!view.scopeRouteCount)){
+    const warning=document.createElement('p');warning.className='scope-warning';warning.setAttribute('role','status');
+    warning.textContent='선택한 지역의 경유 기록이 없어요. 학교 전체 자료를 보고 있어요.';scope.after(warning);
+  }
+  for(const [cls,top] of previousScroll){const el=panel.getElementsByClassName(cls)[0];if(el)el.scrollTop=top;}
+  if(focusKey)panel.querySelector(`[${focusKey[0]}="${CSS.escape(focusKey[1])}"]`)?.focus({preventScroll:true});
+
 }
 function renderTray(){
   const schools=state.compared.map(schoolById);$('compare-tray').hidden=!schools.length;
@@ -83,14 +132,16 @@ function renderTray(){
 function render(){
   const schools=visibleSchools(data,state),label=regionLabel(data,state),school=selected(),view=buildRouteView(school,state);
   $('region-name').textContent=state.region||'전체 지역';
+  $('current-scope').textContent=`${regionLabel(data,state)} · ${state.direction==='all'?'등하교 전체':state.direction} · 학교 확인 전 자료`;
+  $('mobile-view-toggle').setAttribute('aria-pressed',String(state.mobileMap));
   $('neighborhood').innerHTML='<option value="">동네 전체</option>'+data.neighborhoods.filter(n=>n.district===state.region&&!n.outer).sort((a,b)=>a.name.localeCompare(b.name,'ko')).map(n=>`<option value="${esc(n.code)}" ${n.code===state.neighborhood?'selected':''}>${esc(n.name)} · ${n.schoolIds.length}곳</option>`).join('');
   $('neighborhood').disabled=!state.region||data.regions.find(r=>r.name===state.region)?.outer;
   document.querySelectorAll('[data-filter]').forEach(b=>{b.classList.toggle('active',b.dataset.filter===state.direction);b.setAttribute('aria-pressed',b.dataset.filter===state.direction);});
   document.querySelectorAll('[data-mapmode]').forEach(b=>{b.classList.toggle('active',b.dataset.mapmode===state.mapMode);b.setAttribute('aria-pressed',b.dataset.mapmode===state.mapMode);});
   $('saved-count').textContent=state.saved.size;
   $('nav-saved').classList.toggle('active',state.savedOnly);$('nav-schools').classList.toggle('active',!state.region&&!state.savedOnly);$('nav-commute').classList.toggle('active',!!state.region&&!state.savedOnly);
-  $('results-title').innerHTML=`${state.savedOnly?'마음에 담은 학교':state.region?'우리 동네로 오는 학교':'서울 사립초 전체'} <em id="result-count">${schools.length}</em>`;
-  $('results').innerHTML=schools.length?schools.map(card).join(''):`<div class="empty-state">${icon(state.savedOnly?'heart':'search')}<h3>${state.savedOnly?'궁금한 학교를 마음에 담아보세요.':'이 조건의 통학 자료가 없어요.'}</h3><p>${state.savedOnly?'학교 카드의 하트를 누르면 여기 모아볼 수 있어요. 새로고침하면 초기화돼요.':'다른 동네 또는 통학 방향으로 살펴보세요. 실제 미운행을 의미하지는 않아요.'}</p><button class="primary-button" data-action="${state.savedOnly?'all-schools':'reset-filter'}">${state.savedOnly?'학교 둘러보기':'지역 전체 보기'}</button></div>`;
+  $('results-title').innerHTML=`${state.savedOnly?'이 브라우저에 저장한 학교':state.region?'우리 동네로 오는 학교':'서울 사립초 전체'} <em id="result-count">${schools.length}</em>`;
+  $('results').innerHTML=schools.length?schools.map(card).join(''):`<div class="empty-state">${icon(state.savedOnly?'heart':'search')}<h3>${state.savedOnly?'궁금한 학교를 마음에 담아보세요.':'이 조건의 통학 자료가 없어요.'}</h3><p>${state.savedOnly?'학교 카드의 하트를 누르면 이 브라우저에 저장해요. 계정 관심학교와는 별개예요. 브라우저 데이터를 지우면 삭제돼요.':'다른 동네 또는 통학 방향으로 살펴보세요. 실제 미운행을 의미하지는 않아요.'}</p><button class="primary-button" data-action="${state.savedOnly?'all-schools':'reset-filter'}">${state.savedOnly?'학교 둘러보기':'지역 전체 보기'}</button></div>`;
   $('map-context').innerHTML=`<span class="context-mark">${icon(school?'bus':'leaf')}</span><p class="eyebrow">${school?'THE WHOLE JOURNEY':'YOUR NEIGHBORHOOD, CONNECTED'}</p><h2>${esc(school?school.name:label)}<span>${school?(view.selected?`${view.selected.direction} · ${esc(view.selected.name)}`:`${state.routeScope==='all'?'등하교 전체':state.routeScope} ${view.variants.length}개 노선`):`<b>${schools.length}</b>개 학교와 연결`}</span></h2><p>${school?'선을 누르면 노선과 정류장을 자세히 볼 수 있어요.':'학교의 위치와 우리 동네 통학 가능성을 함께 살펴보세요.'}</p>`;
   $('map-legend').innerHTML=school?'<span><i class="legend-school"></i>학교</span><span><i class="legend-morning"></i>등교</span><span><i class="legend-afternoon"></i>하교</span><button data-action="about">정류장 연결선 · 도로 경로 아님</button>':`<span><i class="legend-school"></i>${state.mapMode==='coverage'?'학교 수':'학교'}</span><span><i class="legend-region"></i>선택 지역</span><button data-action="about">자료 안내 ${icon('info')}</button>`;
   document.querySelector('[data-action="fit-map"]').setAttribute('aria-label',school?(view.selected?'선택 노선 전체 보기':'표시 중인 모든 노선 보기'):'선택 지역 전체 보기');
@@ -101,8 +152,14 @@ function render(){
   document.body.classList.toggle('route-summary',!!school&&state.routeSheet==='summary');
   document.body.classList.toggle('route-sheet-open',!!school&&state.routeSheet!=='summary');
   document.body.classList.toggle('mobile-map',state.mobileMap);
-  $('mobile-view-toggle').innerHTML=icon(state.mobileMap?'list':'map')+(state.mobileMap?'목록으로 보기':'지도로 보기');
+  $('mobile-view-toggle').innerHTML=icon(state.mobileMap?'list':'map')+(state.mobileMap?'목록 보기':'지도 보기');
+  document.querySelectorAll('[data-action="save"]').forEach(button=>{
+    const school=schoolById(button.dataset.id);if(!school)return;
+    const label=`${school.name} 이 브라우저에서 ${state.saved.has(school.id)?'저장 해제':'저장'}`;
+    button.setAttribute('aria-label',label);button.setAttribute('title',label);button.setAttribute('aria-pressed',String(state.saved.has(school.id)));
+  });
   commuteMap?.update({state,schools,school,routeView:view});
+  if(!mapFailed&&!mapLoading&&!commuteMap)void ensureMap();
 }
 function showCandidates(items,anchor){
   const variants=getRouteVariants(selected()),dialog=$('route-candidates');
@@ -120,7 +177,20 @@ function regionsDialog(){
 }
 function compareDialog(){
   const schools=state.compared.map(schoolById),stats=schools.map(s=>summary(s,state));
-  const rows=[['학교 소재지',schools.map(s=>esc(s.district))],['지역 내 정류장 기록',stats.map(m=>`<b>${m.stops.length}</b>개`)],['등교 / 하교 노선',stats.map(m=>`${m.morningRoutes} / ${m.afternoonRoutes}`)],['등교 정차 시각 범위',stats.map(m=>esc(m.clockRange))],['등교 / 하교 정류장 기록',stats.map(m=>`${m.morning.length} / ${m.afternoon.length}`)],['자료 상태',schools.map(s=>s.noBus?'미운행 안내 · 확인 필요':'학교 공식 확인 전')]];
+  const selectedRows=schools.map(s=>{
+    const selection=state.compareStops[s.id];
+    const route=getRouteVariants(s).find(v=>v.routeId===selection?.routeId&&v.direction===selection?.direction);
+    const stop=route?.stops.find(p=>p.sourceStopIndex===selection?.index);
+    return {route,stop};
+  });
+  const options=s=>getRouteVariants(s).flatMap(v=>v.stops.filter(p=>inScope(p,state)).map(p=>`<option value="${esc(v.routeId)}|${v.direction}|${p.sourceStopIndex}" ${state.compareStops[s.id]?.routeId===v.routeId&&state.compareStops[s.id]?.direction===v.direction&&state.compareStops[s.id]?.index===p.sourceStopIndex?'selected':''}>${esc(v.name)} · ${v.direction} · ${esc(p.name)} · ${esc(timeLabel(p))}</option>`)).join('');
+  const rows=[['비교할 정류장',schools.map(s=>`<select class="compare-stop" data-school-id="${esc(s.id)}" aria-label="${esc(s.name)} 비교 정류장"><option value="">정류장을 선택해 주세요</option>${options(s)}</select>`)],
+    ['선택한 정류장',selectedRows.map(({stop})=>esc(stop?`${stop.district} ${stop.neighborhood} · ${stop.name}`:'선택 전'))],
+    ['방향 / 노선·회차',selectedRows.map(({route})=>esc(route?`${route.direction} · ${route.name}`:'선택 전'))],
+    ['정차 시각',selectedRows.map(({stop})=>esc(stop?timeLabel(stop):'선택 전'))],
+    ['적용 학년',selectedRows.map(({route,stop})=>esc(gradeLabel(route,stop)))],
+    ['자료에서 모르는 정보',selectedRows.map(({stop})=>esc(stop?`${stop.timeKind==='missing'?'시각 미제공 · ':''}적용 학년 미확인 · 통학 소요시간 미확인`:'정류장을 선택해 주세요'))],
+    ['학교 소재지',schools.map(s=>esc(s.district))],['지역 내 정류장 기록',stats.map(m=>`<b>${m.stops.length}</b>개`)],['등교 / 하교 노선',stats.map(m=>`${m.morningRoutes} / ${m.afternoonRoutes}`)],['등교 정차 시각 범위',stats.map(m=>esc(m.clockRange))],['등교 / 하교 정류장 기록',stats.map(m=>`${m.morning.length} / ${m.afternoon.length}`)],['자료 상태',schools.map(s=>s.noBus?'미운행 안내 · 확인 필요':'학교 공식 확인 전')]];
   $('compare-content').innerHTML=`<p class="comparison-scope">${icon('pin')}<b>${esc(regionLabel(data,state))}</b> · 동일한 지역 조건의 등하교 전체 자료</p><div class="comparison-table-wrap"><table class="comparison-table"><thead><tr><th scope="col">비교 항목</th>${schools.map(s=>`<th scope="col">${crest(s)}<strong>${esc(s.name)}</strong><button data-action="compare-detail" data-id="${esc(s.id)}">통학 상세 ${icon('arrow')}</button></th>`).join('')}</tr></thead><tbody>${rows.map(([title,cells])=>`<tr><th scope="row">${title}</th>${cells.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div><p class="compare-note">${icon('info')} 정류장 기록에는 같은 장소가 중복될 수 있어요. 정차 시각은 탑승 시간이나 통학 소요시간이 아니에요. 서로 다른 회차·학년의 노선이 포함될 수 있으니 학교에 확인해 주세요.</p>`;
   if(!$('compare-dialog').open)$('compare-dialog').showModal();
 }
@@ -145,8 +215,9 @@ function hideSearch(){$('search-results').hidden=true;$('search').setAttribute('
 function selectStop(index){
   if(!stopsFor(selected()).some(p=>p.sourceStopIndex===index))return;
   state.selectedStop=index;
-  if(window.innerWidth<=760){state.mobileMap=true;state.routePeek=true;state.routeSheet='summary';render();requestAnimationFrame(()=>{commuteMap?.resize();commuteMap?.focusStop(index);});}
-  else {document.querySelectorAll('[data-stop]').forEach(b=>b.classList.toggle('active',Number(b.dataset.stop)===index));document.querySelector(`[data-stop="${index}"]`)?.scrollIntoView({block:'nearest',behavior:'smooth'});commuteMap?.focusStop(index);}
+  writeUrl();
+  if(window.innerWidth<=760&&state.mobileMap&&!mapFailed){state.routePeek=true;state.routeSheet='summary';render();requestAnimationFrame(()=>{commuteMap?.resize();commuteMap?.focusStop(index);});}
+  else {document.querySelectorAll('[data-stop]').forEach(b=>{b.classList.toggle('active',Number(b.dataset.stop)===index);b.setAttribute('aria-pressed',String(Number(b.dataset.stop)===index));});document.querySelector(`[data-stop="${index}"]`)?.scrollIntoView({block:'nearest',behavior:'smooth'});$('school-detail').querySelector('.detail-sources').innerHTML=provenanceMarkup(selected());commuteMap?.focusStop(index);}
 }
 document.addEventListener('click',async e=>{
   const button=e.target.closest('button');if(!e.target.closest('.search-area'))hideSearch();if(!button)return;
@@ -163,16 +234,25 @@ document.addEventListener('click',async e=>{
   if(button.hasAttribute('data-stop')){selectStop(Number(button.dataset.stop));return;}
   const id=button.dataset.id;
   switch(button.dataset.action){
-    case 'home': change({region:'서초구',neighborhood:'',schoolId:'',routeId:'',savedOnly:false,direction:'all',mobileMap:false,mapMode:'schools'});break;
-    case 'all-schools': change({region:'',neighborhood:'',schoolId:'',routeId:'',savedOnly:false,direction:'all'});break;
-    case 'saved': change({region:'',neighborhood:'',schoolId:'',routeId:'',savedOnly:true,direction:'all'});break;
+    case 'home': change({region:'',neighborhood:'',schoolId:'',routeId:'',savedOnly:false,direction:'all',mobileMap:false,mapMode:'schools'});break;
+    case 'all-schools': change({region:'',neighborhood:'',schoolId:'',routeId:'',savedOnly:false,direction:'all',mobileMap:false});break;
+    case 'saved': change({region:'',neighborhood:'',schoolId:'',routeId:'',savedOnly:true,direction:'all',mobileMap:false});break;
     case 'reset-filter':setRegion(state.region);change({direction:'all'});break;
     case 'regions':regionsDialog();break;
     case 'about':$('about-dialog').showModal();break;
     case 'open-school':openSchool(id);break;
     case 'close-school':closeSchool();break;
-    case 'save':if(state.saved.has(id))state.saved.delete(id);else state.saved.add(id);render();announce(state.saved.has(id)?'관심학교에 담았어요. 이 화면에서만 유지돼요.':'관심학교에서 뺐어요.');break;
-    case 'compare-add':toggleCompare(id);break;
+    case 'save':{
+      if(state.saved.has(id))state.saved.delete(id);else state.saved.add(id);
+      const persisted=writeSaves(safeStorage(),state.saved);render();
+      document.querySelector(`[data-action="save"][data-id="${CSS.escape(id)}"]`)?.focus({preventScroll:true});
+      announce(persisted?(state.saved.has(id)?'이 브라우저에 저장했어요. 계정에는 저장되지 않아요.':'이 브라우저의 저장 목록에서 뺐어요.'):'브라우저에 저장하지 못했어요. 현재 화면에서만 유지돼요.');break;
+    }
+    case 'compare-add':
+      if(id===state.schoolId&&state.routeId&&state.selectedStop!==null)state.compareStops[id]={routeId:state.routeId,direction:state.way,index:state.selectedStop};
+      toggleCompare(id);break;
+    case 'retry-map':mapFailed=false;state.mobileMap=true;void ensureMap();break;
+    case 'find-school':change({region:'',neighborhood:'',schoolId:'',routeId:'',savedOnly:false,mobileMap:false});$('search').focus();break;
     case 'compare-open':compareDialog();break;
     case 'compare-detail':$('compare-dialog').close();openSchool(id);break;
     case 'fit-map':commuteMap?.fit();break;
@@ -183,13 +263,13 @@ document.addEventListener('click',async e=>{
     case 'route-list':setRouteSheet('list');break;
     case 'route-summary':setRouteSheet('summary');break;
     case 'all-routes':openOverview();break;
-    case 'toggle-view':state.mobileMap=!state.mobileMap;render();requestAnimationFrame(()=>{commuteMap?.resize();commuteMap?.fit();});break;
+    case 'toggle-view':state.mobileMap=!state.mobileMap;render();void ensureMap();requestAnimationFrame(()=>{commuteMap?.resize();commuteMap?.fit();});break;
     case 'share':try{await navigator.clipboard.writeText(location.href);announce('현재 지역과 노선 링크를 복사했어요.');}catch{announce('브라우저 주소창의 링크를 복사해 주세요.');}break;
   }
 });
 $('neighborhood').addEventListener('change',e=>setRegion(state.region,e.target.value));
 $('sort').addEventListener('change',e=>change({sort:e.target.value},{url:false}));
-document.addEventListener('change',e=>{if(e.target.id==='detail-route'){if(e.target.value)openVariant(e.target.value);else openOverview(state.routeScope);}});
+document.addEventListener('change',e=>{if(e.target.matches('.compare-stop')){const [routeId,direction,index]=e.target.value.split('|');state.compareStops[e.target.dataset.schoolId]={routeId,direction,index:Number(index)};const id=e.target.dataset.schoolId;compareDialog();document.querySelector(`[data-school-id="${CSS.escape(id)}"]`)?.focus();return;}if(e.target.id==='detail-route'){if(e.target.value)openVariant(e.target.value);else openOverview(state.routeScope);}});
 $('search').addEventListener('input',()=>{
   const query=$('search').value;searchItems=search(data,query);
   $('search-results').innerHTML=searchItems.length?searchItems.map((r,i)=>`<button class="search-result" data-search-index="${i}"><span class="result-kind">${icon(r.type==='school'?'school':r.type==='stop'?'bus':'pin')}</span><span><strong>${esc(r.label)}</strong><small>${esc(r.sub)}</small></span><em>${r.kind}</em></button>`).join(''):'<p class="search-empty">일치하는 학교·동네·정류장이 없어요.</p>';
@@ -209,8 +289,16 @@ document.addEventListener('keydown',e=>{
   }
   if(e.target.matches('.search-result')&&['ArrowUp','ArrowDown'].includes(e.key)){e.preventDefault();const next=e.key==='ArrowDown'?e.target.nextElementSibling:e.target.previousElementSibling;next?.focus();}
 });
-window.addEventListener('popstate',()=>{const parsed=readUrl(data,location.href);Object.assign(state,parsed,{savedOnly:false,selectedStop:null,routePeek:false,routeSheet:parsed.routeId?'timeline':'summary',mobileMap:!!parsed.schoolId});normalizeSelection();render();});
+window.addEventListener('popstate',()=>{const parsed=readUrl(data,location.href);Object.assign(state,parsed,{savedOnly:false,routePeek:false,routeSheet:parsed.routeId?'timeline':'summary',mobileMap:!!parsed.schoolId});normalizeSelection();render();});
 document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d){const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)d.close();}}));
 normalizeSelection();render();
-try {commuteMap=createCommuteMap($('map'),data,{onSchool:openSchool,onRegion:region=>{state.mapMode='schools';setRegion(region);},onStop:selectStop,onRoute:(id,options)=>openVariant(id,{...options,origin:'map'}),onCandidates:showCandidates});render();}
-catch {$('map-message').hidden=false;$('map-message').textContent='이 브라우저에서는 지도를 표시할 수 없어요. 목록·시간표·학교 비교는 계속 이용할 수 있어요.';}
+void ensureMap();
+function viewportChanged(){
+  const viewport=window.visualViewport;
+  document.documentElement.style.setProperty('--visible-height',`${viewport?.height||window.innerHeight}px`);
+  document.body.classList.toggle('keyboard-open',!!viewport&&window.innerHeight-viewport.height>150);
+  commuteMap?.resize();
+}
+window.visualViewport?.addEventListener('resize',viewportChanged);
+window.addEventListener('resize',viewportChanged);viewportChanged();
+window.addEventListener('storage',event=>{if(event.key==='preppy.schoolmap.saved.v1'){state.saved=readSaves(safeStorage(),data.schools);render();}});

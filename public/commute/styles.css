@@ -114,4 +114,59 @@ dialog{padding:0;border:1px solid #e5ebdf;border-radius:22px;background:#fff;col
 @font-face{font-family:'DM Sans';src:url('./vendor/DM-Sans-Latin.woff2') format('woff2');font-style:normal;font-weight:400 600;font-display:swap}
 @font-face{font-family:'DM Sans Fallback';src:local(Arial);ascent-override:94.9%;descent-override:29.66%;line-gap-override:0%;size-adjust:104.53%}
 .wordmark{color:#315c50;font-family:'DM Sans','DM Sans Fallback','IBM Plex Sans KR','IBM Plex Sans KR Fallback','Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:1.05rem;font-weight:600;letter-spacing:.11em;line-height:1;text-decoration:none}
+/* School-first exploration, with the same search and scope in both mobile views. */
+.entry-points{display:flex;gap:8px;margin-bottom:8px}.entry-points button{flex:1;border:1px solid var(--line);border-radius:8px;min-height:44px;font-weight:650;background:#f2f5ef}
+.current-scope{font-size:12px;line-height:1.5;margin:6px 0;color:#405b4d}
+.save-scope-note{font-size:11px;line-height:1.5;margin:4px 0;color:#526455}
+.save-explanation{font-size:11px;line-height:1.6;padding:10px 16px;border-top:1px solid var(--line);color:#526455}
+.search-results{top:150px;max-height:min(440px,55dvh)}
+.detail-scope,.scope-warning{flex-shrink:0;padding:6px 16px;font-size:12px;line-height:1.5;color:#405b4d;background:#f2f5ef}
+.scope-warning{background:#fff1dc;color:#744c16;border-block:1px solid #e8c899}
+.detail-sources{flex-shrink:0;padding:5px 16px;font-size:11px;line-height:1.6;color:#526455}.field-sources summary{display:flex;align-items:center;cursor:pointer;font-weight:650}.field-sources article{padding:8px;border-top:1px solid var(--line)}.field-sources ul{padding-left:18px}.field-sources a{display:inline-flex;align-items:center;min-height:44px;text-decoration:underline}.source-status{margin:0}.detail-sources:has(details[open]){overflow:auto;max-height:28dvh}
+.compare-stop{max-width:100%;width:220px;min-height:44px;white-space:normal;font:inherit;border:1px solid var(--line);border-radius:6px}
+.compare-tray{position:fixed;z-index:70}
+button,select,summary{min-height:44px}button.icon-button,.heart-button{min-width:44px;min-height:44px}
+button:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #28634b;outline-offset:2px}
+.map-unavailable .map-actions,.map-unavailable .map-mode,.map-unavailable .map-context,.map-unavailable #map,.map-unavailable .mobile-route-link{display:none!important}
+.map-unavailable .mobile-view-toggle{display:none!important}
+.map-unavailable .map-message{display:block;z-index:5}.map-message button{padding:8px;border:1px solid currentColor;border-radius:6px}
+@media(max-width:760px){
+  body.detail-open,body.mobile-map{overflow:auto}
+  .site-header{position:relative;height:auto;min-height:60px;padding-block:8px;flex-wrap:wrap}
+  .page-intro{display:none}
+  .workspace,.detail-open .workspace{display:flex;flex-direction:column;padding:0 10px 70px!important;gap:8px;height:auto!important;min-height:calc(var(--visible-height,100dvh) - 70px)}
+  .explorer,.detail-open .explorer,.mobile-map .explorer{display:flex;overflow:visible;position:sticky;top:0;z-index:8;flex:none;width:100%;border-radius:12px;pointer-events:auto}
+  .search-area{padding:10px;background:var(--surface);border-radius:12px}
+  body:not(.detail-open):not(.mobile-map) .explorer{position:relative}
+  .search-area{position:sticky;top:0;z-index:9}
+  .search-box input{font-size:16px}.search-results{top:151px;left:8px;right:8px;max-height:calc(var(--visible-height,100dvh) - 200px)}
+  .mobile-map .search-box{display:flex}
+  .location-controls{margin-top:8px}.direction-filter{margin-top:6px}.current-scope{margin:4px 0;font-size:11px}
+  .entry-points{margin-bottom:4px}.entry-points button{font-size:13px}
+  .mobile-map .results-heading,.mobile-map #results,.mobile-map .save-explanation,.mobile-map .explorer-foot,.detail-open .results-heading,.detail-open #results,.detail-open .save-explanation,.detail-open .explorer-foot{display:none}
+  .school-list{max-height:none;overflow:visible}.results-heading{padding:12px}.school-card{margin-bottom:10px}
+  .map-pane,.detail-open .map-pane,.mobile-map .map-pane{display:none;position:relative;flex:none;width:100%;min-height:0;border-radius:12px;height:440px}
+  .mobile-map .map-pane{display:block}.detail-open .map-pane{display:block;height:auto;overflow:visible;background:var(--surface)}
+  .detail-open.mobile-map .map-pane{height:calc(var(--visible-height,100dvh) - 330px);min-height:420px}
+  body:not(.mobile-map) #map,body:not(.mobile-map) .map-top,body:not(.mobile-map) .map-actions,body:not(.mobile-map) .map-legend,body:not(.mobile-map) .map-context{display:none!important}
+  .detail-open .school-detail,.route-summary .school-detail,.route-summary.route-peek .school-detail{position:relative!important;inset:auto!important;width:100%!important;height:auto!important;max-height:none!important;display:flex;border-radius:12px;overflow:hidden;box-shadow:none}
+  .detail-open.mobile-map .school-detail{position:absolute!important;bottom:0!important;left:0!important;right:0!important;max-height:80%!important;overflow:auto}
+  .route-summary.mobile-map .school-detail{max-height:360px!important}
+  .detail-top{flex-shrink:0}.detail-open .detail-school{padding-right:42px}.detail-school h2{overflow-wrap:anywhere}
+  .detail-scope,.scope-warning{display:block!important;font-size:11px;padding:5px 14px}
+  .route-summary .overview-summary{flex:none}.route-summary .overview-summary>div{white-space:normal}.route-summary .overview-summary small{display:block}
+  .route-sheet-open:before{display:none}.route-sheet-open .sheet-collapse{right:52px}
+  .route-list,.timeline{overflow:auto;overscroll-behavior:contain;max-height:45dvh;min-height:60px;flex:auto}
+  .stop-row{min-height:64px}.stop-main small{white-space:normal;line-height:1.5}.route-choice{min-height:64px}.route-choice small{white-space:normal;line-height:1.5}
+  .detail-foot{padding-bottom:max(10px,env(safe-area-inset-bottom))!important;flex-shrink:0}
+  .detail-open .mobile-view-toggle,.mobile-view-toggle{display:flex!important;position:fixed;z-index:15;bottom:max(12px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:auto;min-width:144px;min-height:44px}
+  .entry-points .mobile-view-toggle{position:static!important;inset:auto!important;transform:none!important;min-width:0;width:auto;box-shadow:none;padding:5px;font-size:12px;border-radius:8px;gap:4px}
+  .entry-points .mobile-view-toggle .icon{width:15px;height:15px}
+  .compare-tray{bottom:70px;max-width:calc(100% - 20px)}.detail-open .compare-tray{display:flex}
+  .keyboard-open .mobile-view-toggle,.keyboard-open .compare-tray{display:none!important}
+  .keyboard-open .search-results{max-height:calc(var(--visible-height,100dvh) - 180px)}
+  .map-unavailable .map-pane{display:block;height:auto;min-height:100px}.map-unavailable .map-message{position:relative;inset:auto;margin:12px;max-width:none}
+  .map-unavailable .school-detail{position:relative!important;max-height:none!important}
+  dialog{max-height:calc(var(--visible-height,100dvh) - 24px);max-width:calc(100vw - 16px)}
+}
 @media(max-width:400px){.wordmark{font-size:.98rem}}
