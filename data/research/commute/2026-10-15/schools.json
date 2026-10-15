@@ -1,0 +1,2015 @@
+[
+  {
+    "school_id": "kyonggi",
+    "school_name": "경기초",
+    "checked_at": "2026-10-15T14:08:15+00:00",
+    "overall_assessment": "Official route and admissions pages blocked; historical/secondary leads only.",
+    "official_current_year_route_verified": false,
+    "grade_restrictions": "Not established unless a cited source below states otherwise.",
+    "unresolved_questions": [
+      "Obtain the official current timetable and independently verify any 2029 closure and freshman restrictions."
+    ],
+    "negative_findings": [
+      "No source was authenticated through a private Naver cafe or login-only community.",
+      "Missing or blocked evidence does not mean the school has no bus."
+    ],
+    "source_ids": [
+      "kyonggi_bus",
+      "kyonggi_admissions",
+      "kyonggi_preppy",
+      "kyonggi_historical"
+    ],
+    "fact_ids": [
+      "kyonggi_preppy__statement_1",
+      "kyonggi_historical__statement_1"
+    ],
+    "summary": "Official route and admissions pages blocked; historical/secondary leads only.",
+    "current_operation_verified": false,
+    "verified_2027_operating_schedule": false,
+    "district": "서대문구",
+    "audit_status_original": null,
+    "coverage_class": "primary_inaccessible_secondary_or_no_facts",
+    "route_variant_count": 0,
+    "stop_record_count": 0,
+    "recorded_fact_count": 2,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "secondary-circularity",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "kyungbok",
+    "school_name": "경복초",
+    "checked_at": "2026-10-15T14:08:15+00:00",
+    "overall_assessment": "Full official live-page extraction: 28 direction variants, 121 stop records. Effective schoolyear is unstated.",
+    "official_current_year_route_verified": false,
+    "grade_restrictions": "Not established unless a cited source below states otherwise.",
+    "unresolved_questions": [
+      "Confirm operational year and exact 2027 closure date before representing these as guaranteed 2026/2027 availability."
+    ],
+    "negative_findings": [
+      "No source was authenticated through a private Naver cafe or login-only community.",
+      "Missing or blocked evidence does not mean the school has no bus."
+    ],
+    "source_ids": [
+      "kyungbok_morning",
+      "kyungbok_home",
+      "kyungbok_legacy"
+    ],
+    "fact_ids": [
+      "kyungbok_morning__statement_1",
+      "kyungbok_morning__statement_2",
+      "kyungbok_morning__restriction_1",
+      "kyungbok_home__statement_1",
+      "kyungbok_home__statement_2",
+      "kyungbok_home__restriction_1",
+      "kyungbok_legacy__statement_1"
+    ],
+    "summary": "Full official live-page extraction: 28 direction variants, 121 stop records. Effective schoolyear is unstated.",
+    "current_operation_verified": false,
+    "verified_2027_operating_schedule": false,
+    "district": "광진구",
+    "audit_status_original": null,
+    "coverage_class": "published_timetable_read_not_live_verified",
+    "route_variant_count": 28,
+    "stop_record_count": 121,
+    "recorded_fact_count": 7,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "kyungbok-closure",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "kyunghee",
+    "school_name": "경희초",
+    "checked_at": "2026-10-15T14:08:15+00:00",
+    "overall_assessment": "2026 route and multi-year closure leads found, but primary page blocked.",
+    "official_current_year_route_verified": false,
+    "grade_restrictions": "Not established unless a cited source below states otherwise.",
+    "unresolved_questions": [
+      "Verify the original 2026-08-21 PDF and closure notice; do not publish secondary closure claims as official confirmation."
+    ],
+    "negative_findings": [
+      "No source was authenticated through a private Naver cafe or login-only community.",
+      "Missing or blocked evidence does not mean the school has no bus."
+    ],
+    "source_ids": [
+      "kyunghee_bus",
+      "kyunghee_secondary2026",
+      "kyunghee_historical"
+    ],
+    "fact_ids": [
+      "kyunghee_secondary2026__statement_1",
+      "kyunghee_secondary2026__statement_2",
+      "kyunghee_historical__statement_1"
+    ],
+    "summary": "2026 route and multi-year closure leads found, but primary page blocked.",
+    "current_operation_verified": false,
+    "verified_2027_operating_schedule": false,
+    "district": "동대문구",
+    "audit_status_original": null,
+    "coverage_class": "primary_inaccessible_secondary_or_no_facts",
+    "route_variant_count": 0,
+    "stop_record_count": 0,
+    "recorded_fact_count": 3,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "gyeseong",
+    "school_name": "계성초",
+    "checked_at": "2026-10-15T14:08:15+00:00",
+    "overall_assessment": "Full official live-page extraction, but effective year unknown and cross-route notes conflict.",
+    "official_current_year_route_verified": false,
+    "grade_restrictions": "Not established unless a cited source below states otherwise.",
+    "unresolved_questions": [
+      "Resolve conflicting weekday assignments; do not silently pick one or promise a connection."
+    ],
+    "negative_findings": [
+      "No source was authenticated through a private Naver cafe or login-only community.",
+      "Missing or blocked evidence does not mean the school has no bus."
+    ],
+    "source_ids": [
+      "gyeseong_bus",
+      "gyeseong_bus_1101",
+      "gyeseong_bus_1104",
+      "gyeseong_bus_1106",
+      "gyeseong_bus_1108",
+      "gyeseong_bus_1110",
+      "gyeseong_bus_1112",
+      "gyeseong_bus_307444",
+      "gyeseong_bus_307541",
+      "gyeseong_bus_2607822"
+    ],
+    "fact_ids": [
+      "gyeseong_bus__statement_1",
+      "gyeseong_bus__statement_2",
+      "gyeseong_bus__statement_3",
+      "gyeseong_bus__restriction_1",
+      "gyeseong_bus__restriction_2",
+      "gyeseong_bus__restriction_3",
+      "gyeseong_bus_1101__statement_1",
+      "gyeseong_bus_1104__statement_1",
+      "gyeseong_bus_1106__statement_1",
+      "gyeseong_bus_1108__statement_1",
+      "gyeseong_bus_1110__statement_1",
+      "gyeseong_bus_1112__statement_1",
+      "gyeseong_bus_307444__statement_1",
+      "gyeseong_bus_307541__statement_1",
+      "gyeseong_bus_2607822__statement_1"
+    ],
+    "summary": "Full official live-page extraction, but effective year unknown and cross-route notes conflict.",
+    "current_operation_verified": false,
+    "verified_2027_operating_schedule": false,
+    "district": "서초구",
+    "audit_status_original": null,
+    "coverage_class": "published_timetable_read_not_live_verified",
+    "route_variant_count": 10,
+    "stop_record_count": 82,
+    "recorded_fact_count": 15,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "gyeseong-interpretation",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "kwangwoon",
+    "school_name": "광운초",
+    "checked_at": "2026-10-15T14:08:15+00:00",
+    "overall_assessment": "Official tender attachment found, but its internal date is 2025 and it is provisional.",
+    "official_current_year_route_verified": false,
+    "grade_restrictions": "Not established unless a cited source below states otherwise.",
+    "unresolved_questions": [
+      "Do not promote a 2026 filename to verified 2026 operating status. Reconcile 2025 attachment and secondary 2026 course count."
+    ],
+    "negative_findings": [
+      "No source was authenticated through a private Naver cafe or login-only community.",
+      "Missing or blocked evidence does not mean the school has no bus."
+    ],
+    "source_ids": [
+      "kwangwoon_bus",
+      "kwangwoon_tender_routes",
+      "kwangwoon_tender_index",
+      "kwangwoon_secondary2026"
+    ],
+    "fact_ids": [
+      "kwangwoon_tender_routes__statement_1",
+      "kwangwoon_tender_routes__statement_2",
+      "kwangwoon_tender_routes__statement_3",
+      "kwangwoon_secondary2026__statement_1"
+    ],
+    "summary": "Official tender attachment found, but its internal date is 2025 and it is provisional.",
+    "current_operation_verified": false,
+    "verified_2027_operating_schedule": false,
+    "district": "성북구",
+    "audit_status_original": null,
+    "coverage_class": "historical_official_reference_only",
+    "route_variant_count": 0,
+    "stop_record_count": 0,
+    "recorded_fact_count": 4,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "kumsung",
+    "school_name": "금성초",
+    "checked_at": "2026-10-15T14:08:15+00:00",
+    "overall_assessment": "Official 2026 term and vacation notices verified; detailed HWP routes inaccessible.",
+    "official_current_year_route_verified": false,
+    "grade_restrictions": "Not established unless a cited source below states otherwise.",
+    "unresolved_questions": [
+      "Acquire readable final HWP attachments. Keep term/vacation data separate."
+    ],
+    "negative_findings": [
+      "No source was authenticated through a private Naver cafe or login-only community.",
+      "Missing or blocked evidence does not mean the school has no bus."
+    ],
+    "source_ids": [
+      "kumsung_term_notice",
+      "kumsung_term_download",
+      "kumsung_vacation_notice",
+      "kumsung_vacation_download"
+    ],
+    "fact_ids": [
+      "kumsung_term_notice__statement_1",
+      "kumsung_vacation_notice__statement_1",
+      "kumsung_vacation_notice__restriction_1"
+    ],
+    "summary": "Official 2026 term and vacation notices verified; detailed HWP routes inaccessible.",
+    "current_operation_verified": false,
+    "verified_2027_operating_schedule": false,
+    "district": "중랑구",
+    "audit_status_original": null,
+    "coverage_class": "official_notice_read_routes_inaccessible",
+    "route_variant_count": 0,
+    "stop_record_count": 0,
+    "recorded_fact_count": 3,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "daegwang",
+    "school_name": "대광초",
+    "checked_at": "2026-10-15T14:08:15+00:00",
+    "overall_assessment": "Official site blocked; current secondary timetable lead only.",
+    "official_current_year_route_verified": false,
+    "grade_restrictions": "Not established unless a cited source below states otherwise.",
+    "unresolved_questions": [
+      "Find the official 2026.03 timetable and reconcile 13 morning routes with the unverified existing snapshot."
+    ],
+    "negative_findings": [
+      "No source was authenticated through a private Naver cafe or login-only community.",
+      "Missing or blocked evidence does not mean the school has no bus."
+    ],
+    "source_ids": [
+      "daegwang_home",
+      "daegwang_secondary2026",
+      "daegwang_blog2026"
+    ],
+    "fact_ids": [
+      "daegwang_secondary2026__statement_1",
+      "daegwang_blog2026__statement_1"
+    ],
+    "summary": "Official site blocked; current secondary timetable lead only.",
+    "current_operation_verified": false,
+    "verified_2027_operating_schedule": false,
+    "district": "성북구",
+    "audit_status_original": null,
+    "coverage_class": "primary_inaccessible_secondary_or_no_facts",
+    "route_variant_count": 0,
+    "stop_record_count": 0,
+    "recorded_fact_count": 2,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "donggwang",
+    "school_name": "동광초",
+    "checked_at": "2026-10-15T14:08:15+00:00",
+    "overall_assessment": "2026 school-route notice and procurement leads located; final operating stops unavailable.",
+    "official_current_year_route_verified": false,
+    "grade_restrictions": "Not established unless a cited source below states otherwise.",
+    "unresolved_questions": [
+      "Read the actual 2026-01-30 route attachment and any later update."
+    ],
+    "negative_findings": [
+      "No source was authenticated through a private Naver cafe or login-only community.",
+      "Missing or blocked evidence does not mean the school has no bus."
+    ],
+    "source_ids": [
+      "donggwang_home",
+      "donggwang_secondary2026",
+      "donggwang_tender_index",
+      "donggwang_earlier_tender"
+    ],
+    "fact_ids": [
+      "donggwang_secondary2026__statement_1",
+      "donggwang_tender_index__statement_1",
+      "donggwang_earlier_tender__statement_1"
+    ],
+    "summary": "2026 school-route notice and procurement leads located; final operating stops unavailable.",
+    "current_operation_verified": false,
+    "verified_2027_operating_schedule": false,
+    "district": "금천구",
+    "audit_status_original": null,
+    "coverage_class": "historical_official_reference_only",
+    "route_variant_count": 0,
+    "stop_record_count": 0,
+    "recorded_fact_count": 3,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "dongbuk",
+    "school_name": "동북초",
+    "checked_at": "2026-10-15T14:08:15+00:00",
+    "overall_assessment": "2026 provisional official spreadsheet identified; content and final routes not retrieved.",
+    "official_current_year_route_verified": false,
+    "grade_restrictions": "Not established unless a cited source below states otherwise.",
+    "unresolved_questions": [
+      "Obtain readable XLSX and final school-issued route schedule; provisional tender is insufficient."
+    ],
+    "negative_findings": [
+      "No source was authenticated through a private Naver cafe or login-only community.",
+      "Missing or blocked evidence does not mean the school has no bus."
+    ],
+    "source_ids": [
+      "dongbuk_home",
+      "dongbuk_tender_index",
+      "dongbuk_provisional_xlsx"
+    ],
+    "fact_ids": [
+      "dongbuk_tender_index__statement_1",
+      "dongbuk_provisional_xlsx__statement_1"
+    ],
+    "summary": "2026 provisional official spreadsheet identified; content and final routes not retrieved.",
+    "current_operation_verified": false,
+    "verified_2027_operating_schedule": false,
+    "district": "도봉구",
+    "audit_status_original": null,
+    "coverage_class": "primary_inaccessible_secondary_or_no_facts",
+    "route_variant_count": 0,
+    "stop_record_count": 0,
+    "recorded_fact_count": 2,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "dongsan",
+    "school_name": "동산초",
+    "checked_at": "2026-10-15T14:08:15+00:00",
+    "overall_assessment": "Official route page blocked; secondary procurement and historical leads only.",
+    "official_current_year_route_verified": false,
+    "grade_restrictions": "Not established unless a cited source below states otherwise.",
+    "unresolved_questions": [
+      "Obtain final 2026 route table; do not infer route count from vehicles hired."
+    ],
+    "negative_findings": [
+      "No source was authenticated through a private Naver cafe or login-only community.",
+      "Missing or blocked evidence does not mean the school has no bus."
+    ],
+    "source_ids": [
+      "dongsan_bus",
+      "dongsan_tender_index",
+      "dongsan_historical"
+    ],
+    "fact_ids": [
+      "dongsan_tender_index__statement_1",
+      "dongsan_historical__statement_1"
+    ],
+    "summary": "Official route page blocked; secondary procurement and historical leads only.",
+    "current_operation_verified": false,
+    "verified_2027_operating_schedule": false,
+    "district": "중구",
+    "audit_status_original": null,
+    "coverage_class": "primary_inaccessible_secondary_or_no_facts",
+    "route_variant_count": 0,
+    "stop_record_count": 0,
+    "recorded_fact_count": 2,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "lila",
+    "school_name": "리라초",
+    "checked_at": "2026-10-15T14:08:15+00:00",
+    "overall_assessment": "Readable 2026 official planned-route PDF; final school webpage inaccessible.",
+    "official_current_year_route_verified": false,
+    "grade_restrictions": "Not established unless a cited source below states otherwise.",
+    "unresolved_questions": [
+      "Find the final February-or-later version before publishing route promises."
+    ],
+    "negative_findings": [
+      "No source was authenticated through a private Naver cafe or login-only community.",
+      "Missing or blocked evidence does not mean the school has no bus."
+    ],
+    "source_ids": [
+      "lila_live",
+      "lila_tender_routes",
+      "lila_historical"
+    ],
+    "fact_ids": [
+      "lila_tender_routes__statement_1",
+      "lila_tender_routes__statement_2",
+      "lila_tender_routes__statement_3",
+      "lila_tender_routes__restriction_1",
+      "lila_historical__statement_1"
+    ],
+    "summary": "Readable 2026 official planned-route PDF; final school webpage inaccessible.",
+    "current_operation_verified": false,
+    "verified_2027_operating_schedule": false,
+    "district": "중구",
+    "audit_status_original": null,
+    "coverage_class": "procurement_plan_read_not_live_verified",
+    "route_variant_count": 0,
+    "stop_record_count": 0,
+    "recorded_fact_count": 5,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "maewon",
+    "school_name": "매원초",
+    "checked_at": "2026-10-15T14:08:15+00:00",
+    "overall_assessment": "2026 secondary route details and provisional official HWP lead found; primary current stops not verified.",
+    "official_current_year_route_verified": false,
+    "grade_restrictions": "Not established unless a cited source below states otherwise.",
+    "unresolved_questions": [
+      "Obtain final current school table; verify 07:27 and all stop rows independently."
+    ],
+    "negative_findings": [
+      "No source was authenticated through a private Naver cafe or login-only community.",
+      "Missing or blocked evidence does not mean the school has no bus."
+    ],
+    "source_ids": [
+      "maewon_home",
+      "maewon_bus",
+      "maewon_secondary2026",
+      "maewon_tender_index",
+      "maewon_provisional_hwp",
+      "maewon_conditions_hwp",
+      "maewon_historical"
+    ],
+    "fact_ids": [
+      "maewon_secondary2026__statement_1",
+      "maewon_tender_index__statement_1",
+      "maewon_historical__statement_1"
+    ],
+    "summary": "2026 secondary route details and provisional official HWP lead found; primary current stops not verified.",
+    "current_operation_verified": false,
+    "verified_2027_operating_schedule": false,
+    "district": "성북구",
+    "audit_status_original": null,
+    "coverage_class": "primary_inaccessible_secondary_or_no_facts",
+    "route_variant_count": 0,
+    "stop_record_count": 0,
+    "recorded_fact_count": 3,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "myongji",
+    "school_name": "명지초",
+    "checked_at": "2026-10-15T14:08:15+00:00",
+    "overall_assessment": "Full official live-page extraction; effective schoolyear unstated and earlier tender differs.",
+    "official_current_year_route_verified": false,
+    "grade_restrictions": "Not established unless a cited source below states otherwise.",
+    "unresolved_questions": [
+      "Confirm final operating year before labelling all 43 variants current 2026. Preserve weekday/round distinctions."
+    ],
+    "negative_findings": [
+      "No source was authenticated through a private Naver cafe or login-only community.",
+      "Missing or blocked evidence does not mean the school has no bus."
+    ],
+    "source_ids": [
+      "myongji_morning",
+      "myongji_home_weekdays",
+      "myongji_home_wed",
+      "myongji_script",
+      "myongji_tender_routes"
+    ],
+    "fact_ids": [
+      "myongji_morning__statement_1",
+      "myongji_morning__statement_2",
+      "myongji_morning__restriction_1",
+      "myongji_home_weekdays__statement_1",
+      "myongji_home_wed__statement_1",
+      "myongji_script__statement_1",
+      "myongji_tender_routes__statement_1"
+    ],
+    "summary": "Full official live-page extraction; effective schoolyear unstated and earlier tender differs.",
+    "current_operation_verified": false,
+    "verified_2027_operating_schedule": false,
+    "district": "서대문구",
+    "audit_status_original": null,
+    "coverage_class": "published_timetable_read_not_live_verified",
+    "route_variant_count": 43,
+    "stop_record_count": 506,
+    "recorded_fact_count": 7,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "myongji-live-page",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "sangmyung-ae",
+    "school_name": "상명사대부초",
+    "district": "종로구",
+    "audit_status": "secondary_unverified",
+    "collection_date": "2026-10-15",
+    "school_years_searched": [
+      2026,
+      2027
+    ],
+    "source_ids": [
+      "sangmyung-ae-home",
+      "secondary-jungbu",
+      "naver-public",
+      "naver-cafe",
+      "sangmyung-review"
+    ],
+    "fact_ids": [
+      "sangmyung-bus-lead"
+    ],
+    "finding": "Official homepage blocked; historical public review and current secondary article located, no official route/timetable read.",
+    "current_operation_verified": false,
+    "current_2026_timetable_document_verified": false,
+    "route_coverage": "no directly verified current stop-level timetable",
+    "confidence": "low_for_current_service",
+    "unresolved": [
+      "Do not confuse 종로 상명사대부초 with 노원 상명초.",
+      "Current stop/time and 2027 service unknown."
+    ],
+    "search_scope": "School name + 통학버스/스쿨버스/노선/2026/2027; official homepage; public search/blog/community leads; procurement attachments where found.",
+    "negative_findings": [
+      "No 2027 schoolbus timetable verified in this pass.",
+      "Naver public blog/cafe access restricted by retrieval robots policy."
+    ],
+    "existing_snapshot": {
+      "source_url": "https://deatemom-saripcho-map.vercel.app/",
+      "snapshot_date": "2026-08-31",
+      "route_object_count": 17,
+      "noBus": false,
+      "evidence_status": "secondary_unverified",
+      "note": "Read-only comparison inventory; route-object count is not a bus or route verification."
+    },
+    "summary": "Official homepage blocked; historical public review and current secondary article located, no official route/timetable read.",
+    "unresolved_questions": [
+      "Do not confuse 종로 상명사대부초 with 노원 상명초.",
+      "Current stop/time and 2027 service unknown."
+    ],
+    "verified_2027_operating_schedule": false,
+    "audit_status_original": "secondary_unverified",
+    "coverage_class": "primary_inaccessible_secondary_or_no_facts",
+    "route_variant_count": 0,
+    "stop_record_count": 0,
+    "recorded_fact_count": 1,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "sangmyeong",
+    "school_name": "상명초",
+    "district": "노원구",
+    "audit_status": "not_found",
+    "collection_date": "2026-10-15",
+    "school_years_searched": [
+      2026,
+      2027
+    ],
+    "source_ids": [
+      "sangmyeong-home",
+      "naver-public",
+      "naver-cafe",
+      "sangmyeong-promo",
+      "sangmyeong-channel",
+      "sangmyeong-news2019"
+    ],
+    "fact_ids": [],
+    "finding": "School promotional site and official admission channel accessible, but current commute document not found; main homepage blocked.",
+    "current_operation_verified": false,
+    "current_2026_timetable_document_verified": false,
+    "route_coverage": "no directly verified current stop-level timetable",
+    "confidence": "low_for_current_service",
+    "unresolved": [
+      "2019 proposed Gangnam route is historical, not current evidence.",
+      "Municipal bus stops named 상명초 were rejected as schoolbus evidence."
+    ],
+    "search_scope": "School name + 통학버스/스쿨버스/노선/2026/2027; official homepage; public search/blog/community leads; procurement attachments where found.",
+    "negative_findings": [
+      "No 2027 schoolbus timetable verified in this pass.",
+      "Naver public blog/cafe access restricted by retrieval robots policy."
+    ],
+    "existing_snapshot": {
+      "source_url": "https://deatemom-saripcho-map.vercel.app/",
+      "snapshot_date": "2026-08-31",
+      "route_object_count": 27,
+      "noBus": false,
+      "evidence_status": "secondary_unverified",
+      "note": "Read-only comparison inventory; route-object count is not a bus or route verification."
+    },
+    "summary": "School promotional site and official admission channel accessible, but current commute document not found; main homepage blocked.",
+    "unresolved_questions": [
+      "2019 proposed Gangnam route is historical, not current evidence.",
+      "Municipal bus stops named 상명초 were rejected as schoolbus evidence."
+    ],
+    "verified_2027_operating_schedule": false,
+    "audit_status_original": "not_found",
+    "coverage_class": "no_current_commute_document_found",
+    "route_variant_count": 0,
+    "stop_record_count": 0,
+    "recorded_fact_count": 0,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "seoul36",
+    "school_name": "서울삼육초",
+    "district": "동대문구",
+    "audit_status": "inaccessible",
+    "collection_date": "2026-10-15",
+    "school_years_searched": [
+      2026,
+      2027
+    ],
+    "source_ids": [
+      "seoul36-home",
+      "secondary-gwangjin",
+      "naver-public",
+      "naver-cafe",
+      "seoul36-directory",
+      "seoul36-tender-index",
+      "seoul36-spec"
+    ],
+    "fact_ids": [
+      "seoul36-count-lead"
+    ],
+    "finding": "2026 tender and exact official specification link found; file unavailable. Tender index also lists 2025 route workbook as reference.",
+    "current_operation_verified": false,
+    "current_2026_timetable_document_verified": false,
+    "route_coverage": "no directly verified current stop-level timetable",
+    "confidence": "low_for_current_service",
+    "unresolved": [
+      "2025 reference routes cannot become 2026 current routes.",
+      "No current outbound/grade/day restrictions verified."
+    ],
+    "search_scope": "School name + 통학버스/스쿨버스/노선/2026/2027; official homepage; public search/blog/community leads; procurement attachments where found.",
+    "negative_findings": [
+      "No 2027 schoolbus timetable verified in this pass.",
+      "Naver public blog/cafe access restricted by retrieval robots policy."
+    ],
+    "existing_snapshot": {
+      "source_url": "https://deatemom-saripcho-map.vercel.app/",
+      "snapshot_date": "2026-08-31",
+      "route_object_count": 28,
+      "noBus": false,
+      "evidence_status": "secondary_unverified",
+      "note": "Read-only comparison inventory; route-object count is not a bus or route verification."
+    },
+    "summary": "2026 tender and exact official specification link found; file unavailable. Tender index also lists 2025 route workbook as reference.",
+    "unresolved_questions": [
+      "2025 reference routes cannot become 2026 current routes.",
+      "No current outbound/grade/day restrictions verified."
+    ],
+    "verified_2027_operating_schedule": false,
+    "audit_status_original": "inaccessible",
+    "coverage_class": "primary_inaccessible_secondary_or_no_facts",
+    "route_variant_count": 0,
+    "stop_record_count": 0,
+    "recorded_fact_count": 1,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "sunil",
+    "school_name": "선일초",
+    "district": "은평구",
+    "audit_status": "inaccessible",
+    "collection_date": "2026-10-15",
+    "school_years_searched": [
+      2026,
+      2027
+    ],
+    "source_ids": [
+      "sunil-home",
+      "secondary-west",
+      "naver-public",
+      "naver-cafe",
+      "sunil-tender-index",
+      "sunil-oldroutes",
+      "sunil-plan-transcript"
+    ],
+    "fact_ids": [
+      "sunil-planned-times"
+    ],
+    "finding": "2026 tender has explicitly 2025-reference workbook; workbook unparsed. Secondary planning schedule found only.",
+    "current_operation_verified": false,
+    "current_2026_timetable_document_verified": false,
+    "route_coverage": "no directly verified current stop-level timetable",
+    "confidence": "low_for_current_service",
+    "unresolved": [
+      "Secondary reports a pupil-login route app; no pupil data entered and no access attempted.",
+      "Failed-tender metadata prevents current-operation inference."
+    ],
+    "search_scope": "School name + 통학버스/스쿨버스/노선/2026/2027; official homepage; public search/blog/community leads; procurement attachments where found.",
+    "negative_findings": [
+      "No 2027 schoolbus timetable verified in this pass.",
+      "Naver public blog/cafe access restricted by retrieval robots policy."
+    ],
+    "existing_snapshot": {
+      "source_url": "https://deatemom-saripcho-map.vercel.app/",
+      "snapshot_date": "2026-08-31",
+      "route_object_count": 39,
+      "noBus": false,
+      "evidence_status": "secondary_unverified",
+      "note": "Read-only comparison inventory; route-object count is not a bus or route verification."
+    },
+    "summary": "2026 tender has explicitly 2025-reference workbook; workbook unparsed. Secondary planning schedule found only.",
+    "unresolved_questions": [
+      "Secondary reports a pupil-login route app; no pupil data entered and no access attempted.",
+      "Failed-tender metadata prevents current-operation inference."
+    ],
+    "verified_2027_operating_schedule": false,
+    "audit_status_original": "inaccessible",
+    "coverage_class": "historical_official_reference_only",
+    "route_variant_count": 0,
+    "stop_record_count": 0,
+    "recorded_fact_count": 1,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "sungdong",
+    "school_name": "성동초",
+    "district": "광진구",
+    "audit_status": "inaccessible",
+    "collection_date": "2026-10-15",
+    "school_years_searched": [
+      2026,
+      2027
+    ],
+    "source_ids": [
+      "sungdong-home",
+      "secondary-gwangjin",
+      "naver-public",
+      "naver-cafe",
+      "sungdong-tender-index",
+      "sungdong-routes",
+      "sungdong-kiosk"
+    ],
+    "fact_ids": [
+      "sungdong-count-lead"
+    ],
+    "finding": "Exact 2026 official timetable workbook found but unsupported; school-branded kiosk route button not extractable.",
+    "current_operation_verified": false,
+    "current_2026_timetable_document_verified": false,
+    "route_coverage": "no directly verified current stop-level timetable",
+    "confidence": "low_for_current_service",
+    "unresolved": [
+      "Secondary claims timetable effective 2026-03-03, not directly verified.",
+      "School-branded host affiliation not independently verified."
+    ],
+    "search_scope": "School name + 통학버스/스쿨버스/노선/2026/2027; official homepage; public search/blog/community leads; procurement attachments where found.",
+    "negative_findings": [
+      "No 2027 schoolbus timetable verified in this pass.",
+      "Naver public blog/cafe access restricted by retrieval robots policy."
+    ],
+    "existing_snapshot": {
+      "source_url": "https://deatemom-saripcho-map.vercel.app/",
+      "snapshot_date": "2026-08-31",
+      "route_object_count": 24,
+      "noBus": false,
+      "evidence_status": "secondary_unverified",
+      "note": "Read-only comparison inventory; route-object count is not a bus or route verification."
+    },
+    "summary": "Exact 2026 official timetable workbook found but unsupported; school-branded kiosk route button not extractable.",
+    "unresolved_questions": [
+      "Secondary claims timetable effective 2026-03-03, not directly verified.",
+      "School-branded host affiliation not independently verified."
+    ],
+    "verified_2027_operating_schedule": false,
+    "audit_status_original": "inaccessible",
+    "coverage_class": "primary_inaccessible_secondary_or_no_facts",
+    "route_variant_count": 0,
+    "stop_record_count": 0,
+    "recorded_fact_count": 1,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "sungshin",
+    "school_name": "성신초",
+    "district": "성북구",
+    "audit_status": "inaccessible",
+    "collection_date": "2026-10-15",
+    "school_years_searched": [
+      2026,
+      2027
+    ],
+    "source_ids": [
+      "sungshin-home",
+      "secondary-seongbuk",
+      "naver-public",
+      "naver-cafe",
+      "sungshin-tender-index",
+      "sungshin-routes",
+      "sungshin-blog2026"
+    ],
+    "fact_ids": [
+      "sungshin-count-lead"
+    ],
+    "finding": "Exact official 26학년도 학교버스 노선도 HWP found; unsupported format.",
+    "current_operation_verified": false,
+    "current_2026_timetable_document_verified": false,
+    "route_coverage": "no directly verified current stop-level timetable",
+    "confidence": "low_for_current_service",
+    "unresolved": [
+      "No route/stop/time read from HWP.",
+      "Secondary note about non-contiguous stop numbering must not be repaired by inventing missing stops."
+    ],
+    "search_scope": "School name + 통학버스/스쿨버스/노선/2026/2027; official homepage; public search/blog/community leads; procurement attachments where found.",
+    "negative_findings": [
+      "No 2027 schoolbus timetable verified in this pass.",
+      "Naver public blog/cafe access restricted by retrieval robots policy."
+    ],
+    "existing_snapshot": {
+      "source_url": "https://deatemom-saripcho-map.vercel.app/",
+      "snapshot_date": "2026-08-31",
+      "route_object_count": 26,
+      "noBus": false,
+      "evidence_status": "secondary_unverified",
+      "note": "Read-only comparison inventory; route-object count is not a bus or route verification."
+    },
+    "summary": "Exact official 26학년도 학교버스 노선도 HWP found; unsupported format.",
+    "unresolved_questions": [
+      "No route/stop/time read from HWP.",
+      "Secondary note about non-contiguous stop numbering must not be repaired by inventing missing stops."
+    ],
+    "verified_2027_operating_schedule": false,
+    "audit_status_original": "inaccessible",
+    "coverage_class": "primary_inaccessible_secondary_or_no_facts",
+    "route_variant_count": 0,
+    "stop_record_count": 0,
+    "recorded_fact_count": 1,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "sejong",
+    "school_name": "세종초",
+    "district": "광진구",
+    "audit_status": "inaccessible",
+    "collection_date": "2026-10-15",
+    "school_years_searched": [
+      2026,
+      2027
+    ],
+    "source_ids": [
+      "sejong-home",
+      "secondary-gwangjin",
+      "naver-public",
+      "naver-cafe",
+      "sejong-tender-index",
+      "sejong-spec",
+      "sejong-admission2024"
+    ],
+    "fact_ids": [
+      "sejong-count-lead"
+    ],
+    "finding": "2026 official procurement specification HWP found, unparsed; 2024 official admission page is historical only.",
+    "current_operation_verified": false,
+    "current_2026_timetable_document_verified": false,
+    "route_coverage": "no directly verified current stop-level timetable",
+    "confidence": "low_for_current_service",
+    "unresolved": [
+      "Nine routes is a secondary lead, not current verified count."
+    ],
+    "search_scope": "School name + 통학버스/스쿨버스/노선/2026/2027; official homepage; public search/blog/community leads; procurement attachments where found.",
+    "negative_findings": [
+      "No 2027 schoolbus timetable verified in this pass.",
+      "Naver public blog/cafe access restricted by retrieval robots policy."
+    ],
+    "existing_snapshot": {
+      "source_url": "https://deatemom-saripcho-map.vercel.app/",
+      "snapshot_date": "2026-08-31",
+      "route_object_count": 17,
+      "noBus": false,
+      "evidence_status": "secondary_unverified",
+      "note": "Read-only comparison inventory; route-object count is not a bus or route verification."
+    },
+    "summary": "2026 official procurement specification HWP found, unparsed; 2024 official admission page is historical only.",
+    "unresolved_questions": [
+      "Nine routes is a secondary lead, not current verified count."
+    ],
+    "verified_2027_operating_schedule": false,
+    "audit_status_original": "inaccessible",
+    "coverage_class": "historical_official_reference_only",
+    "route_variant_count": 0,
+    "stop_record_count": 0,
+    "recorded_fact_count": 1,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "soongeui",
+    "school_name": "숭의초",
+    "district": "중구",
+    "audit_status": "inaccessible",
+    "collection_date": "2026-10-15",
+    "school_years_searched": [
+      2026,
+      2027
+    ],
+    "source_ids": [
+      "soongeui-home",
+      "secondary-jungbu",
+      "naver-public",
+      "naver-cafe",
+      "soongeui-busline"
+    ],
+    "fact_ids": [],
+    "finding": "Official homepage security filter; external busline lead timed out.",
+    "current_operation_verified": false,
+    "current_2026_timetable_document_verified": false,
+    "route_coverage": "no directly verified current stop-level timetable",
+    "confidence": "low_for_current_service",
+    "unresolved": [
+      "No current stop/time facts recovered.",
+      "Do not infer no service from inaccessible map."
+    ],
+    "search_scope": "School name + 통학버스/스쿨버스/노선/2026/2027; official homepage; public search/blog/community leads; procurement attachments where found.",
+    "negative_findings": [
+      "No 2027 schoolbus timetable verified in this pass.",
+      "Naver public blog/cafe access restricted by retrieval robots policy."
+    ],
+    "existing_snapshot": {
+      "source_url": "https://deatemom-saripcho-map.vercel.app/",
+      "snapshot_date": "2026-08-31",
+      "route_object_count": 24,
+      "noBus": false,
+      "evidence_status": "secondary_unverified",
+      "note": "Read-only comparison inventory; route-object count is not a bus or route verification."
+    },
+    "summary": "Official homepage security filter; external busline lead timed out.",
+    "unresolved_questions": [
+      "No current stop/time facts recovered.",
+      "Do not infer no service from inaccessible map."
+    ],
+    "verified_2027_operating_schedule": false,
+    "audit_status_original": "inaccessible",
+    "coverage_class": "primary_inaccessible_secondary_or_no_facts",
+    "route_variant_count": 0,
+    "stop_record_count": 0,
+    "recorded_fact_count": 0,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "shinkwang",
+    "school_name": "신광초",
+    "district": "용산구",
+    "audit_status": "inaccessible",
+    "collection_date": "2026-10-15",
+    "school_years_searched": [
+      2026,
+      2027
+    ],
+    "source_ids": [
+      "shinkwang-home",
+      "secondary-jungbu",
+      "naver-public",
+      "naver-cafe",
+      "shinkwang-tender-index",
+      "shinkwang-routes"
+    ],
+    "fact_ids": [],
+    "finding": "Exact 2026 official route HWP resolved but unparsed; homepage retrieval failed.",
+    "current_operation_verified": false,
+    "current_2026_timetable_document_verified": false,
+    "route_coverage": "no directly verified current stop-level timetable",
+    "confidence": "low_for_current_service",
+    "unresolved": [
+      "No current stop/time/day restrictions recovered.",
+      "Tender listing is not proof of awarded/current service."
+    ],
+    "search_scope": "School name + 통학버스/스쿨버스/노선/2026/2027; official homepage; public search/blog/community leads; procurement attachments where found.",
+    "negative_findings": [
+      "No 2027 schoolbus timetable verified in this pass.",
+      "Naver public blog/cafe access restricted by retrieval robots policy."
+    ],
+    "existing_snapshot": {
+      "source_url": "https://deatemom-saripcho-map.vercel.app/",
+      "snapshot_date": "2026-08-31",
+      "route_object_count": 11,
+      "noBus": false,
+      "evidence_status": "secondary_unverified",
+      "note": "Read-only comparison inventory; route-object count is not a bus or route verification."
+    },
+    "summary": "Exact 2026 official route HWP resolved but unparsed; homepage retrieval failed.",
+    "unresolved_questions": [
+      "No current stop/time/day restrictions recovered.",
+      "Tender listing is not proof of awarded/current service."
+    ],
+    "verified_2027_operating_schedule": false,
+    "audit_status_original": "inaccessible",
+    "coverage_class": "primary_inaccessible_secondary_or_no_facts",
+    "route_variant_count": 0,
+    "stop_record_count": 0,
+    "recorded_fact_count": 0,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "younghoon",
+    "school_name": "영훈초",
+    "district": "강북구",
+    "audit_status": "official_verified",
+    "collection_date": "2026-10-15",
+    "school_years_searched": [
+      2026,
+      2027
+    ],
+    "source_ids": [
+      "secondary-seongbuk",
+      "naver-public",
+      "naver-cafe",
+      "younghoon-post",
+      "younghoon-currentpdf",
+      "younghoon-oldpdf",
+      "younghoon-faq",
+      "younghoon-blog2026"
+    ],
+    "fact_ids": [
+      "yh-revision",
+      "yh-routes",
+      "yh-babytiger-inbound",
+      "yh-babytiger-outbound",
+      "yh-change-babytiger",
+      "yh-change-gyeonggi",
+      "yh-weekday-policy",
+      "yh-wednesday-policy",
+      "yh-aftercare-policy",
+      "yh-capacity"
+    ],
+    "finding": "Official post links 2026 timetable filename dated 2026-09-15; 12 route labels, distinct inbound/outbound, and selected changes verified.",
+    "current_operation_verified": false,
+    "current_2026_timetable_document_verified": true,
+    "route_coverage": "selected facts only; not a complete route import",
+    "confidence": "high_document_only",
+    "unresolved": [
+      "Document revision is not a confirmed operational effective date.",
+      "Stray 2024-12-12 header retained as ambiguity.",
+      "FAQ Wednesday 14:00 departure does not authorize synthetic per-stop times.",
+      "No 2027 commute document verified."
+    ],
+    "search_scope": "School name + 통학버스/스쿨버스/노선/2026/2027; official homepage; public search/blog/community leads; procurement attachments where found.",
+    "negative_findings": [
+      "No 2027 schoolbus timetable verified in this pass.",
+      "Naver public blog/cafe access restricted by retrieval robots policy."
+    ],
+    "existing_snapshot": {
+      "source_url": "https://deatemom-saripcho-map.vercel.app/",
+      "snapshot_date": "2026-08-31",
+      "route_object_count": 12,
+      "noBus": false,
+      "evidence_status": "secondary_unverified",
+      "note": "Read-only comparison inventory; route-object count is not a bus or route verification."
+    },
+    "summary": "Official post links 2026 timetable filename dated 2026-09-15; 12 route labels, distinct inbound/outbound, and selected changes verified.",
+    "unresolved_questions": [
+      "Document revision is not a confirmed operational effective date.",
+      "Stray 2024-12-12 header retained as ambiguity.",
+      "FAQ Wednesday 14:00 departure does not authorize synthetic per-stop times.",
+      "No 2027 commute document verified."
+    ],
+    "verified_2027_operating_schedule": false,
+    "audit_status_original": "official_verified",
+    "coverage_class": "published_timetable_read_not_live_verified",
+    "route_variant_count": 0,
+    "stop_record_count": 0,
+    "recorded_fact_count": 10,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "younghoon-revision",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "yale",
+    "school_name": "예일초",
+    "district": "은평구",
+    "audit_status": "official_verified",
+    "collection_date": "2026-10-15",
+    "school_years_searched": [
+      2026,
+      2027
+    ],
+    "source_ids": [
+      "yale-home",
+      "secondary-west",
+      "naver-public",
+      "naver-cafe",
+      "yale-tender-index",
+      "yale-notice"
+    ],
+    "fact_ids": [
+      "yale-routes",
+      "yale-frequency",
+      "yale-newcomer-limit",
+      "yale-firststops",
+      "yale-time-conflict",
+      "yale-date-conflict"
+    ],
+    "finding": "2026 official procurement PDF has 12-route inbound plan and new-entry exclusion for blue stops.",
+    "current_operation_verified": false,
+    "current_2026_timetable_document_verified": false,
+    "route_coverage": "selected facts only; not a complete route import",
+    "confidence": "high_document_only",
+    "unresolved": [
+      "Blue stop identity unresolved; no stop-level eligibility claims.",
+      "Contract date typo and non-monotonic route3 source times unresolved.",
+      "Planning document cannot prove present operation."
+    ],
+    "search_scope": "School name + 통학버스/스쿨버스/노선/2026/2027; official homepage; public search/blog/community leads; procurement attachments where found.",
+    "negative_findings": [
+      "No 2027 schoolbus timetable verified in this pass.",
+      "Naver public blog/cafe access restricted by retrieval robots policy."
+    ],
+    "existing_snapshot": {
+      "source_url": "https://deatemom-saripcho-map.vercel.app/",
+      "snapshot_date": "2026-08-31",
+      "route_object_count": 13,
+      "noBus": false,
+      "evidence_status": "secondary_unverified",
+      "note": "Read-only comparison inventory; route-object count is not a bus or route verification."
+    },
+    "summary": "2026 official procurement PDF has 12-route inbound plan and new-entry exclusion for blue stops.",
+    "unresolved_questions": [
+      "Blue stop identity unresolved; no stop-level eligibility claims.",
+      "Contract date typo and non-monotonic route3 source times unresolved.",
+      "Planning document cannot prove present operation."
+    ],
+    "verified_2027_operating_schedule": false,
+    "audit_status_original": "official_verified",
+    "coverage_class": "procurement_plan_read_not_live_verified",
+    "route_variant_count": 0,
+    "stop_record_count": 0,
+    "recorded_fact_count": 6,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "yale-color-restriction",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "uchon",
+    "school_name": "우촌초",
+    "district": "성북구",
+    "audit_status": "official_verified",
+    "collection_date": "2026-10-15",
+    "school_years_searched": [
+      2026,
+      2027
+    ],
+    "source_ids": [
+      "uchon-home",
+      "secondary-seongbuk",
+      "naver-public",
+      "naver-cafe",
+      "uchon-tender-index",
+      "uchon-retender-index",
+      "uchon-notice",
+      "uchon-retender",
+      "uchon-old-wednesday",
+      "uchon-blog2026",
+      "uchon-official-route-lead"
+    ],
+    "fact_ids": [
+      "uchon-fleet",
+      "uchon-period",
+      "uchon-service-days",
+      "uchon-count-lead"
+    ],
+    "finding": "2026 original official tender verifies planned fleet/calendar; later re-tender discovered but unreadable; attached route images explicitly 2025.",
+    "current_operation_verified": false,
+    "current_2026_timetable_document_verified": false,
+    "route_coverage": "no directly verified current stop-level timetable",
+    "confidence": "high_document_only",
+    "unresolved": [
+      "Original tender may be superseded; no current 2026 timetable verified.",
+      "Separate Wednesday and other-weekday outbound maps exist as 2025 leads.",
+      "Do not infer outbound by reversing inbound."
+    ],
+    "search_scope": "School name + 통학버스/스쿨버스/노선/2026/2027; official homepage; public search/blog/community leads; procurement attachments where found.",
+    "negative_findings": [
+      "No 2027 schoolbus timetable verified in this pass.",
+      "Naver public blog/cafe access restricted by retrieval robots policy."
+    ],
+    "existing_snapshot": {
+      "source_url": "https://deatemom-saripcho-map.vercel.app/",
+      "snapshot_date": "2026-08-31",
+      "route_object_count": 42,
+      "noBus": false,
+      "evidence_status": "secondary_unverified",
+      "note": "Read-only comparison inventory; route-object count is not a bus or route verification."
+    },
+    "summary": "2026 original official tender verifies planned fleet/calendar; later re-tender discovered but unreadable; attached route images explicitly 2025.",
+    "unresolved_questions": [
+      "Original tender may be superseded; no current 2026 timetable verified.",
+      "Separate Wednesday and other-weekday outbound maps exist as 2025 leads.",
+      "Do not infer outbound by reversing inbound."
+    ],
+    "verified_2027_operating_schedule": false,
+    "audit_status_original": "official_verified",
+    "coverage_class": "procurement_plan_read_not_live_verified",
+    "route_variant_count": 0,
+    "stop_record_count": 0,
+    "recorded_fact_count": 4,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "uchon-retender",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "unhyun",
+    "school_name": "운현초",
+    "district": "종로구",
+    "audit_status": "secondary_unverified",
+    "collection_date": "2026-10-15",
+    "school_years_searched": [
+      2026,
+      2027
+    ],
+    "source_ids": [
+      "unhyun-home",
+      "secondary-jungbu",
+      "naver-public",
+      "naver-cafe"
+    ],
+    "fact_ids": [
+      "unhyun-nobus-lead"
+    ],
+    "finding": "Secondary admission-guide attribution says no schoolbus; original official guide inaccessible.",
+    "current_operation_verified": false,
+    "current_2026_timetable_document_verified": false,
+    "route_coverage": "no directly verified current stop-level timetable",
+    "confidence": "low_for_current_service",
+    "unresolved": [
+      "Keep noBus as unconfirmed secondary claim, not official verified false/true.",
+      "2027 service unknown."
+    ],
+    "search_scope": "School name + 통학버스/스쿨버스/노선/2026/2027; official homepage; public search/blog/community leads; procurement attachments where found.",
+    "negative_findings": [
+      "No 2027 schoolbus timetable verified in this pass.",
+      "Naver public blog/cafe access restricted by retrieval robots policy."
+    ],
+    "existing_snapshot": {
+      "source_url": "https://deatemom-saripcho-map.vercel.app/",
+      "snapshot_date": "2026-08-31",
+      "route_object_count": 0,
+      "noBus": true,
+      "evidence_status": "secondary_unverified",
+      "note": "Read-only comparison inventory; route-object count is not a bus or route verification."
+    },
+    "summary": "Secondary admission-guide attribution says no schoolbus; original official guide inaccessible.",
+    "unresolved_questions": [
+      "Keep noBus as unconfirmed secondary claim, not official verified false/true.",
+      "2027 service unknown."
+    ],
+    "verified_2027_operating_schedule": false,
+    "audit_status_original": "secondary_unverified",
+    "coverage_class": "primary_inaccessible_secondary_or_no_facts",
+    "route_variant_count": 0,
+    "stop_record_count": 0,
+    "recorded_fact_count": 1,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "yooseok",
+    "school_name": "유석초",
+    "research_status": "secondary_unverified",
+    "primary_source_id": null,
+    "school_url": "https://yooseok.sen.es.kr/",
+    "summary": "2025 table described by secondary source; 2023 blog is historical only. No readable current official timetable.",
+    "unresolved_questions": [
+      "Find school-published 2026 or 2027 table; confirm AM/PM route counts and revision date."
+    ],
+    "negative_findings": [
+      "2026/2027 official transport document not found/readable in completed searches.",
+      "Naver coverage inaccessible."
+    ],
+    "community_coverage": "Partial public web/blog searches; Naver Blog and Cafe access blocked by robots.txt; no login or membership used.",
+    "verified_2027_operating_schedule": false,
+    "current_live_operation_verified": false,
+    "baseline_snapshot": "2026-08-31",
+    "baseline_route_objects": 16,
+    "baseline_no_bus": false,
+    "baseline_status": "third_party_unconfirmed",
+    "source_ids": [
+      "yooseok-school",
+      "yooseok-secondary",
+      "yooseok-blog2023"
+    ],
+    "fact_ids": [
+      "C001",
+      "C002",
+      "C003"
+    ],
+    "fetched_date": "2026-10-15",
+    "current_operation_verified": false,
+    "district": "강서구",
+    "audit_status_original": "secondary_unverified",
+    "coverage_class": "primary_inaccessible_secondary_or_no_facts",
+    "route_variant_count": 0,
+    "stop_record_count": 0,
+    "recorded_fact_count": 3,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "eunseok",
+    "school_name": "은석초",
+    "research_status": "inaccessible",
+    "primary_source_id": "eunseok-spec",
+    "school_url": "https://eunseok.sen.es.kr/",
+    "summary": "Official 2026 tender links located; unreadable HWP. Attached timetable is explicitly 2025. Secondary gives a 2026-02-25 image-table lead.",
+    "unresolved_questions": [
+      "Read 2026-02-25 school images and find any later revision."
+    ],
+    "negative_findings": [
+      "Excluded same-name public school in Cheonan (R26BK01287890).",
+      "No verified 2027 transport schedule."
+    ],
+    "community_coverage": "Partial public web/blog searches; Naver Blog and Cafe access blocked by robots.txt; no login or membership used.",
+    "verified_2027_operating_schedule": false,
+    "current_live_operation_verified": false,
+    "baseline_snapshot": "2026-08-31",
+    "baseline_route_objects": 14,
+    "baseline_no_bus": false,
+    "baseline_status": "third_party_unconfirmed",
+    "source_ids": [
+      "eunseok-school",
+      "eunseok-tender-list",
+      "eunseok-spec",
+      "eunseok-table2025",
+      "eunseok-secondary"
+    ],
+    "fact_ids": [
+      "C004"
+    ],
+    "fetched_date": "2026-10-15",
+    "current_operation_verified": false,
+    "district": "동대문구",
+    "audit_status_original": "inaccessible",
+    "coverage_class": "primary_inaccessible_secondary_or_no_facts",
+    "route_variant_count": 0,
+    "stop_record_count": 0,
+    "recorded_fact_count": 1,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "ewha",
+    "school_name": "이대부초",
+    "research_status": "official_verified",
+    "primary_source_id": "ewha-spec",
+    "school_url": "https://ewha.sen.es.kr/",
+    "summary": "Official 2026 tender specifies 14 vehicles and one AM/two PM rounds; route/stop times unverified.",
+    "unresolved_questions": [
+      "Obtain referenced 별첨1 timetable and final amended 2026 schedule."
+    ],
+    "negative_findings": [
+      "School site filtered; no readable stop-level table.",
+      "No verified 2027 transport schedule."
+    ],
+    "community_coverage": "Partial public web/blog searches; Naver Blog and Cafe access blocked by robots.txt; no login or membership used.",
+    "verified_2027_operating_schedule": false,
+    "current_live_operation_verified": false,
+    "baseline_snapshot": "2026-08-31",
+    "baseline_route_objects": 14,
+    "baseline_no_bus": false,
+    "baseline_status": "third_party_unconfirmed",
+    "source_ids": [
+      "ewha-school",
+      "ewha-list",
+      "ewha-spec",
+      "ewha-secondary"
+    ],
+    "fact_ids": [
+      "C005",
+      "C006",
+      "C007"
+    ],
+    "fetched_date": "2026-10-15",
+    "current_operation_verified": false,
+    "district": "서대문구",
+    "audit_status_original": "official_verified",
+    "coverage_class": "procurement_plan_read_not_live_verified",
+    "route_variant_count": 0,
+    "stop_record_count": 0,
+    "recorded_fact_count": 3,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "cau",
+    "school_name": "중대부초",
+    "research_status": "inaccessible",
+    "primary_source_id": "cau-xlsx",
+    "school_url": "https://cau.sen.es.kr/",
+    "summary": "Official January 2026 route XLSX located; not parsed. Secondary reports a later 2026-04-07 school table.",
+    "unresolved_questions": [
+      "Retrieve final April or later table; distinguish exits and directional route objects."
+    ],
+    "negative_findings": [
+      "No official stop/time rows read.",
+      "No verified 2027 transport schedule."
+    ],
+    "community_coverage": "Partial public web/blog searches; Naver Blog and Cafe access blocked by robots.txt; no login or membership used.",
+    "verified_2027_operating_schedule": false,
+    "current_live_operation_verified": false,
+    "baseline_snapshot": "2026-08-31",
+    "baseline_route_objects": 17,
+    "baseline_no_bus": false,
+    "baseline_status": "third_party_unconfirmed",
+    "source_ids": [
+      "cau-school",
+      "cau-list",
+      "cau-date",
+      "cau-xlsx",
+      "cau-secondary",
+      "cau-blog"
+    ],
+    "fact_ids": [
+      "C008",
+      "C009"
+    ],
+    "fetched_date": "2026-10-15",
+    "current_operation_verified": false,
+    "district": "동작구",
+    "audit_status_original": "inaccessible",
+    "coverage_class": "primary_inaccessible_secondary_or_no_facts",
+    "route_variant_count": 0,
+    "stop_record_count": 0,
+    "recorded_fact_count": 2,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "cheongwon",
+    "school_name": "청원초",
+    "research_status": "official_verified",
+    "primary_source_id": "cheongwon-spec",
+    "school_url": "https://cheongwon.sen.es.kr/",
+    "summary": "Official 2026 tender gives 9 vehicles, AM 07:00–08:20, PM 15:00–17:00 in two rounds; no stop list.",
+    "unresolved_questions": [
+      "Find current school-designated stop list and exact PM departures."
+    ],
+    "negative_findings": [
+      "Excluded same-name Gyeonggi public school cheongwon-e.goehs.kr.",
+      "No verified 2027 school-year schedule."
+    ],
+    "community_coverage": "Partial public web/blog searches; Naver Blog and Cafe access blocked by robots.txt; no login or membership used.",
+    "verified_2027_operating_schedule": false,
+    "current_live_operation_verified": false,
+    "baseline_snapshot": "2026-08-31",
+    "baseline_route_objects": 16,
+    "baseline_no_bus": false,
+    "baseline_status": "third_party_unconfirmed",
+    "source_ids": [
+      "cheongwon-school",
+      "cheongwon-list",
+      "cheongwon-spec",
+      "cheongwon-blog"
+    ],
+    "fact_ids": [
+      "C010",
+      "C011",
+      "C012",
+      "C013",
+      "C014",
+      "C015"
+    ],
+    "fetched_date": "2026-10-15",
+    "current_operation_verified": false,
+    "district": "노원구",
+    "audit_status_original": "official_verified",
+    "coverage_class": "procurement_plan_read_not_live_verified",
+    "route_variant_count": 0,
+    "stop_record_count": 0,
+    "recorded_fact_count": 6,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "chugye",
+    "school_name": "추계초",
+    "research_status": "inaccessible",
+    "primary_source_id": "chugye-plan",
+    "school_url": "https://chugye.sen.es.kr/",
+    "summary": "Official 2026 planned route PDF found, but scan could not be read. Later re-tender lead exists.",
+    "unresolved_questions": [
+      "Visually inspect scanned table through a working normal viewer; check re-tender version and school final schedule."
+    ],
+    "negative_findings": [
+      "No reliable rows extracted from scanned PDF.",
+      "No verified 2027 schedule."
+    ],
+    "community_coverage": "Partial public web/blog searches; Naver Blog and Cafe access blocked by robots.txt; no login or membership used.",
+    "verified_2027_operating_schedule": false,
+    "current_live_operation_verified": false,
+    "baseline_snapshot": "2026-08-31",
+    "baseline_route_objects": 9,
+    "baseline_no_bus": false,
+    "baseline_status": "third_party_unconfirmed",
+    "source_ids": [
+      "chugye-school",
+      "chugye-list",
+      "chugye-plan",
+      "chugye-spec",
+      "chugye-retender",
+      "chugye-secondary"
+    ],
+    "fact_ids": [
+      "C016",
+      "C017"
+    ],
+    "fetched_date": "2026-10-15",
+    "current_operation_verified": false,
+    "district": "서대문구",
+    "audit_status_original": "inaccessible",
+    "coverage_class": "primary_inaccessible_secondary_or_no_facts",
+    "route_variant_count": 0,
+    "stop_record_count": 0,
+    "recorded_fact_count": 2,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "choongam",
+    "school_name": "충암초",
+    "research_status": "secondary_unverified",
+    "primary_source_id": "choongam-brochure",
+    "school_url": "https://choongam.sen.es.kr/",
+    "summary": "2026 brochure on third-party host lists 10 route areas; provenance not confirmed by accessible school page.",
+    "unresolved_questions": [
+      "Confirm school authorship/official link to brochure, current timetable and grade/day restrictions."
+    ],
+    "negative_findings": [
+      "No readable official 2026 procurement/route table found.",
+      "No verified 2027 schedule."
+    ],
+    "community_coverage": "Partial public web/blog searches; Naver Blog and Cafe access blocked by robots.txt; no login or membership used.",
+    "verified_2027_operating_schedule": false,
+    "current_live_operation_verified": false,
+    "baseline_snapshot": "2026-08-31",
+    "baseline_route_objects": 18,
+    "baseline_no_bus": false,
+    "baseline_status": "third_party_unconfirmed",
+    "source_ids": [
+      "choongam-school",
+      "choongam-oldsite",
+      "choongam-brochure",
+      "choongam-secondary"
+    ],
+    "fact_ids": [
+      "C018",
+      "C019",
+      "C020",
+      "C021",
+      "C022",
+      "C023",
+      "C024",
+      "C025",
+      "C026",
+      "C027",
+      "C028"
+    ],
+    "fetched_date": "2026-10-15",
+    "current_operation_verified": false,
+    "district": "은평구",
+    "audit_status_original": "secondary_unverified",
+    "coverage_class": "primary_inaccessible_secondary_or_no_facts",
+    "route_variant_count": 0,
+    "stop_record_count": 0,
+    "recorded_fact_count": 11,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "taegang",
+    "school_name": "태강삼육초",
+    "research_status": "official_verified",
+    "primary_source_id": "taegang-am",
+    "school_url": null,
+    "summary": "Official 2026 AM/PM tender tables readable: 9 route numbers; day-specific PM departures. Representative AM first stops recorded.",
+    "unresolved_questions": [
+      "Verify final/current school version; inspect PM anomalous cells before importing; full stop transcription still outstanding."
+    ],
+    "negative_findings": [
+      "No independent proof of current service/contract award.",
+      "No verified 2027 school-year schedule."
+    ],
+    "community_coverage": "Partial public web/blog searches; Naver Blog and Cafe access blocked by robots.txt; no login or membership used.",
+    "verified_2027_operating_schedule": false,
+    "current_live_operation_verified": false,
+    "baseline_snapshot": "2026-08-31",
+    "baseline_route_objects": 18,
+    "baseline_no_bus": false,
+    "baseline_status": "third_party_unconfirmed",
+    "source_ids": [
+      "taegang-am",
+      "taegang-pm",
+      "taegang-list"
+    ],
+    "fact_ids": [
+      "C029",
+      "C030",
+      "C031",
+      "C032",
+      "C033",
+      "C034",
+      "C035",
+      "C036",
+      "C037",
+      "C038",
+      "C039",
+      "C040",
+      "C041",
+      "C042",
+      "C043",
+      "C044"
+    ],
+    "fetched_date": "2026-10-15",
+    "current_operation_verified": false,
+    "district": "노원구",
+    "audit_status_original": "official_verified",
+    "coverage_class": "procurement_plan_read_not_live_verified",
+    "route_variant_count": 0,
+    "stop_record_count": 0,
+    "recorded_fact_count": 16,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "taegang-pm-anomalies",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "hansin",
+    "school_name": "한신초",
+    "research_status": "official_verified",
+    "primary_source_id": "hansin-notice",
+    "school_url": "https://ihansin.sen.es.kr/",
+    "summary": "Official 2026 re-tender specifies 15 vehicles: 13 AM+two PM rounds, 2 AM-only. Stop/time details inaccessible.",
+    "unresolved_questions": [
+      "Get final stop/time table and identify which routes are AM-only."
+    ],
+    "negative_findings": [
+      "No official route stop/time rows read.",
+      "No verified 2027 school-year schedule."
+    ],
+    "community_coverage": "Partial public web/blog searches; Naver Blog and Cafe access blocked by robots.txt; no login or membership used.",
+    "verified_2027_operating_schedule": false,
+    "current_live_operation_verified": false,
+    "baseline_snapshot": "2026-08-31",
+    "baseline_route_objects": 43,
+    "baseline_no_bus": false,
+    "baseline_status": "third_party_unconfirmed",
+    "source_ids": [
+      "hansin-school",
+      "hansin-list",
+      "hansin-notice",
+      "hansin-spec",
+      "hansin-community"
+    ],
+    "fact_ids": [
+      "C045",
+      "C046"
+    ],
+    "fetched_date": "2026-10-15",
+    "current_operation_verified": false,
+    "district": "도봉구",
+    "audit_status_original": "official_verified",
+    "coverage_class": "procurement_plan_read_not_live_verified",
+    "route_variant_count": 0,
+    "stop_record_count": 0,
+    "recorded_fact_count": 2,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "hanyang",
+    "school_name": "한양초",
+    "research_status": "inaccessible",
+    "primary_source_id": "hanyang-spec",
+    "school_url": "https://hye.or.kr/",
+    "summary": "Official 2026 HWP specification found but unreadable. Secondary reports 13 route labels; no verified stop/time table.",
+    "unresolved_questions": [
+      "Read current school images and final 2026/2027 schedule."
+    ],
+    "negative_findings": [
+      "Excluded Hanyang University shuttle results.",
+      "No verified 2027 schedule."
+    ],
+    "community_coverage": "Partial public web/blog searches; Naver Blog and Cafe access blocked by robots.txt; no login or membership used.",
+    "verified_2027_operating_schedule": false,
+    "current_live_operation_verified": false,
+    "baseline_snapshot": "2026-08-31",
+    "baseline_route_objects": 39,
+    "baseline_no_bus": false,
+    "baseline_status": "third_party_unconfirmed",
+    "source_ids": [
+      "hanyang-school",
+      "hanyang-list",
+      "hanyang-spec",
+      "hanyang-secondary",
+      "hanyang-community",
+      "hanyang-older-brochure"
+    ],
+    "fact_ids": [
+      "C047"
+    ],
+    "fetched_date": "2026-10-15",
+    "current_operation_verified": false,
+    "district": "성동구",
+    "audit_status_original": "inaccessible",
+    "coverage_class": "primary_inaccessible_secondary_or_no_facts",
+    "route_variant_count": 0,
+    "stop_record_count": 0,
+    "recorded_fact_count": 1,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "hongik",
+    "school_name": "홍대부초",
+    "research_status": "inaccessible",
+    "primary_source_id": "hongik-spec",
+    "school_url": "https://hongik.sen.es.kr/",
+    "summary": "Official 2026 amended HWP found but unreadable. Secondary gives 8 routes and day-dependent PM departures.",
+    "unresolved_questions": [
+      "Read final school table; resolve Thursday departure eligibility and verify 2026 revision."
+    ],
+    "negative_findings": [
+      "2023 nine-route blog is not evidence of 2026 route count.",
+      "No verified 2027 schedule."
+    ],
+    "community_coverage": "Partial public web/blog searches; Naver Blog and Cafe access blocked by robots.txt; no login or membership used.",
+    "verified_2027_operating_schedule": false,
+    "current_live_operation_verified": false,
+    "baseline_snapshot": "2026-08-31",
+    "baseline_route_objects": 16,
+    "baseline_no_bus": false,
+    "baseline_status": "third_party_unconfirmed",
+    "source_ids": [
+      "hongik-school",
+      "hongik-list",
+      "hongik-spec",
+      "hongik-secondary",
+      "hongik-blog2023"
+    ],
+    "fact_ids": [
+      "C048",
+      "C049",
+      "C050"
+    ],
+    "fetched_date": "2026-10-15",
+    "current_operation_verified": false,
+    "district": "마포구",
+    "audit_status_original": "inaccessible",
+    "coverage_class": "primary_inaccessible_secondary_or_no_facts",
+    "route_variant_count": 0,
+    "stop_record_count": 0,
+    "recorded_fact_count": 3,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  },
+  {
+    "school_id": "hwarang",
+    "school_name": "화랑초",
+    "research_status": "official_verified",
+    "primary_source_id": "hwarang-spec",
+    "school_url": null,
+    "summary": "Official 2026 tender specifies 6 vehicles, 08:15 arrival, PM departures 14:10/15:10/16:10; route diagrams not read.",
+    "unresolved_questions": [
+      "Find final awarded/current version; inspect diagram stops and March extra-round eligibility."
+    ],
+    "negative_findings": [
+      "Image-only route pages not visually inspectable through current tool result.",
+      "Excluded same-name schools outside Seoul.",
+      "No verified 2027 school-year schedule."
+    ],
+    "community_coverage": "Partial public web/blog searches; Naver Blog and Cafe access blocked by robots.txt; no login or membership used.",
+    "verified_2027_operating_schedule": false,
+    "current_live_operation_verified": false,
+    "baseline_snapshot": "2026-08-31",
+    "baseline_route_objects": 26,
+    "baseline_no_bus": false,
+    "baseline_status": "third_party_unconfirmed",
+    "source_ids": [
+      "hwarang-list",
+      "hwarang-spec"
+    ],
+    "fact_ids": [
+      "C051",
+      "C052",
+      "C053",
+      "C054",
+      "C055",
+      "C056",
+      "C057",
+      "C058"
+    ],
+    "fetched_date": "2026-10-15",
+    "current_operation_verified": false,
+    "district": "노원구",
+    "audit_status_original": "official_verified",
+    "coverage_class": "procurement_plan_read_not_live_verified",
+    "route_variant_count": 0,
+    "stop_record_count": 0,
+    "recorded_fact_count": 8,
+    "commute_eta_supported": false,
+    "admission_eligibility_supported": false,
+    "warning_ids": [
+      "no-live-operation-verification",
+      "hwarang-contract-date",
+      "unknown-is-not-no-bus",
+      "coverage-and-counts"
+    ]
+  }
+]

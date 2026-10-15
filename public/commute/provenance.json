@@ -1,0 +1,1286 @@
+{
+  "schemaVersion": 1,
+  "records": [
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:10",
+      "direction": "등교",
+      "sourceStopIndex": 0,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:41",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_01__row_1",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:10",
+      "direction": "등교",
+      "sourceStopIndex": 1,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:45",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_01__row_2",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:10",
+      "direction": "등교",
+      "sourceStopIndex": 2,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:53",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_01__row_3",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:10",
+      "direction": "등교",
+      "sourceStopIndex": 3,
+      "field": "공식 게시표의 정차 시각",
+      "value": "08:00",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_01__row_4",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:12",
+      "direction": "등교",
+      "sourceStopIndex": 0,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:44",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_02__row_1",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:12",
+      "direction": "등교",
+      "sourceStopIndex": 1,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:47",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_02__row_2",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:12",
+      "direction": "등교",
+      "sourceStopIndex": 2,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:50",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_02__row_3",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:12",
+      "direction": "등교",
+      "sourceStopIndex": 3,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:54",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_02__row_4",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:12",
+      "direction": "등교",
+      "sourceStopIndex": 4,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:56",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_02__row_5",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:12",
+      "direction": "등교",
+      "sourceStopIndex": 5,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:58",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_02__row_6",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:14",
+      "direction": "등교",
+      "sourceStopIndex": 0,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:40",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_03__row_1",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:14",
+      "direction": "등교",
+      "sourceStopIndex": 1,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:43",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_03__row_2",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:14",
+      "direction": "등교",
+      "sourceStopIndex": 2,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:50",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_03__row_3",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:14",
+      "direction": "등교",
+      "sourceStopIndex": 3,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:54",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_03__row_4",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:14",
+      "direction": "등교",
+      "sourceStopIndex": 4,
+      "field": "공식 게시표의 정차 시각",
+      "value": "08:05",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_03__row_5",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:16",
+      "direction": "등교",
+      "sourceStopIndex": 0,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:40",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_04__row_1",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:16",
+      "direction": "등교",
+      "sourceStopIndex": 1,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:43",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_04__row_2",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:16",
+      "direction": "등교",
+      "sourceStopIndex": 2,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:51",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_04__row_3",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:18",
+      "direction": "등교",
+      "sourceStopIndex": 0,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:30",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_05__row_1",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:18",
+      "direction": "등교",
+      "sourceStopIndex": 1,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:40",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_05__row_2",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:18",
+      "direction": "등교",
+      "sourceStopIndex": 2,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:43",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_05__row_3",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:18",
+      "direction": "등교",
+      "sourceStopIndex": 3,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:46",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_05__row_4",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:18",
+      "direction": "등교",
+      "sourceStopIndex": 4,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:48",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_05__row_5",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:18",
+      "direction": "등교",
+      "sourceStopIndex": 5,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:52",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_05__row_6",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:18",
+      "direction": "등교",
+      "sourceStopIndex": 6,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:57",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_05__row_7",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:18",
+      "direction": "등교",
+      "sourceStopIndex": 7,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:59",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_05__row_8",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:20",
+      "direction": "등교",
+      "sourceStopIndex": 0,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:25",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_06__row_1",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:20",
+      "direction": "등교",
+      "sourceStopIndex": 1,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:30",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_06__row_2",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:20",
+      "direction": "등교",
+      "sourceStopIndex": 2,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:35",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_06__row_3",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:20",
+      "direction": "등교",
+      "sourceStopIndex": 3,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:45",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_06__row_4",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:20",
+      "direction": "등교",
+      "sourceStopIndex": 4,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:51",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_06__row_5",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:22",
+      "direction": "등교",
+      "sourceStopIndex": 0,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:55",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_07__row_1",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:22",
+      "direction": "등교",
+      "sourceStopIndex": 1,
+      "field": "공식 게시표의 정차 시각",
+      "value": "08:00",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_07__row_2",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:24",
+      "direction": "등교",
+      "sourceStopIndex": 0,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:37",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_08__row_1",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:24",
+      "direction": "등교",
+      "sourceStopIndex": 1,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:47",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_08__row_2",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:24",
+      "direction": "등교",
+      "sourceStopIndex": 2,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:57",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_08__row_3",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:24",
+      "direction": "등교",
+      "sourceStopIndex": 3,
+      "field": "공식 게시표의 정차 시각",
+      "value": "08:05",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_08__row_4",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:26",
+      "direction": "등교",
+      "sourceStopIndex": 0,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:35",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_09__row_1",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:26",
+      "direction": "등교",
+      "sourceStopIndex": 1,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:42",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_09__row_2",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:26",
+      "direction": "등교",
+      "sourceStopIndex": 2,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:47",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_09__row_3",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:26",
+      "direction": "등교",
+      "sourceStopIndex": 3,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:51",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_09__row_4",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:0",
+      "direction": "등교",
+      "sourceStopIndex": 0,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:43",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_10__row_1",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:0",
+      "direction": "등교",
+      "sourceStopIndex": 1,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:47",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_10__row_2",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:0",
+      "direction": "등교",
+      "sourceStopIndex": 2,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:54",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_10__row_3",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:0",
+      "direction": "등교",
+      "sourceStopIndex": 3,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:56",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_10__row_4",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:2",
+      "direction": "등교",
+      "sourceStopIndex": 0,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:50",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_11__row_1",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:2",
+      "direction": "등교",
+      "sourceStopIndex": 1,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:54",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_11__row_2",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:2",
+      "direction": "등교",
+      "sourceStopIndex": 2,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:59",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_11__row_3",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:4",
+      "direction": "등교",
+      "sourceStopIndex": 0,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:32",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_12__row_1",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:4",
+      "direction": "등교",
+      "sourceStopIndex": 1,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:37",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_12__row_2",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:4",
+      "direction": "등교",
+      "sourceStopIndex": 2,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:40",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_12__row_3",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:4",
+      "direction": "등교",
+      "sourceStopIndex": 3,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:45",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_12__row_4",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:4",
+      "direction": "등교",
+      "sourceStopIndex": 4,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:58",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_12__row_5",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:4",
+      "direction": "등교",
+      "sourceStopIndex": 5,
+      "field": "공식 게시표의 정차 시각",
+      "value": "08:05",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_12__row_6",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:4",
+      "direction": "등교",
+      "sourceStopIndex": 6,
+      "field": "공식 게시표의 정차 시각",
+      "value": "08:10",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_12__row_7",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:6",
+      "direction": "등교",
+      "sourceStopIndex": 0,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:40",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_13__row_1",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:6",
+      "direction": "등교",
+      "sourceStopIndex": 1,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:50",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_13__row_2",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:6",
+      "direction": "등교",
+      "sourceStopIndex": 2,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:58",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_13__row_3",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:6",
+      "direction": "등교",
+      "sourceStopIndex": 3,
+      "field": "공식 게시표의 정차 시각",
+      "value": "08:02",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_13__row_4",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:8",
+      "direction": "등교",
+      "sourceStopIndex": 0,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:35",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_14__row_1",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:8",
+      "direction": "등교",
+      "sourceStopIndex": 1,
+      "field": "공식 게시표의 정차 시각",
+      "value": "07:42",
+      "sourceUrl": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+      "sourceLabel": "이동교실 및 배차시간 등교",
+      "verificationStatus": "document_reviewed",
+      "operatingStatus": "게시 자료 내용 대조 · 실제 현재 운행 확인 전",
+      "conditions": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요.",
+        "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+      ],
+      "researchRecordId": "kyungbok__variant_14__row_2",
+      "sourceIds": [
+        "kyungbok_morning"
+      ]
+    }
+  ]
+}

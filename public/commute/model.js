@@ -23,7 +23,7 @@ export function summary(school,state) {
 }
 export function visibleSchools(data,state) {
   return data.schools.filter(s=>(!state.savedOnly||state.saved.has(s.id)) &&
-    (!state.region || scopeStops(s,state).length>0) &&
+    ((!state.region && !state.neighborhood) || scopeStops(s,state).length>0) &&
     (state.direction==='all' || scopeStops(s,state).some(p=>p.direction===state.direction)))
     .sort((a,b)=>state.sort==='name'?collator.compare(a.name,b.name):scopeStops(b,state).length-scopeStops(a,state).length||collator.compare(a.name,b.name));
 }
@@ -35,18 +35,22 @@ export function sortedRoutes(school,direction) {
 }
 export function search(data,query) {
   const q=query.trim().toLowerCase().replaceAll(' ','');if(!q)return [];
-  const match=s=>s.toLowerCase().replaceAll(' ','').includes(q);
+  const normalize=s=>s.toLowerCase().replaceAll(' ','');
+  const match=s=>normalize(s).includes(q);
   const result=[];
   for(const r of data.regions)if(match(r.name))result.push({type:'region',id:r.name,label:r.name,sub:`통학 학교 ${r.schoolIds.length}곳`,kind:'지역'});
   for(const s of data.schools)if(match(s.name)||match(s.name.replace(/초$/,'초등학교')))result.push({type:'school',id:s.id,label:s.name,sub:s.district,kind:'학교'});
-  for(const n of data.neighborhoods)if(!n.outer&&match(n.district+n.name))result.push({type:'neighborhood',id:n.code,label:n.name,sub:n.district,kind:'동네'});
+  for(const n of data.neighborhoods)if(match(n.district+n.name)||match(n.name.replace(/\d+/g,'')))result.push({type:'neighborhood',id:n.code,label:n.name,sub:n.district,kind:'동네'});
   const keys=new Set();
-  if(result.length<8)for(const s of data.schools)for(const r of s.routes)for(const [sourceStopIndex,stop] of r.stops.entries())if(match(stop.name)){
-    const key=`${s.id}|${stop.name}|${stop.lat}|${stop.lon}`;if(keys.has(key))continue;keys.add(key);
-    result.push({type:'stop',id:s.id,route:r.id,direction:stop.direction,sourceStopIndex,code:stop.code,label:stop.name,sub:`${s.name} · ${stop.district}`,kind:'정류장'});
-    if(result.length>=12)return result.slice(0,12);
-  }
-  return result.slice(0,12);
+  const bySchool=[];
+  for(const s of data.schools){const items=[];for(const r of s.routes)for(const [sourceStopIndex,stop] of r.stops.entries())if(match(stop.name)){
+    const key=`${s.id}|${r.id}|${stop.direction}|${stop.name}|${stop.lat}|${stop.lon}|${stop.time}`;if(keys.has(key))continue;keys.add(key);
+    items.push({type:'stop',id:s.id,route:r.id,direction:stop.direction,sourceStopIndex,code:stop.code,label:stop.name,sub:`${s.name} · ${stop.district} · ${stop.direction} · ${r.name} · ${timeLabel(stop)}`,kind:'정류장'});
+  }if(items.length)bySchool.push(items);}
+  // Round robin keeps the first school's many routes from hiding other schools.
+  const stops=[];
+  while(bySchool.some(items=>items.length)&&stops.length<24){for(const items of bySchool){if(items.length)stops.push(items.shift());}}
+  return [...result.slice(0,8),...stops].slice(0,32);
 }
 export function readUrl(data,href) {
   const q=new URL(href).searchParams;
@@ -59,5 +63,7 @@ export function readUrl(data,href) {
   let routeScope=explicitScope||(['등교','하교'].includes(q.get('way'))?way:'all');
   if(route&&routeScope!=='all'&&routeScope!==way)routeScope=way;
   const filter=['등교','하교'].includes(q.get('filter'))?q.get('filter'):'all';
-  return {region,neighborhood,schoolId:school?.id||'',routeId:route?.id||'',way,routeScope,direction:filter};
+  const stopIndex=q.has('stop')&&/^\d+$/.test(q.get('stop'))?Number(q.get('stop')):null;
+  const selectedStop=stopIndex!==null&&route?.stops[stopIndex]?.direction===way?stopIndex:null;
+  return {region,neighborhood,schoolId:school?.id||'',routeId:route?.id||'',way,routeScope,direction:filter,selectedStop};
 }

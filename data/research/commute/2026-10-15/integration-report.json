@@ -1,0 +1,383 @@
+{
+  "strategy": "additive exact field matches; original snapshot untouched",
+  "schoolCount": 38,
+  "sourceRecords": 163,
+  "researchRouteRecords": 81,
+  "researchStopRows": 709,
+  "matchedClockFields": 61,
+  "matched": [
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:10",
+      "sourceStopIndex": 0,
+      "researchRecordId": "kyungbok__variant_01__row_1"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:10",
+      "sourceStopIndex": 1,
+      "researchRecordId": "kyungbok__variant_01__row_2"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:10",
+      "sourceStopIndex": 2,
+      "researchRecordId": "kyungbok__variant_01__row_3"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:10",
+      "sourceStopIndex": 3,
+      "researchRecordId": "kyungbok__variant_01__row_4"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:12",
+      "sourceStopIndex": 0,
+      "researchRecordId": "kyungbok__variant_02__row_1"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:12",
+      "sourceStopIndex": 1,
+      "researchRecordId": "kyungbok__variant_02__row_2"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:12",
+      "sourceStopIndex": 2,
+      "researchRecordId": "kyungbok__variant_02__row_3"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:12",
+      "sourceStopIndex": 3,
+      "researchRecordId": "kyungbok__variant_02__row_4"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:12",
+      "sourceStopIndex": 4,
+      "researchRecordId": "kyungbok__variant_02__row_5"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:12",
+      "sourceStopIndex": 5,
+      "researchRecordId": "kyungbok__variant_02__row_6"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:14",
+      "sourceStopIndex": 0,
+      "researchRecordId": "kyungbok__variant_03__row_1"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:14",
+      "sourceStopIndex": 1,
+      "researchRecordId": "kyungbok__variant_03__row_2"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:14",
+      "sourceStopIndex": 2,
+      "researchRecordId": "kyungbok__variant_03__row_3"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:14",
+      "sourceStopIndex": 3,
+      "researchRecordId": "kyungbok__variant_03__row_4"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:14",
+      "sourceStopIndex": 4,
+      "researchRecordId": "kyungbok__variant_03__row_5"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:16",
+      "sourceStopIndex": 0,
+      "researchRecordId": "kyungbok__variant_04__row_1"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:16",
+      "sourceStopIndex": 1,
+      "researchRecordId": "kyungbok__variant_04__row_2"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:16",
+      "sourceStopIndex": 2,
+      "researchRecordId": "kyungbok__variant_04__row_3"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:18",
+      "sourceStopIndex": 0,
+      "researchRecordId": "kyungbok__variant_05__row_1"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:18",
+      "sourceStopIndex": 1,
+      "researchRecordId": "kyungbok__variant_05__row_2"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:18",
+      "sourceStopIndex": 2,
+      "researchRecordId": "kyungbok__variant_05__row_3"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:18",
+      "sourceStopIndex": 3,
+      "researchRecordId": "kyungbok__variant_05__row_4"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:18",
+      "sourceStopIndex": 4,
+      "researchRecordId": "kyungbok__variant_05__row_5"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:18",
+      "sourceStopIndex": 5,
+      "researchRecordId": "kyungbok__variant_05__row_6"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:18",
+      "sourceStopIndex": 6,
+      "researchRecordId": "kyungbok__variant_05__row_7"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:18",
+      "sourceStopIndex": 7,
+      "researchRecordId": "kyungbok__variant_05__row_8"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:20",
+      "sourceStopIndex": 0,
+      "researchRecordId": "kyungbok__variant_06__row_1"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:20",
+      "sourceStopIndex": 1,
+      "researchRecordId": "kyungbok__variant_06__row_2"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:20",
+      "sourceStopIndex": 2,
+      "researchRecordId": "kyungbok__variant_06__row_3"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:20",
+      "sourceStopIndex": 3,
+      "researchRecordId": "kyungbok__variant_06__row_4"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:20",
+      "sourceStopIndex": 4,
+      "researchRecordId": "kyungbok__variant_06__row_5"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:22",
+      "sourceStopIndex": 0,
+      "researchRecordId": "kyungbok__variant_07__row_1"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:22",
+      "sourceStopIndex": 1,
+      "researchRecordId": "kyungbok__variant_07__row_2"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:24",
+      "sourceStopIndex": 0,
+      "researchRecordId": "kyungbok__variant_08__row_1"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:24",
+      "sourceStopIndex": 1,
+      "researchRecordId": "kyungbok__variant_08__row_2"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:24",
+      "sourceStopIndex": 2,
+      "researchRecordId": "kyungbok__variant_08__row_3"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:24",
+      "sourceStopIndex": 3,
+      "researchRecordId": "kyungbok__variant_08__row_4"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:26",
+      "sourceStopIndex": 0,
+      "researchRecordId": "kyungbok__variant_09__row_1"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:26",
+      "sourceStopIndex": 1,
+      "researchRecordId": "kyungbok__variant_09__row_2"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:26",
+      "sourceStopIndex": 2,
+      "researchRecordId": "kyungbok__variant_09__row_3"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:26",
+      "sourceStopIndex": 3,
+      "researchRecordId": "kyungbok__variant_09__row_4"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:0",
+      "sourceStopIndex": 0,
+      "researchRecordId": "kyungbok__variant_10__row_1"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:0",
+      "sourceStopIndex": 1,
+      "researchRecordId": "kyungbok__variant_10__row_2"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:0",
+      "sourceStopIndex": 2,
+      "researchRecordId": "kyungbok__variant_10__row_3"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:0",
+      "sourceStopIndex": 3,
+      "researchRecordId": "kyungbok__variant_10__row_4"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:2",
+      "sourceStopIndex": 0,
+      "researchRecordId": "kyungbok__variant_11__row_1"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:2",
+      "sourceStopIndex": 1,
+      "researchRecordId": "kyungbok__variant_11__row_2"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:2",
+      "sourceStopIndex": 2,
+      "researchRecordId": "kyungbok__variant_11__row_3"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:4",
+      "sourceStopIndex": 0,
+      "researchRecordId": "kyungbok__variant_12__row_1"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:4",
+      "sourceStopIndex": 1,
+      "researchRecordId": "kyungbok__variant_12__row_2"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:4",
+      "sourceStopIndex": 2,
+      "researchRecordId": "kyungbok__variant_12__row_3"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:4",
+      "sourceStopIndex": 3,
+      "researchRecordId": "kyungbok__variant_12__row_4"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:4",
+      "sourceStopIndex": 4,
+      "researchRecordId": "kyungbok__variant_12__row_5"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:4",
+      "sourceStopIndex": 5,
+      "researchRecordId": "kyungbok__variant_12__row_6"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:4",
+      "sourceStopIndex": 6,
+      "researchRecordId": "kyungbok__variant_12__row_7"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:6",
+      "sourceStopIndex": 0,
+      "researchRecordId": "kyungbok__variant_13__row_1"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:6",
+      "sourceStopIndex": 1,
+      "researchRecordId": "kyungbok__variant_13__row_2"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:6",
+      "sourceStopIndex": 2,
+      "researchRecordId": "kyungbok__variant_13__row_3"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:6",
+      "sourceStopIndex": 3,
+      "researchRecordId": "kyungbok__variant_13__row_4"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:8",
+      "sourceStopIndex": 0,
+      "researchRecordId": "kyungbok__variant_14__row_1"
+    },
+    {
+      "schoolId": "kyungbok",
+      "routeId": "kyungbok:8",
+      "sourceStopIndex": 1,
+      "researchRecordId": "kyungbok__variant_14__row_2"
+    }
+  ],
+  "notImported": [
+    "all quarantined and historical/secondary facts as current operation",
+    "unmatched route/day/round records",
+    "any timetable replacement",
+    "grade or new-pupil eligibility inference"
+  ],
+  "currentOperationVerified": false
+}

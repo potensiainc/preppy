@@ -19,7 +19,6 @@
     <link rel="stylesheet" href="/commute/vendor/maplibre-gl.css" />
     <link rel="stylesheet" href="/commute/styles.css" />
     <link rel="stylesheet" href="/commute/curation.css" />
-    <script defer src="/commute/vendor/maplibre-gl.js"></script>
     <script type="module" src="/commute/app.js"></script>
   </head>
   <body>
@@ -32,7 +31,7 @@
           통학 탐색<span class="nav-dot"></span>
         </button>
         <button data-action="saved" id="nav-saved">
-          관심학교 <span id="saved-count">0</span>
+          브라우저 저장 <span id="saved-count">0</span>
         </button>
       </nav>
       <div class="header-actions">
@@ -70,6 +69,9 @@
       <div class="workspace" id="workspace">
         <aside class="explorer" aria-label="지역 및 학교 검색">
           <div class="search-area">
+            <div class="entry-points"><button data-action="find-school">학교로 찾기</button><button data-action="regions">지역으로 찾기</button></div>
+            <p id="current-scope" class="current-scope" role="status"></p>
+            <p class="save-scope-note">하트는 이 브라우저에 저장해요. 계정 저장과 별개예요.</p>
             <div class="search-box">
               <span data-icon="search"></span
               ><input
@@ -112,7 +114,6 @@
               우리 동네로 오는 학교 <em id="result-count"></em>
             </h2>
             <select id="sort" aria-label="학교 정렬">
-              <option value="coverage">정류장 많은순</option>
               <option value="name">가나다순</option>
             </select>
           </div>
@@ -121,6 +122,7 @@
               통학 자료를 불러오고 있어요.
             </div>
           </div>
+          <p class="save-explanation">하트는 이 브라우저에만 저장해요. 카카오 계정 저장과 별개이며, 브라우저 데이터를 지우면 삭제돼요. 비교는 현재 화면에서만 유지돼요.</p>
           <footer class="explorer-foot">
             <span class="status-dot"></span>2026년 8월 31일 수집 자료<button
               data-action="about"
@@ -297,10 +299,11 @@
             조건으로 계산해요.
           </li>
           <li>
-            <strong>관심학교와 비교 선택</strong><br />선택한 학교는 이 화면을
-            이용하는 동안만 유지되고, 새로고침하면 초기화돼요. 내 프레피의
-            관심기관과는 연동되지 않아요. 로그인, 위치 권한, 광고, 분석 추적을
-            사용하지 않아요.
+            <strong>브라우저 저장과 비교 선택</strong><br />하트로 저장한 학교는
+            이 브라우저에서 새로고침한 뒤에도 볼 수 있어요. 브라우저 데이터를
+            지우면 삭제돼요. 저장을 차단한 환경에서는 현재 화면에서만 유지돼요.
+            내 프레피의 관심기관과는 연동되지 않아요. 비교 선택은 새로고침하면
+            초기화돼요. 학교 식별자만 저장하며 위치 권한은 요청하지 않아요.
           </li>
         </ul>
         <p class="source-credit">
