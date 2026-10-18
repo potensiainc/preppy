@@ -122,13 +122,13 @@ export async function registerEnglishKindergartenSessions(
         continue;
       }
       // A pre-existing differently named event at this campus/time must be explicitly reconciled.
-      const fingerprint = sessionIdentityFingerprint(row, data.sources);
+      const fingerprint = sessionIdentityFingerprint(row);
       const collisions =
         await executor.raw(sql`select o.id, identity.fingerprint
         from opportunities o join opportunity_versions v on v.opportunity_id=o.id and v.is_current=true
         left join english_session_identities identity on identity.opportunity_id=o.id
         where o.institution_id=${institution.id} and o.kind='INFORMATION_SESSION'
-          and v.event_start_at=${row.eventStartsAt}::timestamptz`);
+          and (v.event_start_at=${row.eventStartsAt}::timestamptz or (${Boolean(row.officialSessionId)} and identity.fingerprint=${fingerprint}))`);
       if (
         collisions.some(
           (item) =>

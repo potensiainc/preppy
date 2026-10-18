@@ -295,6 +295,16 @@ describe("audited no-notify session registration", () => {
       sessionKey: "copied-key",
     });
     expect(sessionPackageSchema.safeParse(duplicate).success).toBe(false);
+    const officialDuplicate = structuredClone(duplicate);
+    for (const row of officialDuplicate.sessions)
+      row.officialSessionId = { namespace: "fixture", value: "same-event" };
+    officialDuplicate.sessions[1]!.eventStartsAt = new Date(
+      new Date(future).getTime() + 86400000,
+    ).toISOString();
+    officialDuplicate.sessions[1]!.note = "Changed booking copy";
+    expect(sessionPackageSchema.safeParse(officialDuplicate).success).toBe(
+      false,
+    );
     await expect(
       runtime.transactionManager.run(async (executor) => {
         const fresh = structuredClone(data);
@@ -325,6 +335,12 @@ describe("audited no-notify session registration", () => {
         renamed.sessions = [
           { ...fresh.sessions[0]!, sessionKey: "copied-after-import" },
         ];
+        renamed.sessions[0]!.note += " changed booking copy";
+        renamed.sessions[0]!.targetAsPublished += " updated wording";
+        renamed.sources[0]!.normalizedText += " revised official booking text";
+        renamed.sessions[0]!.eventStartsAt = new Date(
+          new Date(future).getTime() + 86400000 * 15,
+        ).toISOString();
         const rejected = await register(
           ctx,
           renamed,
@@ -338,6 +354,67 @@ describe("audited no-notify session registration", () => {
         throw new Error("ROLLBACK_SIMULTANEOUS");
       }),
     ).rejects.toThrow("ROLLBACK_SIMULTANEOUS");
+  });
+
+  it("does not distinguish no-ID occurrences by changed booking/target copy or evidence, but permits explicit programs", async () => {
+    const duplicate = structuredClone(data);
+    const copied = {
+      ...duplicate.sessions[0]!,
+      sessionKey: "changed-copy",
+      note: "Changed booking wording",
+      targetAsPublished: "Updated free-form audience wording",
+      evidenceKeys: ["revised"],
+    };
+    duplicate.sources.push({
+      ...duplicate.sources[0]!,
+      key: "revised",
+      normalizedText: "Changed official evidence text remains non-identifying",
+    });
+    duplicate.sessions.push(copied);
+    expect(sessionPackageSchema.safeParse(duplicate).success).toBe(false);
+    await expect(
+      runtime.transactionManager.run(async (executor) => {
+        const fresh = structuredClone(data);
+        fresh.sessions[0]!.sessionKey = "program-one";
+        fresh.sessions[0]!.programAsPublished = "Reviewed program A";
+        fresh.sessions[0]!.eventStartsAt = new Date(
+          new Date(future).getTime() + 86400000 * 16,
+        ).toISOString();
+        fresh.sessions.push({
+          ...fresh.sessions[0]!,
+          sessionKey: "program-two",
+          programAsPublished: "Reviewed program B",
+        });
+        const manager = {
+          run: <T>(
+            op: Parameters<typeof runtime.transactionManager.run<T>>[0],
+          ) => op(executor),
+        };
+        const opts = { ...options, expectedChecksum: packageChecksum(fresh) };
+        expect((await register(ctx, fresh, opts, manager)).changed).toBe(2);
+        expect((await register(ctx, fresh, opts, manager)).changed).toBe(0);
+        const changed = structuredClone(fresh);
+        changed.sessions = [
+          {
+            ...fresh.sessions[0]!,
+            sessionKey: "another-key",
+            note: "Different booking note",
+          },
+        ];
+        changed.sources[0]!.normalizedText += " changed source wording";
+        const result = await register(
+          ctx,
+          changed,
+          { ...options, expectedChecksum: packageChecksum(changed) },
+          manager,
+        );
+        expect(result.applied).toBe(false);
+        expect(result.rejects[0]?.code).toBe(
+          "EXISTING_SESSION_RECONCILIATION_REQUIRED",
+        );
+        throw new Error("ROLLBACK_PROGRAM_IDENTITY");
+      }),
+    ).rejects.toThrow("ROLLBACK_PROGRAM_IDENTITY");
   });
   it("lists future UNKNOWN/CLOSED/OPEN sessions in the menu while excluding past/cancelled/nonpublic/unverified English sessions", async () => {
     await expect(

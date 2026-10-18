@@ -308,7 +308,7 @@ async function getOpportunityTruths(
     projection === "DETAIL"
       ? sql`case state when 'OPEN' then 'CURRENT' when 'UPCOMING' then 'UPCOMING' when 'CLOSED' then 'RECENT' when 'COMPLETED' then 'RECENT' when 'CANCELLED' then 'RECENT' else null end`
       : projection === "BRIEFINGS" || projection === "HOME"
-        ? sql`case when "institutionCategory"='ENGLISH_KINDERGARTEN' and kind='INFORMATION_SESSION' then case when "eventStartAt">=now() and state<>'CANCELLED' then 'HOME' else null end when state in ('OPEN','UPCOMING') then 'HOME' else null end`
+        ? sql`case when "institutionCategory"='ENGLISH_KINDERGARTEN' and kind='INFORMATION_SESSION' and mode='NATIVE' then case when "eventStartAt">=now() and state<>'CANCELLED' then 'HOME' else null end when state in ('OPEN','UPCOMING') then 'HOME' else null end`
         : sql`case when state='UNKNOWN' then null else 'CARD' end`;
   const limit =
     projection === "DETAIL"

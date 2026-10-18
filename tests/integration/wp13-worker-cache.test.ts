@@ -64,8 +64,24 @@ afterAll(async () => {
 });
 
 describe("WP-13 Worker cache lifecycle", () => {
-  it("cache-only drain preserves due and stale notification events byte for byte", async () => {
+  it("cache-only drains V1 and V2 while preserving due and stale notification events byte for byte", async () => {
     const fixture = await seed();
+    const v2Ids = [];
+    for (const targetType of ["INSTITUTION", "OPPORTUNITY"] as const) {
+      const id = randomUUID(),
+        targetId = randomUUID(),
+        versionId = randomUUID();
+      v2Ids.push(id);
+      const payload = {
+        version: 2,
+        targetType,
+        targetId,
+        versionId,
+        reason: "ADMIN_CORRECTION",
+      };
+      await runtime.client`insert into outbox_events(id,event_type,aggregate_type,aggregate_id,payload,dedupe_key,status,available_at,max_attempts) values(${id},'CACHE_REVALIDATION_REQUESTED',${targetType},${targetId},${JSON.stringify(payload)}::jsonb,${prefix + "-v2-" + id},'PENDING','2026-08-25T12:00:00Z',3)`;
+    }
+    const processedVersions: number[] = [];
     const ids = [];
     for (const eventType of [
       "OPPORTUNITY_CHANGE_PUBLISHED",
@@ -88,11 +104,24 @@ describe("WP-13 Worker cache lifecycle", () => {
       },
       {
         transactionManager: runtime.transactionManager,
-        client: { revalidate: async () => ({ kind: "SUCCEEDED" }) },
+        client: {
+          revalidate: async (input) => {
+            processedVersions.push(input.payload.version);
+            return { kind: "SUCCEEDED" };
+          },
+        },
       },
     );
-    expect(result.claimed).toBe(1);
-    expect(result.results).toEqual([{ kind: "PROCESSED" }]);
+    expect(result.claimed).toBe(3);
+    expect(result.results).toEqual(
+      Array.from({ length: 3 }, () => ({ kind: "PROCESSED" })),
+    );
+    expect(processedVersions.sort()).toEqual([1, 2, 2]);
+    expect(
+      (
+        await runtime.client`select status from outbox_events where id in ${runtime.client(v2Ids)}`
+      ).every((r) => r.status === "PROCESSED"),
+    ).toBe(true);
     expect(
       await runtime.client`select row_to_json(outbox_events) as value from outbox_events where id in ${runtime.client(ids)} order by id`,
     ).toEqual(before);

@@ -147,8 +147,10 @@ export const sessionPackageSchema = z
     for (const row of value.sessions) {
       const occurrence = JSON.stringify([
         row.institutionSlug,
-        new Date(row.eventStartsAt).toISOString(),
-        sessionIdentityFingerprint(row, value.sources),
+        row.officialSessionId
+          ? null
+          : new Date(row.eventStartsAt).toISOString(),
+        sessionIdentityFingerprint(row),
       ]);
       if (occurrenceIdentities.has(occurrence))
         ctx.addIssue({
@@ -212,32 +214,23 @@ export function sessionState(
         : "UNKNOWN";
 }
 
-/** Same occurrence only when campus/time AND reviewed audience, program, evidence and official ID agree.
- * A key is a stable storage locator, never proof of a distinct simultaneous session. */
-export function sessionIdentityFingerprint(
-  row: SessionRecord,
-  sources: SessionPackage["sources"],
-) {
-  return createHash("sha256")
-    .update(
-      JSON.stringify({
+/** Official IDs identify a campus/year event even when time, booking copy or evidence changes.
+ * Without an ID, only explicit normalized audience/program distinguish same-time sessions.
+ * Free-form target text, booking notes, URLs, source contents and sessionKey are not identities. */
+export function sessionIdentityFingerprint(row: SessionRecord) {
+  const identity = row.officialSessionId
+    ? {
+        kind: "OFFICIAL_SESSION_V2",
+        year: row.academicYear,
+        namespace: row.officialSessionId.namespace,
+        value: row.officialSessionId.value,
+      }
+    : {
+        kind: "REVIEWED_OCCURRENCE_V2",
         year: row.academicYear,
         ages: [...row.targetAges].sort(),
         births: [...row.birthYears].sort(),
-        audience: row.targetAsPublished,
-        program: row.programAsPublished ?? row.note,
-        officialId: row.officialSessionId,
-        evidence: row.evidenceKeys
-          .map((key) => {
-            const s = sources.find((s) => s.key === key);
-            if (!s) return [key, "UNKNOWN_EVIDENCE"];
-            return [
-              s.url,
-              createHash("sha256").update(s.normalizedText).digest("hex"),
-            ];
-          })
-          .sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b))),
-      }),
-    )
-    .digest("hex");
+        program: row.programAsPublished,
+      };
+  return createHash("sha256").update(JSON.stringify(identity)).digest("hex");
 }
