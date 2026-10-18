@@ -78,6 +78,6 @@ export const EXPECTED_REPOSITORY_MIGRATIONS = [
   },
   {
     identifier: "0018_english_session_identity",
-    hash: "7d87bf122d9477ef6c6a80ec6acc36790ce8eac8b650d03363e67d55e076e215",
+    hash: "6782c831e6d28b646aca6edc92e7b086406f7b973e29621bac4d77d303e6fcf8",
   },
 ] as const satisfies readonly RepositoryMigration[];
