@@ -175,3 +175,51 @@ export function parseArticleCacheRevalidationOutboxInput(
     payloadSafe,
   };
 }
+
+export type DataCacheRevalidationPayloadV2 = Readonly<{
+  version: 2;
+  targetType: "INSTITUTION" | "OPPORTUNITY";
+  targetId: string;
+  versionId: string;
+  reason: "ADMIN_CORRECTION";
+}>;
+
+export type CacheRevalidationPayload =
+  ArticleCacheRevalidationPayloadV1 | DataCacheRevalidationPayloadV2;
+
+export function parseCacheRevalidationPayload(
+  value: unknown,
+): CacheRevalidationPayload | null {
+  const article = parseArticleCacheRevalidationPayload(value);
+  if (article) return article;
+  if (
+    !isPlainDataRecord(value) ||
+    !exactKeys(value, [
+      "version",
+      "targetType",
+      "targetId",
+      "versionId",
+      "reason",
+    ]) ||
+    value.version !== 2 ||
+    (value.targetType !== "INSTITUTION" &&
+      value.targetType !== "OPPORTUNITY") ||
+    value.reason !== "ADMIN_CORRECTION" ||
+    typeof value.targetId !== "string" ||
+    !UUID.test(value.targetId) ||
+    typeof value.versionId !== "string" ||
+    !UUID.test(value.versionId)
+  )
+    return null;
+  return {
+    version: 2,
+    targetType: value.targetType,
+    targetId: value.targetId,
+    versionId: value.versionId,
+    reason: "ADMIN_CORRECTION",
+  };
+}
+
+export function cacheAggregateId(payload: CacheRevalidationPayload): string {
+  return payload.version === 1 ? payload.articleId : payload.targetId;
+}

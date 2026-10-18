@@ -681,4 +681,76 @@ describe("WP-11 Admin verification route and UI contracts", () => {
       expect(source).not.toContain(`name=\"${clientOwned}\"`);
     }
   });
+
+  it("requires an explicit correction reason and retains existing authorization/origin checks", async () => {
+    const correction = {
+      mode: "ADMIN_CORRECTION_NO_NOTIFY",
+      reason: "CORRECTION_DATES_NO_NOTIFY",
+    };
+    const command = vi.fn(async () => opportunityResult());
+    const valid = await handleAdminVerifyOpportunityRequest(
+      request({ ...opportunityBody(), correction }),
+      { opportunityId },
+      { ...pipelineDependencies(), verifyOpportunity: command },
+    );
+    expect(valid.status).toBe(200);
+    expect(command).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ correction }),
+    );
+    for (const invalid of [
+      { mode: "ADMIN_CORRECTION_NO_NOTIFY" },
+      { mode: "OTHER", reason: correction.reason },
+      { ...correction, reason: "NON_USER_FACING" },
+    ]) {
+      command.mockClear();
+      const response = await handleAdminVerifyOpportunityRequest(
+        request({ ...opportunityBody(), correction: invalid }),
+        { opportunityId },
+        { ...pipelineDependencies(), verifyOpportunity: command },
+      );
+      expect(response.status).toBe(400);
+      expect(command).not.toHaveBeenCalled();
+    }
+    const { ForbiddenError } = await import("@/src/application/errors");
+    command.mockClear();
+    const denied = await handleAdminVerifyOpportunityRequest(
+      request({ ...opportunityBody(), correction }),
+      { opportunityId },
+      {
+        ...pipelineDependencies(),
+        requireCurrentAdmin: async () => {
+          throw new ForbiddenError();
+        },
+        verifyOpportunity: command,
+      },
+    );
+    expect(denied.status).toBe(403);
+    expect(command).not.toHaveBeenCalled();
+    const factCommand = vi.fn(async () => ({ institutionId }) as never);
+    const factDenied = await handleAdminVerifyInstitutionFactRequest(
+      request({ ...factBody(), correction }),
+      { institutionId, factType: "TUITION" },
+      {
+        ...pipelineDependencies(),
+        requireCurrentAdmin: async () => {
+          throw new ForbiddenError();
+        },
+        verifyInstitutionFact: factCommand,
+      },
+    );
+    expect(factDenied.status).toBe(403);
+    expect(factCommand).not.toHaveBeenCalled();
+    const conflicting = await handleAdminVerifyOpportunityRequest(
+      request({
+        ...opportunityBody(),
+        correction,
+        materialityOverride: "NON_NOTIFIABLE",
+        overrideReason: "MATERIALITY_NON_USER_FACING_CONFIRMED",
+      }),
+      { opportunityId },
+      { ...pipelineDependencies(), verifyOpportunity: command },
+    );
+    expect(conflicting.status).toBe(400);
+  });
 });

@@ -1,8 +1,17 @@
 import { randomUUID } from "node:crypto";
 
 import postgres from "postgres";
-import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  vi,
+} from "vitest";
 
+import { OutboxWriter } from "@/src/application/outbox-writer.server";
 import { createAdminCommandContext } from "@/src/application/context";
 import { migrateDatabase } from "@/src/db/migrate";
 import {
@@ -1376,5 +1385,115 @@ describe("WP-10B Opportunity verification", () => {
       legacy_versions: 1,
       changes: 0,
     });
+  });
+
+  it("keeps materiality, evidence and audit while suppressing only notifications for Native/Legacy corrections", async () => {
+    for (const legacy of [false, true]) {
+      const fixture = legacy
+        ? await createLegacyFixture()
+        : await createNativeFixture();
+      const candidate = legacy
+        ? legacyInput(fixture as LegacyFixture, "2026-09-05")
+        : nativeInput(fixture as NativeFixture, "2026-09-01T02:00:00.000Z");
+      const correction = {
+        mode: "ADMIN_CORRECTION_NO_NOTIFY",
+        reason: "CORRECTION_DATES_NO_NOTIFY",
+      };
+      const context = createAdminCommandContext({
+        adminUserId: fixture.adminUserId,
+      });
+      const body = { ...candidate, correction };
+      const result = await verifyOpportunity(context, body, {
+        transactionManager: runtime.transactionManager,
+      });
+      expect(result).toMatchObject({
+        outcome: "CHANGED",
+        materiality: "NOTIFIABLE",
+        outboxEnqueued: false,
+      });
+      expect(result.evidenceId).toBeTruthy();
+      expect(result.opportunityChangeId).toBeTruthy();
+      const events =
+        await runtime.client`select event_type, payload from outbox_events where aggregate_id=${fixture.opportunityId} or aggregate_id=${result.opportunityChangeId}`;
+      expect(events).toHaveLength(1);
+      expect(events[0]!.event_type).toBe("CACHE_REVALIDATION_REQUESTED");
+      expect(events[0]!.payload).toMatchObject({
+        version: 2,
+        targetType: "OPPORTUNITY",
+        targetId: fixture.opportunityId,
+        versionId: result.currentVersionId,
+      });
+      const audits =
+        await runtime.client`select action_type, after_data from audit_logs where entity_id=${fixture.opportunityId}`;
+      expect(audits).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            action_type: "ADMIN_CORRECTION_NO_NOTIFY",
+            after_data: expect.objectContaining({
+              reason: correction.reason,
+              metadata: expect.objectContaining({
+                outcomeCode: "NOTIFIABLE",
+                sourceId: fixture.sourceId,
+              }),
+            }),
+          }),
+        ]),
+      );
+      const notifications =
+        await runtime.client`select count(*)::int as n from notifications where opportunity_id=${fixture.opportunityId}`;
+      expect(notifications[0]!.n).toBe(0);
+      const replay = await verifyOpportunity(context, body, {
+        transactionManager: runtime.transactionManager,
+      });
+      expect(replay.outcome).toBe("IDEMPOTENT_REPLAY");
+      expect(replay.outboxEnqueued).toBe(false);
+      const again =
+        await runtime.client`select count(*)::int as n from outbox_events where aggregate_id=${fixture.opportunityId}`;
+      expect(again[0]!.n).toBe(1);
+      const stale = {
+        ...body,
+        proposedState: {
+          ...body.proposedState,
+          actionUrl: "https://official.example.test/changed",
+        },
+      };
+      await expect(
+        verifyOpportunity(context, stale, {
+          transactionManager: runtime.transactionManager,
+        }),
+      ).rejects.toMatchObject({ code: "CONFLICT" });
+      await runtime.client`delete from outbox_events where aggregate_id=${fixture.opportunityId}`;
+      await runtime.client`delete from audit_logs where action_type='ADMIN_CORRECTION_NO_NOTIFY' and entity_id=${fixture.opportunityId}`;
+    }
+  });
+  it("rolls back correction versions, evidence and audit if cache enqueue fails", async () => {
+    const fixture = await createNativeFixture();
+    const enqueue = vi
+      .spyOn(OutboxWriter, "enqueue")
+      .mockRejectedValueOnce(new Error("cache enqueue unavailable"));
+    try {
+      await expect(
+        verifyOpportunity(
+          createAdminCommandContext({ adminUserId: fixture.adminUserId }),
+          {
+            ...nativeInput(fixture, "2026-09-01T02:00:00.000Z"),
+            correction: {
+              mode: "ADMIN_CORRECTION_NO_NOTIFY",
+              reason: "CORRECTION_DATES_NO_NOTIFY",
+            },
+          },
+          { transactionManager: runtime.transactionManager },
+        ),
+      ).rejects.toThrow();
+    } finally {
+      enqueue.mockRestore();
+    }
+    const [counts] = await runtime.client`
+      select (select count(*)::int from opportunity_versions where opportunity_id=${fixture.opportunityId}) as versions,
+        (select count(*)::int from opportunity_changes where opportunity_id=${fixture.opportunityId}) as changes,
+        (select count(*)::int from audit_logs where entity_id=${fixture.opportunityId}) as audits,
+        (select count(*)::int from outbox_events where aggregate_id=${fixture.opportunityId}) as events
+    `;
+    expect(counts).toEqual({ versions: 1, changes: 0, audits: 0, events: 0 });
   });
 });

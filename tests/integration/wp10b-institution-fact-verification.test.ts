@@ -413,4 +413,50 @@ describe("WP-10B Institution Fact verification", () => {
       audits: 0,
     });
   });
+
+  it("preserves the full nested Fact value and writes correction audit plus cache without notifications", async () => {
+    const fixture = await createFixture(true);
+    const body = {
+      ...input(fixture, 1300000),
+      correction: {
+        mode: "ADMIN_CORRECTION_NO_NOTIFY",
+        reason: "CORRECTION_CONTENT_NO_NOTIFY",
+      },
+    };
+    const value = {
+      currency: "KRW",
+      amount: 1300000,
+      exceptions: [null, { terms: ["original", "condition"], unknown: true }],
+    };
+    const result = await verifyInstitutionFact(
+      createAdminCommandContext({ adminUserId: fixture.adminUserId }),
+      { ...body, proposedState: { ...body.proposedState, valueJson: value } },
+      { transactionManager: runtime.transactionManager },
+    );
+    const rows =
+      await runtime.client`select value_json from institution_fact_versions where id=${result.currentVersionId}`;
+    expect(rows[0]!.value_json).toEqual(value);
+    const events =
+      await runtime.client`select event_type,payload from outbox_events where aggregate_id=${fixture.institutionId}`;
+    expect(events).toHaveLength(1);
+    expect(events[0]!.event_type).toBe("CACHE_REVALIDATION_REQUESTED");
+    expect(events[0]!.payload).toMatchObject({
+      targetType: "INSTITUTION",
+      versionId: result.currentVersionId,
+    });
+    const audits =
+      await runtime.client`select after_data from audit_logs where entity_id=${fixture.institutionId}`;
+    expect(
+      audits.some((a) => a.after_data.reason === body.correction.reason),
+    ).toBe(true);
+    expect(result.evidenceId).toBeTruthy();
+    await expect(
+      verifyInstitutionFact(
+        createAdminCommandContext({ adminUserId: fixture.adminUserId }),
+        body,
+        { transactionManager: runtime.transactionManager },
+      ),
+    ).rejects.toMatchObject({ code: "CONFLICT" });
+    await runtime.client`delete from outbox_events where aggregate_id=${fixture.institutionId}`;
+  });
 });

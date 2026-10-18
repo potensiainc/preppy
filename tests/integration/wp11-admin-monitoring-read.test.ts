@@ -364,7 +364,7 @@ describe("WP-11 Admin Monitoring read projections", () => {
   });
 
   it("loads bounded Institution facts with a nullable token for every canonical fact type", async () => {
-    // Mutation caught: Institution Fact creation loses its null token, current Fact token is guessed, or value_json/raw Source data leaks.
+    // Mutation caught: Institution Fact creation loses its null token, current Fact token is guessed, or the complete editable value_json is lost.
     const detailQuery = await importMonitoringDetail();
     expect(detailQuery).not.toBeNull();
     if (!detailQuery) return;
@@ -389,7 +389,7 @@ describe("WP-11 Admin Monitoring read projections", () => {
           is_current, value_json, display_text, verified_at
         ) values (
           ${factVersionId}, ${factId}, 1, 'VERIFIED', true,
-          ${JSON.stringify({ privateAmount: 999999 })}::jsonb,
+          ${JSON.stringify({ amount: 999999, nested: { values: [1, null, "condition"] } })}::jsonb,
           'Tuition confirmed by official notice', '2026-08-23T00:00:00.000Z'
         )
       `);
@@ -417,6 +417,10 @@ describe("WP-11 Admin Monitoring read projections", () => {
           versionId: factVersionId,
           versionNumber: 1,
           displayText: "Tuition confirmed by official notice",
+          valueJson: {
+            amount: 999999,
+            nested: { values: [1, null, "condition"] },
+          },
           verifiedAt: "2026-08-23T00:00:00.000Z",
           validFrom: null,
           validUntil: null,
@@ -434,7 +438,7 @@ describe("WP-11 Admin Monitoring read projections", () => {
         expectedCurrentVersionId: null,
         current: null,
       });
-      expect(JSON.stringify(detail)).not.toContain("privateAmount");
+      expect(JSON.stringify(detail)).toContain("condition");
     });
   });
 
@@ -544,9 +548,7 @@ describe("WP-11 Admin Monitoring read projections", () => {
           actionUrl: null,
         },
       });
-      expect(JSON.stringify(detail)).not.toContain(
-        "official-notes-must-not-leak",
-      );
+      expect(JSON.stringify(detail)).toContain("official-notes-must-not-leak");
     });
   });
 

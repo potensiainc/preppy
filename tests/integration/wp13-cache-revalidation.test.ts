@@ -219,4 +219,42 @@ describe("WP-13 cache revalidation endpoint", () => {
     expect(revalidatePath).not.toHaveBeenCalled();
     expect(revalidateTag).not.toHaveBeenCalled();
   });
+
+  it("revalidates correction targets and related articles from DB identities without notification handling", async () => {
+    const fixture = await seed();
+    for (const targetType of ["INSTITUTION", "OPPORTUNITY"] as const) {
+      const paths: string[] = [],
+        tags: string[] = [];
+      const response = await handleCacheRevalidationRequest(
+        request({
+          version: 2,
+          targetType,
+          targetId:
+            targetType === "INSTITUTION"
+              ? fixture.institutionId
+              : fixture.opportunityId,
+          versionId: randomUUID(),
+          reason: "ADMIN_CORRECTION",
+        }),
+        {
+          getConfig: () => ({ secret, maxClockSkewSeconds: 300 }),
+          now: () => now,
+          transactionManager: runtime.transactionManager,
+          replayRegistry: new BoundedCacheReplayRegistry(),
+          revalidatePath: (path) => paths.push(path),
+          revalidateTag: (tag) => tags.push(tag),
+        },
+      );
+      expect(response.status).toBe(200);
+      expect(paths).toEqual(
+        expect.arrayContaining([
+          `/institutions/${fixture.institutionSlug}`,
+          `/opportunities/${fixture.opportunitySlug}`,
+          `/articles/${fixture.slug}`,
+          "/curation/calendar",
+        ]),
+      );
+      expect(tags).toContain(`institution:${fixture.institutionId}`);
+    }
+  });
 });

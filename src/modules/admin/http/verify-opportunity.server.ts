@@ -1,6 +1,7 @@
 import "server-only";
 
 import { z } from "zod";
+import { adminCorrectionSchema } from "@/src/modules/monitoring/admin-correction";
 
 import type { AdminCommandContext } from "@/src/application/context";
 import { isCanonicalAdminActionUrl } from "@/src/modules/admin/action-url";
@@ -178,6 +179,7 @@ const evidenceSchema = z
 const opportunityBodySchema = z
   .object({
     expectedCurrentVersionId: z.uuid().nullable(),
+    correction: adminCorrectionSchema.optional(),
     proposedState: z.union([nativeCandidateSchema, legacyCandidateSchema]),
     sourceId: z.uuid(),
     evidence: evidenceSchema,
@@ -191,6 +193,16 @@ const opportunityBodySchema = z
   })
   .strict()
   .superRefine((value, context) => {
+    if (
+      value.correction &&
+      (value.materialityOverride || value.overrideReason)
+    ) {
+      context.addIssue({
+        code: "custom",
+        path: ["correction"],
+        message: "Invalid value.",
+      });
+    }
     const validPair =
       (value.materialityOverride === undefined &&
         value.overrideReason === undefined) ||

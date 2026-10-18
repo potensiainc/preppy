@@ -2,7 +2,10 @@ import "server-only";
 
 import type { TransactionManager } from "@/src/infrastructure/db/runtime.server";
 import type { CacheRevalidationClient } from "@/src/modules/cache/revalidation-client.server";
-import { parseArticleCacheRevalidationPayload } from "@/src/modules/cache/revalidation-contract";
+import {
+  parseCacheRevalidationPayload,
+  cacheAggregateId,
+} from "@/src/modules/cache/revalidation-contract";
 import {
   completeOutboxEvent,
   deadLetterOutboxEvent,
@@ -29,8 +32,8 @@ export async function processCacheRevalidationEvent(
   workerContext: Readonly<{ workerId: string; now: Date }>,
   dependencies: Readonly<{ client: CacheRevalidationClient }>,
 ): Promise<CacheRevalidationProcessResult> {
-  const payload = parseArticleCacheRevalidationPayload(claimedEvent.payload);
-  if (!payload || payload.articleId !== claimedEvent.aggregateId) {
+  const payload = parseCacheRevalidationPayload(claimedEvent.payload);
+  if (!payload || cacheAggregateId(payload) !== claimedEvent.aggregateId) {
     throw new TypeError("Invalid claimed cache revalidation event");
   }
   const result = await dependencies.client.revalidate({

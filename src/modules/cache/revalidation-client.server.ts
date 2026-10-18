@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { ArticleCacheRevalidationPayloadV1 } from "@/src/modules/cache/revalidation-contract";
+import type { CacheRevalidationPayload } from "@/src/modules/cache/revalidation-contract";
 import { createCacheRevalidationSignature } from "@/src/modules/cache/revalidation-handler.server";
 
 const MAX_RESPONSE_BYTES = 8 * 1024;
@@ -21,7 +21,7 @@ export interface CacheRevalidationClient {
   revalidate(
     input: Readonly<{
       eventId: string;
-      payload: ArticleCacheRevalidationPayloadV1;
+      payload: CacheRevalidationPayload;
     }>,
   ): Promise<CacheRevalidationResult>;
 }
@@ -96,7 +96,7 @@ export class HttpCacheRevalidationClient implements CacheRevalidationClient {
   async revalidate(
     input: Readonly<{
       eventId: string;
-      payload: ArticleCacheRevalidationPayloadV1;
+      payload: CacheRevalidationPayload;
     }>,
   ): Promise<CacheRevalidationResult> {
     const rawBody = new TextEncoder().encode(JSON.stringify(input.payload));

@@ -1,8 +1,11 @@
 import "server-only";
 
+import { enqueueDataRevalidation } from "@/src/modules/cache/data-revalidation.server";
+
 import { createHash } from "node:crypto";
 
 import { z } from "zod";
+import { adminCorrectionSchema } from "@/src/modules/monitoring/admin-correction";
 
 import { AuditWriter } from "@/src/application/audit-writer.server";
 import type { AdminCommandContext } from "@/src/application/context";
@@ -104,6 +107,7 @@ const verifyNativeOpportunityInputSchema = z
   .object({
     opportunityId: z.uuid(),
     expectedCurrentVersionId: z.uuid().nullable(),
+    correction: adminCorrectionSchema.optional(),
     proposedState: proposedNativeStateSchema,
     sourceId: z.uuid(),
     evidence: z
@@ -251,6 +255,7 @@ const verifyLegacyOpportunityInputSchema = z
   .object({
     opportunityId: z.uuid(),
     expectedCurrentVersionId: z.uuid().nullable(),
+    correction: adminCorrectionSchema.optional(),
     proposedState: proposedLegacyStateSchema,
     sourceId: z.uuid(),
     evidence: z
@@ -288,6 +293,7 @@ const verifyOpportunityInputSchema = z
   .object({
     opportunityId: z.uuid(),
     expectedCurrentVersionId: z.uuid().nullable(),
+    correction: adminCorrectionSchema.optional(),
     proposedState: z.unknown(),
     sourceId: z.uuid(),
     evidence: z.unknown(),
@@ -564,6 +570,9 @@ export async function verifyNativeOpportunityInTransaction(
           summary: "NEW_OPPORTUNITY: initial verified truth",
           changedFields: ["INITIAL_TRUTH"],
           customerSignalEligible: true,
+          ...(input.correction
+            ? { correctionReason: input.correction.reason }
+            : {}),
           ...(input.overrideReason
             ? { auditReason: input.overrideReason }
             : {}),
@@ -638,6 +647,8 @@ export async function verifyNativeOpportunityInTransaction(
             createOpportunityChangeOutboxDedupeKey(existingChange.id),
           )
         : null;
+      if (input.correction && existingOutbox !== null)
+        throw new ConflictError();
       return {
         opportunityId: opportunity.id,
         truthMode: "NATIVE",
@@ -760,6 +771,9 @@ export async function verifyNativeOpportunityInTransaction(
       summary: `${signal.changeType}: ${signal.changedFields.join(", ")}`,
       changedFields: signal.changedFields,
       customerSignalEligible: opportunity.publicationState === "PUBLISHED",
+      ...(input.correction
+        ? { correctionReason: input.correction.reason }
+        : {}),
       ...(input.overrideReason ? { auditReason: input.overrideReason } : {}),
     },
     canonicalChangeDependencies,
@@ -868,6 +882,7 @@ export async function verifyLegacyBackedOpportunityInTransaction(
       executor,
       createOpportunityChangeOutboxDedupeKey(existingChange.id),
     );
+    if (input.correction && existingOutbox !== null) throw new ConflictError();
     return {
       opportunityId: opportunity.id,
       truthMode: "LEGACY_BACKED",
@@ -1000,6 +1015,9 @@ export async function verifyLegacyBackedOpportunityInTransaction(
       summary: `${signal.changeType}: ${signal.changedFields.join(", ")}`,
       changedFields: signal.changedFields,
       customerSignalEligible: opportunity.publicationState === "PUBLISHED",
+      ...(input.correction
+        ? { correctionReason: input.correction.reason }
+        : {}),
       ...(input.overrideReason ? { auditReason: input.overrideReason } : {}),
     },
     canonicalChangeDependencies,
@@ -1032,8 +1050,29 @@ export async function verifyOpportunity(
   if (!parsedInput.success) {
     throw ValidationError.fromZodError(parsedInput.error);
   }
+  if (
+    parsedInput.data.correction &&
+    (parsedInput.data.materialityOverride || parsedInput.data.overrideReason)
+  ) {
+    throw ValidationError.invalidRequest();
+  }
+  const context = parsedInput.data.correction
+    ? { ...parsedContext.data, reason: parsedInput.data.correction.reason }
+    : parsedContext.data;
   try {
     return await dependencies.transactionManager.run(async (executor) => {
+      const finish = async (result: VerificationResult) => {
+        if (parsedInput.data.correction && result.outcome === "CHANGED") {
+          await enqueueDataRevalidation(executor, {
+            version: 2,
+            targetType: "OPPORTUNITY",
+            targetId: result.opportunityId,
+            versionId: result.currentVersionId,
+            reason: "ADMIN_CORRECTION",
+          });
+        }
+        return result;
+      };
       const persistence =
         dependencies.persistence ?? defaultVerifyOpportunityPersistence;
       const opportunity = await persistence.findOpportunityForUpdate(
@@ -1048,12 +1087,14 @@ export async function verifyOpportunity(
         if (!nativeInput.success) {
           throw ValidationError.fromZodError(nativeInput.error);
         }
-        return verifyNativeOpportunityInTransaction(
-          executor,
-          parsedContext.data,
-          nativeInput.data,
-          persistence,
-          dependencies.canonicalChangeDependencies,
+        return finish(
+          await verifyNativeOpportunityInTransaction(
+            executor,
+            context,
+            nativeInput.data,
+            persistence,
+            dependencies.canonicalChangeDependencies,
+          ),
         );
       }
       const legacyInput = verifyLegacyOpportunityInputSchema.safeParse(
@@ -1062,12 +1103,14 @@ export async function verifyOpportunity(
       if (!legacyInput.success) {
         throw ValidationError.fromZodError(legacyInput.error);
       }
-      return verifyLegacyBackedOpportunityInTransaction(
-        executor,
-        parsedContext.data,
-        legacyInput.data,
-        persistence,
-        dependencies.canonicalChangeDependencies,
+      return finish(
+        await verifyLegacyBackedOpportunityInTransaction(
+          executor,
+          context,
+          legacyInput.data,
+          persistence,
+          dependencies.canonicalChangeDependencies,
+        ),
       );
     });
   } catch (error) {

@@ -1,6 +1,9 @@
 import "server-only";
 
 import { z } from "zod";
+import { adminCorrectionSchema } from "@/src/modules/monitoring/admin-correction";
+
+import { enqueueDataRevalidation } from "@/src/modules/cache/data-revalidation.server";
 
 import { AuditWriter } from "@/src/application/audit-writer.server";
 import type { AdminCommandContext } from "@/src/application/context";
@@ -85,6 +88,7 @@ const verifyInstitutionFactInputSchema = z
     institutionId: z.uuid(),
     factType: z.enum(institutionFactTypeValues),
     expectedCurrentVersionId: z.uuid().nullable(),
+    correction: adminCorrectionSchema.optional(),
     proposedState: z
       .object({
         valueJson: factValueSchema,
@@ -404,14 +408,29 @@ export async function verifyInstitutionFact(
     throw ValidationError.fromZodError(parsedInput.error);
   }
   try {
-    return await dependencies.transactionManager.run((executor) =>
-      verifyInstitutionFactInTransaction(
+    return await dependencies.transactionManager.run(async (executor) => {
+      const result = await verifyInstitutionFactInTransaction(
         executor,
-        parsedContext.data,
+        parsedInput.data.correction
+          ? {
+              ...parsedContext.data,
+              reason: parsedInput.data.correction.reason,
+            }
+          : parsedContext.data,
         parsedInput.data,
         dependencies.persistence,
-      ),
-    );
+      );
+      if (parsedInput.data.correction && result.outcome !== "NO_CHANGE") {
+        await enqueueDataRevalidation(executor, {
+          version: 2,
+          targetType: "INSTITUTION",
+          targetId: result.institutionId,
+          versionId: result.currentVersionId,
+          reason: "ADMIN_CORRECTION",
+        });
+      }
+      return result;
+    });
   } catch (error) {
     throw mapDatabaseError(databaseCause(error));
   }
