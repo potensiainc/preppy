@@ -34,6 +34,7 @@ import { safeAbsoluteHttpUrl } from "./source-query.server";
 type AdminMonitoringObservationDTO = Readonly<{
   id: string;
   observedAt: string;
+  snapshotId: string | null;
   outcome: string;
   httpStatus: number | null;
   errorCode: string | null;
@@ -308,6 +309,7 @@ async function loadLatestObservation(
     .select({
       id: sourceObservations.id,
       observedAt: sourceObservations.observedAt,
+      snapshotId: sourceObservations.snapshotId,
       outcome: sourceObservations.outcome,
       httpStatus: sourceObservations.httpStatus,
       errorCode: sourceObservations.errorCode,
@@ -321,6 +323,7 @@ async function loadLatestObservation(
     ? {
         id: row.id.toString(),
         observedAt: iso(row.observedAt)!,
+        snapshotId: row.snapshotId,
         outcome: row.outcome,
         httpStatus: row.httpStatus,
         errorCode: row.errorCode,

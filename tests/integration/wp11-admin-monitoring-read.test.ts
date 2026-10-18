@@ -279,12 +279,15 @@ describe("WP-11 Admin Monitoring read projections", () => {
           (${opportunity.id}, ${sourceId}, 'PRIMARY_NOTICE', true, true, null),
           (${opportunity.id}, ${otherSourceId}, 'SUPPORTING', false, false, now())
       `);
+      const snapshotId = randomUUID();
+      await executor.raw(sql`insert into source_snapshots (id, source_id, captured_at, content_hash, normalized_text)
+        values (${snapshotId}, ${sourceId}, now(), 'test-hash', 'raw-captured-content-must-not-leak')`);
       await executor.raw(sql`
         insert into source_observations (
-          source_id, observed_at, outcome, http_status, error_message
+          source_id, observed_at, outcome, http_status, error_message, snapshot_id
         ) values (
           ${sourceId}, '2026-08-24T10:00:00.000Z', 'CHANGED', 200,
-          ${`${prefix}-raw-error-message-must-not-leak`}
+          ${`${prefix}-raw-error-message-must-not-leak`}, ${snapshotId}
         )
       `);
 
@@ -325,6 +328,7 @@ describe("WP-11 Admin Monitoring read projections", () => {
           targetAudience: "Families",
         },
         latestObservation: {
+          snapshotId,
           outcome: "CHANGED",
           httpStatus: 200,
         },
@@ -332,7 +336,9 @@ describe("WP-11 Admin Monitoring read projections", () => {
       expect(JSON.stringify(detail)).not.toContain(
         "raw-error-message-must-not-leak",
       );
-      expect(JSON.stringify(detail)).not.toContain("snapshot");
+      expect(JSON.stringify(detail)).not.toContain(
+        "raw-captured-content-must-not-leak",
+      );
       expect(JSON.stringify(detail)).not.toContain("evidence");
       expect(detail.schedule).toEqual({
         priority: canonicalSchedule!.priority,

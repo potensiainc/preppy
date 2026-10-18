@@ -459,4 +459,40 @@ describe("WP-10B Institution Fact verification", () => {
     ).rejects.toMatchObject({ code: "CONFLICT" });
     await runtime.client`delete from outbox_events where aggregate_id=${fixture.institutionId}`;
   });
+  it("rejects source-only Fact correction without a false NO_CHANGE success", async () => {
+    const fixture = await createFixture(true);
+    const sourceId = randomUUID();
+    await runtime.client`insert into sources (id, canonical_url, source_type, authority_level, lifecycle_status, source_name)
+      select ${sourceId}, ${`https://official.example.test/${prefix}/${sourceId}`}, source_type, authority_level, lifecycle_status, source_name
+      from sources where id=${fixture.sourceId}`;
+    await runtime.client`insert into institution_source_bindings (institution_id, source_id, role, is_primary, is_active)
+      values (${fixture.institutionId}, ${sourceId}, 'TUITION', false, true)`;
+    await expect(
+      verifyInstitutionFact(
+        createAdminCommandContext({ adminUserId: fixture.adminUserId }),
+        {
+          ...input(fixture, 1000000),
+          sourceId,
+          correction: {
+            mode: "ADMIN_CORRECTION_NO_NOTIFY",
+            reason: "CORRECTION_CONTENT_NO_NOTIFY",
+          },
+        },
+        { transactionManager: runtime.transactionManager },
+      ),
+    ).rejects.toMatchObject({ code: "VALIDATION_ERROR" });
+    const [counts] = await runtime.client`select
+      (select count(*)::int from institution_fact_versions where institution_fact_id=${fixture.factId}) as versions,
+      (select count(*)::int from institution_fact_version_evidence where institution_fact_version_id=${fixture.versionId}) as evidence,
+      (select count(*)::int from audit_logs where entity_id=${fixture.institutionId}) as audits,
+      (select count(*)::int from source_observations where source_id=${sourceId}) as observations,
+      (select count(*)::int from outbox_events where aggregate_id=${fixture.institutionId}) as cache`;
+    expect(counts).toEqual({
+      versions: 1,
+      evidence: 1,
+      audits: 0,
+      observations: 0,
+      cache: 0,
+    });
+  });
 });

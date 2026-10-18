@@ -577,6 +577,7 @@ describe("WP-11 verification candidate UI behavior", () => {
       expectedCurrentVersionId: currentVersionId,
       sourceId,
       observationId: "42",
+      snapshotId: currentVersionId,
       knowledgeState: "KNOWN",
       eventStatus: "ACTIVE",
       displayTitle: "2027 Applications",
@@ -602,7 +603,11 @@ describe("WP-11 verification candidate UI behavior", () => {
     expect(buildOpportunityCandidateBody(detail, form)).toEqual({
       expectedCurrentVersionId: currentVersionId,
       sourceId,
-      evidence: { evidenceRole: "PRIMARY", observationId: "42" },
+      evidence: {
+        evidenceRole: "PRIMARY",
+        observationId: "42",
+        snapshotId: currentVersionId,
+      },
       proposedState: {
         knowledgeState: "KNOWN",
         eventStatus: "ACTIVE",
@@ -702,6 +707,7 @@ describe("WP-11 Admin verification route and UI contracts", () => {
       { mode: "ADMIN_CORRECTION_NO_NOTIFY" },
       { mode: "OTHER", reason: correction.reason },
       { ...correction, reason: "NON_USER_FACING" },
+      { ...correction, reason: "CORRECTION_SOURCE_NO_NOTIFY" },
     ]) {
       command.mockClear();
       const response = await handleAdminVerifyOpportunityRequest(
@@ -712,6 +718,17 @@ describe("WP-11 Admin verification route and UI contracts", () => {
       expect(response.status).toBe(400);
       expect(command).not.toHaveBeenCalled();
     }
+    const invalidFactCommand = vi.fn(async () => ({ institutionId }) as never);
+    const invalidFact = await handleAdminVerifyInstitutionFactRequest(
+      request({
+        ...factBody(),
+        correction: { ...correction, reason: "CORRECTION_SOURCE_NO_NOTIFY" },
+      }),
+      { institutionId, factType: "TUITION" },
+      { ...pipelineDependencies(), verifyInstitutionFact: invalidFactCommand },
+    );
+    expect(invalidFact.status).toBe(400);
+    expect(invalidFactCommand).not.toHaveBeenCalled();
     const { ForbiddenError } = await import("@/src/application/errors");
     command.mockClear();
     const denied = await handleAdminVerifyOpportunityRequest(

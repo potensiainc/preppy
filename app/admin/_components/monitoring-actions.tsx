@@ -34,6 +34,10 @@ function CorrectionFields() {
   return (
     <fieldset>
       <legend>반영 방식</legend>
+      <p>
+        출처나 근거만 바꾸는 정정은 지원하지 않아요. 국제학교 정정은 확인한 원문
+        버전과 조회 기록이 함께 있어야 저장할 수 있어요.
+      </p>
       <label>
         <input
           type="checkbox"
@@ -59,7 +63,6 @@ function CorrectionFields() {
             <option value="CORRECTION_STATUS_NO_NOTIFY">
               접수·진행 상태 정정
             </option>
-            <option value="CORRECTION_SOURCE_NO_NOTIFY">출처 정정</option>
             <option value="CORRECTION_CONTENT_NO_NOTIFY">내용 정정</option>
           </select>
         </label>
@@ -207,9 +210,11 @@ function reloadDetailAfterAnnouncement(): void {
 
 function evidenceFromForm(form: FormData) {
   const observationId = nullableString(form, "observationId");
+  const snapshotId = nullableString(form, "snapshotId");
   return {
     evidenceRole: "PRIMARY",
     ...(observationId === null ? {} : { observationId }),
+    ...(snapshotId === null ? {} : { snapshotId }),
   };
 }
 
@@ -331,6 +336,13 @@ function OpportunityCandidateForm({
         value={detail.expectedCurrentVersionId ?? ""}
       />
       <input type="hidden" name="sourceId" value={detail.source.id} />
+      {detail.latestObservation?.snapshotId ? (
+        <input
+          type="hidden"
+          name="snapshotId"
+          value={detail.latestObservation.snapshotId}
+        />
+      ) : null}
       {detail.latestObservation === null ? null : (
         <input
           type="hidden"
@@ -741,6 +753,13 @@ function FactCandidateForm({
         value={fact.expectedCurrentVersionId ?? ""}
       />
       <input type="hidden" name="sourceId" value={detail.source.id} />
+      {detail.latestObservation?.snapshotId ? (
+        <input
+          type="hidden"
+          name="snapshotId"
+          value={detail.latestObservation.snapshotId}
+        />
+      ) : null}
       {detail.latestObservation === null ? null : (
         <input
           type="hidden"

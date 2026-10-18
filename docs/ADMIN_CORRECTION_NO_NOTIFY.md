@@ -4,11 +4,15 @@ The monitoring verification forms now retain complete current Fact `valueJson` a
 
 ## Explicit correction mode
 
-The existing authenticated admin verify endpoints accept optional `correction` with mode `ADMIN_CORRECTION_NO_NOTIFY` and a required allowlisted reason (dates, status, source, or content). The checkbox is off by default. Existing authentication, Origin checks, source binding/provenance validation, optimistic version checks and transactional row locks still apply. This option cannot be combined with a materiality override.
+The existing authenticated admin verify endpoints accept optional `correction` with mode `ADMIN_CORRECTION_NO_NOTIFY` and a required allowlisted reason (dates, status, or content). The checkbox is off by default. Existing authentication, Origin checks, source binding/provenance validation, optimistic version checks and transactional row locks still apply. This option cannot be combined with a materiality override.
 
 Correction still creates the normal verified version, evidence and canonical change. Materiality stays server-derived, including NOTIFIABLE where appropriate. Audit records contain the correction reason; canonical changes use action `ADMIN_CORRECTION_NO_NOTIFY`. Only customer notification outbox enqueue is skipped. Already-enqueued normal updates cannot be retroactively silenced by replaying as a correction.
 
-A changed correction atomically enqueues a cache-only event. Failed cache enqueue rolls back the content transaction. No-change/replay does not enqueue duplicate cache work. V2 cache payloads contain only validated IDs and a fixed reason; the authenticated cache handler derives related public paths/tags from the database. Existing article V1 events remain supported.
+A changed correction atomically enqueues a cache-only event. Failed cache enqueue rolls back the content transaction. Source/evidence-only correction is unsupported: the source reason is rejected and a correction without a content change is rejected before writing an observation/audit. Idempotent replay does not enqueue duplicate cache work. V2 cache payloads contain only validated IDs and a fixed reason; the authenticated cache handler derives related public paths/tags from the database. Existing article V1 events remain supported.
+
+## Captured evidence and international public reads
+
+The admin observation DTO and form preserve the snapshot ID alongside the observation ID. For international-school corrections the command requires both IDs, an official source of PRIMARY/SECONDARY_OFFICIAL authority, and an observation linked to that exact snapshot. Existing source/binding checks also verify both records belong to the submitted source. Missing or mismatched capture is rejected before any new current version is written. The public projection gate remains unchanged. Evidence is explicitly submitted and validated; older evidence is not silently copied.
 
 ## Release and operation boundaries
 

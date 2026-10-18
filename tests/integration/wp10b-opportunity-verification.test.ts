@@ -25,6 +25,7 @@ import {
   verifyNativeOpportunityInTransaction,
   verifyOpportunity,
 } from "@/src/modules/monitoring/verify-opportunity.server";
+import { getOpportunityBySlug } from "@/src/modules/public/opportunity-query.server";
 import { assertDedicatedTestDatabaseUrl } from "@/tests/support/test-database";
 
 const databaseUrl = process.env.TEST_DATABASE_URL;
@@ -392,7 +393,9 @@ async function cleanup() {
         select id from sources where canonical_url like ${`https://official.example.test/${prefix}/%`}
       )
     `;
+    await transaction`delete from source_snapshots where source_id in (select id from sources where canonical_url like ${`https://official.example.test/${prefix}/%`})`;
     await transaction`delete from sources where canonical_url like ${`https://official.example.test/${prefix}/%`}`;
+    await transaction`delete from institution_registry_identities where registry_external_id like ${`${prefix}:%`}`;
     await transaction`delete from institutions where slug like ${`${prefix}-%`}`;
     await transaction`delete from admin_users where external_auth_subject like ${`${prefix}-%`}`;
   });
@@ -1496,4 +1499,149 @@ describe("WP-10B Opportunity verification", () => {
     `;
     expect(counts).toEqual({ versions: 1, changes: 0, audits: 0, events: 0 });
   });
+  it.each([false, true])(
+    "rejects source-only correction without accepting a false success (legacy=%s)",
+    async (legacy) => {
+      const fixture = legacy
+        ? await createLegacyFixture()
+        : await createNativeFixture();
+      const sourceId = randomUUID();
+      await runtime.client`insert into sources (id, canonical_url, source_type, authority_level, lifecycle_status, source_name)
+      select ${sourceId}, ${`https://official.example.test/${prefix}/${sourceId}`}, source_type, authority_level, lifecycle_status, source_name
+      from sources where id=${fixture.sourceId}`;
+      await runtime.client`insert into opportunity_source_bindings (opportunity_id, source_id, role, is_primary, is_active)
+      values (${fixture.opportunityId}, ${sourceId}, 'SUPPORTING', false, true)`;
+      const candidate = legacy
+        ? legacyInput(fixture as LegacyFixture, "2026-08-31")
+        : nativeInput(fixture as NativeFixture, "2026-09-01T01:00:00.000Z");
+      const run = () =>
+        verifyOpportunity(
+          createAdminCommandContext({ adminUserId: fixture.adminUserId }),
+          {
+            ...candidate,
+            sourceId,
+            correction: {
+              mode: "ADMIN_CORRECTION_NO_NOTIFY",
+              reason: "CORRECTION_CONTENT_NO_NOTIFY",
+            },
+          },
+          { transactionManager: runtime.transactionManager },
+        );
+      await expect(run()).rejects.toMatchObject({ code: "VALIDATION_ERROR" });
+      const [counts] = await runtime.client`select
+      (select count(*)::int from audit_logs where entity_id=${fixture.opportunityId}) as audits,
+      (select count(*)::int from source_observations where source_id=${sourceId}) as observations,
+      (select count(*)::int from outbox_events where aggregate_id=${fixture.opportunityId}) as cache`;
+      expect(counts).toEqual({ audits: 0, observations: 0, cache: 0 });
+    },
+  );
+
+  it.each([false, true])(
+    "keeps international public reads visible and rejects uncaptured corrections (legacy=%s)",
+    async (legacy) => {
+      const fixture = legacy
+        ? await createLegacyFixture()
+        : await createNativeFixture();
+      await runtime.client`update institutions set category='INTERNATIONAL_SCHOOL' where id=${fixture.institutionId}`;
+      await runtime.client`insert into institution_registry_identities (institution_id, registry_name, registry_external_id, registry_record_url, registry_locator, metadata_json)
+        values (${fixture.institutionId}, 'ISI', ${`${prefix}:${fixture.institutionId}`}, 'https://registry.example.test', 'fixture', '{}'::jsonb)`;
+      const snapshotId = randomUUID();
+      await runtime.client`insert into source_snapshots (id, source_id, captured_at, content_hash)
+      values (${snapshotId}, ${fixture.sourceId}, now(), ${`test-${snapshotId}`})`;
+      const [observation] =
+        await runtime.client`insert into source_observations (source_id, observed_at, outcome, http_status, snapshot_id)
+      values (${fixture.sourceId}, now(), 'SUCCESS', 200, ${snapshotId}) returning id::text`;
+      const observationId = observation!.id as string;
+      if (legacy) {
+        await runtime.client`update event_version_evidence set source_observation_id=${observationId}::bigint, snapshot_id=${snapshotId}
+        where event_version_id=${(fixture as LegacyFixture).eventVersionId}`;
+      } else {
+        await runtime.client`update opportunity_version_evidence set source_observation_id=${observationId}::bigint, source_snapshot_id=${snapshotId}
+        where opportunity_version_id=${(fixture as NativeFixture).versionId}`;
+      }
+      const [root] =
+        await runtime.client`select slug from opportunities where id=${fixture.opportunityId}`;
+      const before = await getOpportunityBySlug(
+        runtime.executor,
+        root!.slug as string,
+      );
+      const candidate = legacy
+        ? legacyInput(fixture as LegacyFixture, "2026-09-05")
+        : nativeInput(fixture as NativeFixture, "2026-09-01T02:00:00.000Z");
+      const context = createAdminCommandContext({
+        adminUserId: fixture.adminUserId,
+      });
+      const correction = {
+        mode: "ADMIN_CORRECTION_NO_NOTIFY",
+        reason: "CORRECTION_DATES_NO_NOTIFY",
+      };
+      for (const evidence of [
+        { observationId, evidenceRole: "PRIMARY" },
+        { snapshotId, evidenceRole: "PRIMARY" },
+      ]) {
+        let rejection: unknown;
+        try {
+          await verifyOpportunity(
+            context,
+            { ...candidate, correction, evidence },
+            { transactionManager: runtime.transactionManager },
+          );
+        } catch (error) {
+          rejection = error;
+        }
+        expect(
+          await getOpportunityBySlug(runtime.executor, root!.slug as string),
+        ).toEqual(before);
+        expect(rejection).toMatchObject({ code: "VALIDATION_ERROR" });
+      }
+      const [uncaptured] =
+        await runtime.client`insert into source_observations (source_id, observed_at, outcome)
+        values (${fixture.sourceId}, now(), 'UNCHANGED') returning id::text`;
+      await expect(
+        verifyOpportunity(
+          context,
+          {
+            ...candidate,
+            correction,
+            evidence: {
+              observationId: uncaptured!.id,
+              snapshotId,
+              evidenceRole: "PRIMARY",
+            },
+          },
+          { transactionManager: runtime.transactionManager },
+        ),
+      ).rejects.toMatchObject({ code: "NOT_ELIGIBLE" });
+      expect(
+        await getOpportunityBySlug(runtime.executor, root!.slug as string),
+      ).toEqual(before);
+      const result = await verifyOpportunity(
+        context,
+        {
+          ...candidate,
+          correction,
+          evidence: { observationId, snapshotId, evidenceRole: "PRIMARY" },
+        },
+        { transactionManager: runtime.transactionManager },
+      );
+      expect(result).toMatchObject({
+        outcome: "CHANGED",
+        outboxEnqueued: false,
+      });
+      const after = await getOpportunityBySlug(
+        runtime.executor,
+        root!.slug as string,
+      );
+      expect(after.id).toBe(before.id);
+      const [capture] = legacy
+        ? await runtime.client`select source_observation_id::text as observation_id, snapshot_id from event_version_evidence where event_version_id=${result.currentVersionId}`
+        : await runtime.client`select source_observation_id::text as observation_id, source_snapshot_id as snapshot_id from opportunity_version_evidence where opportunity_version_id=${result.currentVersionId}`;
+      expect(capture).toEqual({
+        observation_id: observationId,
+        snapshot_id: snapshotId,
+      });
+      await runtime.client`delete from outbox_events where aggregate_id=${fixture.opportunityId}`;
+      await runtime.client`delete from audit_logs where action_type='ADMIN_CORRECTION_NO_NOTIFY' and entity_id=${fixture.opportunityId}`;
+    },
+  );
 });

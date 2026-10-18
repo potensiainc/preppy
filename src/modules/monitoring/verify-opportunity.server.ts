@@ -5,6 +5,8 @@ import { enqueueDataRevalidation } from "@/src/modules/cache/data-revalidation.s
 import { createHash } from "node:crypto";
 
 import { z } from "zod";
+import { eq } from "drizzle-orm";
+import { institutions, opportunities } from "@/src/db/schema";
 import { adminCorrectionSchema } from "@/src/modules/monitoring/admin-correction";
 
 import { AuditWriter } from "@/src/application/audit-writer.server";
@@ -469,6 +471,33 @@ async function validateProvenance(
     },
   );
   if (!binding) throw new NotEligibleError();
+  // A new current version must retain the captured evidence required by public reads.
+  let requireCapturedEvidence = false;
+  if (input.correction) {
+    const [institution] = await executor.drizzle
+      .select({ category: institutions.category })
+      .from(opportunities)
+      .innerJoin(institutions, eq(institutions.id, opportunities.institutionId))
+      .where(eq(opportunities.id, opportunityId))
+      .limit(1);
+    requireCapturedEvidence = institution?.category === "INTERNATIONAL_SCHOOL";
+    if (
+      requireCapturedEvidence &&
+      (!["PRIMARY", "SECONDARY_OFFICIAL"].includes(source.authorityLevel) ||
+        !input.evidence.observationId ||
+        !input.evidence.snapshotId ||
+        ![
+          "OFFICIAL_ADMISSION_PAGE",
+          "OFFICIAL_NOTICE_BOARD",
+          "OFFICIAL_DOCUMENT",
+          "OFFICIAL_APPLICATION_PORTAL",
+          "OFFICIAL_SCHOOL_PAGE",
+          "OFFICIAL_SOCIAL",
+        ].includes(source.sourceType))
+    ) {
+      throw ValidationError.invalidRequest();
+    }
+  }
   if (input.evidence.observationId) {
     const observation = await persistence.findSourceObservation(
       executor,
@@ -476,6 +505,11 @@ async function validateProvenance(
     );
     if (!observation) throw new NotFoundError();
     if (observation.sourceId !== source.id) throw new NotEligibleError();
+    if (
+      requireCapturedEvidence &&
+      observation.snapshotId !== input.evidence.snapshotId
+    )
+      throw new NotEligibleError();
   }
   if (input.evidence.snapshotId) {
     const snapshot = await persistence.findSourceSnapshot(
@@ -671,6 +705,7 @@ export async function verifyNativeOpportunityInTransaction(
     candidate,
   );
   if (!signal) {
+    if (input.correction) throw ValidationError.invalidRequest();
     const observation = await persistence.insertSourceObservation(executor, {
       sourceId: source.id,
       observedAt: ctx.occurredAt,
@@ -902,6 +937,7 @@ export async function verifyLegacyBackedOpportunityInTransaction(
     input.proposedState,
   );
   if (!signal) {
+    if (input.correction) throw ValidationError.invalidRequest();
     const observation = await persistence.insertSourceObservation(executor, {
       sourceId: source.id,
       observedAt: ctx.occurredAt,

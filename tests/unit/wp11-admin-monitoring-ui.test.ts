@@ -117,6 +117,7 @@ const nativeDetail = {
   institution: queueRow.institution,
   source: queueRow.source,
   latestObservation: {
+    snapshotId: "10101010-1010-4010-8010-101010101010",
     id: "42",
     observedAt: queueRow.lastCheckedAt,
     outcome: "CHANGED",
@@ -349,6 +350,9 @@ describe("WP-11 Admin Monitoring UI", () => {
     expect(markup).toContain("현재 기준 정보");
     expect(markup).toContain("최근 수집 결과");
     expect(markup).toContain("CHANGED");
+    expect(markup).toContain('name="snapshotId"');
+    expect(markup).not.toContain("CORRECTION_SOURCE_NO_NOTIFY");
+    expect(markup).toContain("출처나 근거만 바꾸는 정정은 지원하지 않아요.");
     expect(markup).toContain("변경 없음");
     expect(markup).toContain("변경 없음 기록");
     expect(markup).toMatch(

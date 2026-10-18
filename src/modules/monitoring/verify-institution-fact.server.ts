@@ -290,6 +290,7 @@ export async function verifyInstitutionFactInTransaction(
       validUntil: current.validUntil,
     };
     if (!compareFactTruth(existing, proposed)) {
+      if (input.correction) throw ValidationError.invalidRequest();
       const observation = await persistence.insertSourceObservation(executor, {
         sourceId: source.id,
         observedAt: ctx.occurredAt,

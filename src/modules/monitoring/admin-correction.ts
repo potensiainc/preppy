@@ -4,7 +4,6 @@ import { z } from "zod";
 export const correctionReasons = [
   "CORRECTION_DATES_NO_NOTIFY",
   "CORRECTION_STATUS_NO_NOTIFY",
-  "CORRECTION_SOURCE_NO_NOTIFY",
   "CORRECTION_CONTENT_NO_NOTIFY",
 ] as const;
 
