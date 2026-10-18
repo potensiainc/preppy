@@ -123,6 +123,21 @@ export async function registerEnglishKindergartenSessions(
       }
       // A pre-existing differently named event at this campus/time must be explicitly reconciled.
       const fingerprint = sessionIdentityFingerprint(row);
+      if (opportunity) {
+        const stored = await executor.raw(
+          sql`select fingerprint from english_session_identities where opportunity_id=${opportunity.id}`,
+        );
+        if (stored.length !== 1 || stored[0]?.fingerprint !== fingerprint) {
+          plan.push({
+            row,
+            opportunity,
+            current,
+            slug,
+            reject: "SESSION_IDENTITY_RECONCILIATION_REQUIRED" as const,
+          });
+          continue;
+        }
+      }
       const collisions =
         await executor.raw(sql`select o.id, identity.fingerprint
         from opportunities o join opportunity_versions v on v.opportunity_id=o.id and v.is_current=true

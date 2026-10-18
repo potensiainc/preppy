@@ -477,6 +477,35 @@ describe("audited no-notify session registration", () => {
       }),
     ).rejects.toThrow("ROLLBACK_MENU");
   });
+  it("rejects same-key official-ID or program adoption without silently retaining an old fingerprint", async () => {
+    const before =
+      await runtime.client`select identity.fingerprint,v.id as version_id from english_session_identities identity join opportunities o on o.id=identity.opportunity_id join opportunity_versions v on v.opportunity_id=o.id and v.is_current=true where o.institution_id=${campus}`;
+    for (const field of ["officialSessionId", "programAsPublished"] as const) {
+      const changed = structuredClone(data);
+      if (field === "officialSessionId")
+        changed.sessions[0]!.officialSessionId = {
+          namespace: "fixture",
+          value: "adopted-id",
+        };
+      else
+        changed.sessions[0]!.programAsPublished =
+          "New reviewed program identity";
+      const result = await register(
+        ctx,
+        changed,
+        { ...options, expectedChecksum: packageChecksum(changed) },
+        runtime.transactionManager,
+      );
+      expect(result.applied).toBe(false);
+      expect(result.rejects[0]?.code).toBe(
+        "SESSION_IDENTITY_RECONCILIATION_REQUIRED",
+      );
+      expect(result.before[0]?.operation).toBe("RECONCILIATION_REQUIRED");
+      expect(
+        await runtime.client`select identity.fingerprint,v.id as version_id from english_session_identities identity join opportunities o on o.id=identity.opportunity_id join opportunity_versions v on v.opportunity_id=o.id and v.is_current=true where o.institution_id=${campus}`,
+      ).toEqual(before);
+    }
+  });
   it("rejects evidence-only replacement without refreshing verification", async () => {
     const revised = structuredClone(data);
     revised.sources[0]!.normalizedText += " 새 공식 자료의 추가 문구";
