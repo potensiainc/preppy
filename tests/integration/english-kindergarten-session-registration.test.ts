@@ -18,6 +18,8 @@ import {
   getInstitutionBySlug,
   getCurrentInformationSessionCards,
 } from "@/src/modules/public/institution-query.server";
+import { verifyNativeOpportunityInTransaction } from "@/src/modules/monitoring/verify-opportunity.server";
+import { getMonitorableInstitutionIds } from "@/src/modules/follow/followability-policy.server";
 import { assertDedicatedTestDatabaseUrl } from "@/tests/support/test-database";
 const url = process.env.TEST_DATABASE_URL!;
 assertDedicatedTestDatabaseUrl(url);
@@ -477,6 +479,132 @@ describe("audited no-notify session registration", () => {
       }),
     ).rejects.toThrow("ROLLBACK_MENU");
   });
+
+  it.each(["ACTIVE", "DISCOVERED", "PAUSED", "RETIRED"] as const)(
+    "uses matching dry-run/apply source rules for %s and preserves source/monitoring rows",
+    async (lifecycle) => {
+      const marker = prefix + "-source-policy-" + lifecycle.toLowerCase();
+      await expect(
+        runtime.transactionManager.run(async (executor) => {
+          const fresh = structuredClone(data),
+            sourceId = randomUUID();
+          fresh.sources[0]!.url = `https://official.example.test/${marker}`;
+          fresh.sessions[0]!.sessionKey =
+            "source-policy-" + lifecycle.toLowerCase();
+          fresh.sessions[0]!.eventStartsAt = new Date(
+            new Date(future).getTime() + 86400000 * 25,
+          ).toISOString();
+          await executor.raw(
+            sql`insert into sources(id,canonical_url,source_type,authority_level,lifecycle_status,source_name) values(${sourceId},${fresh.sources[0]!.url},'OFFICIAL_SCHOOL_PAGE','PRIMARY',${lifecycle},'Reviewed official source')`,
+          );
+          await executor.raw(
+            sql`insert into source_monitor_configs(source_id,collection_strategy,monitoring_profile,is_enabled) values(${sourceId},'HTTP','STANDARD_SEASONAL',true)`,
+          );
+          const sourceBefore = await executor.raw(
+            sql`select row_to_json(s) as value from sources s where id=${sourceId}`,
+          );
+          const monitorBefore = await executor.raw(
+            sql`select row_to_json(c) as value from source_monitor_configs c where source_id=${sourceId}`,
+          );
+          const manager = {
+            run: <T>(
+              op: Parameters<typeof runtime.transactionManager.run<T>>[0],
+            ) => op(executor),
+          };
+          const dry = await register(
+            ctx,
+            fresh,
+            { apply: false, cacheConsumersV2Ready: false },
+            manager,
+          );
+          const applied = await register(
+            ctx,
+            fresh,
+            { ...options, expectedChecksum: packageChecksum(fresh) },
+            manager,
+          );
+          expect(applied.rejects).toEqual(dry.rejects);
+          if (lifecycle === "ACTIVE" || lifecycle === "DISCOVERED") {
+            expect(dry.rejects).toEqual([]);
+            expect(applied.applied).toBe(true);
+            expect(applied.changed).toBe(1);
+            const replay = await register(
+              ctx,
+              fresh,
+              { ...options, expectedChecksum: packageChecksum(fresh) },
+              manager,
+            );
+            expect(replay.changed).toBe(0);
+            expect(replay.rejects).toEqual([]);
+            const sourcePlan = replay.sourceBefore.find(
+              (r) => r.url === fresh.sources[0]!.url,
+            );
+            expect(sourcePlan?.current?.lifecycleStatus).toBe(lifecycle);
+            if (lifecycle === "DISCOVERED") {
+              expect(
+                (await getMonitorableInstitutionIds(executor, [campus])).has(
+                  campus,
+                ),
+              ).toBe(false);
+              const [opportunity] = await executor.raw(
+                sql`select id from opportunities where slug=${`${prefix}-briefing-2027-${fresh.sessions[0]!.sessionKey}`}`,
+              );
+              await expect(
+                verifyNativeOpportunityInTransaction(executor, ctx, {
+                  opportunityId: String(opportunity!.id),
+                  expectedCurrentVersionId: null,
+                  sourceId,
+                  evidence: { evidenceRole: "PRIMARY" },
+                  proposedState: {
+                    businessState: "CLOSED",
+                    title: "must not use general verification",
+                    summary: null,
+                    targetAudience: null,
+                    eventStartAt: null,
+                    eventEndAt: null,
+                    applicationOpenAt: null,
+                    applicationCloseAt: null,
+                    actionUrl: null,
+                    locationText: null,
+                    validFrom: null,
+                    validUntil: null,
+                  },
+                }),
+              ).rejects.toThrow();
+            }
+          } else {
+            expect(applied.applied).toBe(false);
+            expect(applied.rejects[0]?.code).toBe(
+              "SOURCE_LIFECYCLE_NOT_ALLOWED",
+            );
+            expect(
+              (
+                await executor.raw(
+                  sql`select id from opportunities where slug=${`${prefix}-briefing-2027-${fresh.sessions[0]!.sessionKey}`}`,
+                )
+              ).length,
+            ).toBe(0);
+          }
+          expect(
+            await executor.raw(
+              sql`select row_to_json(s) as value from sources s where id=${sourceId}`,
+            ),
+          ).toEqual(sourceBefore);
+          expect(
+            await executor.raw(
+              sql`select row_to_json(c) as value from source_monitor_configs c where source_id=${sourceId}`,
+            ),
+          ).toEqual(monitorBefore);
+          throw new Error("ROLLBACK_SOURCE_POLICY");
+        }),
+      ).rejects.toThrow("ROLLBACK_SOURCE_POLICY");
+      expect(
+        (
+          await runtime.client`select id from sources where canonical_url=${`https://official.example.test/${marker}`}`
+        ).length,
+      ).toBe(0);
+    },
+  );
   it("rejects same-key official-ID or program adoption without silently retaining an old fingerprint", async () => {
     const before =
       await runtime.client`select identity.fingerprint,v.id as version_id from english_session_identities identity join opportunities o on o.id=identity.opportunity_id join opportunity_versions v on v.opportunity_id=o.id and v.is_current=true where o.institution_id=${campus}`;

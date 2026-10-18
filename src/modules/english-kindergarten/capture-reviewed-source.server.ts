@@ -5,14 +5,7 @@ import { sources, sourceSnapshots, sourceObservations } from "@/src/db/schema";
 import type { TransactionExecutor } from "@/src/infrastructure/db/runtime.server";
 import { ValidationError } from "@/src/application/errors";
 import type { SessionPackage } from "./session-package";
-const officialTypes = new Set([
-  "OFFICIAL_ADMISSION_PAGE",
-  "OFFICIAL_NOTICE_BOARD",
-  "OFFICIAL_DOCUMENT",
-  "OFFICIAL_APPLICATION_PORTAL",
-  "OFFICIAL_SCHOOL_PAGE",
-  "OFFICIAL_SOCIAL",
-]);
+import { reviewedSourceEligibility } from "./reviewed-source-policy";
 export async function captureReviewedSource(
   executor: TransactionExecutor,
   evidence: SessionPackage["sources"][number],
@@ -34,12 +27,7 @@ export async function captureReviewedSource(
         lifecycleStatus: "ACTIVE",
       })
       .returning();
-  if (
-    !source ||
-    source.lifecycleStatus !== "ACTIVE" ||
-    !officialTypes.has(source.sourceType) ||
-    !["PRIMARY", "SECONDARY_OFFICIAL"].includes(source.authorityLevel)
-  )
+  if (!source || reviewedSourceEligibility(source))
     throw ValidationError.invalidRequest();
   const hash = createHash("sha256")
     .update(evidence.normalizedText)

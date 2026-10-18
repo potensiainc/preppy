@@ -79,3 +79,13 @@ Official session identity is scoped by campus + academic year + official namespa
 The main briefings menu and home extend future visibility only for verified, officially evidenced NATIVE English information sessions. LEGACY_BACKED English sessions keep the previous OPEN/UPCOMING state rule, so unevidenced future CLOSED legacy rows are not newly exposed. They treat future native English information sessions independently of booking OPEN/CLOSED/UNKNOWN, excluding cancelled/nonpublic/unverified rows and requiring official evidence. Existing private-elementary and international-school state rules remain unchanged.
 
 QA-only scripts are excluded from the Docker context; tests are not copied into the production image. Remote build/runtime validation must pass for the final SHA before any release claim.
+
+## Reviewed source lifecycle policy (explicitly approved recovery)
+
+Session package planning, source capture and the explicit reviewed English-session canonical verifier share the same eligibility predicate: official type, PRIMARY/SECONDARY_OFFICIAL authority, and lifecycle ACTIVE or DISCOVERED. PAUSED, RETIRED and unknown/blocked states reject. `sourceBefore` records every unique reviewed URL/current source and the action; rejects are returned before any domain writes in both dry-run and apply.
+
+Existing source lifecycle, URL, authority, type, monitor configuration and bindings are preserved. DISCOVERED is not automatically activated. The normal verification and crawler paths remain ACTIVE-only; the reviewed-session exception requires a published NATIVE English-kindergarten INFORMATION_SESSION, explicit no-notify correction, active opportunity/source binding and exactly linked captured observation/snapshot. There is no HTTP switch for this exception. Re-running a package does not create more versions/cache events or promote source state.
+
+The ten staging sources have no monitor configurations, one active OFFICIAL_MAIN binding each to the expected published campus, and no opportunity/legacy bindings or observations before import. Accepting their reviewed captures does not create monitor configurations or schedule workers. Lifecycle DISCOVERED denotes a discovered source record, not booking availability or an institution being closed.
+
+See `docs/qa/english-kindergarten-20261018/source-lifecycle-recovery.md` for the source-by-source review and current fetch limits. Re-deploy the new exact image before staging retry; recheck the 213-record package checksum, fresh backup, zero processing claims and full queue fingerprints. Do not rerun the older failed apply binary.

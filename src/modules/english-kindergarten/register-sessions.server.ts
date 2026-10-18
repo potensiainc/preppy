@@ -1,4 +1,5 @@
 import "server-only";
+import { planReviewedSources } from "./plan-reviewed-sources.server";
 import { planSessionCampuses } from "./campus-plan.server";
 import { captureReviewedSource } from "./capture-reviewed-source.server";
 import { createHash, randomUUID } from "node:crypto";
@@ -22,7 +23,7 @@ import { AuditWriter } from "@/src/application/audit-writer.server";
 import type { AdminCommandContext } from "@/src/application/context";
 import type { TransactionManager } from "@/src/infrastructure/db/runtime.server";
 import { enqueueDataRevalidation } from "@/src/modules/cache/data-revalidation.server";
-import { verifyNativeOpportunityInTransaction } from "@/src/modules/monitoring/verify-opportunity.server";
+import { verifyReviewedEnglishSessionOpportunityInTransaction } from "@/src/modules/monitoring/verify-opportunity.server";
 import {
   packageChecksum,
   sessionAudience,
@@ -66,6 +67,7 @@ export async function registerEnglishKindergartenSessions(
     await executor.raw(
       sql`select pg_advisory_xact_lock(hashtext('preppy-english-kindergarten-sessions'))`,
     );
+    const sourcePlan = await planReviewedSources(executor, data);
     const campuses = await planSessionCampuses(executor, data);
     const plan = [];
     for (const row of data.sessions) {
@@ -242,7 +244,11 @@ export async function registerEnglishKindergartenSessions(
           : {}),
         ...("current" in item ? { current: item.current } : {}),
       }));
-    const rejects = [...campuses.rejects, ...sessionRejects];
+    const rejects = [
+      ...sourcePlan.rejects,
+      ...campuses.rejects,
+      ...sessionRejects,
+    ];
     const before = plan
       .filter((item) => "slug" in item)
       .map((item) => ({
@@ -264,6 +270,7 @@ export async function registerEnglishKindergartenSessions(
         checksum,
         before,
         campusBefore: campuses.before,
+        sourceBefore: sourcePlan.before,
         rejects,
         changed: 0,
         createdCampuses: 0,
@@ -433,29 +440,33 @@ export async function registerEnglishKindergartenSessions(
       const primary = captures[0]!;
       const dates = (value: string | null) =>
         value === null ? null : new Date(value);
-      const result = await verifyNativeOpportunityInTransaction(executor, ctx, {
-        opportunityId,
-        expectedCurrentVersionId: item.current?.id ?? null,
-        proposedState: {
-          ...item.candidate,
-          eventStartAt: new Date(item.candidate.eventStartAt),
-          eventEndAt: dates(item.candidate.eventEndAt),
-          applicationOpenAt: dates(item.candidate.applicationOpenAt),
-          applicationCloseAt: dates(item.candidate.applicationCloseAt),
-          validFrom: dates(item.candidate.validFrom),
-          validUntil: dates(item.candidate.validUntil),
+      const result = await verifyReviewedEnglishSessionOpportunityInTransaction(
+        executor,
+        ctx,
+        {
+          opportunityId,
+          expectedCurrentVersionId: item.current?.id ?? null,
+          proposedState: {
+            ...item.candidate,
+            eventStartAt: new Date(item.candidate.eventStartAt),
+            eventEndAt: dates(item.candidate.eventEndAt),
+            applicationOpenAt: dates(item.candidate.applicationOpenAt),
+            applicationCloseAt: dates(item.candidate.applicationCloseAt),
+            validFrom: dates(item.candidate.validFrom),
+            validUntil: dates(item.candidate.validUntil),
+          },
+          sourceId: primary.sourceId,
+          correction: {
+            mode: "ADMIN_CORRECTION_NO_NOTIFY",
+            reason: "CORRECTION_CONTENT_NO_NOTIFY",
+          },
+          evidence: {
+            observationId: primary.observationId,
+            snapshotId: primary.snapshotId,
+            evidenceRole: "PRIMARY",
+          },
         },
-        sourceId: primary.sourceId,
-        correction: {
-          mode: "ADMIN_CORRECTION_NO_NOTIFY",
-          reason: "CORRECTION_CONTENT_NO_NOTIFY",
-        },
-        evidence: {
-          observationId: primary.observationId,
-          snapshotId: primary.snapshotId,
-          evidenceRole: "PRIMARY",
-        },
-      });
+      );
       if (result.outcome === "CHANGED")
         await enqueueDataRevalidation(executor, {
           version: 2,
@@ -479,6 +490,7 @@ export async function registerEnglishKindergartenSessions(
       checksum,
       before,
       campusBefore: campuses.before,
+      sourceBefore: sourcePlan.before,
       rejects,
       changed,
       createdCampuses: campuses.creates.length,

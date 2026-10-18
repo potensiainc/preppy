@@ -1,5 +1,6 @@
 import "server-only";
 
+import { reviewedSourceEligibility } from "@/src/modules/english-kindergarten/reviewed-source-policy";
 import { enqueueDataRevalidation } from "@/src/modules/cache/data-revalidation.server";
 
 import { createHash } from "node:crypto";
@@ -450,6 +451,7 @@ async function validateProvenance(
   opportunityId: string,
   input: VerifyNativeOpportunityInput | VerifyLegacyOpportunityInput,
   persistence: VerifyOpportunityPersistence,
+  reviewedEnglishSession = false,
 ) {
   const source = await persistence.findSourceForUpdate(
     executor,
@@ -457,7 +459,9 @@ async function validateProvenance(
   );
   if (!source) throw new NotFoundError();
   if (
-    source.lifecycleStatus !== "ACTIVE" ||
+    (reviewedEnglishSession
+      ? Boolean(reviewedSourceEligibility(source))
+      : source.lifecycleStatus !== "ACTIVE") ||
     source.authorityLevel === "DISCOVERY_ONLY" ||
     source.sourceType === "THIRD_PARTY_DISCOVERY"
   ) {
@@ -480,7 +484,9 @@ async function validateProvenance(
       .innerJoin(institutions, eq(institutions.id, opportunities.institutionId))
       .where(eq(opportunities.id, opportunityId))
       .limit(1);
-    requireCapturedEvidence = institution?.category === "INTERNATIONAL_SCHOOL";
+    requireCapturedEvidence =
+      reviewedEnglishSession ||
+      institution?.category === "INTERNATIONAL_SCHOOL";
     if (
       requireCapturedEvidence &&
       (!["PRIMARY", "SECONDARY_OFFICIAL"].includes(source.authorityLevel) ||
@@ -522,12 +528,30 @@ async function validateProvenance(
   return source;
 }
 
+/** Explicit reviewed-session import boundary; no HTTP option enables it.
+ * General verification, legacy verification and collection retain ACTIVE-only policy. */
+export async function verifyReviewedEnglishSessionOpportunityInTransaction(
+  executor: TransactionExecutor,
+  ctx: AdminCommandContext,
+  input: VerifyNativeOpportunityInput,
+) {
+  return verifyNativeOpportunityInTransaction(
+    executor,
+    ctx,
+    input,
+    undefined,
+    undefined,
+    true,
+  );
+}
+
 export async function verifyNativeOpportunityInTransaction(
   executor: TransactionExecutor,
   ctx: AdminCommandContext,
   input: VerifyNativeOpportunityInput,
   persistence: VerifyOpportunityPersistence = defaultVerifyOpportunityPersistence,
   canonicalChangeDependencies?: CanonicalChangeDependencies,
+  reviewedEnglishSession = false,
 ): Promise<VerificationResult> {
   const opportunity = await persistence.findOpportunityForUpdate(
     executor,
@@ -535,6 +559,20 @@ export async function verifyNativeOpportunityInTransaction(
   );
   if (!opportunity) throw new NotFoundError();
   if (opportunity.truthMode !== "NATIVE") throw new NotEligibleError();
+  if (reviewedEnglishSession) {
+    const [institution] = await executor.drizzle
+      .select({ category: institutions.category })
+      .from(institutions)
+      .where(eq(institutions.id, opportunity.institutionId))
+      .limit(1);
+    if (
+      opportunity.kind !== "INFORMATION_SESSION" ||
+      opportunity.publicationState !== "PUBLISHED" ||
+      institution?.category !== "ENGLISH_KINDERGARTEN" ||
+      input.correction?.mode !== "ADMIN_CORRECTION_NO_NOTIFY"
+    )
+      throw new NotEligibleError();
+  }
   const current = await persistence.findCurrentNativeVersionForUpdate(
     executor,
     opportunity.id,
@@ -544,6 +582,7 @@ export async function verifyNativeOpportunityInTransaction(
     opportunity.id,
     input,
     persistence,
+    reviewedEnglishSession,
   );
   const candidate = input.proposedState;
   const candidateFingerprint = fingerprint(candidate);
