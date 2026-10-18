@@ -133,7 +133,10 @@ export async function registerEnglishKindergartenSessions(
         collisions.some(
           (item) =>
             item.id !== opportunity?.id &&
-            (item.fingerprint == null || item.fingerprint === fingerprint),
+            (item.fingerprint == null ||
+              item.fingerprint === fingerprint ||
+              String(item.fingerprint).split(":")[0] !==
+                fingerprint.split(":")[0]),
         )
       ) {
         plan.push({

@@ -144,7 +144,20 @@ export const sessionPackageSchema = z
           "Duplicate campus, missing identity evidence or no dated session",
       });
     const occurrenceIdentities = new Set<string>();
+    const timeKinds = new Map<string, boolean>();
     for (const row of value.sessions) {
+      const timeKey = JSON.stringify([
+        row.institutionSlug,
+        new Date(row.eventStartsAt).toISOString(),
+      ]);
+      const hasId = Boolean(row.officialSessionId);
+      if (timeKinds.has(timeKey) && timeKinds.get(timeKey) !== hasId)
+        ctx.addIssue({
+          code: "custom",
+          message:
+            "Mixed identified/unidentified same-time sessions require reconciliation",
+        });
+      timeKinds.set(timeKey, hasId);
       const occurrence = JSON.stringify([
         row.institutionSlug,
         row.officialSessionId
@@ -232,5 +245,5 @@ export function sessionIdentityFingerprint(row: SessionRecord) {
         births: [...row.birthYears].sort(),
         program: row.programAsPublished,
       };
-  return createHash("sha256").update(JSON.stringify(identity)).digest("hex");
+  return `${row.officialSessionId ? "official-v2" : "reviewed-v2"}:${createHash("sha256").update(JSON.stringify(identity)).digest("hex")}`;
 }

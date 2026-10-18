@@ -305,6 +305,10 @@ describe("audited no-notify session registration", () => {
     expect(sessionPackageSchema.safeParse(officialDuplicate).success).toBe(
       false,
     );
+    const mixed = structuredClone(officialDuplicate);
+    mixed.sessions[1]!.eventStartsAt = mixed.sessions[0]!.eventStartsAt;
+    mixed.sessions[1]!.officialSessionId = null;
+    expect(sessionPackageSchema.safeParse(mixed).success).toBe(false);
     await expect(
       runtime.transactionManager.run(async (executor) => {
         const fresh = structuredClone(data);
