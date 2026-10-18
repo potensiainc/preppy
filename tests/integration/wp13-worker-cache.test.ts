@@ -9,6 +9,7 @@ import {
   closeRuntimeDatabase,
   getRuntimeDatabase,
 } from "@/src/infrastructure/db/runtime.server";
+import { runCacheOnlyOnce } from "@/src/modules/cache/run-cache-only.server";
 import { runWorkerOnce } from "@/src/modules/worker/run-once.server";
 import { assertDedicatedTestDatabaseUrl } from "@/tests/support/test-database";
 
@@ -63,6 +64,45 @@ afterAll(async () => {
 });
 
 describe("WP-13 Worker cache lifecycle", () => {
+  it("cache-only drain preserves due and stale notification events byte for byte", async () => {
+    const fixture = await seed();
+    const ids = [];
+    for (const eventType of [
+      "OPPORTUNITY_CHANGE_PUBLISHED",
+      "DELIVERY_EMAIL_SEND",
+    ]) {
+      for (const status of ["PENDING", "PROCESSING"]) {
+        const id = randomUUID();
+        ids.push(id);
+        await runtime.client`insert into outbox_events(id,event_type,aggregate_type,aggregate_id,payload,dedupe_key,status,available_at,locked_at,locked_by,max_attempts) values(${id},${eventType},'OPPORTUNITY',${randomUUID()},${JSON.stringify({ sentinel: prefix })}::jsonb,${prefix + "-sentinel-" + id},${status},'2026-08-01T00:00:00Z',${status === "PROCESSING" ? "2026-08-01T00:00:00Z" : null},${status === "PROCESSING" ? "old-worker" : null},3)`;
+      }
+    }
+    const before =
+      await runtime.client`select row_to_json(outbox_events) as value from outbox_events where id in ${runtime.client(ids)} order by id`;
+    const result = await runCacheOnlyOnce(
+      {
+        workerId: "cache-only-test",
+        batchSize: 100,
+        leaseDurationMs: 300000,
+        now: new Date("2026-08-25T12:00:00Z"),
+      },
+      {
+        transactionManager: runtime.transactionManager,
+        client: { revalidate: async () => ({ kind: "SUCCEEDED" }) },
+      },
+    );
+    expect(result.claimed).toBe(1);
+    expect(result.results).toEqual([{ kind: "PROCESSED" }]);
+    expect(
+      await runtime.client`select row_to_json(outbox_events) as value from outbox_events where id in ${runtime.client(ids)} order by id`,
+    ).toEqual(before);
+    expect(
+      (
+        await runtime.client`select status from outbox_events where id=${fixture.eventId}`
+      )[0]?.status,
+    ).toBe("PROCESSED");
+  });
+
   it("commits claim, performs network outside a transaction, then commits settlement", async () => {
     const fixture = await seed();
     let active = false;

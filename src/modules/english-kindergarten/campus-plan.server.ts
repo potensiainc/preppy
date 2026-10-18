@@ -1,6 +1,6 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import {
   institutions,
   institutionSourceBindings,
@@ -43,7 +43,20 @@ export async function planSessionCampuses(
   const links = [];
   const rejects = [];
   for (const row of data.campuses) {
+    const officialIdentity = row.officialCampusId;
+    const owners = officialIdentity
+      ? await executor.raw(
+          sql`select institution_id from english_campus_identities where namespace=${officialIdentity.namespace} and external_id=${officialIdentity.value}`,
+        )
+      : [];
     const current = all.find((i) => i.slug === row.slug);
+    if (owners.some((owner) => owner.institution_id !== current?.id)) {
+      rejects.push({
+        institutionSlug: row.slug,
+        code: "CAMPUS_OFFICIAL_IDENTITY_RECONCILIATION_REQUIRED",
+      });
+      continue;
+    }
     if (current) {
       const replay =
         row.mode === "CREATE" &&
@@ -72,13 +85,30 @@ export async function planSessionCampuses(
           institutionSlug: row.slug,
           code: "CAMPUS_MAPPING_OR_PUBLICATION_REQUIRED",
         });
+      const aliases = await executor.raw(
+        sql`select name from english_campus_aliases where institution_id=${current.id}`,
+      );
+      const needsIdentity =
+        Boolean(officialIdentity && !owners.length) ||
+        [current.displayName, row.name].some(
+          (name) => !aliases.some((alias) => alias.name === name),
+        );
       links.push({ row, desired: current });
       before.push({
         slug: row.slug,
         operation:
           row.updateAddress && current.addressLine !== row.officialAddress
             ? "UPDATE_ADDRESS"
-            : "UNCHANGED",
+            : needsIdentity
+              ? "LINK_REVIEWED_IDENTITY"
+              : "UNCHANGED",
+        officialIdentity: officialIdentity
+          ? {
+              ...officialIdentity,
+              institutionId: owners[0]?.institution_id ?? null,
+            }
+          : null,
+        aliases,
         current,
       });
       continue;

@@ -104,7 +104,11 @@ try {
       );
       if (
         readback.rejects.length ||
-        readback.before.some((row) => row.operation !== "UNCHANGED") ||
+        readback.before.some(
+          (row) =>
+            row.operation !== "UNCHANGED" ||
+            row.publicationState !== "PUBLISHED",
+        ) ||
         readback.campusBefore.some((row) => row.operation !== "UNCHANGED")
       )
         throw new Error(

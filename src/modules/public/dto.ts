@@ -153,6 +153,7 @@ export type EnglishKindergartenDetailDTO = EnglishKindergartenCardSummaryDTO & {
 };
 
 export type InstitutionCardDTO = {
+  matchedAlias?: string;
   id: string;
   slug: string;
   name: string;

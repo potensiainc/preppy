@@ -60,6 +60,20 @@ export const sessionPackageSchema = z
               .string()
               .max(81)
               .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+            officialSessionId: z
+              .object({
+                namespace: z.string().min(1),
+                value: z.string().min(1),
+              })
+              .strict()
+              .nullable()
+              .default(null),
+            programAsPublished: z
+              .string()
+              .min(1)
+              .max(500)
+              .nullable()
+              .default(null),
             targetAsPublished: z.string().min(1).max(500),
             academicYear: z.number().int().min(2026).max(2100),
             targetAges: z.array(z.number().int().min(3).max(7)).max(5),
@@ -129,7 +143,19 @@ export const sessionPackageSchema = z
         message:
           "Duplicate campus, missing identity evidence or no dated session",
       });
+    const occurrenceIdentities = new Set<string>();
     for (const row of value.sessions) {
+      const occurrence = JSON.stringify([
+        row.institutionSlug,
+        new Date(row.eventStartsAt).toISOString(),
+        sessionIdentityFingerprint(row, value.sources),
+      ]);
+      if (occurrenceIdentities.has(occurrence))
+        ctx.addIssue({
+          code: "custom",
+          message: "Duplicate session occurrence under a different key",
+        });
+      occurrenceIdentities.add(occurrence);
       const identity = sessionSlug(row);
       if (
         identities.has(identity) ||
@@ -184,4 +210,34 @@ export function sessionState(
       : row.reservationState === "CANCELLED"
         ? "CANCELLED"
         : "UNKNOWN";
+}
+
+/** Same occurrence only when campus/time AND reviewed audience, program, evidence and official ID agree.
+ * A key is a stable storage locator, never proof of a distinct simultaneous session. */
+export function sessionIdentityFingerprint(
+  row: SessionRecord,
+  sources: SessionPackage["sources"],
+) {
+  return createHash("sha256")
+    .update(
+      JSON.stringify({
+        year: row.academicYear,
+        ages: [...row.targetAges].sort(),
+        births: [...row.birthYears].sort(),
+        audience: row.targetAsPublished,
+        program: row.programAsPublished ?? row.note,
+        officialId: row.officialSessionId,
+        evidence: row.evidenceKeys
+          .map((key) => {
+            const s = sources.find((s) => s.key === key);
+            if (!s) return [key, "UNKNOWN_EVIDENCE"];
+            return [
+              s.url,
+              createHash("sha256").update(s.normalizedText).digest("hex"),
+            ];
+          })
+          .sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b))),
+      }),
+    )
+    .digest("hex");
 }

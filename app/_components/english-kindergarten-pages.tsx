@@ -293,6 +293,9 @@ function EnglishKindergartenCard({
           <h2>
             <Link href={detailHref}>{institution.name}</Link>
           </h2>
+          {institution.matchedAlias ? (
+            <p>기관 별칭: {institution.matchedAlias}</p>
+          ) : null}
           {institution.address ? (
             <p className="ek-card__address">{institution.address}</p>
           ) : null}
@@ -315,11 +318,7 @@ function EnglishKindergartenCard({
             예정 설명회 {summary.informationSessions.length}회 · 예약 마감
             회차도 포함해요.
           </p>
-          <Link
-            href={`${detailHref}#session-${summary.nextInformationSession!.id}`}
-          >
-            대상·회차·공식 경로 보기
-          </Link>
+          <Link href={detailHref}>기관의 전체 설명회 일정 보기</Link>
         </div>
       ) : null}
       {(summary.tuition ||

@@ -26,6 +26,7 @@ import { verifyNativeOpportunityInTransaction } from "@/src/modules/monitoring/v
 import {
   packageChecksum,
   sessionAudience,
+  sessionIdentityFingerprint,
   sessionPackageSchema,
   sessionSlug,
   sessionState,
@@ -109,23 +110,32 @@ export async function registerEnglishKindergartenSessions(
             .for("update")
             .limit(1)
         : [];
+      if (opportunity && opportunity.publicationState !== "PUBLISHED") {
+        plan.push({
+          row,
+          opportunity,
+          current,
+          slug,
+          reject:
+            "EXISTING_SESSION_PUBLICATION_RECONCILIATION_REQUIRED" as const,
+        });
+        continue;
+      }
       // A pre-existing differently named event at this campus/time must be explicitly reconciled.
-      const collisions = await executor.drizzle
-        .select({ id: opportunities.id })
-        .from(opportunities)
-        .innerJoin(
-          opportunityVersions,
-          eq(opportunityVersions.opportunityId, opportunities.id),
+      const fingerprint = sessionIdentityFingerprint(row, data.sources);
+      const collisions =
+        await executor.raw(sql`select o.id, identity.fingerprint
+        from opportunities o join opportunity_versions v on v.opportunity_id=o.id and v.is_current=true
+        left join english_session_identities identity on identity.opportunity_id=o.id
+        where o.institution_id=${institution.id} and o.kind='INFORMATION_SESSION'
+          and v.event_start_at=${row.eventStartsAt}::timestamptz`);
+      if (
+        collisions.some(
+          (item) =>
+            item.id !== opportunity?.id &&
+            (item.fingerprint == null || item.fingerprint === fingerprint),
         )
-        .where(
-          and(
-            eq(opportunities.institutionId, institution.id),
-            eq(opportunities.kind, "INFORMATION_SESSION"),
-            eq(opportunityVersions.isCurrent, true),
-            eq(opportunityVersions.eventStartAt, new Date(row.eventStartsAt)),
-          ),
-        );
-      if (collisions.some((item) => item.id !== opportunity?.id)) {
+      ) {
         plan.push({
           row,
           reject: "EXISTING_SESSION_RECONCILIATION_REQUIRED" as const,
@@ -196,6 +206,7 @@ export async function registerEnglishKindergartenSessions(
         current,
         slug,
         candidate,
+        fingerprint,
         same: Boolean(same),
       });
     }
@@ -205,19 +216,29 @@ export async function registerEnglishKindergartenSessions(
         institutionSlug: item.row.institutionSlug,
         eventStartsAt: item.row.eventStartsAt,
         code: item.reject,
+        ...("opportunity" in item
+          ? {
+              publicationState: item.opportunity?.publicationState,
+              opportunityId: item.opportunity?.id,
+            }
+          : {}),
         ...("current" in item ? { current: item.current } : {}),
       }));
     const rejects = [...campuses.rejects, ...sessionRejects];
     const before = plan
-      .filter((item) => !("reject" in item))
+      .filter((item) => "slug" in item)
       .map((item) => ({
         slug: item.slug,
+        publicationState: item.opportunity?.publicationState ?? null,
         current: item.current ?? null,
-        operation: item.same
-          ? "UNCHANGED"
-          : item.opportunity
-            ? "NEW_VERSION"
-            : "CREATE_SESSION",
+        operation:
+          "reject" in item
+            ? "RECONCILIATION_REQUIRED"
+            : item.same
+              ? "UNCHANGED"
+              : item.opportunity
+                ? "NEW_VERSION"
+                : "CREATE_SESSION",
       }));
     if (!options.apply || rejects.length)
       return {
@@ -265,6 +286,27 @@ export async function registerEnglishKindergartenSessions(
         );
         updatedCampuses++;
       }
+      if (campus.row.officialCampusId) {
+        const identity = campus.row.officialCampusId;
+        await executor.raw(
+          sql`insert into english_campus_identities(namespace,external_id,institution_id) values(${identity.namespace},${identity.value},${campus.desired.id}) on conflict(namespace,external_id) do nothing`,
+        );
+      }
+      if (campus.row.officialCampusId) {
+        const identity = campus.row.officialCampusId;
+        const owners = await executor.raw(
+          sql`select institution_id from english_campus_identities where namespace=${identity.namespace} and external_id=${identity.value}`,
+        );
+        if (
+          owners.length !== 1 ||
+          owners[0]?.institution_id !== campus.desired.id
+        )
+          throw new ConflictError();
+      }
+      for (const name of new Set([campus.desired.displayName, campus.row.name]))
+        await executor.raw(
+          sql`insert into english_campus_aliases(institution_id,name) values(${campus.desired.id},${name}) on conflict do nothing`,
+        );
       for (const [index, key] of campus.row.identityEvidenceKeys.entries()) {
         const evidence = data.sources.find((source) => source.key === key)!;
         const existingBinding = await executor.raw(
@@ -339,6 +381,9 @@ export async function registerEnglishKindergartenSessions(
           executor,
         );
       }
+      await executor.raw(
+        sql`insert into english_session_identities(opportunity_id,fingerprint) values(${opportunityId},${item.fingerprint}) on conflict(opportunity_id) do update set fingerprint=excluded.fingerprint`,
+      );
       const captures = [];
       for (const key of item.row.evidenceKeys) {
         const evidence = data.sources.find((source) => source.key === key)!;

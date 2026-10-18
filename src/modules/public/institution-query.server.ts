@@ -307,8 +307,8 @@ async function getOpportunityTruths(
   const section =
     projection === "DETAIL"
       ? sql`case state when 'OPEN' then 'CURRENT' when 'UPCOMING' then 'UPCOMING' when 'CLOSED' then 'RECENT' when 'COMPLETED' then 'RECENT' when 'CANCELLED' then 'RECENT' else null end`
-      : projection === "HOME" || projection === "BRIEFINGS"
-        ? sql`case when state in ('OPEN', 'UPCOMING') then 'HOME' else null end`
+      : projection === "BRIEFINGS" || projection === "HOME"
+        ? sql`case when "institutionCategory"='ENGLISH_KINDERGARTEN' and kind='INFORMATION_SESSION' then case when "eventStartAt">=now() and state<>'CANCELLED' then 'HOME' else null end when state in ('OPEN','UPCOMING') then 'HOME' else null end`
         : sql`case when state='UNKNOWN' then null else 'CARD' end`;
   const limit =
     projection === "DETAIL"
@@ -341,11 +341,11 @@ async function getOpportunityTruths(
   const rows = (await executor.raw(sql`
     with candidates as (
       select o.id, o.institution_id as "institutionId", o.slug, o.kind, v.id as "versionId", 'NATIVE' as mode, v.title, v.business_state as state, v.summary, v.target_audience as "targetAudience", v.action_url as "actionUrl", v.verified_at as "verifiedAt",
-        case when v.application_close_at is not null then 'APPLICATION_CLOSE' when v.application_open_at is not null then 'APPLICATION_OPEN' when v.event_start_at is not null then 'EVENT_START' when v.event_end_at is not null then 'EVENT_END' else null end as "keyDateKind",
-        coalesce(v.application_close_at,v.application_open_at,v.event_start_at,v.event_end_at) as "nativeKeyAt",
+        case when i.category='ENGLISH_KINDERGARTEN' and o.kind='INFORMATION_SESSION' and v.event_start_at is not null then 'EVENT_START' when v.application_close_at is not null then 'APPLICATION_CLOSE' when v.application_open_at is not null then 'APPLICATION_OPEN' when v.event_start_at is not null then 'EVENT_START' when v.event_end_at is not null then 'EVENT_END' else null end as "keyDateKind",
+        case when i.category='ENGLISH_KINDERGARTEN' and o.kind='INFORMATION_SESSION' then v.event_start_at else coalesce(v.application_close_at,v.application_open_at,v.event_start_at,v.event_end_at) end as "nativeKeyAt",
         null::date as "legacyKeyDate", null::time as "legacyKeyTime", null::text as "legacyTimezone",
         coalesce(v.application_close_at,v.application_open_at,v.event_start_at,v.event_end_at)::text as "sortKey",
-        i.category as "institutionCategory"
+        v.event_start_at as "eventStartAt", i.category as "institutionCategory"
       from opportunities o join institutions i on i.id=o.institution_id and i.publication_state='PUBLISHED'
         and (i.category <> 'INTERNATIONAL_SCHOOL' or (
           i.operational_state='ACTIVE' and exists (
@@ -355,6 +355,11 @@ async function getOpportunityTruths(
         ))
       join opportunity_versions v on v.opportunity_id=o.id and v.is_current=true and v.verification_state='VERIFIED'
       where ${targetCondition} ${kindCondition} and o.publication_state='PUBLISHED' and o.truth_mode='NATIVE' and v.verified_at is not null
+        and (i.category <> 'ENGLISH_KINDERGARTEN' or exists (
+          select 1 from opportunity_version_evidence evidence join sources source on source.id=evidence.source_id
+          where evidence.opportunity_version_id=v.id and source.authority_level in ('PRIMARY','SECONDARY_OFFICIAL')
+          and source.source_type in ('OFFICIAL_ADMISSION_PAGE','OFFICIAL_NOTICE_BOARD','OFFICIAL_DOCUMENT','OFFICIAL_APPLICATION_PORTAL','OFFICIAL_SCHOOL_PAGE','OFFICIAL_SOCIAL')
+        ))
         and (i.category <> 'INTERNATIONAL_SCHOOL' or exists (
           select 1
           from opportunity_version_evidence evidence
@@ -373,7 +378,7 @@ async function getOpportunityTruths(
         case when v.registration_close_date is not null then v.registration_close_time when v.registration_open_date is not null then v.registration_open_time when v.event_start_date is not null then v.event_start_time when v.event_end_date is not null then v.event_end_time else null end,
         v.timezone,
         coalesce(v.registration_close_date::text || coalesce('T' || v.registration_close_time::text, ''), v.registration_open_date::text || coalesce('T' || v.registration_open_time::text, ''), v.event_start_date::text || coalesce('T' || v.event_start_time::text, ''), v.event_end_date::text || coalesce('T' || v.event_end_time::text, '')),
-        i.category
+        (v.event_start_date + coalesce(v.event_start_time, time '00:00')) at time zone v.timezone, i.category
       from opportunities o join institutions i on i.id=o.institution_id and i.publication_state='PUBLISHED'
         and (i.category <> 'INTERNATIONAL_SCHOOL' or (
           i.operational_state='ACTIVE' and exists (
@@ -784,7 +789,7 @@ function listConditions(query: InstitutionListQuery) {
     query.query === undefined
       ? undefined
       : query.category === "ENGLISH_KINDERGARTEN"
-        ? sql`(${institutions.displayName} ilike ${`%${query.query}%`} or exists(select 1 ${englishSessionRows(query)} and matched_version.title ilike ${`%${query.query}%`}))`
+        ? sql`(${institutions.displayName} ilike ${`%${query.query}%`} or exists(select 1 from english_campus_aliases alias where alias.institution_id=${institutions.id} and alias.name ilike ${`%${query.query}%`}))`
         : ilike(institutions.displayName, `%${query.query}%`),
     recruitmentExists(query.recruitmentState),
     query.hasConfirmedTuition === true
@@ -1122,6 +1127,12 @@ export async function listInstitutions(
       query.minAge,
       query.admissionYear,
     );
+  const aliasMatches =
+    query.category === "ENGLISH_KINDERGARTEN" && query.query
+      ? await executor.raw(
+          sql`select institution_id, name from english_campus_aliases where name ilike ${`%${query.query}%`} order by name`,
+        )
+      : [];
   const total = countRow[0]?.total ?? 0;
   const sessionCounts =
     query.category === "ENGLISH_KINDERGARTEN"
@@ -1133,13 +1144,24 @@ export async function listInstitutions(
     ...(query.category === "ENGLISH_KINDERGARTEN"
       ? { matchingSessionCount: Number(sessionCounts[0]?.total ?? 0) }
       : {}),
-    items: items.map((row) =>
-      cardFromInstitution(
+    items: items.map((row) => ({
+      ...cardFromInstitution(
         row,
         byInstitution.get(row.id) ?? [],
         englishKindergartenSummaries.get(row.id),
       ),
-    ),
+      ...(aliasMatches.find(
+        (a) => a.institution_id === row.id && a.name !== row.name,
+      )
+        ? {
+            matchedAlias: String(
+              aliasMatches.find(
+                (a) => a.institution_id === row.id && a.name !== row.name,
+              )!.name,
+            ),
+          }
+        : {}),
+    })),
     districtFacets,
     pagination: {
       page: query.page,

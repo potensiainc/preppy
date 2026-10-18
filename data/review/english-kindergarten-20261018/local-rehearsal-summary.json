@@ -1,17 +1,19 @@
 {
   "localOnly": true,
   "productionApplied": false,
+  "productionDryRun": false,
+  "schemaMigration": "0018_english_session_identity",
   "runs": [
     {
-      "artifactPath": "data/review/english-kindergarten-20261018/local-rehearsal/1792313518840",
+      "artifactPath": "data/review/english-kindergarten-20261018/local-rehearsal/1792316245533",
       "localOnly": true,
       "productionApplied": false,
       "productionDryRun": false,
-      "checksum": "1067df0544b1eeac7e6cd41b21623fd12c8b46d0ea78c70042b9eb031bc1bc06",
+      "checksum": "fb9140e21c285bf4c95a34c6806b0d103fdadbeb0ae26370868989d6de1b178d",
       "counts": {
         "campusOperations": {
           "CREATE_CAMPUS": 45,
-          "UNCHANGED": 34,
+          "LINK_REVIEWED_IDENTITY": 34,
           "UPDATE_ADDRESS": 1
         },
         "sessionOperations": {
@@ -39,11 +41,11 @@
       }
     },
     {
-      "artifactPath": "data/review/english-kindergarten-20261018/local-rehearsal/1792314122166",
+      "artifactPath": "data/review/english-kindergarten-20261018/local-rehearsal/1792316311377",
       "localOnly": true,
       "productionApplied": false,
       "productionDryRun": false,
-      "checksum": "1067df0544b1eeac7e6cd41b21623fd12c8b46d0ea78c70042b9eb031bc1bc06",
+      "checksum": "fb9140e21c285bf4c95a34c6806b0d103fdadbeb0ae26370868989d6de1b178d",
       "counts": {
         "campusOperations": {
           "UNCHANGED": 80

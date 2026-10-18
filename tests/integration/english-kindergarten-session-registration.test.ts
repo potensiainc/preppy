@@ -16,6 +16,7 @@ import {
 import {
   listInstitutions,
   getInstitutionBySlug,
+  getCurrentInformationSessionCards,
 } from "@/src/modules/public/institution-query.server";
 import { assertDedicatedTestDatabaseUrl } from "@/tests/support/test-database";
 const url = process.env.TEST_DATABASE_URL!;
@@ -141,12 +142,15 @@ describe("audited no-notify session registration", () => {
       await tx`delete from audit_logs where admin_user_id=${admin}`;
       await tx`delete from opportunity_changes where opportunity_id in(select id from opportunities where institution_id=${campus})`;
       await tx`delete from opportunity_version_evidence where opportunity_version_id in(select v.id from opportunity_versions v join opportunities o on o.id=v.opportunity_id where o.institution_id=${campus})`;
+      await tx`delete from english_session_identities where opportunity_id in(select id from opportunities where institution_id=${campus})`;
       await tx`delete from opportunity_versions where opportunity_id in(select id from opportunities where institution_id=${campus})`;
       await tx`delete from opportunity_source_bindings where opportunity_id in(select id from opportunities where institution_id=${campus})`;
       await tx`delete from opportunities where institution_id=${campus}`;
       await tx`delete from source_observations where source_id in(select id from sources where canonical_url=${data.sources[0]!.url})`;
       await tx`delete from source_snapshots where source_id in(select id from sources where canonical_url=${data.sources[0]!.url})`;
       await tx`delete from sources where canonical_url=${data.sources[0]!.url}`;
+      await tx`delete from english_campus_aliases where institution_id=${campus}`;
+      await tx`delete from english_campus_identities where institution_id=${campus}`;
       await tx`delete from institutions where id=${campus}`;
       await tx`delete from admin_users where id=${admin}`;
     });
@@ -190,6 +194,7 @@ describe("audited no-notify session registration", () => {
       runtime.transactionManager,
     );
     expect(second.changed).toBe(0);
+    expect(second.before[0]?.publicationState).toBe("PUBLISHED");
     const events =
       await runtime.client`select event_type from outbox_events where payload::text like ${"%" + (await runtime.client`select id from opportunities where institution_id=${campus}`)[0]!.id + "%"}`;
     expect(events.length).toBe(1);
@@ -234,6 +239,162 @@ describe("audited no-notify session registration", () => {
     ).toBe(0);
     const detail = await getInstitutionBySlug(runtime.executor, prefix);
     expect(detail.englishKindergarten?.informationSessions).toHaveLength(1);
+  });
+
+  it.each(["DRAFT", "HIDDEN", "ARCHIVED"] as const)(
+    "rejects %s sessions with or without a current version",
+    async (state) => {
+      for (const withVersion of [false, true])
+        await expect(
+          runtime.transactionManager.run(async (executor) => {
+            const fresh = structuredClone(data);
+            fresh.sessions[0]!.sessionKey = `publication-${state.toLowerCase()}-${withVersion}`;
+            fresh.sessions[0]!.eventStartsAt = new Date(
+              new Date(future).getTime() + 86400000 * 12,
+            ).toISOString();
+            const opts = {
+              ...options,
+              expectedChecksum: packageChecksum(fresh),
+            };
+            const manager = {
+              run: <T>(
+                op: Parameters<typeof runtime.transactionManager.run<T>>[0],
+              ) => op(executor),
+            };
+            if (withVersion) await register(ctx, fresh, opts, manager);
+            else
+              await executor.raw(
+                sql`insert into opportunities(institution_id,slug,kind,truth_mode,publication_state) values(${campus},${`${prefix}-briefing-2027-${fresh.sessions[0]!.sessionKey}`},'INFORMATION_SESSION','NATIVE','PUBLISHED')`,
+              );
+            await executor.raw(
+              sql`update opportunities set publication_state=${state} where slug=${`${prefix}-briefing-2027-${fresh.sessions[0]!.sessionKey}`}`,
+            );
+            const before = await executor.raw(
+              sql`select row_to_json(v) as value from opportunity_versions v join opportunities o on o.id=v.opportunity_id where o.slug=${`${prefix}-briefing-2027-${fresh.sessions[0]!.sessionKey}`}`,
+            );
+            const result = await register(ctx, fresh, opts, manager);
+            expect(result.applied).toBe(false);
+            expect(result.rejects[0]?.code).toBe(
+              "EXISTING_SESSION_PUBLICATION_RECONCILIATION_REQUIRED",
+            );
+            expect(result.before[0]?.publicationState).toBe(state);
+            expect(
+              await executor.raw(
+                sql`select row_to_json(v) as value from opportunity_versions v join opportunities o on o.id=v.opportunity_id where o.slug=${`${prefix}-briefing-2027-${fresh.sessions[0]!.sessionKey}`}`,
+              ),
+            ).toEqual(before);
+            throw new Error("ROLLBACK_PUBLICATION");
+          }),
+        ).rejects.toThrow("ROLLBACK_PUBLICATION");
+    },
+  );
+  it("rejects copied keys before writes and consistently replays distinct simultaneous official sessions", async () => {
+    const duplicate = structuredClone(data);
+    duplicate.sessions.push({
+      ...duplicate.sessions[0]!,
+      sessionKey: "copied-key",
+    });
+    expect(sessionPackageSchema.safeParse(duplicate).success).toBe(false);
+    await expect(
+      runtime.transactionManager.run(async (executor) => {
+        const fresh = structuredClone(data);
+        fresh.sessions[0]!.sessionKey = "simultaneous-one";
+        fresh.sessions[0]!.eventStartsAt = new Date(
+          new Date(future).getTime() + 86400000 * 13,
+        ).toISOString();
+        fresh.sessions[0]!.officialSessionId = {
+          namespace: "fixture",
+          value: "one",
+        };
+        fresh.sessions.push({
+          ...fresh.sessions[0]!,
+          sessionKey: "simultaneous-two",
+          officialSessionId: { namespace: "fixture", value: "two" },
+        });
+        const opts = { ...options, expectedChecksum: packageChecksum(fresh) };
+        const manager = {
+          run: <T>(
+            op: Parameters<typeof runtime.transactionManager.run<T>>[0],
+          ) => op(executor),
+        };
+        expect((await register(ctx, fresh, opts, manager)).changed).toBe(2);
+        const replay = await register(ctx, fresh, opts, manager);
+        expect(replay.rejects).toEqual([]);
+        expect(replay.changed).toBe(0);
+        const renamed = structuredClone(fresh);
+        renamed.sessions = [
+          { ...fresh.sessions[0]!, sessionKey: "copied-after-import" },
+        ];
+        const rejected = await register(
+          ctx,
+          renamed,
+          { ...options, expectedChecksum: packageChecksum(renamed) },
+          manager,
+        );
+        expect(rejected.applied).toBe(false);
+        expect(rejected.rejects[0]?.code).toBe(
+          "EXISTING_SESSION_RECONCILIATION_REQUIRED",
+        );
+        throw new Error("ROLLBACK_SIMULTANEOUS");
+      }),
+    ).rejects.toThrow("ROLLBACK_SIMULTANEOUS");
+  });
+  it("lists future UNKNOWN/CLOSED/OPEN sessions in the menu while excluding past/cancelled/nonpublic/unverified English sessions", async () => {
+    await expect(
+      runtime.transactionManager.run(async (executor) => {
+        const fresh = structuredClone(data);
+        const states = [
+          "UNKNOWN",
+          "CLOSED",
+          "OPEN_AS_PUBLISHED",
+          "OPEN_AS_PUBLISHED",
+          "CANCELLED",
+          "UNKNOWN",
+          "UNKNOWN",
+        ] as const;
+        fresh.sessions = states.map((reservationState, i) => ({
+          ...data.sessions[0]!,
+          sessionKey: `menu-${i}`,
+          reservationState,
+          eventStartsAt: new Date(
+            Date.now() + 86400000 * (i === 3 ? -5 : 40 + i),
+          ).toISOString(),
+        }));
+        const manager = {
+          run: <T>(
+            op: Parameters<typeof runtime.transactionManager.run<T>>[0],
+          ) => op(executor),
+        };
+        await register(
+          ctx,
+          fresh,
+          { ...options, expectedChecksum: packageChecksum(fresh) },
+          manager,
+        );
+        await executor.raw(
+          sql`update opportunities set publication_state='HIDDEN' where slug=${`${prefix}-briefing-2027-menu-5`}`,
+        );
+        await executor.raw(sql`set local session_replication_role=replica`);
+        await executor.raw(
+          sql`update opportunity_versions set is_current=false,verification_state='UNVERIFIED',verified_at=null,verified_by_admin_id=null where opportunity_id in(select id from opportunities where slug=${`${prefix}-briefing-2027-menu-6`})`,
+        );
+        const ids = [];
+        for (let page = 1; page <= 10; page++) {
+          const result = await getCurrentInformationSessionCards(
+            executor,
+            page,
+          );
+          ids.push(...result.items.map((i) => i.slug));
+          if (!result.hasNext) break;
+        }
+        expect(
+          ids
+            .filter((id) => id?.includes(`${prefix}-briefing-2027-menu-`))
+            .sort(),
+        ).toEqual([0, 1, 2].map((i) => `${prefix}-briefing-2027-menu-${i}`));
+        throw new Error("ROLLBACK_MENU");
+      }),
+    ).rejects.toThrow("ROLLBACK_MENU");
   });
   it("rejects evidence-only replacement without refreshing verification", async () => {
     const revised = structuredClone(data);
@@ -344,6 +505,66 @@ describe("audited no-notify session registration", () => {
         });
         expect(second.changed).toBe(0);
         expect(second.updatedCampuses).toBe(0);
+        expect(found.items[0]?.matchedAlias).toBe(brand);
+        await executor.raw(sql`set local session_replication_role=replica`);
+        for (const mode of ["past", "cancelled"]) {
+          await executor.raw(
+            mode === "past"
+              ? sql`update opportunity_versions set event_start_at=now()-interval '1 day' where is_current=true and opportunity_id in(select id from opportunities where institution_id=${campus})`
+              : sql`update opportunity_versions set business_state='CANCELLED' where is_current=true and opportunity_id in(select id from opportunities where institution_id=${campus})`,
+          );
+          const plain = {
+            category: "ENGLISH_KINDERGARTEN" as const,
+            page: 1,
+            pageSize: 12,
+          };
+          expect(
+            (await listInstitutions(executor, { ...plain, query: brand }))
+              .items[0]?.id,
+          ).toBe(campus);
+          expect(
+            (await listInstitutions(executor, { ...plain, query: prefix }))
+              .items[0]?.id,
+          ).toBe(campus);
+          expect(
+            (
+              await listInstitutions(executor, {
+                ...plain,
+                query: brand,
+                hasUpcomingInfoSession: true,
+              })
+            ).pagination.total,
+          ).toBe(0);
+        }
+        await executor.raw(
+          sql`update institutions set publication_state='HIDDEN' where id=${campus}`,
+        );
+        const duplicate = structuredClone(fresh);
+        duplicate.sessions[0]!.institutionSlug = prefix + "-renamed";
+        duplicate.campuses[0] = {
+          ...fresh.campuses[0]!,
+          slug: prefix + "-renamed",
+          mode: "CREATE",
+          updateAddress: false,
+          expectedInstitutionId: null,
+          expectedName: null,
+          expectedAddress: null,
+          name: "Renamed moved campus",
+          officialAddress: "서울 강남구 역삼로 999",
+          officialCampusUrl: null,
+        };
+        const blocked = await register(
+          ctx,
+          duplicate,
+          { ...options, expectedChecksum: packageChecksum(duplicate) },
+          { run: (op) => op(executor) },
+        );
+        expect(
+          blocked.rejects.some(
+            (r) =>
+              r.code === "CAMPUS_OFFICIAL_IDENTITY_RECONCILIATION_REQUIRED",
+          ),
+        ).toBe(true);
         throw new Error("ROLLBACK_BRAND_FIXTURE");
       }),
     ).rejects.toThrow("ROLLBACK_BRAND_FIXTURE");
