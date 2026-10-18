@@ -372,7 +372,7 @@ describe("English-kindergarten public experience", () => {
       ),
     );
     expect(filteredEmpty("body").text()).toContain(
-      "선택한 조건에 맞는 영어유치원을 찾지 못했어요",
+      "조건에 맞게 등록된 영어유치원이 없어요",
     );
     expect(
       filteredEmpty("a").filter(
@@ -445,7 +445,6 @@ describe("English-kindergarten public experience", () => {
       "입학설명회",
       "연령·커리큘럼",
       "셔틀",
-      "급식",
       "후기 요약",
       "공식 출처",
     ]) {
@@ -465,7 +464,7 @@ describe("English-kindergarten public experience", () => {
         ),
       ).toHaveLength(1);
     }
-    expect(text).toContain("확인한 공식 안내에서 급식 정보를 찾지 못했어요.");
+    expect($("#meals, a[href='#meals']")).toHaveLength(0);
     expect(text).toContain("신청 마감");
     expect(text).toContain("2026년 10월 1일");
     expect(text).toContain("자료 수집");
@@ -473,10 +472,10 @@ describe("English-kindergarten public experience", () => {
     expect(text).toContain("내용 확인");
     expect(text).toContain("2026년 9월 5일");
     expect(text).toContain("공개 후기 요약 · 공식 정보 아님");
-    expect(text).toContain("후기 12건을 검토했어요.");
+    expect(text).toContain("공개 후기 12건 기준이에요.");
     expect(
       $("a[href='https://academy.example.test']").filter((_, element) =>
-        $(element).text().includes("기관 공식 홈페이지 열기"),
+        $(element).text().includes("공식 안내 보기"),
       ),
     ).toHaveLength(1);
     expect($("button[disabled]:not(.favorite-heart), a[href='']")).toHaveLength(

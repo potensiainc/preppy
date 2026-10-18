@@ -1,0 +1,309 @@
+{
+  "title": "PREPPY 기존기관 8개 캠퍼스 주소·동일기관 매핑 검증",
+  "checked_at": "2026-10-18T17:32:10+09:00",
+  "scope": "읽기 전용 조사. 기관 및 운영 데이터 변경 없음. 후보 기존 record_id와 명칭은 부모가 제공한 매핑 목록을 기준으로 검증했다.",
+  "records": [
+    {
+      "key": "poly-mapo",
+      "source_record_id": "poly-마포-2027",
+      "source_campus_id": "0611002",
+      "source_namespace": "poly.searchClientCode",
+      "candidate_record_id": "seoul-ek-nw-002",
+      "candidate_name": "POLY 마포",
+      "candidate_address": "서울 마포구 독막로 320 4층",
+      "current_official_name": "폴리어학원(마포)",
+      "current_official_address": "서울특별시 마포구 도화동560 태영데시앙 4층",
+      "normalized_road_address": "서울특별시 마포구 독막로 320 태영데시앙 4층",
+      "phone": "02-713-7659",
+      "registration_number": "제02200700021호",
+      "decision": "match",
+      "relationship": "same_brand_campus; road_name_and_lot_number_variants",
+      "identity_basis": [
+        "공식 캠퍼스 0611002가 폴리어학원(마포), 도화동 560, 태영데시앙 4층을 명시한다.",
+        "고용노동부 서울서부지청 공식 페이지가 독막로 320(도화동 560) 태영데시앙 주소를 병기한다.",
+        "기존 후보의 POLY 마포 명칭과 4층까지 일치한다. 주소만으로 다른 기관을 합치는 경우가 아니다."
+      ],
+      "address_equivalence_verified": true,
+      "relocation_status": "주소표기 차이로 설명 가능. 별도 이전을 주장하지 않음.",
+      "evidence_urls": [
+        "https://www.poly-english.com/aboutpoly/campusList.do",
+        "https://www.poly-english.com/campus/campusMain.do?searchClientCode=0611002",
+        "https://moel.go.kr/local/seoulseobu/news/notice/noticeView.do?bbs_seq=20260500043"
+      ],
+      "checked_at": "2026-10-18T17:31:29+09:00",
+      "priority_note": "확정 설명회 0회차. 개별상담 상태를 유지한다.",
+      "external_mutations_performed": false,
+      "prior_record_id": "seoul-ek-nw-002"
+    },
+    {
+      "key": "poly-seongbuk",
+      "source_record_id": "poly-성북-2027",
+      "source_campus_id": "0701002",
+      "source_namespace": "poly.searchClientCode",
+      "candidate_record_id": "seoul-ek-ne-011",
+      "candidate_name": "POLY 성북",
+      "candidate_address": "서울 성북구 동소문로 63 드림트리빌딩 3층",
+      "current_official_name": "폴리어학원(성북)",
+      "current_official_address": "서울특별시 성북구 동소문동4가260 드림트리빌딩 3층",
+      "normalized_road_address": "서울특별시 성북구 동소문로 63 드림트리빌딩 3층",
+      "phone": "02-953-7659",
+      "registration_number": "제2007-25호",
+      "decision": "match",
+      "relationship": "same_brand_campus; road_name_and_lot_number_variants",
+      "identity_basis": [
+        "공식 캠퍼스 0701002가 폴리어학원(성북), 동소문동4가 260, 드림트리빌딩 3층을 명시한다.",
+        "서울특별시선거관리위원회 공식 연락처가 동소문로 63(동소문동4가 260 드림트리빌딩)을 병기한다.",
+        "기존 후보의 POLY 성북 명칭과 건물 3층이 일치한다."
+      ],
+      "address_equivalence_verified": true,
+      "relocation_status": "주소표기 차이로 설명 가능. 별도 이전을 주장하지 않음.",
+      "evidence_urls": [
+        "https://www.poly-english.com/aboutpoly/campusList.do",
+        "https://www.poly-english.com/campus/campusMain.do?searchClientCode=0701002",
+        "https://su.nec.go.kr/su/singl/deptInfo/guSiGunInfo.do?menuNo=200015"
+      ],
+      "checked_at": "2026-10-18T17:31:29+09:00",
+      "external_mutations_performed": false,
+      "prior_record_id": "seoul-ek-ne-011"
+    },
+    {
+      "key": "ecc-seochoisu",
+      "source_record_id": "ybm-ecc-서초이수-2027",
+      "source_campus_id": "761",
+      "source_namespace": "ybmecc.sCode",
+      "candidate_record_id": "seoul-ek-se-018",
+      "candidate_name": "하랑숲아이들",
+      "candidate_address": "서울 동작구 동작대로41길 7",
+      "current_official_name": "ECC 서초이수 학원",
+      "certificate_name": "GLI하랑숲아이들학원",
+      "current_official_address": "서울시 동작구 동작대로41길 7",
+      "certificate_address": "서울특별시 동작구 동작대로41길 7, 101호, 201호(1~2층)",
+      "phone": "02-2038-6606",
+      "registration_number": "제3618호",
+      "decision": "match",
+      "relationship": "same_registered_academy_current_ECC_brand; historic_name_alias",
+      "identity_basis": [
+        "ECC 서초이수 공식 홈페이지 footer의 등록번호는 제3618호다.",
+        "같은 공식 사이트의 2026-08-27 학원설립운영등록증 공지가 GLI하랑숲아이들 학원인가증.pdf를 직접 연결한다.",
+        "PDF를 시각 검증했다. 명칭은 GLI하랑숲아이들학원, 등록번호는 제3618호, 주소는 동작대로41길 7 101·201호다. 현재 footer와 등록번호·대표·주소가 일치한다.",
+        "단순한 동일 주소 추정이 아니다. 현재 ECC가 자기 등록증으로 공개한 동일 등록학원의 과거/등록명과 현 브랜드를 연결한 것이다."
+      ],
+      "address_equivalence_verified": true,
+      "legal_identity_link_verified": true,
+      "brand_transition_date": null,
+      "brand_transition_note": "ECC 본사의 2026 NEW 및 9월 개강반 안내는 확인했지만 실제 브랜드 전환일과 등록명 변경 완료일은 미확인이다. PDF의 2025-06-20 재교부 사유인 명칭 변경을 2026 ECC 전환일로 해석하지 않는다.",
+      "recommended_mapping_note": "기존 하랑숲 레코드에 ECC 서초이수를 동일 등록기관의 현재 브랜드로 연결할 수 있다. 기존 명칭은 별칭 또는 이력으로 보존한다. 현재 명칭을 표시하는 변경은 개발 담당자가 기존 데이터 정책에 맞춰 처리한다.",
+      "evidence_urls": [
+        "https://www.ybmecc.com/seochoisu",
+        "https://www.ybmecc.com/seochoisu/notice/430234",
+        "https://upsisa.ybmnet.co.kr/si/ybmecc_com/www/UploadData/board/GLI%ED%95%98%EB%9E%91%EC%88%B2%EC%95%84%EC%9D%B4%EB%93%A4%20%ED%95%99%EC%9B%90%EC%9D%B8%EA%B0%80%EC%A6%9D.pdf",
+        "https://www.ybmecc.com/seochoisu/notice/429757",
+        "https://www.ybmecc.com/campus/open"
+      ],
+      "checked_at": "2026-10-18T17:31:29+09:00",
+      "external_mutations_performed": false,
+      "verification_limit": "현재 공식 사이트와 그 사이트가 공개한 교육청 등록증을 대조했다. 교육청 최신 등록 원부를 별도로 조회한 결과는 아니다.",
+      "prior_record_id": "seoul-ek-se-018"
+    },
+    {
+      "prior_record_id": "psa-gaepo",
+      "source_campus_id": 110,
+      "decision": "match",
+      "official_campus_name": "PSA 개포",
+      "registered_academy_name": "피에스에이개포어학학원",
+      "official_academy_registration_number": "제5422호",
+      "official_phone": "02-571-0509",
+      "current_official_address": "서울특별시 강남구 개포로 408 (개포동, 한국외국인학교) PSA개포",
+      "old_address": "개포로 408 한국외국인학교",
+      "official_briefing_address": "개포동 155",
+      "relationship": "같은 PSA 캠퍼스. 공식 설명회 지번 표기와 공식 캠퍼스 도로명 표기의 대응.",
+      "evidence_urls": [
+        "https://www.ybmpine.com/psa/gaepo",
+        "https://www.ybmpine.com/briefing",
+        "https://www.ybmpine.com/briefing/getBranch?program=psa",
+        "https://www.ybmpine.com/reservation?sCode=110"
+      ],
+      "checked_at": "2026-10-18T08:30:48Z",
+      "factual_basis": "공식 지점 상세가 기존 도로명주소와 피에스에이개포어학학원(제5422호)를 명시하고 상담예약 링크에 sCode=110를 직접 제공한다. 공식 설명회 지점 응답의 PSA 개포/110 및 설명회 지번표의 지점명·전화번호가 상세 페이지와 일치한다. 주소만으로 판단하지 않았다.",
+      "evidence_files": [
+        "/workspace/shared/psa_mapping_evidence_20261018/gaepo.html",
+        "/workspace/shared/psa_mapping_evidence_20261018/branches.json",
+        "/workspace/shared/psa_mapping_evidence_20261018/briefing.html"
+      ],
+      "address_update_recommendation": "기존 도로명주소 유지 가능. 공식 예약 sCode를 이 기존기관에 연결 가능.",
+      "source_namespace": "ybmpine.sCode",
+      "candidate_record_id": "psa-gaepo",
+      "source_record_id": "psa-개포-2027",
+      "address_equivalence_verified": true,
+      "same_official_campus_identity_verified": true,
+      "external_mutations_performed": false
+    },
+    {
+      "prior_record_id": "psa-mokdong",
+      "source_campus_id": 470,
+      "decision": "match",
+      "official_campus_name": "PSA 목동",
+      "registered_academy_name": "피에스에이목동어학학원",
+      "official_academy_registration_number": "제6096호",
+      "official_phone": "02-2691-0509",
+      "current_official_address": "서울특별시 양천구 중앙로 181 (신정동, 복합메디컬타운) 2층",
+      "old_address": "중앙로 181 복합메디컬타운 2층",
+      "official_briefing_address": "신정동 1268",
+      "relationship": "같은 PSA 캠퍼스. 공식 설명회 지번 표기와 공식 캠퍼스 도로명 표기의 대응.",
+      "evidence_urls": [
+        "https://www.ybmpine.com/psa/mokdong",
+        "https://www.ybmpine.com/briefing",
+        "https://www.ybmpine.com/briefing/getBranch?program=psa",
+        "https://www.ybmpine.com/reservation?sCode=470"
+      ],
+      "checked_at": "2026-10-18T08:30:48Z",
+      "factual_basis": "공식 지점 상세가 기존 도로명주소와 피에스에이목동어학학원(제6096호)를 명시하고 상담예약 링크에 sCode=470를 직접 제공한다. 공식 설명회 지점 응답의 PSA 목동/470 및 설명회 지번표의 지점명·전화번호가 상세 페이지와 일치한다. 주소만으로 판단하지 않았다.",
+      "evidence_files": [
+        "/workspace/shared/psa_mapping_evidence_20261018/mokdong.html",
+        "/workspace/shared/psa_mapping_evidence_20261018/branches.json",
+        "/workspace/shared/psa_mapping_evidence_20261018/briefing.html"
+      ],
+      "address_update_recommendation": "기존 도로명주소 유지 가능. 공식 예약 sCode를 이 기존기관에 연결 가능.",
+      "source_namespace": "ybmpine.sCode",
+      "candidate_record_id": "psa-mokdong",
+      "source_record_id": "psa-목동-2027",
+      "address_equivalence_verified": true,
+      "same_official_campus_identity_verified": true,
+      "external_mutations_performed": false
+    },
+    {
+      "prior_record_id": "psa-seocho",
+      "source_campus_id": 100,
+      "decision": "match",
+      "official_campus_name": "PSA 서초",
+      "registered_academy_name": "피에스에이서초어학학원",
+      "official_academy_registration_number": "제4573호",
+      "official_phone": "02-585-0509",
+      "current_official_address": "서울특별시 서초구 효령로 231 (서초동, 진양제약사옥) PSA 3층",
+      "old_address": "효령로 231 진양제약사옥 3층",
+      "official_briefing_address": "서초동 1532-9",
+      "relationship": "같은 PSA 캠퍼스. 공식 설명회 지번 표기와 공식 캠퍼스 도로명 표기의 대응.",
+      "evidence_urls": [
+        "https://www.ybmpine.com/psa/seocho",
+        "https://www.ybmpine.com/briefing",
+        "https://www.ybmpine.com/briefing/getBranch?program=psa",
+        "https://www.ybmpine.com/reservation?sCode=100"
+      ],
+      "checked_at": "2026-10-18T08:30:48Z",
+      "factual_basis": "공식 지점 상세가 기존 도로명주소와 피에스에이서초어학학원(제4573호)를 명시하고 상담예약 링크에 sCode=100를 직접 제공한다. 공식 설명회 지점 응답의 PSA 서초/100 및 설명회 지번표의 지점명·전화번호가 상세 페이지와 일치한다. 주소만으로 판단하지 않았다.",
+      "evidence_files": [
+        "/workspace/shared/psa_mapping_evidence_20261018/seocho.html",
+        "/workspace/shared/psa_mapping_evidence_20261018/branches.json",
+        "/workspace/shared/psa_mapping_evidence_20261018/briefing.html"
+      ],
+      "address_update_recommendation": "기존 도로명주소 유지 가능. 공식 예약 sCode를 이 기존기관에 연결 가능.",
+      "source_namespace": "ybmpine.sCode",
+      "candidate_record_id": "psa-seocho",
+      "source_record_id": "psa-seocho-2027",
+      "address_equivalence_verified": true,
+      "same_official_campus_identity_verified": true,
+      "external_mutations_performed": false
+    },
+    {
+      "prior_record_id": "psa-apgujeong",
+      "source_campus_id": 120,
+      "decision": "match",
+      "official_campus_name": "PSA 압구정",
+      "registered_academy_name": "피에스에이압구정어학학원",
+      "official_academy_registration_number": "제6864호",
+      "official_phone": "02-738-0509",
+      "current_official_address": "서울특별시 강남구 압구정로 206 (신사동) 2층, 3층",
+      "old_address": "압구정로 206 2~3층",
+      "official_briefing_address": "신사동 614-1",
+      "relationship": "같은 PSA 캠퍼스. 공식 설명회 지번 표기와 공식 캠퍼스 도로명 표기의 대응.",
+      "evidence_urls": [
+        "https://www.ybmpine.com/psa/apgujeong",
+        "https://www.ybmpine.com/briefing",
+        "https://www.ybmpine.com/briefing/getBranch?program=psa",
+        "https://www.ybmpine.com/reservation?sCode=120"
+      ],
+      "checked_at": "2026-10-18T08:30:48Z",
+      "factual_basis": "공식 지점 상세가 기존 도로명주소와 피에스에이압구정어학학원(제6864호)를 명시하고 상담예약 링크에 sCode=120를 직접 제공한다. 공식 설명회 지점 응답의 PSA 압구정/120 및 설명회 지번표의 지점명·전화번호가 상세 페이지와 일치한다. 주소만으로 판단하지 않았다.",
+      "evidence_files": [
+        "/workspace/shared/psa_mapping_evidence_20261018/apgujeong.html",
+        "/workspace/shared/psa_mapping_evidence_20261018/branches.json",
+        "/workspace/shared/psa_mapping_evidence_20261018/briefing.html"
+      ],
+      "address_update_recommendation": "기존 도로명주소 유지 가능. 공식 예약 sCode를 이 기존기관에 연결 가능.",
+      "source_namespace": "ybmpine.sCode",
+      "candidate_record_id": "psa-apgujeong",
+      "source_record_id": "psa-압구정-2027",
+      "address_equivalence_verified": true,
+      "same_official_campus_identity_verified": true,
+      "external_mutations_performed": false
+    },
+    {
+      "prior_record_id": "psa-yongsan",
+      "source_campus_id": 130,
+      "decision": "match",
+      "official_campus_name": "PSA 용산",
+      "registered_academy_name": "피에스에이용산어학학원",
+      "official_academy_registration_number": "제2405호",
+      "official_phone": "02-763-0509",
+      "current_official_address": "서울특별시 용산구 신흥로 14 (용산동2가, 상가) PSA용산",
+      "old_address": "서울특별시 용산구 녹사평대로 245 (용산동2가, 한신아파트) 상가 3동",
+      "official_briefing_address": "용산구 신흥로 14",
+      "relationship": "같은 공식 PSA 용산 캠퍼스의 주소 표기 변경. 실제 장소 이전 여부와 변경일은 미확인.",
+      "evidence_urls": [
+        "https://www.ybmpine.com/psa/yongsan",
+        "https://www.ybmpine.com/briefing",
+        "https://www.ybmpine.com/briefing/getBranch?program=psa",
+        "https://www.ybmpine.com/reservation?sCode=130"
+      ],
+      "checked_at": "2026-10-18T08:30:48Z",
+      "factual_basis": "기존 저장 공식원문(수집일 별도 미검증)와 현재 동일 URL의 등록학원명·등록번호 제2405호·전화 02-763-0509·상담예약 sCode=130·공식 지도 링크가 모두 동일하다. 이전 페이지는 녹사평대로245 한신아파트 상가3동, 현재는 신흥로14를 표기한다. 주소만으로 판단하지 않고 동일 등록기관 및 공식 지점 식별자로 연결했다.",
+      "evidence_files": [
+        "/workspace/shared/psa_mapping_evidence_20261018/yongsan.html",
+        "/workspace/shared/psa_mapping_evidence_20261018/branches.json",
+        "/workspace/shared/psa_mapping_evidence_20261018/briefing.html",
+        "/workspace/shared/psa_mapping_evidence_20261018/yongsan_official_prior_snapshot_20261007.json"
+      ],
+      "address_update_recommendation": "현재 공식 주소 신흥로14로 표기하고 기존주소는 이력으로 보존. 공식 이전 공지 없으므로 이전 완료나 이전일을 만들어 넣지 말 것.",
+      "prior_official_snapshot": {
+        "source_url": "https://www.ybmpine.com/psa/yongsan",
+        "source_file": "/workspace/shared/north_sources/psayongsan.json",
+        "file_mtime_utc": "2026-10-07T03:06:09.575581+00:00",
+        "snapshot_contains_explicit_fetched_at": false,
+        "sha256": "01af96054413747489ce433a80f683cb8842b7ac4fd290458c113ce044bd3cc5",
+        "matching_identity_fields": [
+          "registered_academy_name",
+          "official_academy_registration_number",
+          "official_phone",
+          "reservation?sCode=130",
+          "https://naver.me/GxkFiqum"
+        ],
+        "provenance_note": "기존 공식출처 저장 파일에는 name/url/final_url/text/links/images만 있고 retrieved_at이나 원본 HTTP 응답 metadata가 없다. 파일 수정시각은 2026-10-07이지만 수집일은 별도 미검증이며 날짜를 동일성 판단 근거로 사용하지 않는다.",
+        "snapshot_label": "기존 저장 공식원문(수집일 별도 미검증)",
+        "retrieved_at": null,
+        "original_response_metadata": null
+      },
+      "relocation_confirmed": false,
+      "source_namespace": "ybmpine.sCode",
+      "candidate_record_id": "psa-yongsan",
+      "source_record_id": "psa-용산-2027",
+      "address_equivalence_verified": false,
+      "same_official_campus_identity_verified": true,
+      "external_mutations_performed": false
+    }
+  ],
+  "status": "complete",
+  "summary": {
+    "requested": 8,
+    "match": 8,
+    "do_not_match": 0,
+    "unresolved_identity": 0,
+    "road_lot_or_existing_road_address_confirmed": 6,
+    "same_registered_academy_brand_link": 1,
+    "same_campus_address_display_change": 1,
+    "relocation_or_brand_change_date_unverified": [
+      "ecc-seochoisu",
+      "psa-yongsan"
+    ]
+  },
+  "mapping_policy": "공식 브랜드/캠퍼스 식별자, 등록학원명 또는 등록번호와 주소 근거를 함께 확인했다. 주소만으로 기관을 합치지 않았다. match는 읽기 전용 추천이며 실제 데이터 변경을 수행하지 않았다."
+}

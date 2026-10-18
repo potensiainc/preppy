@@ -1,4 +1,5 @@
 import "server-only";
+import { sessionAgePattern } from "@/src/modules/english-kindergarten/session-state";
 
 import { and, asc, desc, eq, ilike, inArray, or, sql } from "drizzle-orm";
 
@@ -745,6 +746,25 @@ function executorSelectLegacy(state: string) {
   return sql`select 1 from ${opportunities} join ${opportunityAdmissionEventLinks} on ${opportunityAdmissionEventLinks.opportunityId} = ${opportunities.id} join ${admissionEvents} on ${admissionEvents.id} = ${opportunityAdmissionEventLinks.admissionEventId} join ${admissionEventVersions} on ${admissionEventVersions.admissionEventId} = ${admissionEvents.id} where ${opportunities.institutionId} = ${institutions.id} and ${opportunities.publicationState} = 'PUBLISHED' and ${opportunities.truthMode} = 'LEGACY_BACKED' and ${admissionEvents.isPublic} = true and ${admissionEventVersions.isCurrent} = true and ${admissionEventVersions.verificationStatus} = 'VERIFIED' and ${admissionEventVersions.verifiedAt} is not null and ${admissionEventVersions.eventStatus} = ${state} and (${institutions.category} <> 'INTERNATIONAL_SCHOOL' or exists (select 1 from event_version_evidence evidence join sources source on source.id=evidence.source_id where evidence.event_version_id=${admissionEventVersions.id} and evidence.source_observation_id is not null and evidence.snapshot_id is not null and source.source_type in ('OFFICIAL_ADMISSION_PAGE','OFFICIAL_NOTICE_BOARD','OFFICIAL_DOCUMENT','OFFICIAL_APPLICATION_PORTAL','OFFICIAL_SCHOOL_PAGE','OFFICIAL_SOCIAL') and source.authority_level in ('PRIMARY','SECONDARY_OFFICIAL')))`;
 }
 
+/** Same row, evidence and time predicate for filtering, ordering and totals. */
+function englishSessionRows(query: InstitutionListQuery) {
+  return sql`from opportunities matched_session
+    join opportunity_versions matched_version on matched_version.opportunity_id=matched_session.id
+    where matched_session.institution_id=${institutions.id}
+      and matched_session.kind='INFORMATION_SESSION' and matched_session.truth_mode='NATIVE'
+      and matched_session.publication_state='PUBLISHED'
+      and matched_version.is_current=true and matched_version.verification_state='VERIFIED'
+      and matched_version.verified_at is not null and matched_version.business_state <> 'CANCELLED'
+      and matched_version.event_start_at >= now()
+      ${query.minAge === undefined ? sql`` : sql`and matched_version.target_audience ~ ${sessionAgePattern(query.minAge)}`}
+      ${query.admissionYear === undefined ? sql`` : sql`and matched_version.target_audience like ${`${query.admissionYear}학년도%`}`}
+      and exists (select 1 from opportunity_version_evidence evidence
+        join sources source on source.id=evidence.source_id
+        where evidence.opportunity_version_id=matched_version.id
+          and source.source_type in ('OFFICIAL_ADMISSION_PAGE','OFFICIAL_NOTICE_BOARD','OFFICIAL_DOCUMENT','OFFICIAL_APPLICATION_PORTAL','OFFICIAL_SCHOOL_PAGE','OFFICIAL_SOCIAL')
+          and source.authority_level in ('PRIMARY','SECONDARY_OFFICIAL'))`;
+}
+
 function listConditions(query: InstitutionListQuery) {
   return and(
     eq(institutions.publicationState, "PUBLISHED"),
@@ -763,7 +783,9 @@ function listConditions(query: InstitutionListQuery) {
         ),
     query.query === undefined
       ? undefined
-      : ilike(institutions.displayName, `%${query.query}%`),
+      : query.category === "ENGLISH_KINDERGARTEN"
+        ? sql`(${institutions.displayName} ilike ${`%${query.query}%`} or exists(select 1 ${englishSessionRows(query)} and matched_version.title ilike ${`%${query.query}%`}))`
+        : ilike(institutions.displayName, `%${query.query}%`),
     recruitmentExists(query.recruitmentState),
     query.hasConfirmedTuition === true
       ? sql`exists (
@@ -787,9 +809,9 @@ function listConditions(query: InstitutionListQuery) {
             ))
         )`
       : undefined,
-    query.minAge === undefined
+    query.minAge === undefined || query.category === "ENGLISH_KINDERGARTEN"
       ? undefined
-      : sql`exists (
+      : sql`(exists (
           select 1
           from institution_facts ek_age_fact
           join institution_fact_versions ek_age_version
@@ -812,7 +834,22 @@ function listConditions(query: InstitutionListQuery) {
                 and source.source_type in ('OFFICIAL_ADMISSION_PAGE','OFFICIAL_NOTICE_BOARD','OFFICIAL_DOCUMENT','OFFICIAL_APPLICATION_PORTAL','OFFICIAL_SCHOOL_PAGE','OFFICIAL_SOCIAL')
                 and source.authority_level in ('PRIMARY','SECONDARY_OFFICIAL')
             ))
-        )`,
+        ) or exists (
+          select 1 from opportunities age_session
+          join opportunity_versions age_version on age_version.opportunity_id=age_session.id
+          where age_session.institution_id=${institutions.id}
+            and age_session.kind='INFORMATION_SESSION' and age_session.truth_mode='NATIVE'
+            and age_session.publication_state='PUBLISHED' and age_version.is_current=true
+            and age_version.verification_state='VERIFIED' and age_version.verified_at is not null
+            and age_version.target_audience ~ ${`(^|[^0-9])${query.minAge}세([^0-9]|$)`}
+            and age_version.event_start_at >= now() and age_version.business_state <> 'CANCELLED'
+        ))`,
+    query.category === "ENGLISH_KINDERGARTEN" &&
+      (query.minAge !== undefined ||
+        query.admissionYear !== undefined ||
+        query.hasUpcomingInfoSession)
+      ? sql`exists (select 1 ${englishSessionRows(query)})`
+      : undefined,
     query.transport === undefined
       ? undefined
       : sql`exists (
@@ -836,7 +873,8 @@ function listConditions(query: InstitutionListQuery) {
                 and source.authority_level in ('PRIMARY','SECONDARY_OFFICIAL')
             ))
         )`,
-    query.hasUpcomingInfoSession === true
+    query.hasUpcomingInfoSession === true &&
+      query.category !== "ENGLISH_KINDERGARTEN"
       ? sql`exists (
           select 1
           from opportunities ek_session
@@ -851,6 +889,8 @@ function listConditions(query: InstitutionListQuery) {
             and ek_session.publication_state = 'PUBLISHED'
             and ek_session_version.business_state <> 'CANCELLED'
             and ek_session_version.event_start_at >= now()
+            ${query.admissionYear === undefined ? sql`` : sql`and ek_session_version.target_audience like ${`${query.admissionYear}학년도%`}`}
+            ${query.minAge === undefined ? sql`` : sql`and ek_session_version.target_audience ~ ${`(^|[^0-9])${query.minAge}세([^0-9]|$)`}`}
             and (${institutions.category} <> 'INTERNATIONAL_SCHOOL' or exists (
               select 1 from opportunity_version_evidence evidence
               join sources source on source.id=evidence.source_id
@@ -953,7 +993,9 @@ function tuitionYearOrder() {
   )`;
 }
 
-function informationSessionOrder() {
+function informationSessionOrder(query: InstitutionListQuery) {
+  if (query.category === "ENGLISH_KINDERGARTEN")
+    return sql<Date | null>`(select min(matched_version.event_start_at) ${englishSessionRows(query)})`;
   return sql<Date | null>`(
     select min(v.event_start_at)
     from opportunities o
@@ -995,9 +1037,10 @@ function listOrder(query: InstitutionListQuery) {
   }
   if (
     query.category === "ENGLISH_KINDERGARTEN" &&
-    query.sort === "INFO_SESSION_ASC"
+    (query.sort === "INFO_SESSION_ASC" ||
+      (query.hasUpcomingInfoSession && query.sort === undefined))
   ) {
-    const session = informationSessionOrder();
+    const session = informationSessionOrder(query);
     return [
       asc(sql`case when ${session} is null then 1 else 0 end`),
       asc(session),
@@ -1076,9 +1119,20 @@ export async function listInstitutions(
     await loadEnglishKindergartenCardSummaries(
       executor,
       items.map((row) => row.id),
+      query.minAge,
+      query.admissionYear,
     );
   const total = countRow[0]?.total ?? 0;
+  const sessionCounts =
+    query.category === "ENGLISH_KINDERGARTEN"
+      ? await executor.raw(
+          sql`select coalesce(sum((select count(*) ${englishSessionRows(query)})),0)::int as total from institutions where ${where}`,
+        )
+      : [];
   return {
+    ...(query.category === "ENGLISH_KINDERGARTEN"
+      ? { matchingSessionCount: Number(sessionCounts[0]?.total ?? 0) }
+      : {}),
     items: items.map((row) =>
       cardFromInstitution(
         row,

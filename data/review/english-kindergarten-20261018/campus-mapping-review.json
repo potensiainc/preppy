@@ -1,0 +1,2155 @@
+{
+  "mode": "PUBLIC_DIRECTORY_RECONCILIATION_ONLY",
+  "applied": false,
+  "dbDryRun": false,
+  "counts": {
+    "EXISTING_OFFICIAL_IDENTITY_VERIFIED": 8,
+    "EXISTING_ROAD_AND_BRAND_MATCH": 31,
+    "NEW_CAMPUS_CANDIDATE": 48
+  },
+  "datedSessions": 213,
+  "caution": "Road and brand matches are candidates; inspect official campus ID and name together. Existing DB ID/current fields still require authenticated dry-run. New candidates require duplicate checks against all current roots, including drafts/hidden records.",
+  "mappings": [
+    {
+      "recordId": "poly-강동-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-poly-1808003",
+      "name": "POLY 강동",
+      "officialCampusId": {
+        "namespace": "poly.searchClientCode",
+        "value": "1808003"
+      },
+      "officialCampusUrl": "https://www.poly-english.com/campus/campusMain.do?searchClientCode=1808003",
+      "officialAddress": "서울 강동구 양재대로 1553 (천호동) 201호~204호(천호동, 선진빌딩)",
+      "streetIdentity": "양재대로1553",
+      "officialPhone": "02-6285-7659",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 2
+    },
+    {
+      "recordId": "poly-강서-2027",
+      "status": "EXISTING_ROAD_AND_BRAND_MATCH",
+      "proposedSlug": "seoul-ek-nw-001",
+      "name": "POLY 강서",
+      "officialCampusId": {
+        "namespace": "poly.searchClientCode",
+        "value": "1311001"
+      },
+      "officialCampusUrl": "https://www.poly-english.com/campus/campusMain.do?searchClientCode=1311001",
+      "officialAddress": "서울 강서구 공항대로41길 34 (등촌동) 7층",
+      "streetIdentity": "공항대로41길34",
+      "officialPhone": "02-3661-7659",
+      "existing": {
+        "name": "폴리어학원 강서캠퍼스",
+        "institutionId": "d6c664b7-e7f2-46ee-86de-0941f3540c06",
+        "slug": "seoul-ek-nw-001",
+        "address": "서울 강서구 공항대로41길 34 7층",
+        "region": "강서구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 4
+    },
+    {
+      "recordId": "poly-관악-2027",
+      "status": "EXISTING_ROAD_AND_BRAND_MATCH",
+      "proposedSlug": "seoul-ek-se-008",
+      "name": "POLY 관악",
+      "officialCampusId": {
+        "namespace": "poly.searchClientCode",
+        "value": "0601006"
+      },
+      "officialCampusUrl": "https://www.poly-english.com/campus/campusMain.do?searchClientCode=0601006",
+      "officialAddress": "서울 관악구 관악로30길 12 봉천우성아파트상가동 3층",
+      "streetIdentity": "관악로30길12",
+      "officialPhone": "02-887-7659",
+      "existing": {
+        "name": "폴리 관악캠퍼스",
+        "institutionId": "b65e4615-2034-4d81-8139-67d056b56560",
+        "slug": "seoul-ek-se-008",
+        "address": "서울특별시 관악구 관악로30길 12 우성타운상가 3층",
+        "region": "관악구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 1
+    },
+    {
+      "recordId": "poly-광교-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-poly-2109001",
+      "name": "POLY 광교",
+      "officialCampusId": {
+        "namespace": "poly.searchClientCode",
+        "value": "2109001"
+      },
+      "officialCampusUrl": "https://www.poly-english.com/campus/campusMain.do?searchClientCode=2109001",
+      "officialAddress": "경기 수원시 영통구 에듀타운로 102 (이의동) 광교중앙역 SK VIEW B동 401~410호",
+      "streetIdentity": "에듀타운로102",
+      "officialPhone": "031-8019-7659",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 3
+    },
+    {
+      "recordId": "poly-광명-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-poly-0601007",
+      "name": "POLY 광명",
+      "officialCampusId": {
+        "namespace": "poly.searchClientCode",
+        "value": "0601007"
+      },
+      "officialCampusUrl": "https://www.poly-english.com/campus/campusMain.do?searchClientCode=0601007",
+      "officialAddress": "경기 광명시 범안로 1060 (하안동) 남전빌딩 6층, 7층",
+      "streetIdentity": "범안로1060",
+      "officialPhone": "02-898-7659",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 3
+    },
+    {
+      "recordId": "poly-광진-2027",
+      "status": "EXISTING_ROAD_AND_BRAND_MATCH",
+      "proposedSlug": "seoul-ek-ne-013",
+      "name": "POLY 광진",
+      "officialCampusId": {
+        "namespace": "poly.searchClientCode",
+        "value": "1412002"
+      },
+      "officialCampusUrl": "https://www.poly-english.com/campus/campusMain.do?searchClientCode=1412002",
+      "officialAddress": "서울 광진구 자양로 113 (자양동, 구의 현대 하이엘) 2층",
+      "streetIdentity": "자양로113",
+      "officialPhone": "02-455-7659",
+      "existing": {
+        "name": "폴리어학원 광진캠퍼스",
+        "institutionId": "4d9a1f63-726a-4e99-a819-0d03a181fea1",
+        "slug": "seoul-ek-ne-013",
+        "address": "서울특별시 광진구 자양로 113 구의 현대 하이엘 2층",
+        "region": "광진구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 1
+    },
+    {
+      "recordId": "poly-구리남양주-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-poly-0908001",
+      "name": "POLY 구리남양주",
+      "officialCampusId": {
+        "namespace": "poly.searchClientCode",
+        "value": "0908001"
+      },
+      "officialCampusUrl": "https://www.poly-english.com/campus/campusMain.do?searchClientCode=0908001",
+      "officialAddress": "경기 남양주시 미금로 134 (다산동) 2층",
+      "streetIdentity": "미금로134",
+      "officialPhone": "031-558-7659",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 1
+    },
+    {
+      "recordId": "poly-gimpo-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-poly-1107001",
+      "name": "POLY 김포",
+      "officialCampusId": {
+        "namespace": "poly.searchClientCode",
+        "value": "1107001"
+      },
+      "officialCampusUrl": "https://www.poly-english.com/campus/campusMain.do?searchClientCode=1107001",
+      "officialAddress": "경기 김포시 사우중로 48 (사우동) 드림월드프라자 601호",
+      "streetIdentity": "사우중로48",
+      "officialPhone": "031-983-7659",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 3
+    },
+    {
+      "recordId": "poly-대치폴리매그넷-2027",
+      "status": "EXISTING_ROAD_AND_BRAND_MATCH",
+      "proposedSlug": "seoul-ek-gs-016",
+      "name": "POLY 대치폴리매그넷",
+      "officialCampusId": {
+        "namespace": "poly.searchClientCode",
+        "value": "2210003"
+      },
+      "officialCampusUrl": "https://www.poly-english.com/campus/campusMain.do?searchClientCode=2210003",
+      "officialAddress": "서울 강남구 영동대로 318 (대치동) 4~5층",
+      "streetIdentity": "영동대로318",
+      "officialPhone": "02-6953-7659",
+      "existing": {
+        "name": "대치폴리매그넷",
+        "institutionId": "321fc5d3-672b-4bc4-aeb2-0de827ce7891",
+        "slug": "seoul-ek-gs-016",
+        "address": "서울 강남구 영동대로 318 4~5층",
+        "region": "강남구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 2
+    },
+    {
+      "recordId": "poly-덕양-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-poly-0512002",
+      "name": "POLY 덕양",
+      "officialCampusId": {
+        "namespace": "poly.searchClientCode",
+        "value": "0512002"
+      },
+      "officialCampusUrl": "https://www.poly-english.com/campus/campusMain.do?searchClientCode=0512002",
+      "officialAddress": "경기 고양시 덕양구 화신로272번길 3 (화정동) 7층",
+      "streetIdentity": "화신로272번길3",
+      "officialPhone": "031-972-7656",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 3
+    },
+    {
+      "recordId": "poly-동대문-2027",
+      "status": "EXISTING_ROAD_AND_BRAND_MATCH",
+      "proposedSlug": "seoul-ek-ne-012",
+      "name": "POLY 동대문",
+      "officialCampusId": {
+        "namespace": "poly.searchClientCode",
+        "value": "0701001"
+      },
+      "officialCampusUrl": "https://www.poly-english.com/campus/campusMain.do?searchClientCode=0701001",
+      "officialAddress": "서울특별시 동대문구 장안벚꽃로 1길 7 상가동 3층(장안동,장안힐스테이트)",
+      "streetIdentity": "장안벚꽃로1길7",
+      "officialPhone": "02-2244-7659",
+      "existing": {
+        "name": "폴리어학원 동대문캠퍼스",
+        "institutionId": "592fa3f1-fcec-4054-b2d5-8d7345e4d053",
+        "slug": "seoul-ek-ne-012",
+        "address": "서울 동대문구 장안벚꽃로1길 7 장안힐스테이트 상가동 3층",
+        "region": "동대문구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 4
+    },
+    {
+      "recordId": "poly-dongtan-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-poly-0804001",
+      "name": "POLY 동탄",
+      "officialCampusId": {
+        "namespace": "poly.searchClientCode",
+        "value": "0804001"
+      },
+      "officialCampusUrl": "https://www.poly-english.com/campus/campusMain.do?searchClientCode=0804001",
+      "officialAddress": "경기 화성시 메타폴리스로 47-25 (반송동, 센트럴에스타운) 4층",
+      "streetIdentity": "메타폴리스로47-25",
+      "officialPhone": "031-8003-7659",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 2
+    },
+    {
+      "recordId": "poly-마포-2027",
+      "status": "EXISTING_OFFICIAL_IDENTITY_VERIFIED",
+      "proposedSlug": "seoul-ek-nw-002",
+      "name": "POLY 마포",
+      "officialCampusId": {
+        "namespace": "poly.searchClientCode",
+        "value": "0611002"
+      },
+      "officialCampusUrl": "https://www.poly-english.com/campus/campusMain.do?searchClientCode=0611002",
+      "officialAddress": "서울특별시 마포구 도화동560 태영데시앙 4층",
+      "streetIdentity": null,
+      "officialPhone": "02-713-7659",
+      "existing": {
+        "name": "폴리어학원 마포캠퍼스",
+        "institutionId": "d7635b5c-b2f0-4e0d-a229-9405cb273521",
+        "slug": "seoul-ek-nw-002",
+        "address": "서울 마포구 독막로 320 4층",
+        "region": "마포구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [
+        {
+          "name": "폴리어학원 마포캠퍼스",
+          "institutionId": "d7635b5c-b2f0-4e0d-a229-9405cb273521",
+          "slug": "seoul-ek-nw-002",
+          "address": "서울 마포구 독막로 320 4층",
+          "region": "마포구"
+        }
+      ],
+      "datedSessions": 0,
+      "resolutionEvidence": {
+        "key": "poly-mapo",
+        "source_record_id": "poly-마포-2027",
+        "source_campus_id": "0611002",
+        "source_namespace": "poly.searchClientCode",
+        "candidate_record_id": "seoul-ek-nw-002",
+        "candidate_name": "POLY 마포",
+        "candidate_address": "서울 마포구 독막로 320 4층",
+        "current_official_name": "폴리어학원(마포)",
+        "current_official_address": "서울특별시 마포구 도화동560 태영데시앙 4층",
+        "normalized_road_address": "서울특별시 마포구 독막로 320 태영데시앙 4층",
+        "phone": "02-713-7659",
+        "registration_number": "제02200700021호",
+        "decision": "match",
+        "relationship": "same_brand_campus; road_name_and_lot_number_variants",
+        "identity_basis": [
+          "공식 캠퍼스 0611002가 폴리어학원(마포), 도화동 560, 태영데시앙 4층을 명시한다.",
+          "고용노동부 서울서부지청 공식 페이지가 독막로 320(도화동 560) 태영데시앙 주소를 병기한다.",
+          "기존 후보의 POLY 마포 명칭과 4층까지 일치한다. 주소만으로 다른 기관을 합치는 경우가 아니다."
+        ],
+        "address_equivalence_verified": true,
+        "relocation_status": "주소표기 차이로 설명 가능. 별도 이전을 주장하지 않음.",
+        "evidence_urls": [
+          "https://www.poly-english.com/aboutpoly/campusList.do",
+          "https://www.poly-english.com/campus/campusMain.do?searchClientCode=0611002",
+          "https://moel.go.kr/local/seoulseobu/news/notice/noticeView.do?bbs_seq=20260500043"
+        ],
+        "checked_at": "2026-10-18T17:31:29+09:00",
+        "priority_note": "확정 설명회 0회차. 개별상담 상태를 유지한다.",
+        "external_mutations_performed": false,
+        "prior_record_id": "seoul-ek-nw-002"
+      },
+      "updateAddress": false
+    },
+    {
+      "recordId": "poly-목동-2027",
+      "status": "EXISTING_ROAD_AND_BRAND_MATCH",
+      "proposedSlug": "seoul-ek-nw-003",
+      "name": "POLY 목동",
+      "officialCampusId": {
+        "namespace": "poly.searchClientCode",
+        "value": "0601012"
+      },
+      "officialCampusUrl": "https://www.poly-english.com/campus/campusMain.do?searchClientCode=0601012",
+      "officialAddress": "서울 양천구 목동동로 233-3 (목동) 4층",
+      "streetIdentity": "목동동로233-3",
+      "officialPhone": "02-2644-7659",
+      "existing": {
+        "name": "폴리어학원 목동캠퍼스",
+        "institutionId": "6753f385-d3a0-43b2-b1fa-85b30f6748ad",
+        "slug": "seoul-ek-nw-003",
+        "address": "서울 양천구 목동동로 233-3 4층",
+        "region": "양천구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 4
+    },
+    {
+      "recordId": "poly-부천-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-poly-0608001",
+      "name": "POLY 부천",
+      "officialCampusId": {
+        "namespace": "poly.searchClientCode",
+        "value": "0608001"
+      },
+      "officialCampusUrl": "https://www.poly-english.com/campus/campusMain.do?searchClientCode=0608001",
+      "officialAddress": "경기 부천시 원미구 길주로 111 (상동) 501호 센타프라자",
+      "streetIdentity": "길주로111",
+      "officialPhone": "032-322-7659",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 1
+    },
+    {
+      "recordId": "poly-분당-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-poly-0711002",
+      "name": "POLY 분당",
+      "officialCampusId": {
+        "namespace": "poly.searchClientCode",
+        "value": "0711002"
+      },
+      "officialCampusUrl": "https://www.poly-english.com/campus/campusMain.do?searchClientCode=0711002",
+      "officialAddress": "경기 성남시 분당구 성남대로 349 (정자동, 시그마타워 5층)",
+      "streetIdentity": "성남대로349",
+      "officialPhone": "031-715-2367",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 2
+    },
+    {
+      "recordId": "poly-서대문-2027",
+      "status": "EXISTING_ROAD_AND_BRAND_MATCH",
+      "proposedSlug": "seoul-ek-nw-004",
+      "name": "POLY 서대문",
+      "officialCampusId": {
+        "namespace": "poly.searchClientCode",
+        "value": "0712002"
+      },
+      "officialCampusUrl": "https://www.poly-english.com/campus/campusMain.do?searchClientCode=0712002",
+      "officialAddress": "서울 서대문구 응암로 76 5층, 6층 (북가좌동, 새호빌딩)",
+      "streetIdentity": "응암로76",
+      "officialPhone": "02-394-7658",
+      "existing": {
+        "name": "폴리어학원 서대문캠퍼스",
+        "institutionId": "e1553666-6bb3-4cc7-8807-2f0ed9c29f9a",
+        "slug": "seoul-ek-nw-004",
+        "address": "서울 서대문구 응암로 76 새호빌딩 5·6층",
+        "region": "서대문구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 1
+    },
+    {
+      "recordId": "poly-서수원-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-poly-2512001",
+      "name": "POLY 서수원",
+      "officialCampusId": {
+        "namespace": "poly.searchClientCode",
+        "value": "2512001"
+      },
+      "officialCampusUrl": "https://www.poly-english.com/campus/campusMain.do?searchClientCode=2512001",
+      "officialAddress": "경기 수원시 권선구 서부로 1817 (탑동) 1층~3층",
+      "streetIdentity": "서부로1817",
+      "officialPhone": "031-298-5244",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 4
+    },
+    {
+      "recordId": "poly-성동-2027",
+      "status": "EXISTING_ROAD_AND_BRAND_MATCH",
+      "proposedSlug": "seoul-ek-nw-005",
+      "name": "POLY 성동",
+      "officialCampusId": {
+        "namespace": "poly.searchClientCode",
+        "value": "0605001"
+      },
+      "officialCampusUrl": "https://www.poly-english.com/campus/campusMain.do?searchClientCode=0605001",
+      "officialAddress": "서울 중구 다산로 162 (신당동) 1,2층",
+      "streetIdentity": "다산로162",
+      "officialPhone": "02-2232-7659",
+      "existing": {
+        "name": "폴리어학원 성동캠퍼스",
+        "institutionId": "e43b4c43-1fb7-4931-a218-5852c17fd2f0",
+        "slug": "seoul-ek-nw-005",
+        "address": "서울 중구 다산로 162 1·2층",
+        "region": "중구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 0
+    },
+    {
+      "recordId": "poly-성북-2027",
+      "status": "EXISTING_OFFICIAL_IDENTITY_VERIFIED",
+      "proposedSlug": "seoul-ek-ne-011",
+      "name": "POLY 성북",
+      "officialCampusId": {
+        "namespace": "poly.searchClientCode",
+        "value": "0701002"
+      },
+      "officialCampusUrl": "https://www.poly-english.com/campus/campusMain.do?searchClientCode=0701002",
+      "officialAddress": "서울특별시 성북구 동소문동4가260 드림트리빌딩 3층",
+      "streetIdentity": null,
+      "officialPhone": "02-953-7659",
+      "existing": {
+        "name": "폴리어학원 성북캠퍼스",
+        "institutionId": "091c90a1-f960-4d8c-a0ac-161c965cf010",
+        "slug": "seoul-ek-ne-011",
+        "address": "서울특별시 성북구 동소문로 63 드림트리빌딩 3층",
+        "region": "성북구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [
+        {
+          "name": "폴리어학원 성북캠퍼스",
+          "institutionId": "091c90a1-f960-4d8c-a0ac-161c965cf010",
+          "slug": "seoul-ek-ne-011",
+          "address": "서울특별시 성북구 동소문로 63 드림트리빌딩 3층",
+          "region": "성북구"
+        }
+      ],
+      "datedSessions": 2,
+      "resolutionEvidence": {
+        "key": "poly-seongbuk",
+        "source_record_id": "poly-성북-2027",
+        "source_campus_id": "0701002",
+        "source_namespace": "poly.searchClientCode",
+        "candidate_record_id": "seoul-ek-ne-011",
+        "candidate_name": "POLY 성북",
+        "candidate_address": "서울 성북구 동소문로 63 드림트리빌딩 3층",
+        "current_official_name": "폴리어학원(성북)",
+        "current_official_address": "서울특별시 성북구 동소문동4가260 드림트리빌딩 3층",
+        "normalized_road_address": "서울특별시 성북구 동소문로 63 드림트리빌딩 3층",
+        "phone": "02-953-7659",
+        "registration_number": "제2007-25호",
+        "decision": "match",
+        "relationship": "same_brand_campus; road_name_and_lot_number_variants",
+        "identity_basis": [
+          "공식 캠퍼스 0701002가 폴리어학원(성북), 동소문동4가 260, 드림트리빌딩 3층을 명시한다.",
+          "서울특별시선거관리위원회 공식 연락처가 동소문로 63(동소문동4가 260 드림트리빌딩)을 병기한다.",
+          "기존 후보의 POLY 성북 명칭과 건물 3층이 일치한다."
+        ],
+        "address_equivalence_verified": true,
+        "relocation_status": "주소표기 차이로 설명 가능. 별도 이전을 주장하지 않음.",
+        "evidence_urls": [
+          "https://www.poly-english.com/aboutpoly/campusList.do",
+          "https://www.poly-english.com/campus/campusMain.do?searchClientCode=0701002",
+          "https://su.nec.go.kr/su/singl/deptInfo/guSiGunInfo.do?menuNo=200015"
+        ],
+        "checked_at": "2026-10-18T17:31:29+09:00",
+        "external_mutations_performed": false,
+        "prior_record_id": "seoul-ek-ne-011"
+      },
+      "updateAddress": false
+    },
+    {
+      "recordId": "poly-송파-2027",
+      "status": "EXISTING_ROAD_AND_BRAND_MATCH",
+      "proposedSlug": "seoul-ek-se-007",
+      "name": "POLY 송파",
+      "officialCampusId": {
+        "namespace": "poly.searchClientCode",
+        "value": "0801001"
+      },
+      "officialCampusUrl": "https://www.poly-english.com/campus/campusMain.do?searchClientCode=0801001",
+      "officialAddress": "서울 송파구 오금로 233 (방이동) 4~6층",
+      "streetIdentity": "오금로233",
+      "officialPhone": "02-474-2367",
+      "existing": {
+        "name": "폴리 송파캠퍼스",
+        "institutionId": "c0d4e76c-4202-4303-a8fe-8ecef71d4c6e",
+        "slug": "seoul-ek-se-007",
+        "address": "서울특별시 송파구 오금로 233 4~6층",
+        "region": "송파구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 4
+    },
+    {
+      "recordId": "poly-suji-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-poly-0601008",
+      "name": "POLY 수지",
+      "officialCampusId": {
+        "namespace": "poly.searchClientCode",
+        "value": "0601008"
+      },
+      "officialCampusUrl": "https://www.poly-english.com/campus/campusMain.do?searchClientCode=0601008",
+      "officialAddress": "경기 용인시 수지구 풍덕천로 122 (풍덕천동) 하나로 프라자 7층",
+      "streetIdentity": "풍덕천로122",
+      "officialPhone": "031-262-7659",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 3
+    },
+    {
+      "recordId": "poly-시흥장현-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-poly-2212001",
+      "name": "POLY 시흥장현",
+      "officialCampusId": {
+        "namespace": "poly.searchClientCode",
+        "value": "2212001"
+      },
+      "officialCampusUrl": "https://www.poly-english.com/campus/campusMain.do?searchClientCode=2212001",
+      "officialAddress": "경기 시흥시 진말1로 8 801호~806호(장곡동, 장곡에듀타워)",
+      "streetIdentity": "진말1로8",
+      "officialPhone": "031-8042-7659",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 4
+    },
+    {
+      "recordId": "poly-영통-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-poly-0601009",
+      "name": "POLY 영통",
+      "officialCampusId": {
+        "namespace": "poly.searchClientCode",
+        "value": "0601009"
+      },
+      "officialCampusUrl": "https://www.poly-english.com/campus/campusMain.do?searchClientCode=0601009",
+      "officialAddress": "경기 수원시 영통구 매영로345번길 111 (영통동) 4층(경기방송 본관)",
+      "streetIdentity": "매영로345번길111",
+      "officialPhone": "031-205-7658",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 4
+    },
+    {
+      "recordId": "poly-운정-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-poly-2210001",
+      "name": "POLY 운정",
+      "officialCampusId": {
+        "namespace": "poly.searchClientCode",
+        "value": "2210001"
+      },
+      "officialCampusUrl": "https://www.poly-english.com/campus/campusMain.do?searchClientCode=2210001",
+      "officialAddress": "경기 파주시 청암로 75 (다율동) 상상메디컬프라자 7층",
+      "streetIdentity": "청암로75",
+      "officialPhone": "031-994-7659",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 2
+    },
+    {
+      "recordId": "poly-위례-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-poly-2009003",
+      "name": "POLY 위례",
+      "officialCampusId": {
+        "namespace": "poly.searchClientCode",
+        "value": "2009003"
+      },
+      "officialCampusUrl": "https://www.poly-english.com/campus/campusMain.do?searchClientCode=2009003",
+      "officialAddress": "서울 송파구 위례순환로 387 (장지동) 대신위례센터 2관 5층",
+      "streetIdentity": "위례순환로387",
+      "officialPhone": "02-2043-7659",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 3
+    },
+    {
+      "recordId": "poly-은평-2027",
+      "status": "EXISTING_ROAD_AND_BRAND_MATCH",
+      "proposedSlug": "seoul-ek-nw-006",
+      "name": "POLY 은평",
+      "officialCampusId": {
+        "namespace": "poly.searchClientCode",
+        "value": "1412001"
+      },
+      "officialCampusUrl": "https://www.poly-english.com/campus/campusMain.do?searchClientCode=1412001",
+      "officialAddress": "서울특별시 은평구 진관2로 29-21 드림스퀘어 5층",
+      "streetIdentity": "진관2로29-21",
+      "officialPhone": "02-388-7659",
+      "existing": {
+        "name": "폴리어학원 은평캠퍼스",
+        "institutionId": "080d4d74-ce97-4b49-acad-e58791799806",
+        "slug": "seoul-ek-nw-006",
+        "address": "서울 은평구 진관2로 29-21 드림스퀘어 5층",
+        "region": "은평구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 2
+    },
+    {
+      "recordId": "poly-일산-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-poly-0601003",
+      "name": "POLY 일산",
+      "officialCampusId": {
+        "namespace": "poly.searchClientCode",
+        "value": "0601003"
+      },
+      "officialCampusUrl": "https://www.poly-english.com/campus/campusMain.do?searchClientCode=0601003",
+      "officialAddress": "경기 고양시 일산동구 일산로 450 (정발산동) 삼일빌딩 2층",
+      "streetIdentity": "일산로450",
+      "officialPhone": "031-919-7659",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 3
+    },
+    {
+      "recordId": "poly-중계-2027",
+      "status": "EXISTING_ROAD_AND_BRAND_MATCH",
+      "proposedSlug": "seoul-ek-ne-010",
+      "name": "POLY 중계",
+      "officialCampusId": {
+        "namespace": "poly.searchClientCode",
+        "value": "0601005"
+      },
+      "officialCampusUrl": "https://www.poly-english.com/campus/campusMain.do?searchClientCode=0601005",
+      "officialAddress": "서울 노원구 노원로 236 (하계동) 5, 6층",
+      "streetIdentity": "노원로236",
+      "officialPhone": "02-6927-7659",
+      "existing": {
+        "name": "폴리어학원 중계캠퍼스",
+        "institutionId": "7ca1184b-f94c-4f73-9ce5-14cc9707eed5",
+        "slug": "seoul-ek-ne-010",
+        "address": "서울특별시 노원구 노원로 236 5층 일부, 6층",
+        "region": "노원구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 7
+    },
+    {
+      "recordId": "poly-평촌-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-poly-0601014",
+      "name": "POLY 평촌",
+      "officialCampusId": {
+        "namespace": "poly.searchClientCode",
+        "value": "0601014"
+      },
+      "officialCampusUrl": "https://www.poly-english.com/campus/campusMain.do?searchClientCode=0601014",
+      "officialAddress": "경기 안양시 동안구 평촌대로 112 (평촌동) 정진빌딩 2층",
+      "streetIdentity": "평촌대로112",
+      "officialPhone": "031-385-2367",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 0
+    },
+    {
+      "recordId": "poly-평택지제-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-poly-2407001",
+      "name": "POLY 평택지제",
+      "officialCampusId": {
+        "namespace": "poly.searchClientCode",
+        "value": "2407001"
+      },
+      "officialCampusUrl": "https://www.poly-english.com/campus/campusMain.do?searchClientCode=2407001",
+      "officialAddress": "경기 평택시 지제동삭1로 208 모산프라자 2층",
+      "streetIdentity": "지제동삭1로208",
+      "officialPhone": "031-8054-7659",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 1
+    },
+    {
+      "recordId": "poly-하남미사-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-poly-2009001",
+      "name": "POLY 하남미사",
+      "officialCampusId": {
+        "namespace": "poly.searchClientCode",
+        "value": "2009001"
+      },
+      "officialCampusUrl": "https://www.poly-english.com/campus/campusMain.do?searchClientCode=2009001",
+      "officialAddress": "경기 하남시 미사강변대로226번안길 35 (망월동) 청담프라자 5층",
+      "streetIdentity": "미사강변대로226번안길35",
+      "officialPhone": "031-793-7659",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 4
+    },
+    {
+      "recordId": "ybm-ecc-강동-2027",
+      "status": "EXISTING_ROAD_AND_BRAND_MATCH",
+      "proposedSlug": "seoul-ek-se-001",
+      "name": "YBM ECC 강동",
+      "officialCampusId": {
+        "namespace": "ybmecc.sCode",
+        "value": "101"
+      },
+      "officialCampusUrl": "https://www.ybmecc.com/gangdong",
+      "officialAddress": "서울특별시 강동구 양재대로 1590 수목빌딩 3층~5층 YBM ECC 강동",
+      "streetIdentity": "양재대로1590",
+      "officialPhone": "02-442-0509",
+      "existing": {
+        "name": "YBM ECC 강동",
+        "institutionId": "cb9417fe-5240-4938-b4af-58d04c306116",
+        "slug": "seoul-ek-se-001",
+        "address": "서울특별시 강동구 양재대로 1590 수목빌딩 3~5층",
+        "region": "강동구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 3
+    },
+    {
+      "recordId": "ybm-ecc-광진-2027",
+      "status": "EXISTING_ROAD_AND_BRAND_MATCH",
+      "proposedSlug": "seoul-ek-ne-006",
+      "name": "YBM ECC 광진",
+      "officialCampusId": {
+        "namespace": "ybmecc.sCode",
+        "value": "113"
+      },
+      "officialCampusUrl": "https://www.ybmecc.com/gwangjin",
+      "officialAddress": "서울특별시 광진구 아차산로 471 CS프라자 5층",
+      "streetIdentity": "아차산로471",
+      "officialPhone": "02-444-1536",
+      "existing": {
+        "name": "YBM ECC 광진",
+        "institutionId": "a8337876-72f4-46b9-9719-73c25b30a38b",
+        "slug": "seoul-ek-ne-006",
+        "address": "서울특별시 광진구 아차산로 471 CS프라자 5층",
+        "region": "광진구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 1
+    },
+    {
+      "recordId": "ecc-nowon-2027",
+      "status": "EXISTING_ROAD_AND_BRAND_MATCH",
+      "proposedSlug": "seoul-ek-ne-001",
+      "name": "YBM ECC 노원",
+      "officialCampusId": {
+        "namespace": "ybmecc.sCode",
+        "value": "120"
+      },
+      "officialCampusUrl": "https://www.ybmecc.com/nowon",
+      "officialAddress": "서울특별시 노원구 한글비석로 263 (중계동) 성모빌딩 6,7층",
+      "streetIdentity": "한글비석로263",
+      "officialPhone": "02-938-0509",
+      "existing": {
+        "name": "YBM ECC 노원",
+        "institutionId": "507a0121-d44c-43df-9f72-6ed0cf508fab",
+        "slug": "seoul-ek-ne-001",
+        "address": "서울특별시 노원구 한글비석로 263 성모빌딩 6,7층",
+        "region": "노원구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 1
+    },
+    {
+      "recordId": "ybm-ecc-대치-2027",
+      "status": "EXISTING_ROAD_AND_BRAND_MATCH",
+      "proposedSlug": "seoul-ek-gs-005",
+      "name": "YBM ECC 대치",
+      "officialCampusId": {
+        "namespace": "ybmecc.sCode",
+        "value": "105"
+      },
+      "officialCampusUrl": "https://www.ybmecc.com/daechi",
+      "officialAddress": "서울특별시 강남구 역삼로 442",
+      "streetIdentity": "역삼로442",
+      "officialPhone": "02-553-0509",
+      "existing": {
+        "name": "YBM ECC 대치",
+        "institutionId": "d08ab915-bf58-4432-a08c-f25cf4bbf720",
+        "slug": "seoul-ek-gs-005",
+        "address": "서울특별시 강남구 역삼로 442",
+        "region": "강남구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 3
+    },
+    {
+      "recordId": "ybm-ecc-동대문-2027",
+      "status": "EXISTING_ROAD_AND_BRAND_MATCH",
+      "proposedSlug": "seoul-ek-ne-004",
+      "name": "YBM ECC 동대문",
+      "officialCampusId": {
+        "namespace": "ybmecc.sCode",
+        "value": "655"
+      },
+      "officialCampusUrl": "https://www.ybmecc.com/dongdaemun1",
+      "officialAddress": "서울특별시 동대문구 사가정로 80 카운티에비뉴 2층",
+      "streetIdentity": "사가정로80",
+      "officialPhone": "02-2246-0509",
+      "existing": {
+        "name": "YBM ECC 동대문",
+        "institutionId": "e7eacf80-bc04-4068-8223-46762e3a2f4e",
+        "slug": "seoul-ek-ne-004",
+        "address": "서울특별시 동대문구 사가정로 80 카운티에비뉴 2층",
+        "region": "동대문구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 2
+    },
+    {
+      "recordId": "ybm-ecc-마포-2027",
+      "status": "EXISTING_ROAD_AND_BRAND_MATCH",
+      "proposedSlug": "seoul-ek-nw-012",
+      "name": "YBM ECC 마포",
+      "officialCampusId": {
+        "namespace": "ybmecc.sCode",
+        "value": "108"
+      },
+      "officialCampusUrl": "https://www.ybmecc.com/mapo",
+      "officialAddress": "서울특별시 서대문구 성산로 553 동문빌딩",
+      "streetIdentity": "성산로553",
+      "officialPhone": "02-334-0509",
+      "existing": {
+        "name": "YBM ECC 마포서대문",
+        "institutionId": "ad570bd7-c690-4b60-b71a-1042baf0d86b",
+        "slug": "seoul-ek-nw-012",
+        "address": "서울 서대문구 성산로 553 동문빌딩",
+        "region": "서대문구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 0
+    },
+    {
+      "recordId": "ecc-mokdong-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-ybm-ecc-109",
+      "name": "YBM ECC 목동",
+      "officialCampusId": {
+        "namespace": "ybmecc.sCode",
+        "value": "109"
+      },
+      "officialCampusUrl": "https://www.ybmecc.com/mokdong",
+      "officialAddress": "서울특별시 양천구 목동동로12길 20 (신정동) 목동하버드빌딩 3층/제 2022-서울양천-0622호",
+      "streetIdentity": "목동동로12길20",
+      "officialPhone": "02-2652-0509",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 3
+    },
+    {
+      "recordId": "ybm-ecc-서초이수-2027",
+      "status": "EXISTING_OFFICIAL_IDENTITY_VERIFIED",
+      "proposedSlug": "seoul-ek-se-018",
+      "name": "YBM ECC 서초이수",
+      "officialCampusId": {
+        "namespace": "ybmecc.sCode",
+        "value": "761"
+      },
+      "officialCampusUrl": "https://www.ybmecc.com/seochoisu",
+      "officialAddress": "서울시 동작구 동작대로41길 7",
+      "streetIdentity": "동작대로41길7",
+      "officialPhone": "02-2038-6606",
+      "existing": {
+        "name": "하랑숲아이들",
+        "institutionId": "f2dcdd7b-244c-450e-bf52-e95f1d8abd3c",
+        "slug": "seoul-ek-se-018",
+        "address": "서울특별시 동작구 동작대로41길 7",
+        "region": "동작구"
+      },
+      "conflictingCandidates": [
+        {
+          "name": "하랑숲아이들",
+          "institutionId": "f2dcdd7b-244c-450e-bf52-e95f1d8abd3c",
+          "slug": "seoul-ek-se-018",
+          "address": "서울특별시 동작구 동작대로41길 7",
+          "region": "동작구"
+        }
+      ],
+      "nameCandidates": [],
+      "datedSessions": 3,
+      "resolutionEvidence": {
+        "key": "ecc-seochoisu",
+        "source_record_id": "ybm-ecc-서초이수-2027",
+        "source_campus_id": "761",
+        "source_namespace": "ybmecc.sCode",
+        "candidate_record_id": "seoul-ek-se-018",
+        "candidate_name": "하랑숲아이들",
+        "candidate_address": "서울 동작구 동작대로41길 7",
+        "current_official_name": "ECC 서초이수 학원",
+        "certificate_name": "GLI하랑숲아이들학원",
+        "current_official_address": "서울시 동작구 동작대로41길 7",
+        "certificate_address": "서울특별시 동작구 동작대로41길 7, 101호, 201호(1~2층)",
+        "phone": "02-2038-6606",
+        "registration_number": "제3618호",
+        "decision": "match",
+        "relationship": "same_registered_academy_current_ECC_brand; historic_name_alias",
+        "identity_basis": [
+          "ECC 서초이수 공식 홈페이지 footer의 등록번호는 제3618호다.",
+          "같은 공식 사이트의 2026-08-27 학원설립운영등록증 공지가 GLI하랑숲아이들 학원인가증.pdf를 직접 연결한다.",
+          "PDF를 시각 검증했다. 명칭은 GLI하랑숲아이들학원, 등록번호는 제3618호, 주소는 동작대로41길 7 101·201호다. 현재 footer와 등록번호·대표·주소가 일치한다.",
+          "단순한 동일 주소 추정이 아니다. 현재 ECC가 자기 등록증으로 공개한 동일 등록학원의 과거/등록명과 현 브랜드를 연결한 것이다."
+        ],
+        "address_equivalence_verified": true,
+        "legal_identity_link_verified": true,
+        "brand_transition_date": null,
+        "brand_transition_note": "ECC 본사의 2026 NEW 및 9월 개강반 안내는 확인했지만 실제 브랜드 전환일과 등록명 변경 완료일은 미확인이다. PDF의 2025-06-20 재교부 사유인 명칭 변경을 2026 ECC 전환일로 해석하지 않는다.",
+        "recommended_mapping_note": "기존 하랑숲 레코드에 ECC 서초이수를 동일 등록기관의 현재 브랜드로 연결할 수 있다. 기존 명칭은 별칭 또는 이력으로 보존한다. 현재 명칭을 표시하는 변경은 개발 담당자가 기존 데이터 정책에 맞춰 처리한다.",
+        "evidence_urls": [
+          "https://www.ybmecc.com/seochoisu",
+          "https://www.ybmecc.com/seochoisu/notice/430234",
+          "https://upsisa.ybmnet.co.kr/si/ybmecc_com/www/UploadData/board/GLI%ED%95%98%EB%9E%91%EC%88%B2%EC%95%84%EC%9D%B4%EB%93%A4%20%ED%95%99%EC%9B%90%EC%9D%B8%EA%B0%80%EC%A6%9D.pdf",
+          "https://www.ybmecc.com/seochoisu/notice/429757",
+          "https://www.ybmecc.com/campus/open"
+        ],
+        "checked_at": "2026-10-18T17:31:29+09:00",
+        "external_mutations_performed": false,
+        "verification_limit": "현재 공식 사이트와 그 사이트가 공개한 교육청 등록증을 대조했다. 교육청 최신 등록 원부를 별도로 조회한 결과는 아니다.",
+        "prior_record_id": "seoul-ek-se-018"
+      },
+      "updateAddress": false
+    },
+    {
+      "recordId": "ybm-ecc-석계-2027",
+      "status": "EXISTING_ROAD_AND_BRAND_MATCH",
+      "proposedSlug": "seoul-ek-ne-007",
+      "name": "YBM ECC 석계",
+      "officialCampusId": {
+        "namespace": "ybmecc.sCode",
+        "value": "123"
+      },
+      "officialCampusUrl": "https://www.ybmecc.com/seokgye",
+      "officialAddress": "서울특별시 성북구 화랑로 254 대성프라자 3층 ECC석계 어학원",
+      "streetIdentity": "화랑로254",
+      "officialPhone": "02-952-0509",
+      "existing": {
+        "name": "YBM ECC 석계",
+        "institutionId": "5842babe-75da-4564-809f-44feb4d488fa",
+        "slug": "seoul-ek-ne-007",
+        "address": "서울특별시 성북구 화랑로 254 대성프라자 3층",
+        "region": "성북구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 2
+    },
+    {
+      "recordId": "ybm-ecc-성동-2027",
+      "status": "EXISTING_ROAD_AND_BRAND_MATCH",
+      "proposedSlug": "seoul-ek-ne-005",
+      "name": "YBM ECC 성동",
+      "officialCampusId": {
+        "namespace": "ybmecc.sCode",
+        "value": "649"
+      },
+      "officialCampusUrl": "https://www.ybmecc.com/seongdong",
+      "officialAddress": "서울특별시 성동구 무학봉길 36",
+      "streetIdentity": "무학봉길36",
+      "officialPhone": "02-2282-0073",
+      "existing": {
+        "name": "YBM ECC 성동",
+        "institutionId": "fe0efc27-0b22-4586-bb1d-070811f617c5",
+        "slug": "seoul-ek-ne-005",
+        "address": "서울특별시 성동구 무학봉길 36",
+        "region": "성동구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 0
+    },
+    {
+      "recordId": "ybm-ecc-성북-2027",
+      "status": "EXISTING_ROAD_AND_BRAND_MATCH",
+      "proposedSlug": "seoul-ek-ne-003",
+      "name": "YBM ECC 성북",
+      "officialCampusId": {
+        "namespace": "ybmecc.sCode",
+        "value": "114"
+      },
+      "officialCampusUrl": "https://www.ybmecc.com/seongbuk",
+      "officialAddress": "서울특별시 성북구 동소문로 47 부라다리빙텔 2층",
+      "streetIdentity": "동소문로47",
+      "officialPhone": "02-927-0509",
+      "existing": {
+        "name": "YBM ECC 성북",
+        "institutionId": "286b6f0c-22b1-4b11-9479-4d93b467ad1f",
+        "slug": "seoul-ek-ne-003",
+        "address": "서울특별시 성북구 동소문로 47 부라다리빙텔 2층",
+        "region": "성북구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 3
+    },
+    {
+      "recordId": "ybm-ecc-송파잠실-2027",
+      "status": "EXISTING_ROAD_AND_BRAND_MATCH",
+      "proposedSlug": "seoul-ek-se-003",
+      "name": "YBM ECC 송파잠실",
+      "officialCampusId": {
+        "namespace": "ybmecc.sCode",
+        "value": "115"
+      },
+      "officialCampusUrl": "https://www.ybmecc.com/songpa",
+      "officialAddress": "서울특별시 송파구 오금로 235 젬스빌딩 4층",
+      "streetIdentity": "오금로235",
+      "officialPhone": "02-407-0509",
+      "existing": {
+        "name": "YBM ECC 송파잠실",
+        "institutionId": "93404cb9-4e1b-46c4-9f81-e280b0245a75",
+        "slug": "seoul-ek-se-003",
+        "address": "서울특별시 송파구 오금로 235 젬스빌딩 4층",
+        "region": "송파구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 3
+    },
+    {
+      "recordId": "ybm-ecc-쌍문-2027",
+      "status": "EXISTING_ROAD_AND_BRAND_MATCH",
+      "proposedSlug": "seoul-ek-ne-002",
+      "name": "YBM ECC 쌍문",
+      "officialCampusId": {
+        "namespace": "ybmecc.sCode",
+        "value": "116"
+      },
+      "officialCampusUrl": "https://www.ybmecc.com/ssangmun",
+      "officialAddress": "서울특별시 도봉구 도봉로136길 7 4층 쌍문ECC",
+      "streetIdentity": "도봉로136길7",
+      "officialPhone": "02-956-0509",
+      "existing": {
+        "name": "YBM ECC 쌍문",
+        "institutionId": "07d3be58-3f1a-4d35-8c0e-c0a892e778ea",
+        "slug": "seoul-ek-ne-002",
+        "address": "서울특별시 도봉구 도봉로136길 7 4층",
+        "region": "도봉구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 4
+    },
+    {
+      "recordId": "ybm-ecc-여의도-2027",
+      "status": "EXISTING_ROAD_AND_BRAND_MATCH",
+      "proposedSlug": "seoul-ek-se-012",
+      "name": "YBM ECC 여의도",
+      "officialCampusId": {
+        "namespace": "ybmecc.sCode",
+        "value": "755"
+      },
+      "officialCampusUrl": "https://www.ybmecc.com/yeouido",
+      "officialAddress": "서울시 영등포구 국제금융로 79 2층",
+      "streetIdentity": "국제금융로79",
+      "officialPhone": "02-783-1171",
+      "existing": {
+        "name": "YBM ECC 여의도",
+        "institutionId": "80e393b5-a4af-4fa0-9bcb-45af57d8b122",
+        "slug": "seoul-ek-se-012",
+        "address": "서울특별시 영등포구 국제금융로 79 2층",
+        "region": "영등포구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 2
+    },
+    {
+      "recordId": "ybm-ecc-경기광주-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-ybm-ecc-762",
+      "name": "YBM ECC 경기광주",
+      "officialCampusId": {
+        "namespace": "ybmecc.sCode",
+        "value": "762"
+      },
+      "officialCampusUrl": "https://www.ybmecc.com/gwangju",
+      "officialAddress": "경기도 광주시 태성로 196 YBM ECC 경기광주",
+      "streetIdentity": "태성로196",
+      "officialPhone": "031-768-0509",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 1
+    },
+    {
+      "recordId": "ybm-ecc-김포-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-ybm-ecc-204",
+      "name": "YBM ECC 김포",
+      "officialCampusId": {
+        "namespace": "ybmecc.sCode",
+        "value": "204"
+      },
+      "officialCampusUrl": "https://www.ybmecc.com/gimpo",
+      "officialAddress": "경기도 김포시 풍무동 1056 2층",
+      "streetIdentity": null,
+      "officialPhone": "031-998-0509",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 0
+    },
+    {
+      "recordId": "ybm-ecc-남동탄-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-ybm-ecc-722",
+      "name": "YBM ECC 남동탄",
+      "officialCampusId": {
+        "namespace": "ybmecc.sCode",
+        "value": "722"
+      },
+      "officialCampusUrl": "https://www.ybmecc.com/namdongtan",
+      "officialAddress": "경기도 화성시 동탄순환대로 127-19 에스비타운 10층 1001호",
+      "streetIdentity": "동탄순환대로127-19",
+      "officialPhone": "031-378-1616",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 1
+    },
+    {
+      "recordId": "ybm-ecc-문산-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-ybm-ecc-645",
+      "name": "YBM ECC 문산",
+      "officialCampusId": {
+        "namespace": "ybmecc.sCode",
+        "value": "645"
+      },
+      "officialCampusUrl": "https://www.ybmecc.com/Munsan",
+      "officialAddress": "경기도 파주시 파주읍 충현로 42-6 3층",
+      "streetIdentity": "충현로42-6",
+      "officialPhone": "031-954-1900",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 0
+    },
+    {
+      "recordId": "ybm-ecc-영통-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-ybm-ecc-648",
+      "name": "YBM ECC 영통",
+      "officialCampusId": {
+        "namespace": "ybmecc.sCode",
+        "value": "648"
+      },
+      "officialCampusUrl": "https://www.ybmecc.com/youngtong",
+      "officialAddress": "경기도 수원시 영통구 영통로 349",
+      "streetIdentity": "영통로349",
+      "officialPhone": "031-203-7240",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 2
+    },
+    {
+      "recordId": "ecc-okgil-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-ybm-ecc-723",
+      "name": "YBM ECC 옥길",
+      "officialCampusId": {
+        "namespace": "ybmecc.sCode",
+        "value": "723"
+      },
+      "officialCampusUrl": "https://www.ybmecc.com/okgil",
+      "officialAddress": "경기도 부천시 옥길로 121 씨티프라자 603호, 701호, 702호, 703호",
+      "streetIdentity": "옥길로121",
+      "officialPhone": "02-6956-5202",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 5
+    },
+    {
+      "recordId": "ybm-ecc-의정부-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-ybm-ecc-756",
+      "name": "YBM ECC 의정부",
+      "officialCampusId": {
+        "namespace": "ybmecc.sCode",
+        "value": "756"
+      },
+      "officialCampusUrl": "https://www.ybmecc.com/uijeongbu",
+      "officialAddress": "경기도 의정부시 청사로 48번길 7 , 6층",
+      "streetIdentity": "청사로48",
+      "officialPhone": "031-853-0533",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 6
+    },
+    {
+      "recordId": "ybm-ecc-장안-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-ybm-ecc-743",
+      "name": "YBM ECC 장안",
+      "officialCampusId": {
+        "namespace": "ybmecc.sCode",
+        "value": "743"
+      },
+      "officialCampusUrl": "https://www.ybmecc.com/jangan",
+      "officialAddress": "경기도 수원시 장안구 덕영대로535번길 38 5층",
+      "streetIdentity": "덕영대로535번길38",
+      "officialPhone": "031-269-0908",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 2
+    },
+    {
+      "recordId": "ybm-ecc-제1동탄-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-ybm-ecc-700",
+      "name": "YBM ECC 제1동탄",
+      "officialCampusId": {
+        "namespace": "ybmecc.sCode",
+        "value": "700"
+      },
+      "officialCampusUrl": "https://www.ybmecc.com/dongtan1",
+      "officialAddress": "경기도 화성시 동탄반석로 208 아인슈타인프라자 9층",
+      "streetIdentity": "동탄반석로208",
+      "officialPhone": "031-8003-5040",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 1
+    },
+    {
+      "recordId": "ybm-ecc-제2동탄-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-ybm-ecc-667",
+      "name": "YBM ECC 제2동탄",
+      "officialCampusId": {
+        "namespace": "ybmecc.sCode",
+        "value": "667"
+      },
+      "officialCampusUrl": "https://www.ybmecc.com/dongtan2",
+      "officialAddress": "경기도 화성시 동탄순환대로 697 비전프라자 4층",
+      "streetIdentity": "동탄순환대로697",
+      "officialPhone": "031-8015-4200",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 1
+    },
+    {
+      "recordId": "ybm-ecc-죽전-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-ybm-ecc-661",
+      "name": "YBM ECC 죽전",
+      "officialCampusId": {
+        "namespace": "ybmecc.sCode",
+        "value": "661"
+      },
+      "officialCampusUrl": "https://www.ybmecc.com/jukjeon",
+      "officialAddress": "경기도 용인시 기흥구 죽전로 47 성진웰빙타운 6층",
+      "streetIdentity": "죽전로47",
+      "officialPhone": "031-747-0509",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 1
+    },
+    {
+      "recordId": "ybm-ecc-판교-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-ybm-ecc-713",
+      "name": "YBM ECC 판교",
+      "officialCampusId": {
+        "namespace": "ybmecc.sCode",
+        "value": "713"
+      },
+      "officialCampusUrl": "https://www.ybmecc.com/Pangyo",
+      "officialAddress": "경기도 성남시 분당구 판교원로 209 판교 ECC",
+      "streetIdentity": "판교원로209",
+      "officialPhone": "031-709-9991",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 1
+    },
+    {
+      "recordId": "psa-개포-2027",
+      "status": "EXISTING_OFFICIAL_IDENTITY_VERIFIED",
+      "proposedSlug": "psa-gaepo",
+      "name": "YBM PSA 개포",
+      "officialCampusId": {
+        "namespace": "ybmpine.sCode",
+        "value": 110
+      },
+      "officialCampusUrl": "https://www.ybmpine.com/psa/gaepo",
+      "officialAddress": "서울특별시 강남구 개포로 408 (개포동, 한국외국인학교) PSA개포",
+      "streetIdentity": null,
+      "officialPhone": "02-571-0509",
+      "existing": {
+        "name": "PSA 개포",
+        "institutionId": "d848da28-9a73-453b-b6f7-cd86f7b5b106",
+        "slug": "psa-gaepo",
+        "address": "서울특별시 강남구 개포로 408 (개포동, 한국외국인학교) PSA개포",
+        "region": "강남구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [
+        {
+          "name": "PSA 개포",
+          "institutionId": "d848da28-9a73-453b-b6f7-cd86f7b5b106",
+          "slug": "psa-gaepo",
+          "address": "서울특별시 강남구 개포로 408 (개포동, 한국외국인학교) PSA개포",
+          "region": "강남구"
+        }
+      ],
+      "datedSessions": 3,
+      "resolutionEvidence": {
+        "prior_record_id": "psa-gaepo",
+        "source_campus_id": 110,
+        "decision": "match",
+        "official_campus_name": "PSA 개포",
+        "registered_academy_name": "피에스에이개포어학학원",
+        "official_academy_registration_number": "제5422호",
+        "official_phone": "02-571-0509",
+        "current_official_address": "서울특별시 강남구 개포로 408 (개포동, 한국외국인학교) PSA개포",
+        "old_address": "개포로 408 한국외국인학교",
+        "official_briefing_address": "개포동 155",
+        "relationship": "같은 PSA 캠퍼스. 공식 설명회 지번 표기와 공식 캠퍼스 도로명 표기의 대응.",
+        "evidence_urls": [
+          "https://www.ybmpine.com/psa/gaepo",
+          "https://www.ybmpine.com/briefing",
+          "https://www.ybmpine.com/briefing/getBranch?program=psa",
+          "https://www.ybmpine.com/reservation?sCode=110"
+        ],
+        "checked_at": "2026-10-18T08:30:48Z",
+        "factual_basis": "공식 지점 상세가 기존 도로명주소와 피에스에이개포어학학원(제5422호)를 명시하고 상담예약 링크에 sCode=110를 직접 제공한다. 공식 설명회 지점 응답의 PSA 개포/110 및 설명회 지번표의 지점명·전화번호가 상세 페이지와 일치한다. 주소만으로 판단하지 않았다.",
+        "evidence_files": [
+          "/workspace/shared/psa_mapping_evidence_20261018/gaepo.html",
+          "/workspace/shared/psa_mapping_evidence_20261018/branches.json",
+          "/workspace/shared/psa_mapping_evidence_20261018/briefing.html"
+        ],
+        "address_update_recommendation": "기존 도로명주소 유지 가능. 공식 예약 sCode를 이 기존기관에 연결 가능.",
+        "source_namespace": "ybmpine.sCode",
+        "candidate_record_id": "psa-gaepo",
+        "source_record_id": "psa-개포-2027",
+        "address_equivalence_verified": true,
+        "same_official_campus_identity_verified": true,
+        "external_mutations_performed": false
+      },
+      "updateAddress": false
+    },
+    {
+      "recordId": "psa-목동-2027",
+      "status": "EXISTING_OFFICIAL_IDENTITY_VERIFIED",
+      "proposedSlug": "psa-mokdong",
+      "name": "YBM PSA 목동",
+      "officialCampusId": {
+        "namespace": "ybmpine.sCode",
+        "value": 470
+      },
+      "officialCampusUrl": "https://www.ybmpine.com/psa/mokdong",
+      "officialAddress": "서울특별시 양천구 중앙로 181 (신정동, 복합메디컬타운) 2층",
+      "streetIdentity": null,
+      "officialPhone": "02-2691-0509",
+      "existing": {
+        "name": "PSA 목동",
+        "institutionId": "d4150f08-82d5-4ca1-8dd6-e34ccb319ef6",
+        "slug": "psa-mokdong",
+        "address": "서울특별시 양천구 중앙로 181 (신정동, 복합메디컬타운) 2층",
+        "region": "양천구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [
+        {
+          "name": "PSA 목동",
+          "institutionId": "d4150f08-82d5-4ca1-8dd6-e34ccb319ef6",
+          "slug": "psa-mokdong",
+          "address": "서울특별시 양천구 중앙로 181 (신정동, 복합메디컬타운) 2층",
+          "region": "양천구"
+        }
+      ],
+      "datedSessions": 4,
+      "resolutionEvidence": {
+        "prior_record_id": "psa-mokdong",
+        "source_campus_id": 470,
+        "decision": "match",
+        "official_campus_name": "PSA 목동",
+        "registered_academy_name": "피에스에이목동어학학원",
+        "official_academy_registration_number": "제6096호",
+        "official_phone": "02-2691-0509",
+        "current_official_address": "서울특별시 양천구 중앙로 181 (신정동, 복합메디컬타운) 2층",
+        "old_address": "중앙로 181 복합메디컬타운 2층",
+        "official_briefing_address": "신정동 1268",
+        "relationship": "같은 PSA 캠퍼스. 공식 설명회 지번 표기와 공식 캠퍼스 도로명 표기의 대응.",
+        "evidence_urls": [
+          "https://www.ybmpine.com/psa/mokdong",
+          "https://www.ybmpine.com/briefing",
+          "https://www.ybmpine.com/briefing/getBranch?program=psa",
+          "https://www.ybmpine.com/reservation?sCode=470"
+        ],
+        "checked_at": "2026-10-18T08:30:48Z",
+        "factual_basis": "공식 지점 상세가 기존 도로명주소와 피에스에이목동어학학원(제6096호)를 명시하고 상담예약 링크에 sCode=470를 직접 제공한다. 공식 설명회 지점 응답의 PSA 목동/470 및 설명회 지번표의 지점명·전화번호가 상세 페이지와 일치한다. 주소만으로 판단하지 않았다.",
+        "evidence_files": [
+          "/workspace/shared/psa_mapping_evidence_20261018/mokdong.html",
+          "/workspace/shared/psa_mapping_evidence_20261018/branches.json",
+          "/workspace/shared/psa_mapping_evidence_20261018/briefing.html"
+        ],
+        "address_update_recommendation": "기존 도로명주소 유지 가능. 공식 예약 sCode를 이 기존기관에 연결 가능.",
+        "source_namespace": "ybmpine.sCode",
+        "candidate_record_id": "psa-mokdong",
+        "source_record_id": "psa-목동-2027",
+        "address_equivalence_verified": true,
+        "same_official_campus_identity_verified": true,
+        "external_mutations_performed": false
+      },
+      "updateAddress": false
+    },
+    {
+      "recordId": "psa-seocho-2027",
+      "status": "EXISTING_OFFICIAL_IDENTITY_VERIFIED",
+      "proposedSlug": "psa-seocho",
+      "name": "YBM PSA 서초",
+      "officialCampusId": {
+        "namespace": "ybmpine.sCode",
+        "value": 100
+      },
+      "officialCampusUrl": "https://www.ybmpine.com/psa/seocho",
+      "officialAddress": "서울특별시 서초구 효령로 231 (서초동, 진양제약사옥) PSA 3층",
+      "streetIdentity": null,
+      "officialPhone": "02-585-0509",
+      "existing": {
+        "name": "PSA 서초",
+        "institutionId": "1d33f72d-c1e5-4254-8eb9-66b727926657",
+        "slug": "psa-seocho",
+        "address": "서울특별시 서초구 효령로 231 (서초동, 진양제약사옥) PSA 3층",
+        "region": "서초구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [
+        {
+          "name": "PSA 서초",
+          "institutionId": "1d33f72d-c1e5-4254-8eb9-66b727926657",
+          "slug": "psa-seocho",
+          "address": "서울특별시 서초구 효령로 231 (서초동, 진양제약사옥) PSA 3층",
+          "region": "서초구"
+        }
+      ],
+      "datedSessions": 4,
+      "resolutionEvidence": {
+        "prior_record_id": "psa-seocho",
+        "source_campus_id": 100,
+        "decision": "match",
+        "official_campus_name": "PSA 서초",
+        "registered_academy_name": "피에스에이서초어학학원",
+        "official_academy_registration_number": "제4573호",
+        "official_phone": "02-585-0509",
+        "current_official_address": "서울특별시 서초구 효령로 231 (서초동, 진양제약사옥) PSA 3층",
+        "old_address": "효령로 231 진양제약사옥 3층",
+        "official_briefing_address": "서초동 1532-9",
+        "relationship": "같은 PSA 캠퍼스. 공식 설명회 지번 표기와 공식 캠퍼스 도로명 표기의 대응.",
+        "evidence_urls": [
+          "https://www.ybmpine.com/psa/seocho",
+          "https://www.ybmpine.com/briefing",
+          "https://www.ybmpine.com/briefing/getBranch?program=psa",
+          "https://www.ybmpine.com/reservation?sCode=100"
+        ],
+        "checked_at": "2026-10-18T08:30:48Z",
+        "factual_basis": "공식 지점 상세가 기존 도로명주소와 피에스에이서초어학학원(제4573호)를 명시하고 상담예약 링크에 sCode=100를 직접 제공한다. 공식 설명회 지점 응답의 PSA 서초/100 및 설명회 지번표의 지점명·전화번호가 상세 페이지와 일치한다. 주소만으로 판단하지 않았다.",
+        "evidence_files": [
+          "/workspace/shared/psa_mapping_evidence_20261018/seocho.html",
+          "/workspace/shared/psa_mapping_evidence_20261018/branches.json",
+          "/workspace/shared/psa_mapping_evidence_20261018/briefing.html"
+        ],
+        "address_update_recommendation": "기존 도로명주소 유지 가능. 공식 예약 sCode를 이 기존기관에 연결 가능.",
+        "source_namespace": "ybmpine.sCode",
+        "candidate_record_id": "psa-seocho",
+        "source_record_id": "psa-seocho-2027",
+        "address_equivalence_verified": true,
+        "same_official_campus_identity_verified": true,
+        "external_mutations_performed": false
+      },
+      "updateAddress": false
+    },
+    {
+      "recordId": "psa-압구정-2027",
+      "status": "EXISTING_OFFICIAL_IDENTITY_VERIFIED",
+      "proposedSlug": "psa-apgujeong",
+      "name": "YBM PSA 압구정",
+      "officialCampusId": {
+        "namespace": "ybmpine.sCode",
+        "value": 120
+      },
+      "officialCampusUrl": "https://www.ybmpine.com/psa/apgujeong",
+      "officialAddress": "서울특별시 강남구 압구정로 206 (신사동) 2층, 3층",
+      "streetIdentity": null,
+      "officialPhone": "02-738-0509",
+      "existing": {
+        "name": "PSA 압구정",
+        "institutionId": "fc8f4337-ed63-5739-8c11-72b81d6bf3f9",
+        "slug": "psa-apgujeong",
+        "address": "강남구 압구정로 206, 2~3층",
+        "region": "강남구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [
+        {
+          "name": "PSA 압구정",
+          "institutionId": "fc8f4337-ed63-5739-8c11-72b81d6bf3f9",
+          "slug": "psa-apgujeong",
+          "address": "강남구 압구정로 206, 2~3층",
+          "region": "강남구"
+        }
+      ],
+      "datedSessions": 5,
+      "resolutionEvidence": {
+        "prior_record_id": "psa-apgujeong",
+        "source_campus_id": 120,
+        "decision": "match",
+        "official_campus_name": "PSA 압구정",
+        "registered_academy_name": "피에스에이압구정어학학원",
+        "official_academy_registration_number": "제6864호",
+        "official_phone": "02-738-0509",
+        "current_official_address": "서울특별시 강남구 압구정로 206 (신사동) 2층, 3층",
+        "old_address": "압구정로 206 2~3층",
+        "official_briefing_address": "신사동 614-1",
+        "relationship": "같은 PSA 캠퍼스. 공식 설명회 지번 표기와 공식 캠퍼스 도로명 표기의 대응.",
+        "evidence_urls": [
+          "https://www.ybmpine.com/psa/apgujeong",
+          "https://www.ybmpine.com/briefing",
+          "https://www.ybmpine.com/briefing/getBranch?program=psa",
+          "https://www.ybmpine.com/reservation?sCode=120"
+        ],
+        "checked_at": "2026-10-18T08:30:48Z",
+        "factual_basis": "공식 지점 상세가 기존 도로명주소와 피에스에이압구정어학학원(제6864호)를 명시하고 상담예약 링크에 sCode=120를 직접 제공한다. 공식 설명회 지점 응답의 PSA 압구정/120 및 설명회 지번표의 지점명·전화번호가 상세 페이지와 일치한다. 주소만으로 판단하지 않았다.",
+        "evidence_files": [
+          "/workspace/shared/psa_mapping_evidence_20261018/apgujeong.html",
+          "/workspace/shared/psa_mapping_evidence_20261018/branches.json",
+          "/workspace/shared/psa_mapping_evidence_20261018/briefing.html"
+        ],
+        "address_update_recommendation": "기존 도로명주소 유지 가능. 공식 예약 sCode를 이 기존기관에 연결 가능.",
+        "source_namespace": "ybmpine.sCode",
+        "candidate_record_id": "psa-apgujeong",
+        "source_record_id": "psa-압구정-2027",
+        "address_equivalence_verified": true,
+        "same_official_campus_identity_verified": true,
+        "external_mutations_performed": false
+      },
+      "updateAddress": false
+    },
+    {
+      "recordId": "psa-용산-2027",
+      "status": "EXISTING_OFFICIAL_IDENTITY_VERIFIED",
+      "proposedSlug": "psa-yongsan",
+      "name": "YBM PSA 용산",
+      "officialCampusId": {
+        "namespace": "ybmpine.sCode",
+        "value": 130
+      },
+      "officialCampusUrl": "https://www.ybmpine.com/psa/yongsan",
+      "officialAddress": "서울특별시 용산구 신흥로 14 (용산동2가, 상가) PSA용산",
+      "streetIdentity": "신흥로14",
+      "officialPhone": "02-763-0509",
+      "existing": {
+        "name": "PSA 용산",
+        "institutionId": "43ce06d7-595e-4e28-9ebd-2d8b11788b5f",
+        "slug": "psa-yongsan",
+        "address": "서울특별시 용산구 녹사평대로 245 (용산동2가, 한신아파트) 상가 3동",
+        "region": "용산구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [
+        {
+          "name": "PSA 용산",
+          "institutionId": "43ce06d7-595e-4e28-9ebd-2d8b11788b5f",
+          "slug": "psa-yongsan",
+          "address": "서울특별시 용산구 녹사평대로 245 (용산동2가, 한신아파트) 상가 3동",
+          "region": "용산구"
+        }
+      ],
+      "datedSessions": 3,
+      "resolutionEvidence": {
+        "prior_record_id": "psa-yongsan",
+        "source_campus_id": 130,
+        "decision": "match",
+        "official_campus_name": "PSA 용산",
+        "registered_academy_name": "피에스에이용산어학학원",
+        "official_academy_registration_number": "제2405호",
+        "official_phone": "02-763-0509",
+        "current_official_address": "서울특별시 용산구 신흥로 14 (용산동2가, 상가) PSA용산",
+        "old_address": "서울특별시 용산구 녹사평대로 245 (용산동2가, 한신아파트) 상가 3동",
+        "official_briefing_address": "용산구 신흥로 14",
+        "relationship": "같은 공식 PSA 용산 캠퍼스의 주소 표기 변경. 실제 장소 이전 여부와 변경일은 미확인.",
+        "evidence_urls": [
+          "https://www.ybmpine.com/psa/yongsan",
+          "https://www.ybmpine.com/briefing",
+          "https://www.ybmpine.com/briefing/getBranch?program=psa",
+          "https://www.ybmpine.com/reservation?sCode=130"
+        ],
+        "checked_at": "2026-10-18T08:30:48Z",
+        "factual_basis": "기존 저장 공식원문(수집일 별도 미검증)와 현재 동일 URL의 등록학원명·등록번호 제2405호·전화 02-763-0509·상담예약 sCode=130·공식 지도 링크가 모두 동일하다. 이전 페이지는 녹사평대로245 한신아파트 상가3동, 현재는 신흥로14를 표기한다. 주소만으로 판단하지 않고 동일 등록기관 및 공식 지점 식별자로 연결했다.",
+        "evidence_files": [
+          "/workspace/shared/psa_mapping_evidence_20261018/yongsan.html",
+          "/workspace/shared/psa_mapping_evidence_20261018/branches.json",
+          "/workspace/shared/psa_mapping_evidence_20261018/briefing.html",
+          "/workspace/shared/psa_mapping_evidence_20261018/yongsan_official_prior_snapshot_20261007.json"
+        ],
+        "address_update_recommendation": "현재 공식 주소 신흥로14로 표기하고 기존주소는 이력으로 보존. 공식 이전 공지 없으므로 이전 완료나 이전일을 만들어 넣지 말 것.",
+        "prior_official_snapshot": {
+          "source_url": "https://www.ybmpine.com/psa/yongsan",
+          "source_file": "/workspace/shared/north_sources/psayongsan.json",
+          "file_mtime_utc": "2026-10-07T03:06:09.575581+00:00",
+          "snapshot_contains_explicit_fetched_at": false,
+          "sha256": "01af96054413747489ce433a80f683cb8842b7ac4fd290458c113ce044bd3cc5",
+          "matching_identity_fields": [
+            "registered_academy_name",
+            "official_academy_registration_number",
+            "official_phone",
+            "reservation?sCode=130",
+            "https://naver.me/GxkFiqum"
+          ],
+          "provenance_note": "기존 공식출처 저장 파일에는 name/url/final_url/text/links/images만 있고 retrieved_at이나 원본 HTTP 응답 metadata가 없다. 파일 수정시각은 2026-10-07이지만 수집일은 별도 미검증이며 날짜를 동일성 판단 근거로 사용하지 않는다.",
+          "snapshot_label": "기존 저장 공식원문(수집일 별도 미검증)",
+          "retrieved_at": null,
+          "original_response_metadata": null
+        },
+        "relocation_confirmed": false,
+        "source_namespace": "ybmpine.sCode",
+        "candidate_record_id": "psa-yongsan",
+        "source_record_id": "psa-용산-2027",
+        "address_equivalence_verified": false,
+        "same_official_campus_identity_verified": true,
+        "external_mutations_performed": false
+      },
+      "updateAddress": true
+    },
+    {
+      "recordId": "psa-pangyo-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-ybm-psa-610",
+      "name": "YBM PSA 판교",
+      "officialCampusId": {
+        "namespace": "ybmpine.sCode",
+        "value": 610
+      },
+      "officialCampusUrl": null,
+      "officialAddress": "경기 성남시 분당구 운중동 967",
+      "streetIdentity": null,
+      "officialPhone": "031-756-0509",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 4
+    },
+    {
+      "recordId": "c-gate-압구정-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-ybm-c-gate-400",
+      "name": "YBM C-GATE 압구정",
+      "officialCampusId": {
+        "namespace": "ybmpine.sCode",
+        "value": 400
+      },
+      "officialCampusUrl": null,
+      "officialAddress": "서울 강남구 신사동 568-11",
+      "streetIdentity": null,
+      "officialPhone": "02-778-0509",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 2
+    },
+    {
+      "recordId": "c-gate-잠실-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-ybm-c-gate-370",
+      "name": "YBM C-GATE 잠실",
+      "officialCampusId": {
+        "namespace": "ybmpine.sCode",
+        "value": 370
+      },
+      "officialCampusUrl": null,
+      "officialAddress": "서울 송파구 잠실동 209-5",
+      "streetIdentity": null,
+      "officialPhone": "02-424-0509",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 2
+    },
+    {
+      "recordId": "dna-dongtan-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-dna-cd3187a40711",
+      "name": "DNA어학원 동탄 본원",
+      "officialCampusId": null,
+      "officialCampusUrl": null,
+      "officialAddress": "경기 화성시 동탄순환대로 693 대성메디칼프라자1 5층",
+      "streetIdentity": "동탄순환대로693",
+      "officialPhone": "031-376-0573",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 7
+    },
+    {
+      "recordId": "slp-s03-2027",
+      "status": "EXISTING_ROAD_AND_BRAND_MATCH",
+      "proposedSlug": "seoul-ek-nw-007",
+      "name": "서강SLP 강서",
+      "officialCampusId": {
+        "namespace": "slp.athenaeum.idx",
+        "value": "S03"
+      },
+      "officialCampusUrl": null,
+      "officialAddress": "서울 강서구 강서로 392-11 진성프라자 3층~4층 (등촌3동)",
+      "streetIdentity": "강서로392-11",
+      "officialPhone": "02-3661-2030",
+      "existing": {
+        "name": "서강SLP 강서학당",
+        "institutionId": "d7d43c00-9305-43be-9abb-60eb815fce0b",
+        "slug": "seoul-ek-nw-007",
+        "address": "서울 강서구 강서로 392-11 진성프라자 3층",
+        "region": "강서구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 4
+    },
+    {
+      "recordId": "slp-s33-2027",
+      "status": "EXISTING_ROAD_AND_BRAND_MATCH",
+      "proposedSlug": "seoul-ek-se-009",
+      "name": "서강SLP 관악",
+      "officialCampusId": {
+        "namespace": "slp.athenaeum.idx",
+        "value": "S33"
+      },
+      "officialCampusUrl": null,
+      "officialAddress": "서울 관악구 은천로 81 2~3층",
+      "streetIdentity": "은천로81",
+      "officialPhone": "02-886-3336",
+      "existing": {
+        "name": "서강SLP 관악학당",
+        "institutionId": "ca8ba9db-0431-4cc3-942c-115f62771205",
+        "slug": "seoul-ek-se-009",
+        "address": "서울특별시 관악구 은천로 81 은천빌딩 2~3층",
+        "region": "관악구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 7
+    },
+    {
+      "recordId": "slp-s09-2027",
+      "status": "EXISTING_ROAD_AND_BRAND_MATCH",
+      "proposedSlug": "seoul-ek-se-010",
+      "name": "서강SLP 동작",
+      "officialCampusId": {
+        "namespace": "slp.athenaeum.idx",
+        "value": "S09"
+      },
+      "officialCampusUrl": null,
+      "officialAddress": "서울 동작구 상도로 34 산맥빌딩 2층(대방동)",
+      "streetIdentity": "상도로34",
+      "officialPhone": "02-822-4200",
+      "existing": {
+        "name": "서강SLP 동작학당",
+        "institutionId": "fbd0041c-8f86-4a68-ac74-fdf152a20778",
+        "slug": "seoul-ek-se-010",
+        "address": "서울특별시 동작구 상도로 34 산맥빌딩 2~3층",
+        "region": "동작구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 4
+    },
+    {
+      "recordId": "slp-mokdong-2027",
+      "status": "EXISTING_ROAD_AND_BRAND_MATCH",
+      "proposedSlug": "seoul-ek-nw-008",
+      "name": "서강SLP 목동",
+      "officialCampusId": {
+        "namespace": "slp.athenaeum.idx",
+        "value": "S11"
+      },
+      "officialCampusUrl": null,
+      "officialAddress": "서울 양천구 목동동로 435 화성프라자 7층(목동)",
+      "streetIdentity": "목동동로435",
+      "officialPhone": "02-2654-7331",
+      "existing": {
+        "name": "서강SLP 목동학당",
+        "institutionId": "dc15aadb-94da-4247-ba72-14eee1712e85",
+        "slug": "seoul-ek-nw-008",
+        "address": "서울 양천구 목동동로 435 화성프라자 7층",
+        "region": "양천구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 3
+    },
+    {
+      "recordId": "slp-s15-2027",
+      "status": "EXISTING_ROAD_AND_BRAND_MATCH",
+      "proposedSlug": "seoul-ek-ne-009",
+      "name": "서강SLP 성북",
+      "officialCampusId": {
+        "namespace": "slp.athenaeum.idx",
+        "value": "S15"
+      },
+      "officialCampusUrl": null,
+      "officialAddress": "서울 성북구 동소문로 43 흥화브라운빌딩 3층(동소문동 4가)",
+      "streetIdentity": "동소문로43",
+      "officialPhone": "02-953-3553",
+      "existing": {
+        "name": "서강SLP 성북",
+        "institutionId": "aae3c95a-5b7a-4544-8228-5a2614dcd26b",
+        "slug": "seoul-ek-ne-009",
+        "address": "서울 성북구 동소문로 43 흥화브라운 동소문빌딩 3층",
+        "region": "성북구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 3
+    },
+    {
+      "recordId": "slp-s17-2027",
+      "status": "EXISTING_ROAD_AND_BRAND_MATCH",
+      "proposedSlug": "seoul-ek-se-011",
+      "name": "서강SLP 영등포",
+      "officialCampusId": {
+        "namespace": "slp.athenaeum.idx",
+        "value": "S17"
+      },
+      "officialCampusUrl": null,
+      "officialAddress": "서울 영등포구 대림로 247 대림프라자 4,5층(대림동)",
+      "streetIdentity": "대림로247",
+      "officialPhone": "02-841-0579",
+      "existing": {
+        "name": "서강SLP 영등포학당",
+        "institutionId": "797b59eb-b847-4bbc-86c4-abb544e20354",
+        "slug": "seoul-ek-se-011",
+        "address": "서울특별시 영등포구 대림로 247 대림프라자 4~5층",
+        "region": "영등포구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 1
+    },
+    {
+      "recordId": "slp-k03-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-slp-k03",
+      "name": "서강SLP 고양",
+      "officialCampusId": {
+        "namespace": "slp.athenaeum.idx",
+        "value": "K03"
+      },
+      "officialCampusUrl": null,
+      "officialAddress": "경기 고양시 덕양구 화신로 267 E프라자 4층(화정동)",
+      "streetIdentity": "화신로267",
+      "officialPhone": "031-978-0584",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 2
+    },
+    {
+      "recordId": "slp-k29-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-slp-k29",
+      "name": "서강SLP 광교",
+      "officialCampusId": {
+        "namespace": "slp.athenaeum.idx",
+        "value": "K29"
+      },
+      "officialCampusUrl": null,
+      "officialAddress": "경기 수원시 영통구 도청로89번길 30 이루리타워 3층(이의동)",
+      "streetIdentity": "도청로89번길30",
+      "officialPhone": "031-203-1240",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 2
+    },
+    {
+      "recordId": "slp-k32-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-slp-k32",
+      "name": "서강SLP 광명",
+      "officialCampusId": {
+        "namespace": "slp.athenaeum.idx",
+        "value": "K32"
+      },
+      "officialCampusUrl": null,
+      "officialAddress": "경기 광명시 하안로288번길 15 조일프라자 8층(하안동)",
+      "streetIdentity": "하안로288번길15",
+      "officialPhone": "02-2038-6737",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 3
+    },
+    {
+      "recordId": "slp-k05-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-slp-k05",
+      "name": "서강SLP 구리",
+      "officialCampusId": {
+        "namespace": "slp.athenaeum.idx",
+        "value": "K05"
+      },
+      "officialCampusUrl": null,
+      "officialAddress": "경기 남양주시 다산지금로 139 영신프라자 4층(다산동)",
+      "streetIdentity": "다산지금로139",
+      "officialPhone": "031-552-1230",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 1
+    },
+    {
+      "recordId": "slp-k35-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-slp-k35",
+      "name": "서강SLP 김포한강",
+      "officialCampusId": {
+        "namespace": "slp.athenaeum.idx",
+        "value": "K35"
+      },
+      "officialCampusUrl": null,
+      "officialAddress": "경기 김포시 전원로 11 가든프라자 5층(운양동)",
+      "streetIdentity": "전원로11",
+      "officialPhone": "031-996-0570",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 1
+    },
+    {
+      "recordId": "slp-k21-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-slp-k21",
+      "name": "서강SLP 동탄",
+      "officialCampusId": {
+        "namespace": "slp.athenaeum.idx",
+        "value": "K21"
+      },
+      "officialCampusUrl": null,
+      "officialAddress": "경기 화성시 동탄구 동탄기흥로353번길 99-3 6층(오산동. 유즈에듀타워)",
+      "streetIdentity": "동탄기흥로353번길99-3",
+      "officialPhone": "031-613-0005",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 1
+    },
+    {
+      "recordId": "slp-k13-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-slp-k13",
+      "name": "서강SLP 수원",
+      "officialCampusId": {
+        "namespace": "slp.athenaeum.idx",
+        "value": "K13"
+      },
+      "officialCampusUrl": null,
+      "officialAddress": "경기 수원시 영통구 영통로154번길 74 사국빌딩 5층(망포동)",
+      "streetIdentity": "영통로154번길74",
+      "officialPhone": "031-273-1230",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 3
+    },
+    {
+      "recordId": "slp-k14-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-slp-k14",
+      "name": "서강SLP 안산",
+      "officialCampusId": {
+        "namespace": "slp.athenaeum.idx",
+        "value": "K14"
+      },
+      "officialCampusUrl": null,
+      "officialAddress": "경기 안산시 단원구 광덕1로 193 스카이 프라자 606호",
+      "streetIdentity": "광덕1로193",
+      "officialPhone": "031-438-0505",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 2
+    },
+    {
+      "recordId": "slp-k26-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-slp-k26",
+      "name": "서강SLP 평택",
+      "officialCampusId": {
+        "namespace": "slp.athenaeum.idx",
+        "value": "K26"
+      },
+      "officialCampusUrl": null,
+      "officialAddress": "경기 평택시 지제동삭2로 181-39 4층(동삭동)",
+      "streetIdentity": "지제동삭2로181-39",
+      "officialPhone": "031-692-3303",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 1
+    },
+    {
+      "recordId": "rise-ilsan-madu-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-rise-c6b63ee737eb",
+      "name": "RISE 라이즈 일산마두 어학원",
+      "officialCampusId": null,
+      "officialCampusUrl": null,
+      "officialAddress": "경기 고양시 일산동구 중앙로1261번길 61 메트로골드 10층",
+      "streetIdentity": "중앙로1261번길61",
+      "officialPhone": "031-904-0509",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 1
+    },
+    {
+      "recordId": "rise-primus-gangnam-2027",
+      "status": "EXISTING_ROAD_AND_BRAND_MATCH",
+      "proposedSlug": "seoul-ek-gs-008",
+      "name": "RISE 라이즈 프리머스 강남",
+      "officialCampusId": null,
+      "officialCampusUrl": null,
+      "officialAddress": "서울 강남구 도곡로37길 5 라이즈빌딩 5층",
+      "streetIdentity": "도곡로37길5",
+      "officialPhone": "02-3453-2939",
+      "existing": {
+        "name": "라이즈 프리머스 강남",
+        "institutionId": "8d4d0ffc-dc10-4f18-b2ce-df1388bf2c3c",
+        "slug": "seoul-ek-gs-008",
+        "address": "서울 강남구 도곡로37길 5 라이즈빌딩",
+        "region": "강남구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 2
+    },
+    {
+      "recordId": "rise-pyeongchon-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-rise-705f7ecf8d65",
+      "name": "RISE 라이즈 평촌캠퍼스",
+      "officialCampusId": null,
+      "officialCampusUrl": null,
+      "officialAddress": "경기 안양시 동안구 경수대로 890 LG빌딩",
+      "streetIdentity": "경수대로890",
+      "officialPhone": "031-386-2329",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 3
+    },
+    {
+      "recordId": "rise-seongbuk-2027",
+      "status": "EXISTING_ROAD_AND_BRAND_MATCH",
+      "proposedSlug": "seoul-ek-ne-014",
+      "name": "RISE 라이즈 성북캠퍼스",
+      "officialCampusId": null,
+      "officialCampusUrl": null,
+      "officialAddress": "서울 성북구 삼선동3가 95 JH빌딩 2–4층",
+      "streetIdentity": null,
+      "officialPhone": "1688-4607",
+      "existing": {
+        "name": "라이즈 성북",
+        "institutionId": "052d4a37-673e-43bf-9e59-08a076fdfbcd",
+        "slug": "seoul-ek-ne-014",
+        "address": "서울 성북구 삼선동3가 95 JH빌딩 2~4층",
+        "region": "성북구"
+      },
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 2
+    },
+    {
+      "recordId": "jubilee-prime-2027",
+      "status": "NEW_CAMPUS_CANDIDATE",
+      "proposedSlug": "ek-jubilee-b99e20a3346d",
+      "name": "쥬빌리프라임주니어 어학학원",
+      "officialCampusId": null,
+      "officialCampusUrl": null,
+      "officialAddress": "서울 송파구 송이로 238",
+      "streetIdentity": "송이로238",
+      "officialPhone": "02-403-0511",
+      "existing": null,
+      "conflictingCandidates": [],
+      "nameCandidates": [],
+      "datedSessions": 2
+    }
+  ]
+}

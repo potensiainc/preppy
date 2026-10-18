@@ -224,14 +224,16 @@ export function InstitutionListView({
 
 export function InstitutionDetailView({
   data,
+  returnTo,
 }: {
   data: InstitutionDetailDTO;
+  returnTo?: string;
 }) {
   if (
     data.institution.category === "ENGLISH_KINDERGARTEN" &&
     data.englishKindergarten
   ) {
-    return <EnglishKindergartenDetailView data={data} />;
+    return <EnglishKindergartenDetailView data={data} returnTo={returnTo} />;
   }
 
   const { institution } = data;

@@ -1,0 +1,47 @@
+{
+  "files": [
+    {
+      "name": "preppy-session-import-poly-20261018.json",
+      "sha256": "4c0de291b23f1a70dbc2df4186953d11c3589fdaff3e3a794225dd41a2004618",
+      "original_expected_sha256": "3d59c99205740cc6343af57245f42b7924efd5d8100bdb72c2ef603c2d9e5976",
+      "byte_identical_to_parent_original": false,
+      "transport": "semantic reconstruction from trusted delegated JSON; not original bytes"
+    },
+    {
+      "name": "preppy-session-import-ecc-20261018.json",
+      "sha256": "753540fd23fa63cabdd459e0f358ae886c32d2642c67b079b370d1f3bd2509cf",
+      "original_expected_sha256": "c7d388c3f701e1d4a66f49ab3e50e3ebb518dec16c3789b1a422717502db8230",
+      "byte_identical_to_parent_original": false,
+      "transport": "semantic reconstruction from trusted delegated JSON; not original bytes"
+    },
+    {
+      "name": "preppy-session-import-psa-appletree-20261018.json",
+      "sha256": "d586585ec66fe85c4eeb0e4ae30034be985419a822cae9e80673077b9b3aaf3c",
+      "original_expected_sha256": "2e9118f5a78a781e81df5fd6ca7d4de59b79ac649fc2b3278bddf7225e829980",
+      "byte_identical_to_parent_original": false,
+      "transport": "semantic reconstruction from trusted delegated JSON; not original bytes"
+    },
+    {
+      "name": "preppy-session-import-slp-rise-other-20261018.json",
+      "sha256": "13a96e7688fbfb6d008a30294207dec58487a8ca7007a8f4f851fb57877f64e4",
+      "original_expected_sha256": "b178c9032336719e3156ab518f9e6313a6084229a34df2cce85cf92e8d339acd",
+      "byte_identical_to_parent_original": false,
+      "transport": "semantic reconstruction from trusted delegated JSON; not original bytes"
+    }
+  ],
+  "counts": {
+    "campuses": 87,
+    "dated_sessions": 213,
+    "future_sessions": 199,
+    "past_sessions": 14,
+    "undated_sessions": 1,
+    "statuses": {
+      "unknown": 177,
+      "closed": 34,
+      "open_as_published": 2,
+      "waitlist": 1
+    },
+    "official_campus_ids": 81,
+    "official_session_ids": 65
+  }
+}

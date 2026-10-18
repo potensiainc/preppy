@@ -1,0 +1,102 @@
+{
+  "localProductionBuild": true,
+  "productionMutation": false,
+  "widths": [
+    {
+      "width": 375,
+      "metrics": {
+        "scrollWidth": 375,
+        "width": 375
+      },
+      "ecc": true,
+      "officialHref": "https://www.ybmecc.com/entrance/presentation/create",
+      "empty": 0,
+      "backFilters": true,
+      "closed": true,
+      "zero": true,
+      "reset": {
+        "age": "",
+        "query": "",
+        "year": ""
+      },
+      "emptyExplanation": true,
+      "emptySections": 0,
+      "unknownAll": true,
+      "unknown5": true,
+      "browserBack": {
+        "age": "",
+        "cards": 1,
+        "query": "서강SLP 성북"
+      },
+      "emptyOptionalSections": 0
+    },
+    {
+      "width": 390,
+      "metrics": {
+        "scrollWidth": 390,
+        "width": 390
+      },
+      "ecc": true,
+      "officialHref": "https://www.ybmecc.com/entrance/presentation/create",
+      "empty": 0,
+      "backFilters": true,
+      "closed": true,
+      "zero": true,
+      "reset": {
+        "age": "",
+        "query": "",
+        "year": ""
+      },
+      "emptyExplanation": true,
+      "emptySections": 0,
+      "unknownAll": true,
+      "unknown5": true,
+      "browserBack": {
+        "age": "",
+        "cards": 1,
+        "query": "서강SLP 성북"
+      },
+      "emptyOptionalSections": 0
+    },
+    {
+      "width": 412,
+      "metrics": {
+        "scrollWidth": 412,
+        "width": 412
+      },
+      "ecc": true,
+      "officialHref": "https://www.ybmecc.com/entrance/presentation/create",
+      "empty": 0,
+      "backFilters": true,
+      "closed": true,
+      "zero": true,
+      "reset": {
+        "age": "",
+        "query": "",
+        "year": ""
+      },
+      "emptyExplanation": true,
+      "emptySections": 0,
+      "unknownAll": true,
+      "unknown5": true,
+      "browserBack": {
+        "age": "",
+        "cards": 1,
+        "query": "서강SLP 성북"
+      },
+      "emptyOptionalSections": 0
+    }
+  ],
+  "externalVerification": {
+    "currentHref": "https://www.ybmecc.com/entrance/presentation/create",
+    "earlierLiveVisit": "checkpoint2 official-ecc-booking-dom.txt",
+    "finalReobserve": "BLOCKED_URL_POLICY_AFTER_CLICK",
+    "reason": "Invalid URL authority denied on newly opened tab; no workaround attempted"
+  },
+  "notes": [
+    "Viewport content widths375/390/412; browser inner widths390/405/427 account for15px desktop scrollbar.",
+    "Initial probes read old DOM before navigation; accepted-* artifacts explicitly wait for detail h1/result headings.",
+    "History control restoration defect fixed and repeated successfully.",
+    "No physical device, screen reader or usability study."
+  ]
+}

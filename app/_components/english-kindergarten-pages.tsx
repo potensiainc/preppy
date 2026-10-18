@@ -1,3 +1,9 @@
+import {
+  sessionBookingLabel,
+  sessionActionLabel,
+  sessionEventLabel,
+} from "@/src/modules/english-kindergarten/session-state";
+import { EnglishKindergartenFilterForm } from "./english-kindergarten-filter-form";
 import { publicRegionLabel } from "@/app/_lib/public-region-label";
 import { FollowCta } from "@/app/_components/follow-cta";
 import Link from "next/link";
@@ -90,6 +96,8 @@ function institutionListHref(filters: InstitutionListQuery, page: number) {
   if (filters.query) params.set("query", filters.query);
   if (filters.hasConfirmedTuition) params.set("hasConfirmedTuition", "true");
   if (filters.minAge) params.set("minAge", String(filters.minAge));
+  if (filters.admissionYear)
+    params.set("admissionYear", String(filters.admissionYear));
   if (filters.transport) params.set("transport", filters.transport);
   if (filters.hasUpcomingInfoSession)
     params.set("hasUpcomingInfoSession", "true");
@@ -110,6 +118,8 @@ function districtListHref(
   if (filters.query) params.set("query", filters.query);
   if (filters.hasConfirmedTuition) params.set("hasConfirmedTuition", "true");
   if (filters.minAge) params.set("minAge", String(filters.minAge));
+  if (filters.admissionYear)
+    params.set("admissionYear", String(filters.admissionYear));
   if (filters.transport) params.set("transport", filters.transport);
   if (filters.hasUpcomingInfoSession)
     params.set("hasUpcomingInfoSession", "true");
@@ -209,83 +219,66 @@ function SummaryGrid({
 }: {
   summary: EnglishKindergartenCardSummaryDTO;
 }) {
-  const tuition =
-    summary.tuition?.displayText ??
-    (summary.tuition
-      ? formatTuitionValue(summary.tuition)
-      : coverageText(summary, "TUITION", "원비 내용을 확인하고 있어요."));
-  const age =
-    summary.ageRange?.displayText ??
-    (summary.ageRange
-      ? formatAgeRange(summary.ageRange)
-      : coverageText(
-          summary,
-          "TARGET_AGE_GRADE",
-          "운영 연령을 확인하고 있어요.",
-        ));
-  const transport =
-    summary.transport.displayText ??
-    (summary.transport.verifiedAt
-      ? formatTransport(summary.transport)
-      : coverageText(summary, "TRANSPORT", "셔틀 내용을 확인하고 있어요."));
   const session = summary.nextInformationSession;
-
+  const knownTransport =
+    summary.transport.verifiedAt && summary.transport.state !== "UNKNOWN";
+  if (!summary.tuition && !summary.ageRange && !knownTransport && !session) {
+    return (
+      <p className="ek-card__checked">
+        PREPPY에 등록된 원비·운영 연령·셔틀·설명회 정보가 없어요.
+      </p>
+    );
+  }
   return (
     <dl className="ek-summary-grid">
-      <SummaryValue
-        label="월 원비"
-        value={tuition}
-        note={
-          summary.tuition?.billingCadence &&
-          summary.tuition.billingCadence !== "MONTHLY"
-            ? `${cadenceLabels[summary.tuition.billingCadence]} 기준 금액이에요.`
-            : null
-        }
-      />
-      <SummaryValue
-        label="운영 연령"
-        value={age}
-        note={
-          summary.ageRange ? ageBasisLabels[summary.ageRange.basis] : undefined
-        }
-      />
-      <SummaryValue
-        label="셔틀"
-        value={transport}
-        note={
-          summary.transport.inquiryRequired
-            ? "운행 지역과 좌석은 기관에 확인해 주세요."
-            : null
-        }
-      />
-      <SummaryValue
-        label="다음 설명회"
-        value={
-          session
-            ? formatPublicDateTime(session.eventStartsAt)
-            : coverageText(
-                summary,
-                "INFORMATION_SESSION",
-                "설명회 일정을 확인하고 있어요.",
-              )
-        }
-        note={
-          session?.applicationClosesAt
-            ? `신청 마감 ${formatPublicDateTime(session.applicationClosesAt)}`
-            : null
-        }
-      />
+      {session ? (
+        <SummaryValue
+          label="다음 설명회"
+          value={formatPublicDateTime(session.eventStartsAt)}
+          note={[session.targetAudience, sessionBookingLabel(session)]
+            .filter(Boolean)
+            .join(" · ")}
+        />
+      ) : null}
+      {summary.tuition ? (
+        <SummaryValue
+          label="원비"
+          value={
+            summary.tuition.displayText ?? formatTuitionValue(summary.tuition)
+          }
+        />
+      ) : null}
+      {summary.ageRange ? (
+        <SummaryValue
+          label="운영 연령"
+          value={
+            summary.ageRange.displayText ?? formatAgeRange(summary.ageRange)
+          }
+          note={ageBasisLabels[summary.ageRange.basis]}
+        />
+      ) : null}
+      {knownTransport ? (
+        <SummaryValue
+          label="셔틀"
+          value={
+            summary.transport.displayText ?? formatTransport(summary.transport)
+          }
+        />
+      ) : null}
     </dl>
   );
 }
 
 function EnglishKindergartenCard({
   institution,
+  returnHref,
 }: {
+  returnHref: string;
   institution: InstitutionListDTO["items"][number];
 }) {
   const summary = institution.englishKindergarten;
   if (!summary) return null;
+  const detailHref = `/institutions/${institution.slug}?returnTo=${encodeURIComponent(returnHref)}`;
 
   return (
     <article className="ek-card">
@@ -298,9 +291,7 @@ function EnglishKindergartenCard({
                 : "지역 확인 중")}
           </p>
           <h2>
-            <Link href={`/institutions/${institution.slug}`}>
-              {institution.name}
-            </Link>
+            <Link href={detailHref}>{institution.name}</Link>
           </h2>
           {institution.address ? (
             <p className="ek-card__address">{institution.address}</p>
@@ -314,7 +305,28 @@ function EnglishKindergartenCard({
         />
       </header>
       <SummaryGrid summary={summary} />
-      {summary.lastContentCheckedAt ? (
+      {summary.nextInformationSession &&
+      !summary.nextInformationSession.title.startsWith(institution.name) ? (
+        <p>{summary.nextInformationSession.title}</p>
+      ) : null}
+      {summary.informationSessions?.length ? (
+        <div>
+          <p>
+            예정 설명회 {summary.informationSessions.length}회 · 예약 마감
+            회차도 포함해요.
+          </p>
+          <Link
+            href={`${detailHref}#session-${summary.nextInformationSession!.id}`}
+          >
+            대상·회차·공식 경로 보기
+          </Link>
+        </div>
+      ) : null}
+      {(summary.tuition ||
+        summary.ageRange ||
+        summary.transport.verifiedAt ||
+        summary.nextInformationSession) &&
+      summary.lastContentCheckedAt ? (
         <p className="ek-card__checked">
           내용 확인{" "}
           <time dateTime={summary.lastContentCheckedAt}>
@@ -334,6 +346,7 @@ export function EnglishKindergartenListView({
   filters: InstitutionListQuery;
 }) {
   const hasNarrowingCondition = Boolean(
+    filters.admissionYear ||
     filters.query ||
     filters.hasConfirmedTuition ||
     filters.minAge ||
@@ -350,23 +363,46 @@ export function EnglishKindergartenListView({
         <header className="ek-list__intro">
           <p className="eyebrow">영어유치원 비교</p>
           <h1>영어유치원 비교하기</h1>
-          <p>
-            원비, 운영 연령, 셔틀과 입학설명회 일정을 한 화면에서 살펴볼 수
-            있어요.
-          </p>
+          <p>캠퍼스별 입학설명회와 모집 대상을 찾아보세요.</p>
         </header>
 
         <CategoryNavigation selected="ENGLISH_KINDERGARTEN" />
-        <DistrictPicker data={data} filters={filters} />
+        {filters.region === SEOUL_REGION_CODE ? (
+          <DistrictPicker data={data} filters={filters} />
+        ) : null}
+        <nav aria-label="설명회 검색 지역">
+          {[
+            ["KR-11", "서울"],
+            ["KR-41", "경기"],
+            ["KR-28", "인천"],
+          ].map(([region, label]) => (
+            <Link
+              key={region}
+              href={institutionListHref(
+                { ...filters, region, district: undefined },
+                1,
+              )}
+              aria-current={filters.region === region ? "page" : undefined}
+            >
+              {label}
+            </Link>
+          ))}
+        </nav>
 
-        <details
-          className="filter-disclosure"
-          open={Boolean(hasNarrowingCondition)}
-        >
+        <p>
+          연령은 모집 학년도에 기관이 표기한 나이예요. 회차별 대상을 확인해
+          주세요.
+        </p>
+        <details className="filter-disclosure" open={true}>
           <summary>
             비교 조건 <span>기관명 · 연령 · 셔틀 · 설명회</span>
           </summary>
-          <form action="/institutions" method="get" className="ek-filters">
+          <EnglishKindergartenFilterForm
+            key={institutionListHref(filters, data.pagination.page)}
+            action="/institutions"
+            method="get"
+            className="ek-filters"
+          >
             <input type="hidden" name="category" value="ENGLISH_KINDERGARTEN" />
             <input
               type="hidden"
@@ -387,7 +423,22 @@ export function EnglishKindergartenListView({
               />
             </div>
             <div className="ek-filter">
-              <label htmlFor="ek-age">자녀 나이</label>
+              <label htmlFor="ek-year">모집 학년도</label>
+              <select
+                id="ek-year"
+                name="admissionYear"
+                defaultValue={filters.admissionYear ?? ""}
+              >
+                <option value="">전체 학년도</option>
+                {[2026, 2027, 2028].map((year) => (
+                  <option value={year} key={year}>
+                    {year}학년도
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="ek-filter">
+              <label htmlFor="ek-age">모집 대상 연령</label>
               <select
                 id="ek-age"
                 name="minAge"
@@ -444,7 +495,7 @@ export function EnglishKindergartenListView({
               </label>
             </fieldset>
             <button type="submit">조건 적용</button>
-          </form>
+          </EnglishKindergartenFilterForm>
         </details>
 
         <section aria-labelledby="ek-result-title">
@@ -454,15 +505,28 @@ export function EnglishKindergartenListView({
               <h2 id="ek-result-title">
                 {filters.district
                   ? `${filters.district} 영어유치원 ${data.pagination.total}곳`
-                  : `서울 영어유치원 ${data.pagination.total}곳`}
+                  : `${publicRegionLabel(filters.region ?? SEOUL_REGION_CODE)} 영어유치원 ${data.pagination.total}곳`}
               </h2>
             </div>
-            <p>확인된 정보만 비교 항목에 표시해요.</p>
+            <p>예약 상태와 잔여석은 공식 페이지에서 확인해 주세요.</p>
           </div>
+          {data.matchingSessionCount !== undefined ? (
+            <p>
+              조건에 맞는 예정 설명회 {data.matchingSessionCount}회 ·{" "}
+              {data.pagination.total}개 캠퍼스
+            </p>
+          ) : null}
           {data.items.length > 0 ? (
             <div className="ek-card-list">
               {data.items.map((item) => (
-                <EnglishKindergartenCard key={item.id} institution={item} />
+                <EnglishKindergartenCard
+                  key={item.id}
+                  institution={item}
+                  returnHref={institutionListHref(
+                    filters,
+                    data.pagination.page,
+                  )}
+                />
               ))}
             </div>
           ) : (
@@ -471,12 +535,14 @@ export function EnglishKindergartenListView({
                 title={
                   hasUncoveredDistrict
                     ? `현재 ${filters.district}에 공개된 영어유치원이 없어요`
-                    : "선택한 조건에 맞는 영어유치원을 찾지 못했어요"
+                    : filters.hasUpcomingInfoSession
+                      ? "조건에 맞게 등록된 설명회 일정이 없어요"
+                      : "조건에 맞게 등록된 영어유치원이 없어요"
                 }
                 description={
                   hasUncoveredDistrict
                     ? "서울 전체 목록에서 다른 자치구를 살펴보세요."
-                    : "연령이나 비교 조건을 조정해 보세요."
+                    : "설명회가 없다는 뜻은 아니에요. 아직 등록되지 않았거나 확인이 필요한 일정이 있을 수 있어요. 조건을 넓혀 보세요."
                 }
               />
               <Link
@@ -680,76 +746,107 @@ function InformationSessionSection({
 }: {
   data: EnglishKindergartenDetailDTO;
 }) {
-  const session = data.nextInformationSession;
-  if (!session) {
+  const sessions =
+    data.informationSessions ??
+    (data.nextInformationSession ? [data.nextInformationSession] : []);
+  if (sessions.length === 0)
     return (
       <SectionMessage>
-        {coverageText(
-          data,
-          "INFORMATION_SESSION",
-          "입학설명회 일정을 확인하고 있어요.",
-        )}
+        {coverageFor(data, "INFORMATION_SESSION")?.status === "ACCESS_FAILED"
+          ? "공식 페이지를 불러오지 못해 설명회 일정을 확인할 수 없어요. 캠퍼스에 문의해 주세요."
+          : coverageFor(data, "INFORMATION_SESSION")?.status ===
+              "CHECKED_NOT_FOUND"
+            ? "최근 확인한 공식 안내에는 예정 설명회 일정이 없어요. 이후 일정은 캠퍼스 공식 안내를 확인해 주세요."
+            : coverageFor(data, "INFORMATION_SESSION")?.status ===
+                "NEEDS_REVIEW"
+              ? "설명회 날짜나 대상에 확인이 필요한 내용이 있어요. 정확한 일정은 캠퍼스에 문의해 주세요."
+              : "PREPPY에 등록된 예정 설명회 일정이 없어요. 캠퍼스의 설명회 개최 여부는 공식 안내를 확인해 주세요."}
+        {coverageFor(data, "INFORMATION_SESSION")?.lastCheckedAt
+          ? ` (${formatPublicDate(coverageFor(data, "INFORMATION_SESSION")!.lastCheckedAt!)} 기준)`
+          : null}
       </SectionMessage>
     );
-  }
-  const actionHref = session.actionUrl
-    ? safeExternalHref(session.actionUrl)
-    : null;
   return (
-    <article className="ek-session-card">
-      <p className="eyebrow">다음 일정</p>
-      <h3>{session.title}</h3>
-      <dl className="ek-detail-list">
-        <div>
-          <dt>설명회</dt>
-          <dd>
-            <time dateTime={session.eventStartsAt}>
-              {formatPublicDateTime(session.eventStartsAt)}
-            </time>
-          </dd>
-        </div>
-        {session.applicationClosesAt ? (
-          <div>
-            <dt>신청 마감</dt>
-            <dd>
-              <time dateTime={session.applicationClosesAt}>
-                {formatPublicDateTime(session.applicationClosesAt)}
+    <div>
+      {sessions.map((session) => {
+        const actionHref = session.actionUrl
+          ? safeExternalHref(session.actionUrl)
+          : null;
+        const booking = sessionBookingLabel(session);
+        return (
+          <article
+            className="ek-session-card"
+            key={session.id}
+            id={`session-${session.id}`}
+          >
+            <h3>{session.title}</h3>
+            <p>{sessionEventLabel(session)}</p>
+            <dl className="ek-detail-list">
+              <div>
+                <dt>행사 일시</dt>
+                <dd>
+                  <time dateTime={session.eventStartsAt}>
+                    {formatPublicDateTime(session.eventStartsAt)}
+                  </time>{" "}
+                  (KST)
+                </dd>
+              </div>
+              {session.targetAudience ? (
+                <div>
+                  <dt>모집 대상</dt>
+                  <dd>{session.targetAudience}</dd>
+                </div>
+              ) : null}
+              <div>
+                <dt>예약 상태</dt>
+                <dd>{booking}</dd>
+              </div>
+              <div>
+                <dt>신청 마감</dt>
+                <dd>
+                  {session.applicationClosesAt ? (
+                    <time dateTime={session.applicationClosesAt}>
+                      {formatPublicDateTime(session.applicationClosesAt)}
+                    </time>
+                  ) : (
+                    "신청 마감 시각은 공식 페이지에서 확인해 주세요."
+                  )}
+                </dd>
+              </div>
+            </dl>
+            {session.bookingNote ? <p>{session.bookingNote}</p> : null}
+            {actionHref ? (
+              <a
+                className="ek-action-link"
+                href={actionHref}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {sessionActionLabel(actionHref, booking === "예약 마감")}
+              </a>
+            ) : null}
+            {session.officialSource ? (
+              <a
+                href={safeExternalHref(session.officialSource.url) ?? undefined}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                공식 일정 출처
+              </a>
+            ) : null}
+            <p>
+              내용 확인{" "}
+              <time dateTime={session.verifiedAt}>
+                {formatPublicDate(session.verifiedAt)}
               </time>
-            </dd>
-          </div>
-        ) : null}
-      </dl>
-      {actionHref ? (
-        <a
-          className="ek-action-link"
-          href={actionHref}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          설명회 신청 페이지 열기
-        </a>
-      ) : null}
-      <dl className="ek-freshness">
-        {session.lastCollectedAt ? (
-          <div>
-            <dt>자료 수집</dt>
-            <dd>
-              <time dateTime={session.lastCollectedAt}>
-                {formatPublicDate(session.lastCollectedAt)}
-              </time>
-            </dd>
-          </div>
-        ) : null}
-        <div>
-          <dt>내용 확인</dt>
-          <dd>
-            <time dateTime={session.verifiedAt}>
-              {formatPublicDate(session.verifiedAt)}
-            </time>
-          </dd>
-        </div>
-      </dl>
-    </article>
+            </p>
+            {session.lastCollectedAt ? (
+              <p>자료 수집 {formatPublicDate(session.lastCollectedAt)}</p>
+            ) : null}
+          </article>
+        );
+      })}
+    </div>
   );
 }
 
@@ -800,15 +897,7 @@ function AgeCurriculumSection({
           ) : null}
           <FactFreshness fact={age} />
         </div>
-      ) : (
-        <SectionMessage>
-          {coverageText(
-            data,
-            "TARGET_AGE_GRADE",
-            "운영 연령을 확인하고 있어요.",
-          )}
-        </SectionMessage>
-      )}
+      ) : null}
       {curriculum ? (
         <div className="ek-fact-panel">
           <h3>커리큘럼</h3>
@@ -841,11 +930,7 @@ function AgeCurriculumSection({
           ) : null}
           <FactFreshness fact={curriculum} />
         </div>
-      ) : (
-        <SectionMessage>
-          {coverageText(data, "CURRICULUM", "커리큘럼을 확인하고 있어요.")}
-        </SectionMessage>
-      )}
+      ) : null}
     </div>
   );
 }
@@ -916,7 +1001,7 @@ function MealsSection({ data }: { data: EnglishKindergartenDetailDTO }) {
           <dt>식사</dt>
           <dd>
             {value.mealProvided === null
-              ? "제공 여부를 확인하고 있어요."
+              ? "제공 여부는 캠퍼스에 문의해 주세요."
               : value.mealProvided
                 ? "제공해요."
                 : "제공하지 않아요."}
@@ -926,7 +1011,7 @@ function MealsSection({ data }: { data: EnglishKindergartenDetailDTO }) {
           <dt>간식</dt>
           <dd>
             {value.snackProvided === null
-              ? "제공 여부를 확인하고 있어요."
+              ? "제공 여부는 캠퍼스에 문의해 주세요."
               : value.snackProvided
                 ? "제공해요."
                 : "제공하지 않아요."}
@@ -957,7 +1042,7 @@ function ReviewSection({ data }: { data: EnglishKindergartenDetailDTO }) {
   return (
     <div className="ek-review-panel">
       <p className="ek-review-disclaimer">공개 후기 요약 · 공식 정보 아님</p>
-      <p>후기 {review.sampleSize}건을 검토했어요.</p>
+      <p>공개 후기 {review.sampleSize}건 기준이에요.</p>
       {review.periodStart && review.periodEnd ? (
         <p>
           검토 기간: {formatPublicDate(review.periodStart)}~
@@ -1028,9 +1113,10 @@ function collectOfficialSources(
   ) ?? []) {
     sources.set(source.url, source);
   }
-  const sessionSource =
-    data.englishKindergarten?.nextInformationSession?.officialSource;
-  if (sessionSource) sources.set(sessionSource.url, sessionSource);
+  for (const session of data.englishKindergarten?.informationSessions ?? []) {
+    if (session.officialSource)
+      sources.set(session.officialSource.url, session.officialSource);
+  }
   return [...sources.values()];
 }
 
@@ -1041,7 +1127,7 @@ function OfficialSourcesSection({ data }: { data: InstitutionDetailDTO }) {
   }
   return (
     <div className="ek-official-sources">
-      {sources.map((source, index) => {
+      {sources.map((source) => {
         const href = safeExternalHref(source.url);
         if (!href) return null;
         return (
@@ -1052,9 +1138,7 @@ function OfficialSourcesSection({ data }: { data: InstitutionDetailDTO }) {
             rel="noopener noreferrer"
           >
             <span>{source.name}</span>
-            <strong>
-              {index === 0 ? "기관 공식 홈페이지 열기" : "공식 안내 열기"}
-            </strong>
+            <strong>공식 안내 보기</strong>
           </a>
         );
       })}
@@ -1064,20 +1148,37 @@ function OfficialSourcesSection({ data }: { data: InstitutionDetailDTO }) {
 
 export function EnglishKindergartenDetailView({
   data,
+  returnTo,
 }: {
   data: InstitutionDetailDTO;
+  returnTo?: string;
 }) {
   const profile = data.englishKindergarten;
   if (!profile) return null;
   const institution = data.institution;
+  const listHref =
+    returnTo?.startsWith("/institutions?") &&
+    new URLSearchParams(returnTo.split("?")[1]).get("category") ===
+      "ENGLISH_KINDERGARTEN"
+      ? returnTo
+      : "/institutions?category=ENGLISH_KINDERGARTEN";
+  const visibleSection = (id: string) =>
+    id === "information-session" ||
+    (id === "tuition" && Boolean(findFact(profile, "TUITION"))) ||
+    (id === "age-curriculum" &&
+      Boolean(
+        findFact(profile, "TARGET_AGE_GRADE") ||
+        findFact(profile, "CURRICULUM"),
+      )) ||
+    (id === "transport" && Boolean(findFact(profile, "TRANSPORT"))) ||
+    (id === "meals" && Boolean(findFact(profile, "MEALS"))) ||
+    (id === "review-summary" && Boolean(profile.reviewInsight)) ||
+    (id === "official-sources" && collectOfficialSources(data).length > 0);
 
   return (
     <PageContainer>
       <article className="ek-detail">
-        <Link
-          className="page-back"
-          href="/institutions?category=ENGLISH_KINDERGARTEN"
-        >
+        <Link className="page-back" href={listHref}>
           ← 영어유치원 목록
         </Link>
         <header className="ek-detail__hero">
@@ -1093,12 +1194,15 @@ export function EnglishKindergartenDetailView({
             {institution.address ??
               (institution.region
                 ? publicRegionLabel(institution.region)
-                : "기관 위치를 확인하고 있어요.")}
+                : "주소는 캠퍼스 공식 안내를 확인해 주세요.")}
           </p>
           <SummaryGrid summary={profile} />
-          {profile.lastContentCheckedAt ? (
+          {profile.lastContentCheckedAt &&
+          (profile.facts.length ||
+            profile.nextInformationSession ||
+            profile.reviewInsight) ? (
             <p className="ek-detail__checked">
-              전체 항목 최근 확인{" "}
+              표시된 정보 최근 확인{" "}
               <time dateTime={profile.lastContentCheckedAt}>
                 {formatPublicDate(profile.lastContentCheckedAt)}
               </time>
@@ -1107,21 +1211,20 @@ export function EnglishKindergartenDetailView({
         </header>
 
         <nav className="ek-anchor-nav" aria-label="영어유치원 상세 정보">
-          {detailAnchors.map(([id, label]) => (
-            <a key={id} href={`#${id}`}>
-              {label}
-            </a>
-          ))}
+          {detailAnchors
+            .filter(([id]) => visibleSection(id))
+            .map(([id, label]) => (
+              <a key={id} href={`#${id}`}>
+                {label}
+              </a>
+            ))}
         </nav>
 
         <div className="ek-detail__sections">
-          <SectionShell
-            id="tuition"
-            title="원비"
-            description="적용 학년도와 납부 주기를 함께 확인해 주세요."
-          >
-            <TuitionSection data={profile} />
-          </SectionShell>
+          <p>
+            표시되지 않은 원비·셔틀·급식 등의 제공 여부는 캠퍼스에 문의해
+            주세요.
+          </p>
           <SectionShell
             id="information-session"
             title="입학설명회"
@@ -1129,38 +1232,56 @@ export function EnglishKindergartenDetailView({
           >
             <InformationSessionSection data={profile} />
           </SectionShell>
-          <SectionShell id="age-curriculum" title="연령·커리큘럼">
-            <AgeCurriculumSection data={profile} />
-          </SectionShell>
-          <SectionShell id="transport" title="셔틀">
-            <TransportSection data={profile} />
-          </SectionShell>
-          <SectionShell id="meals" title="급식">
-            <MealsSection data={profile} />
-          </SectionShell>
-          <SectionShell
-            id="review-summary"
-            title="후기 요약"
-            description="공개 후기에서 반복된 내용만 요약해요."
-          >
-            <ReviewSection data={profile} />
-          </SectionShell>
-          <SectionShell
-            id="official-sources"
-            title="공식 출처"
-            description="원비와 일정은 기관 안내가 바뀔 수 있어요. 신청 전 다시 확인해 주세요."
-          >
-            <OfficialSourcesSection data={data} />
-          </SectionShell>
+          {visibleSection("tuition") ? (
+            <SectionShell
+              id="tuition"
+              title="원비"
+              description="적용 학년도와 납부 주기를 함께 확인해 주세요."
+            >
+              <TuitionSection data={profile} />
+            </SectionShell>
+          ) : null}
+
+          {visibleSection("age-curriculum") ? (
+            <SectionShell id="age-curriculum" title="연령·커리큘럼">
+              <AgeCurriculumSection data={profile} />
+            </SectionShell>
+          ) : null}
+          {visibleSection("transport") ? (
+            <SectionShell id="transport" title="셔틀">
+              <TransportSection data={profile} />
+            </SectionShell>
+          ) : null}
+          {visibleSection("meals") ? (
+            <SectionShell id="meals" title="급식">
+              <MealsSection data={profile} />
+            </SectionShell>
+          ) : null}
+          {visibleSection("review-summary") ? (
+            <SectionShell
+              id="review-summary"
+              title="후기 요약"
+              description="공개 후기에서 반복된 내용만 요약해요."
+            >
+              <ReviewSection data={profile} />
+            </SectionShell>
+          ) : null}
+          {visibleSection("official-sources") ? (
+            <SectionShell
+              id="official-sources"
+              title="공식 출처"
+              description="원비와 일정은 기관 안내가 바뀔 수 있어요. 신청 전 다시 확인해 주세요."
+            >
+              <OfficialSourcesSection data={data} />
+            </SectionShell>
+          ) : null}
         </div>
 
         <nav
           className="ek-detail__return"
           aria-label="영어유치원 목록으로 돌아가기"
         >
-          <Link href="/institutions?category=ENGLISH_KINDERGARTEN">
-            다른 영어유치원 비교하기
-          </Link>
+          <Link href={listHref}>다른 영어유치원 비교하기</Link>
         </nav>
       </article>
     </PageContainer>

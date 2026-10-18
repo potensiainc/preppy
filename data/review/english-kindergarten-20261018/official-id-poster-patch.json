@@ -1,0 +1,926 @@
+{
+  "schema": "preppy.session_import.supplement.v2",
+  "revision": "20261018-official-id-poster-fix",
+  "checked_at": "2026-10-18T16:57:51+09:00",
+  "base_files": [
+    {
+      "name": "preppy-session-import-poly-20261018.json",
+      "sha256": "3d59c99205740cc6343af57245f42b7924efd5d8100bdb72c2ef603c2d9e5976",
+      "bytes": 41277
+    },
+    {
+      "name": "preppy-session-import-ecc-20261018.json",
+      "sha256": "c7d388c3f701e1d4a66f49ab3e50e3ebb518dec16c3789b1a422717502db8230",
+      "bytes": 40446
+    },
+    {
+      "name": "preppy-session-import-psa-appletree-20261018.json",
+      "sha256": "2e9118f5a78a781e81df5fd6ca7d4de59b79ac649fc2b3278bddf7225e829980",
+      "bytes": 19508
+    },
+    {
+      "name": "preppy-session-import-slp-rise-other-20261018.json",
+      "sha256": "b178c9032336719e3156ab518f9e6313a6084229a34df2cce85cf92e8d339acd",
+      "bytes": 42936
+    }
+  ],
+  "apply_instruction": "기존 record_id/event_id에 필드만 추가·정정. 기존 ID·일시 변경 및 새 회차 생성 없음. observed 공식ID는 namespace와 함께 보존. unobserved 목록은 source_*_id=null,status=not_observed이며 임의공식ID 생성 금지.",
+  "campus_id_format": [
+    "namespace",
+    "source_campus_id"
+  ],
+  "session_id_format": [
+    "namespace",
+    "source_session_id",
+    "record_id"
+  ],
+  "campus_ids": {
+    "poly-강동-2027": [
+      "poly.searchClientCode",
+      "1808003"
+    ],
+    "poly-강서-2027": [
+      "poly.searchClientCode",
+      "1311001"
+    ],
+    "poly-관악-2027": [
+      "poly.searchClientCode",
+      "0601006"
+    ],
+    "poly-광교-2027": [
+      "poly.searchClientCode",
+      "2109001"
+    ],
+    "poly-광명-2027": [
+      "poly.searchClientCode",
+      "0601007"
+    ],
+    "poly-광진-2027": [
+      "poly.searchClientCode",
+      "1412002"
+    ],
+    "poly-구리남양주-2027": [
+      "poly.searchClientCode",
+      "0908001"
+    ],
+    "poly-gimpo-2027": [
+      "poly.searchClientCode",
+      "1107001"
+    ],
+    "poly-대치폴리매그넷-2027": [
+      "poly.searchClientCode",
+      "2210003"
+    ],
+    "poly-덕양-2027": [
+      "poly.searchClientCode",
+      "0512002"
+    ],
+    "poly-동대문-2027": [
+      "poly.searchClientCode",
+      "0701001"
+    ],
+    "poly-dongtan-2027": [
+      "poly.searchClientCode",
+      "0804001"
+    ],
+    "poly-마포-2027": [
+      "poly.searchClientCode",
+      "0611002"
+    ],
+    "poly-목동-2027": [
+      "poly.searchClientCode",
+      "0601012"
+    ],
+    "poly-부천-2027": [
+      "poly.searchClientCode",
+      "0608001"
+    ],
+    "poly-분당-2027": [
+      "poly.searchClientCode",
+      "0711002"
+    ],
+    "poly-서대문-2027": [
+      "poly.searchClientCode",
+      "0712002"
+    ],
+    "poly-서수원-2027": [
+      "poly.searchClientCode",
+      "2512001"
+    ],
+    "poly-성동-2027": [
+      "poly.searchClientCode",
+      "0605001"
+    ],
+    "poly-성북-2027": [
+      "poly.searchClientCode",
+      "0701002"
+    ],
+    "poly-송파-2027": [
+      "poly.searchClientCode",
+      "0801001"
+    ],
+    "poly-suji-2027": [
+      "poly.searchClientCode",
+      "0601008"
+    ],
+    "poly-시흥장현-2027": [
+      "poly.searchClientCode",
+      "2212001"
+    ],
+    "poly-영통-2027": [
+      "poly.searchClientCode",
+      "0601009"
+    ],
+    "poly-운정-2027": [
+      "poly.searchClientCode",
+      "2210001"
+    ],
+    "poly-위례-2027": [
+      "poly.searchClientCode",
+      "2009003"
+    ],
+    "poly-은평-2027": [
+      "poly.searchClientCode",
+      "1412001"
+    ],
+    "poly-일산-2027": [
+      "poly.searchClientCode",
+      "0601003"
+    ],
+    "poly-중계-2027": [
+      "poly.searchClientCode",
+      "0601005"
+    ],
+    "poly-평촌-2027": [
+      "poly.searchClientCode",
+      "0601014"
+    ],
+    "poly-평택지제-2027": [
+      "poly.searchClientCode",
+      "2407001"
+    ],
+    "poly-하남미사-2027": [
+      "poly.searchClientCode",
+      "2009001"
+    ],
+    "ybm-ecc-강동-2027": [
+      "ybmecc.sCode",
+      "101"
+    ],
+    "ybm-ecc-광진-2027": [
+      "ybmecc.sCode",
+      "113"
+    ],
+    "ecc-nowon-2027": [
+      "ybmecc.sCode",
+      "120"
+    ],
+    "ybm-ecc-대치-2027": [
+      "ybmecc.sCode",
+      "105"
+    ],
+    "ybm-ecc-동대문-2027": [
+      "ybmecc.sCode",
+      "655"
+    ],
+    "ybm-ecc-마포-2027": [
+      "ybmecc.sCode",
+      "108"
+    ],
+    "ecc-mokdong-2027": [
+      "ybmecc.sCode",
+      "109"
+    ],
+    "ybm-ecc-서초이수-2027": [
+      "ybmecc.sCode",
+      "761"
+    ],
+    "ybm-ecc-석계-2027": [
+      "ybmecc.sCode",
+      "123"
+    ],
+    "ybm-ecc-성동-2027": [
+      "ybmecc.sCode",
+      "649"
+    ],
+    "ybm-ecc-성북-2027": [
+      "ybmecc.sCode",
+      "114"
+    ],
+    "ybm-ecc-송파잠실-2027": [
+      "ybmecc.sCode",
+      "115"
+    ],
+    "ybm-ecc-쌍문-2027": [
+      "ybmecc.sCode",
+      "116"
+    ],
+    "ybm-ecc-여의도-2027": [
+      "ybmecc.sCode",
+      "755"
+    ],
+    "ybm-ecc-경기광주-2027": [
+      "ybmecc.sCode",
+      "762"
+    ],
+    "ybm-ecc-김포-2027": [
+      "ybmecc.sCode",
+      "204"
+    ],
+    "ybm-ecc-남동탄-2027": [
+      "ybmecc.sCode",
+      "722"
+    ],
+    "ybm-ecc-문산-2027": [
+      "ybmecc.sCode",
+      "645"
+    ],
+    "ybm-ecc-영통-2027": [
+      "ybmecc.sCode",
+      "648"
+    ],
+    "ecc-okgil-2027": [
+      "ybmecc.sCode",
+      "723"
+    ],
+    "ybm-ecc-의정부-2027": [
+      "ybmecc.sCode",
+      "756"
+    ],
+    "ybm-ecc-장안-2027": [
+      "ybmecc.sCode",
+      "743"
+    ],
+    "ybm-ecc-제1동탄-2027": [
+      "ybmecc.sCode",
+      "700"
+    ],
+    "ybm-ecc-제2동탄-2027": [
+      "ybmecc.sCode",
+      "667"
+    ],
+    "ybm-ecc-죽전-2027": [
+      "ybmecc.sCode",
+      "661"
+    ],
+    "ybm-ecc-판교-2027": [
+      "ybmecc.sCode",
+      "713"
+    ],
+    "psa-개포-2027": [
+      "ybmpine.sCode",
+      110
+    ],
+    "psa-목동-2027": [
+      "ybmpine.sCode",
+      470
+    ],
+    "psa-seocho-2027": [
+      "ybmpine.sCode",
+      100
+    ],
+    "psa-압구정-2027": [
+      "ybmpine.sCode",
+      120
+    ],
+    "psa-용산-2027": [
+      "ybmpine.sCode",
+      130
+    ],
+    "psa-pangyo-2027": [
+      "ybmpine.sCode",
+      610
+    ],
+    "c-gate-압구정-2027": [
+      "ybmpine.sCode",
+      400
+    ],
+    "c-gate-잠실-2027": [
+      "ybmpine.sCode",
+      370
+    ],
+    "slp-s03-2027": [
+      "slp.athenaeum.idx",
+      "S03"
+    ],
+    "slp-s33-2027": [
+      "slp.athenaeum.idx",
+      "S33"
+    ],
+    "slp-s09-2027": [
+      "slp.athenaeum.idx",
+      "S09"
+    ],
+    "slp-mokdong-2027": [
+      "slp.athenaeum.idx",
+      "S11"
+    ],
+    "slp-s15-2027": [
+      "slp.athenaeum.idx",
+      "S15"
+    ],
+    "slp-s17-2027": [
+      "slp.athenaeum.idx",
+      "S17"
+    ],
+    "slp-k03-2027": [
+      "slp.athenaeum.idx",
+      "K03"
+    ],
+    "slp-k29-2027": [
+      "slp.athenaeum.idx",
+      "K29"
+    ],
+    "slp-k32-2027": [
+      "slp.athenaeum.idx",
+      "K32"
+    ],
+    "slp-k05-2027": [
+      "slp.athenaeum.idx",
+      "K05"
+    ],
+    "slp-k35-2027": [
+      "slp.athenaeum.idx",
+      "K35"
+    ],
+    "slp-k21-2027": [
+      "slp.athenaeum.idx",
+      "K21"
+    ],
+    "slp-k13-2027": [
+      "slp.athenaeum.idx",
+      "K13"
+    ],
+    "slp-k14-2027": [
+      "slp.athenaeum.idx",
+      "K14"
+    ],
+    "slp-k26-2027": [
+      "slp.athenaeum.idx",
+      "K26"
+    ]
+  },
+  "campus_ids_unobserved": [
+    "dna-dongtan-2027",
+    "rise-ilsan-madu-2027",
+    "rise-primus-gangnam-2027",
+    "rise-pyeongchon-2027",
+    "rise-seongbuk-2027",
+    "jubilee-prime-2027"
+  ],
+  "session_ids": {
+    "519c4930a7ab123a": [
+      "ybmecc.presentation.P_ID",
+      "71",
+      "ybm-ecc-강동-2027"
+    ],
+    "89c0d0fa8ec38023": [
+      "ybmecc.presentation.P_ID",
+      "1",
+      "ybm-ecc-강동-2027"
+    ],
+    "9e5c4258e5933dd9": [
+      "ybmecc.presentation.P_ID",
+      "2",
+      "ybm-ecc-강동-2027"
+    ],
+    "18964e71438b90ba": [
+      "ybmecc.presentation.P_ID",
+      "37",
+      "ybm-ecc-광진-2027"
+    ],
+    "3cb209a7d2035ce9": [
+      "ybmecc.presentation.P_ID",
+      "34",
+      "ybm-ecc-대치-2027"
+    ],
+    "0a79042eae4e78b0": [
+      "ybmecc.presentation.P_ID",
+      "39",
+      "ybm-ecc-대치-2027"
+    ],
+    "2156942858d4d63e": [
+      "ybmecc.presentation.P_ID",
+      "41",
+      "ybm-ecc-대치-2027"
+    ],
+    "d874b177d591d9f6": [
+      "ybmecc.presentation.P_ID",
+      "20",
+      "ybm-ecc-동대문-2027"
+    ],
+    "6202fc20c9d6d56a": [
+      "ybmecc.presentation.P_ID",
+      "21",
+      "ybm-ecc-동대문-2027"
+    ],
+    "f6ce7c501887d587": [
+      "ybmecc.presentation.P_ID",
+      "23",
+      "ecc-mokdong-2027"
+    ],
+    "52ba71fcf00ff731": [
+      "ybmecc.presentation.P_ID",
+      "25",
+      "ecc-mokdong-2027"
+    ],
+    "156936387c6e1f03": [
+      "ybmecc.presentation.P_ID",
+      "26",
+      "ecc-mokdong-2027"
+    ],
+    "2304c40e81af1c24": [
+      "ybmecc.presentation.P_ID",
+      "94",
+      "ybm-ecc-서초이수-2027"
+    ],
+    "a6b19f6eef013bbd": [
+      "ybmecc.presentation.P_ID",
+      "28",
+      "ybm-ecc-석계-2027"
+    ],
+    "6e2c68b52b3a82f0": [
+      "ybmecc.presentation.P_ID",
+      "4",
+      "ybm-ecc-성북-2027"
+    ],
+    "8379302ce3792d72": [
+      "ybmecc.presentation.P_ID",
+      "5",
+      "ybm-ecc-성북-2027"
+    ],
+    "454fefd4eb34e67f": [
+      "ybmecc.presentation.P_ID",
+      "6",
+      "ybm-ecc-성북-2027"
+    ],
+    "03f411c626a2da65": [
+      "ybmecc.presentation.P_ID",
+      "10",
+      "ybm-ecc-쌍문-2027"
+    ],
+    "902c8b78a9e819b3": [
+      "ybmecc.presentation.P_ID",
+      "12",
+      "ybm-ecc-쌍문-2027"
+    ],
+    "d2c3cfa70e42b5e7": [
+      "ybmecc.presentation.P_ID",
+      "76",
+      "ybm-ecc-쌍문-2027"
+    ],
+    "dcd594218b70268a": [
+      "ybmecc.presentation.P_ID",
+      "13",
+      "ybm-ecc-쌍문-2027"
+    ],
+    "517be9db2aed3a66": [
+      "ybmecc.presentation.P_ID",
+      "78",
+      "ybm-ecc-여의도-2027"
+    ],
+    "7f1fc80712218126": [
+      "ybmecc.presentation.P_ID",
+      "74",
+      "ybm-ecc-경기광주-2027"
+    ],
+    "1c3a31c678c5a382": [
+      "ybmecc.presentation.P_ID",
+      "55",
+      "ybm-ecc-남동탄-2027"
+    ],
+    "955aaeaaec9b49ef": [
+      "ybmecc.presentation.P_ID",
+      "95",
+      "ecc-okgil-2027"
+    ],
+    "4bd548bb9c562f0c": [
+      "ybmecc.presentation.P_ID",
+      "91",
+      "ecc-okgil-2027"
+    ],
+    "aa0b516565cd4476": [
+      "ybmecc.presentation.P_ID",
+      "92",
+      "ecc-okgil-2027"
+    ],
+    "71956cbd7f4f5ce0": [
+      "ybmecc.presentation.P_ID",
+      "49",
+      "ybm-ecc-의정부-2027"
+    ],
+    "91772c86a997eece": [
+      "ybmecc.presentation.P_ID",
+      "51",
+      "ybm-ecc-의정부-2027"
+    ],
+    "95b2f5faf0bb1ab3": [
+      "ybmecc.presentation.P_ID",
+      "48",
+      "ybm-ecc-의정부-2027"
+    ],
+    "7ed50ba528ecedcc": [
+      "ybmecc.presentation.P_ID",
+      "69",
+      "ybm-ecc-의정부-2027"
+    ],
+    "e7fd99b3792c9af0": [
+      "ybmecc.presentation.P_ID",
+      "52",
+      "ybm-ecc-의정부-2027"
+    ],
+    "9bd871c1299ec587": [
+      "ybmecc.presentation.P_ID",
+      "44",
+      "ybm-ecc-장안-2027"
+    ],
+    "291ddaca5058e746": [
+      "ybmecc.presentation.P_ID",
+      "42",
+      "ybm-ecc-장안-2027"
+    ],
+    "69878b9d8590397a": [
+      "ybmecc.presentation.P_ID",
+      "38",
+      "ybm-ecc-제1동탄-2027"
+    ],
+    "df189321ea1be593": [
+      "ybmecc.presentation.P_ID",
+      "56",
+      "ybm-ecc-제2동탄-2027"
+    ],
+    "638b4969c27422d9": [
+      "ybmecc.presentation.P_ID",
+      "73",
+      "ybm-ecc-죽전-2027"
+    ],
+    "0b5e62abc773bf86": [
+      "ybmecc.presentation.P_ID",
+      "35",
+      "ybm-ecc-판교-2027"
+    ],
+    "3743b71fc85974a2": [
+      "ybmpine.briefing.prdSeq",
+      11616,
+      "psa-개포-2027"
+    ],
+    "07eea034f5f903d0": [
+      "ybmpine.briefing.prdSeq",
+      11617,
+      "psa-개포-2027"
+    ],
+    "d9129f73df1587d3": [
+      "ybmpine.briefing.prdSeq",
+      11618,
+      "psa-개포-2027"
+    ],
+    "aef372a71e67f72a": [
+      "ybmpine.briefing.prdSeq",
+      11835,
+      "psa-목동-2027"
+    ],
+    "c4d2f2a6285e19d7": [
+      "ybmpine.briefing.prdSeq",
+      11625,
+      "psa-목동-2027"
+    ],
+    "eeab505ef1b1ad1e": [
+      "ybmpine.briefing.prdSeq",
+      11834,
+      "psa-목동-2027"
+    ],
+    "01a93799a22430ce": [
+      "ybmpine.briefing.prdSeq",
+      11848,
+      "psa-목동-2027"
+    ],
+    "b925d41d02ac47de": [
+      "ybmpine.briefing.prdSeq",
+      11611,
+      "psa-seocho-2027"
+    ],
+    "5c0dacaa4863a425": [
+      "ybmpine.briefing.prdSeq",
+      11612,
+      "psa-seocho-2027"
+    ],
+    "323c1e008a8dd02d": [
+      "ybmpine.briefing.prdSeq",
+      11613,
+      "psa-seocho-2027"
+    ],
+    "ed4543e155addd2e": [
+      "ybmpine.briefing.prdSeq",
+      11849,
+      "psa-seocho-2027"
+    ],
+    "462a8db438eec8a1": [
+      "ybmpine.briefing.prdSeq",
+      11621,
+      "psa-압구정-2027"
+    ],
+    "76fa9a3bc23ea131": [
+      "ybmpine.briefing.prdSeq",
+      11620,
+      "psa-압구정-2027"
+    ],
+    "c3eeeae160928e47": [
+      "ybmpine.briefing.prdSeq",
+      11622,
+      "psa-압구정-2027"
+    ],
+    "9891e07cbbd1bdc4": [
+      "ybmpine.briefing.prdSeq",
+      11838,
+      "psa-압구정-2027"
+    ],
+    "0224bf38ed3f2f63": [
+      "ybmpine.briefing.prdSeq",
+      11839,
+      "psa-압구정-2027"
+    ],
+    "00f75a06a17198ea": [
+      "ybmpine.briefing.prdSeq",
+      11643,
+      "psa-용산-2027"
+    ],
+    "1da87fea67c1e18c": [
+      "ybmpine.briefing.prdSeq",
+      11644,
+      "psa-용산-2027"
+    ],
+    "ea7d00af5f657cc2": [
+      "ybmpine.briefing.prdSeq",
+      11645,
+      "psa-용산-2027"
+    ],
+    "c5be687c822a6238": [
+      "ybmpine.briefing.prdSeq",
+      11633,
+      "psa-pangyo-2027"
+    ],
+    "1f2d851e19c531d9": [
+      "ybmpine.briefing.prdSeq",
+      11858,
+      "psa-pangyo-2027"
+    ],
+    "16d72291bb47cb72": [
+      "ybmpine.briefing.prdSeq",
+      11634,
+      "psa-pangyo-2027"
+    ],
+    "a83afa0d81034f1d": [
+      "ybmpine.briefing.prdSeq",
+      11833,
+      "psa-pangyo-2027"
+    ],
+    "2c312d075ac1c874": [
+      "ybmpine.briefing.prdSeq",
+      11830,
+      "c-gate-압구정-2027"
+    ],
+    "b9279fb378216627": [
+      "ybmpine.briefing.prdSeq",
+      11844,
+      "c-gate-압구정-2027"
+    ],
+    "97b1de5f2de6c7bf": [
+      "ybmpine.briefing.prdSeq",
+      11615,
+      "c-gate-잠실-2027"
+    ],
+    "5711e9465fee068a": [
+      "ybmpine.briefing.prdSeq",
+      11847,
+      "c-gate-잠실-2027"
+    ]
+  },
+  "session_ids_unobserved": [
+    "8dbd77d19f74573a",
+    "3760640d6c9bb059",
+    "f535b5e3d84e1917",
+    "a53b1fbc99be92be",
+    "99c3cd7212b992f6",
+    "c37f3c0b4f5000e9",
+    "977ef6af5a224aa8",
+    "5dc23190a52ab3cf",
+    "c6d1d3f871905c0e",
+    "61d1cf5317de7094",
+    "dc4605a829e04893",
+    "c79923f1707a4d68",
+    "c34f6cb0deff10e0",
+    "54a7b0ec9b3c589b",
+    "ffe5ec59f3d85cb3",
+    "066dcd6a9a95a74d",
+    "fac758362ec4777e",
+    "1ef7c97d165a9f0a",
+    "003a6f260e22e302",
+    "0670d649d89da955",
+    "69638ef443298dd2",
+    "3c4e76e61bbae744",
+    "6d5c965226fd8787",
+    "87d3b667d7235750",
+    "43241b382e1cc79e",
+    "a4f6b08f60e55f48",
+    "1b28f58bed5525f7",
+    "5696f883227b78ad",
+    "17f270cc71623f03",
+    "4af352e2d695edd6",
+    "f772d378c328f17a",
+    "23f194f5f247516d",
+    "320b0cb1c77a8290",
+    "d7de1d1bdb2a500b",
+    "97dcf272123cd923",
+    "927e63661ac2cbb5",
+    "45bc2a6774fc5ba8",
+    "cda2dc05598deb11",
+    "43d5c3e695abc539",
+    "cd88cb621fe5ce76",
+    "ae2914fcbf7e1b50",
+    "a1ae55242b9ffa32",
+    "f0ad9284f9794d14",
+    "3ecd5d7ba3c5f5f9",
+    "456feb05893c0e4e",
+    "3b404ac2777e6171",
+    "33e0341bca936c54",
+    "e03439b61c22546d",
+    "3a4c6fc0abc8ee0c",
+    "3407d60c906b9351",
+    "a847f73e8cf29656",
+    "b6fae56443071dca",
+    "f296c4cdcd9fcec6",
+    "aded711ab601dfe8",
+    "27d72466733cb5b6",
+    "9a920f900182738d",
+    "5341203555cdeaa9",
+    "c2f5e0b53a47c3c2",
+    "a039f80de878a0e0",
+    "28435eac7d19418a",
+    "7f65215232856f2f",
+    "4cc71621e6050b23",
+    "a24adcbae31416df",
+    "d2941ed8237d292f",
+    "1167b47f9d2202e1",
+    "00a7c502af5458ed",
+    "62dfcf542515543a",
+    "cd0c3baec45b5e77",
+    "b1015a751d467352",
+    "d1d601a46fe2f482",
+    "a8611c16341e2abb",
+    "f994b8c31d5d2c19",
+    "be62dcc4e849f0fc",
+    "8c0215edeb23966a",
+    "f65b6782751443ec",
+    "0f9f5aa35e789e83",
+    "757242bd3edd3416",
+    "16c8c31dc3f309d2",
+    "95a42013a609ba86",
+    "3b604c34c51ef13f",
+    "7ddf2ceab6313408",
+    "9e5302af33c754c3",
+    "4d661b22055b3af3",
+    "5b488cf0f3448827",
+    "a112c8f694be7f73",
+    "289561a1ef351dd8",
+    "d2238970fa48ba9a",
+    "f6cc28260ea40cf7",
+    "a9be2b5e1544789c",
+    "8c228e6b8d89f777",
+    "62e310516dd94690",
+    "6effe0ae6c0b7f6d",
+    "383f5e9096f585d8",
+    "03b99524325e2606",
+    "bfe4fa3d3e82eb25",
+    "0634f9f1cbce3487",
+    "bda031c093ec0985",
+    "5d0052e0999f6f3a",
+    "bfec5b3e99ee21d8",
+    "34be453d64d2b729",
+    "ca359b83256f542b",
+    "1a764f1d3fbedfeb",
+    "df25533c57bb219d",
+    "7100eac6880dc95a",
+    "be77a88339ac7368",
+    "d34d2b300d5e9bfe",
+    "0d3eff9b52c2e232",
+    "8526b6e89379b972",
+    "02d310d23758b4ad",
+    "31d71b8eb43080d7",
+    "09f77c59c6411c91",
+    "b2fc83a57c7dce4e",
+    "f89a5f14ff7723ec",
+    "11d7f0793f4e00bb",
+    "19a3ac7d3778e482",
+    "ab77d61efdca1401",
+    "58b3b289a26d4695",
+    "cf22564aef49a6ef",
+    "d531ad2b8f185c95",
+    "1db38efbc423b088",
+    "69c9db06ca38d352",
+    "c446406e39b51c89",
+    "c30f997bfd6b2cec",
+    "98545a2bd41ebe37",
+    "4da5f5e5e4e5fd60",
+    "848c7f9e0848878c",
+    "2d528d05c9941d7c",
+    "adce03b1fd9c0221",
+    "bbd9316903e4f95b",
+    "0eb76ed9f61d3373",
+    "ee3f005e081dc1b1",
+    "ef716d7d6efbf868",
+    "65e7c34013da0e26",
+    "2c9cf33549182765",
+    "f4e2dcbec8030624",
+    "5c51031ecbb65ba4",
+    "6119558535a53baa",
+    "5bc55e7948510fd9",
+    "d2e7fe8c05fce629",
+    "c8c34967e43d2194",
+    "7be7fa000270a288",
+    "b075d45a6391f308",
+    "57caa4604fe3f7aa",
+    "a2d3aeeeea8e3bf8",
+    "7ec2199f1a47f123",
+    "d3a6226346119b28",
+    "bb07747fb6c721ab",
+    "3c4bf28be9ae4981",
+    "c7a8eb276719e8c1"
+  ],
+  "corrections": [
+    {
+      "record_id": "ecc-okgil-2027",
+      "event_id": "62e310516dd94690",
+      "institution_set": {
+        "registration_note": "사전예약·선착순 마감. 후속 공식10/2공지의 첨부 이미지에서 10/27·11/10 마감 확인.",
+        "checked_at": "2026-10-18T16:57:51+09:00"
+      },
+      "event_set": {
+        "status": "closed",
+        "status_note": "후속 공식 10/2 공지 첨부 이미지에서 해당 회차 마감 명시. 현재 예약표 미노출은 반증이 아님.",
+        "checked_at": "2026-10-18T16:57:51+09:00"
+      },
+      "event_remove": [
+        "caveat"
+      ],
+      "add_source_url": "https://upsisa.ybmnet.co.kr/si/ybmecc_com/www/scNotice/KakaoTalk_20261002_151254766.png"
+    },
+    {
+      "record_id": "ecc-okgil-2027",
+      "event_id": "6effe0ae6c0b7f6d",
+      "institution_set": {
+        "registration_note": "사전예약·선착순 마감. 후속 공식10/2공지의 첨부 이미지에서 10/27·11/10 마감 확인.",
+        "checked_at": "2026-10-18T16:57:51+09:00"
+      },
+      "event_set": {
+        "status": "closed",
+        "status_note": "후속 공식 10/2 공지 첨부 이미지에서 해당 회차 마감 명시. 현재 예약표 미노출은 반증이 아님.",
+        "checked_at": "2026-10-18T16:57:51+09:00"
+      },
+      "event_remove": [
+        "caveat"
+      ],
+      "add_source_url": "https://upsisa.ybmnet.co.kr/si/ybmecc_com/www/scNotice/KakaoTalk_20261002_151254766.png"
+    },
+    {
+      "record_id": "rise-ilsan-madu-2027",
+      "event_id": "c8c34967e43d2194",
+      "institution_set": {
+        "phone": "031-904-0509",
+        "mapping.phone": "031-904-0509",
+        "mapping.contact_note": "2027 공식 연결 포스터에서 전화 확인.",
+        "checked_at": "2026-10-18T16:57:51+09:00"
+      },
+      "event_set": {
+        "age": "5~7세 (21~23년생) 오전유치부",
+        "checked_at": "2026-10-18T16:57:51+09:00"
+      },
+      "add_source_url": "https://k.kakaocdn.net/dn/co32Oi/dJMcafH61Oc/E6G4MrsVa1ntgbbVWDA2Y0/img_l.jpg"
+    }
+  ],
+  "added_sources": [
+    {
+      "url": "https://k.kakaocdn.net/dn/co32Oi/dJMcafH61Oc/E6G4MrsVa1ntgbbVWDA2Y0/img_l.jpg",
+      "checked_at": "2026-10-18T16:57:51+09:00",
+      "verification_method": "official_notice_linked_image_visually_read",
+      "parent_notice_url": "https://pf.kakao.com/_xoBvmK/114543951",
+      "evidence_excerpt": "5~7세 (21~23년생) 오전유치부"
+    },
+    {
+      "url": "https://upsisa.ybmnet.co.kr/si/ybmecc_com/www/scNotice/KakaoTalk_20261002_151254766.png",
+      "checked_at": "2026-10-18T16:57:51+09:00",
+      "verification_method": "official_notice_linked_image_visually_read",
+      "parent_notice_url": "https://www.ybmecc.com/okgil/notice/430477",
+      "evidence_excerpt": "10.27 마감 / 11.10 마감"
+    }
+  ],
+  "counts": {
+    "campuses": 87,
+    "dated_sessions": 213,
+    "undated_waitlists": 1,
+    "official_campus_ids_observed": 81,
+    "official_session_ids_observed": 65,
+    "psa_official_session_ids": 27,
+    "ecc_official_session_ids": 38,
+    "corrections": 3
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "localOnly": true,
+  "productionApplied": false,
+  "runs": [
+    {
+      "artifactPath": "data/review/english-kindergarten-20261018/local-rehearsal/1792313518840",
+      "localOnly": true,
+      "productionApplied": false,
+      "productionDryRun": false,
+      "checksum": "1067df0544b1eeac7e6cd41b21623fd12c8b46d0ea78c70042b9eb031bc1bc06",
+      "counts": {
+        "campusOperations": {
+          "CREATE_CAMPUS": 45,
+          "UNCHANGED": 34,
+          "UPDATE_ADDRESS": 1
+        },
+        "sessionOperations": {
+          "CREATE_SESSION": 213
+        },
+        "rejects": []
+      },
+      "applied": {
+        "createdCampuses": 45,
+        "updatedCampuses": 1,
+        "changedSessions": 213
+      },
+      "readback": "ALL_UNCHANGED",
+      "baselineQueues": {
+        "notifications": 0,
+        "deliveries": 0,
+        "notificationEvents": 0,
+        "cacheEvents": 0
+      },
+      "afterQueues": {
+        "notifications": 0,
+        "deliveries": 0,
+        "notificationEvents": 0,
+        "cacheEvents": 213
+      }
+    },
+    {
+      "artifactPath": "data/review/english-kindergarten-20261018/local-rehearsal/1792314122166",
+      "localOnly": true,
+      "productionApplied": false,
+      "productionDryRun": false,
+      "checksum": "1067df0544b1eeac7e6cd41b21623fd12c8b46d0ea78c70042b9eb031bc1bc06",
+      "counts": {
+        "campusOperations": {
+          "UNCHANGED": 80
+        },
+        "sessionOperations": {
+          "UNCHANGED": 213
+        },
+        "rejects": []
+      },
+      "applied": {
+        "createdCampuses": 0,
+        "updatedCampuses": 0,
+        "changedSessions": 0
+      },
+      "readback": "ALL_UNCHANGED",
+      "baselineQueues": {
+        "notifications": 0,
+        "deliveries": 0,
+        "notificationEvents": 0,
+        "cacheEvents": 213
+      },
+      "afterQueues": {
+        "notifications": 0,
+        "deliveries": 0,
+        "notificationEvents": 0,
+        "cacheEvents": 213
+      }
+    }
+  ]
+}

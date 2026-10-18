@@ -1,0 +1,196 @@
+{
+  "mode": "OFFLINE_PACKAGE_PLAN_NOT_DB_DRY_RUN",
+  "productionApplied": false,
+  "existingCampuses": 35,
+  "newCampusCandidates": 45,
+  "datedSessions": 213,
+  "excluded": [
+    {
+      "recordId": "poly-마포-2027",
+      "reason": "NO_DATED_SESSION",
+      "datedSessions": 0
+    },
+    {
+      "recordId": "poly-성동-2027",
+      "reason": "NO_DATED_SESSION",
+      "datedSessions": 0
+    },
+    {
+      "recordId": "poly-평촌-2027",
+      "reason": "NO_DATED_SESSION",
+      "datedSessions": 0
+    },
+    {
+      "recordId": "ybm-ecc-마포-2027",
+      "reason": "NO_DATED_SESSION",
+      "datedSessions": 0
+    },
+    {
+      "recordId": "ybm-ecc-성동-2027",
+      "reason": "NO_DATED_SESSION",
+      "datedSessions": 0
+    },
+    {
+      "recordId": "ybm-ecc-김포-2027",
+      "reason": "NO_DATED_SESSION",
+      "datedSessions": 0
+    },
+    {
+      "recordId": "ybm-ecc-문산-2027",
+      "reason": "NO_DATED_SESSION",
+      "datedSessions": 0
+    }
+  ],
+  "ageNormalization": {
+    "5,6,7세(ECP 5,6,7)": [
+      5,
+      6,
+      7
+    ],
+    "6,7세(ECP 6m,7m,7i)": [
+      6,
+      7
+    ],
+    "5세": [
+      5
+    ],
+    "6세": [
+      6
+    ],
+    "7세": [
+      7
+    ],
+    "5,6,7세": [
+      5,
+      6,
+      7
+    ],
+    "대상 연령은 캠퍼스에 문의해 주세요.": [],
+    "5, 6세": [
+      5,
+      6
+    ],
+    "5세, 6세": [
+      5,
+      6
+    ],
+    "5, 6, 7세": [
+      5,
+      6,
+      7
+    ],
+    "5세~7세": [
+      5,
+      6,
+      7
+    ],
+    "6, 7세": [
+      6,
+      7
+    ],
+    "전체(온라인)": [],
+    "6,7세": [
+      6,
+      7
+    ],
+    "5세 대상": [
+      5
+    ],
+    "6세, 7세 대상": [
+      6,
+      7
+    ],
+    "2027년 5,6,7세": [
+      5,
+      6,
+      7
+    ],
+    "2027년 6,7세": [
+      6,
+      7
+    ],
+    "2027년 5세": [
+      5
+    ],
+    "2027년 6세": [
+      6
+    ],
+    "2027년 7세": [
+      7
+    ],
+    "23년생 5세 ~ 21년 7세 통합": [
+      5,
+      6,
+      7
+    ],
+    "24년생 4세": [
+      4
+    ],
+    "23년생 5세 • 22년 6세": [
+      5,
+      6
+    ],
+    "22년생 6세 경력": [
+      6
+    ],
+    "2027학년도 5세·6세 (2022·2023년생)": [
+      5,
+      6
+    ],
+    "5, 6, 7세 통합": [
+      5,
+      6,
+      7
+    ],
+    "5세반 (23년생) / 6세반 (22년생)": [
+      5,
+      6
+    ],
+    "7세반 (21년생)": [
+      7
+    ],
+    "5세(23년생), 6세(22년생), 7세(21년생)": [
+      5,
+      6,
+      7
+    ],
+    "5~7세 (21~23년생) 오전유치부": [
+      5,
+      6,
+      7
+    ],
+    "5세 신규반 및 경험반 &amp; 6세 신규반": [
+      5,
+      6
+    ],
+    "6세 경험반 &amp; 7세 신규반 및 경험반": [
+      6,
+      7
+    ],
+    "7세 (2021년생)": [
+      7
+    ],
+    "6세 (2022년생)": [
+      6
+    ],
+    "5세 (2023년생)": [
+      5
+    ],
+    "1년차 신입생 대상 (5~7세); 2023/2022/2021년생": [
+      5,
+      6,
+      7
+    ],
+    "모든 년차 신입생 대상 (5~7세); 2023/2022/2021년생": [
+      5,
+      6,
+      7
+    ],
+    "2027년도 5세~7세 신규생 (2021, 2022, 2023년생); 2027년 1월 시작 예비6세 Advanced Prep (2022년생)": [
+      5,
+      6,
+      7
+    ]
+  },
+  "warning": "Final target counts require authenticated runtime dry-run incl hidden/draft duplicates and current version checks. Unknown ages remain empty; no birth-year inference."
+}

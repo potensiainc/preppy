@@ -1,0 +1,901 @@
+{
+  "checkedAt": "2026-10-18T08:31:23.508Z",
+  "readOnly": true,
+  "pages": [
+    "https://preppy.kr/institutions?category=ENGLISH_KINDERGARTEN",
+    "https://preppy.kr/institutions?category=ENGLISH_KINDERGARTEN&region=KR-11&page=2",
+    "https://preppy.kr/institutions?category=ENGLISH_KINDERGARTEN&region=KR-11&page=3",
+    "https://preppy.kr/institutions?category=ENGLISH_KINDERGARTEN&region=KR-11&page=4",
+    "https://preppy.kr/institutions?category=ENGLISH_KINDERGARTEN&region=KR-11&page=5",
+    "https://preppy.kr/institutions?category=ENGLISH_KINDERGARTEN&region=KR-11&page=6",
+    "https://preppy.kr/institutions?category=ENGLISH_KINDERGARTEN&region=KR-11&page=7",
+    "https://preppy.kr/institutions?category=ENGLISH_KINDERGARTEN&region=KR-11&page=8",
+    "https://preppy.kr/institutions?category=ENGLISH_KINDERGARTEN&region=KR-11&page=9",
+    "https://preppy.kr/institutions?category=ENGLISH_KINDERGARTEN&region=KR-11&page=10",
+    "https://preppy.kr/institutions?category=ENGLISH_KINDERGARTEN&region=KR-11&page=11"
+  ],
+  "records": [
+    {
+      "name": "라트",
+      "institutionId": "913c2510-22a5-4d46-985f-21595f07ead2",
+      "slug": "seoul-ek-gs-017",
+      "address": "서울 강남구 논현로 164 유니북스사옥",
+      "region": "강남구"
+    },
+    {
+      "name": "엘이씨",
+      "institutionId": "35fdcdad-2d47-4fb2-83e9-aabc906b6d5a",
+      "slug": "seoul-ek-gs-022",
+      "address": "서울 강남구 논현로 213",
+      "region": "강남구"
+    },
+    {
+      "name": "키비스",
+      "institutionId": "8d67d18c-3aa5-4a59-9214-1569ee538d0a",
+      "slug": "seoul-ek-gs-015",
+      "address": "서울 강남구 논현로 170 서연빌딩",
+      "region": "강남구"
+    },
+    {
+      "name": "러닝트리",
+      "institutionId": "73796fa0-0309-4cca-921a-cf3d2bd72108",
+      "slug": "seoul-ek-ne-024",
+      "address": "서울 도봉구 쌍문동 653 삼환프라자 401~404호",
+      "region": "도봉구"
+    },
+    {
+      "name": "몬테키즈",
+      "institutionId": "3eb93725-43d1-5943-8930-c623f228356d",
+      "slug": "montekids",
+      "address": "강남구 논현로152길 30",
+      "region": "강남구"
+    },
+    {
+      "name": "루이어학원",
+      "institutionId": "7078e612-ee6b-4698-ae78-e82c8e3946f2",
+      "slug": "seoul-ek-ne-019",
+      "address": "서울특별시 성북구 서경로6길 13 4층 401호, 5층 501호",
+      "region": "성북구"
+    },
+    {
+      "name": "알아이에스",
+      "institutionId": "9f33d13d-3fca-409e-8758-611c3854fec6",
+      "slug": "seoul-ek-gs-021",
+      "address": "서울 강남구 도곡로 157 원빌딩",
+      "region": "강남구"
+    },
+    {
+      "name": "에이미킨디",
+      "institutionId": "33aaacbe-317d-4897-a745-6c042592f3a6",
+      "slug": "seoul-ek-se-019",
+      "address": "서울특별시 송파구 백제고분로 160",
+      "region": "송파구"
+    },
+    {
+      "name": "에이지아이",
+      "institutionId": "9860cef0-e08c-41c8-9cfa-8a8676da9389",
+      "slug": "seoul-ek-gs-018",
+      "address": "서울 강남구 봉은사로26길 11",
+      "region": "강남구"
+    },
+    {
+      "name": "원일아이숲",
+      "institutionId": "e83d40a5-8044-4fd7-8b39-e3cb128fe665",
+      "slug": "seoul-ek-gs-023",
+      "address": "서울 강남구 광평로10길 15 상록수아파트",
+      "region": "강남구"
+    },
+    {
+      "name": "플럼어학원",
+      "institutionId": "f3904b5e-221d-5060-9d56-de835a28e4f0",
+      "slug": "plum-academy",
+      "address": "서초구 잠원로8길 13, 4층",
+      "region": "서초구"
+    },
+    {
+      "name": "로티스어학원",
+      "institutionId": "5bbb9e4d-15b4-401b-9f0f-ed8dca6e3390",
+      "slug": "seoul-ek-se-020",
+      "address": "서울특별시 송파구 삼전로 81 2~7층",
+      "region": "송파구"
+    },
+    {
+      "name": "비탑키즈학원",
+      "institutionId": "7c710642-77c2-505c-8f17-d1608c69b9ed",
+      "slug": "bitop-kids",
+      "address": "서초구 고무래로10길 42, 2층",
+      "region": "서초구"
+    },
+    {
+      "name": "이소키즈클럽",
+      "institutionId": "9f16312d-579c-4f8b-ba40-856107b64c15",
+      "slug": "seoul-ek-gs-002",
+      "address": "서울 서초구 동광로 95-2",
+      "region": "서초구"
+    },
+    {
+      "name": "키스톤어학원",
+      "institutionId": "462b3588-0ec4-428d-9920-4183171f3b31",
+      "slug": "seoul-ek-nw-021",
+      "address": "서울 용산구 효창원로 30-1 1~4층",
+      "region": "용산구"
+    },
+    {
+      "name": "키즈코어학원",
+      "institutionId": "c1d082ac-a941-4ca5-ae46-15b77f2a96ec",
+      "slug": "seoul-ek-nw-022",
+      "address": "서울 은평구 연서로 518 키즈코빌딩 2~4층·5층",
+      "region": "은평구"
+    },
+    {
+      "name": "트리니엘학원",
+      "institutionId": "522f6544-356b-494a-95e7-53e539049b52",
+      "slug": "seoul-ek-ne-016",
+      "address": "서울특별시 성동구 독서당로51길 32 영조빌딩 1~3층",
+      "region": "성동구"
+    },
+    {
+      "name": "하랑숲아이들",
+      "institutionId": "f2dcdd7b-244c-450e-bf52-e95f1d8abd3c",
+      "slug": "seoul-ek-se-018",
+      "address": "서울특별시 동작구 동작대로41길 7",
+      "region": "동작구"
+    },
+    {
+      "name": "대치폴리매그넷",
+      "institutionId": "321fc5d3-672b-4bc4-aeb2-0de827ce7891",
+      "slug": "seoul-ek-gs-016",
+      "address": "서울 강남구 영동대로 318 4~5층",
+      "region": "강남구"
+    },
+    {
+      "name": "떼뜨슐레어학원",
+      "institutionId": "364aa19c-5f8c-4b55-9a44-be5bd85eb1ae",
+      "slug": "seoul-ek-se-015",
+      "address": "서울특별시 구로구 경인로 661 신도림1차푸르지오 101동 5층",
+      "region": "구로구"
+    },
+    {
+      "name": "로즈몬트어학원",
+      "institutionId": "48d34b4e-6f11-4d32-b239-08b3e189885f",
+      "slug": "seoul-ek-ne-015",
+      "address": "서울시 성동구 왕십리로 38 2층",
+      "region": "성동구"
+    },
+    {
+      "name": "키즈랜드어학원",
+      "institutionId": "74a9e348-8ef3-4568-983f-6d37e95a1f40",
+      "slug": "seoul-ek-se-013",
+      "address": "서울특별시 구로구 신도림로 18",
+      "region": "구로구"
+    },
+    {
+      "name": "프뢰벨영어은물",
+      "institutionId": "add2d183-b914-5164-ad85-0147e8632176",
+      "slug": "froebel-english-gifts",
+      "address": "강남구 압구정로32길 11",
+      "region": "강남구"
+    },
+    {
+      "name": "숙명킨더아카데미",
+      "institutionId": "de682778-1040-4d9d-9343-1f2d86279be1",
+      "slug": "seoul-ek-gs-001",
+      "address": "서울 서초구 강남대로8길 23-11",
+      "region": "서초구"
+    },
+    {
+      "name": "프레이즈라라어학원",
+      "institutionId": "81a7b787-78a3-41f0-ba13-c54c35ffeaf6",
+      "slug": "seoul-ek-se-016",
+      "address": "서울특별시 구로구 신도림로 20 302호",
+      "region": "구로구"
+    },
+    {
+      "name": "레인보우플래닛어학원",
+      "institutionId": "5b4804f8-a479-4d17-9483-a41c8e338524",
+      "slug": "seoul-ek-ne-022",
+      "address": "서울특별시 성동구 무수막길 74 1~2층",
+      "region": "성동구"
+    },
+    {
+      "name": "대원킨더아카데미어학원",
+      "institutionId": "a4252383-b334-46a9-a3d6-396f4c1d9dec",
+      "slug": "seoul-ek-ne-017",
+      "address": "서울특별시 광진구 용마산로22길 28 1층",
+      "region": "광진구"
+    },
+    {
+      "name": "라스텔라아카데미어학원",
+      "institutionId": "69591887-c3a7-414b-8abc-01f8af3ee8ff",
+      "slug": "seoul-ek-ne-021",
+      "address": "서울특별시 광진구 아차산로 431 111호, 401호",
+      "region": "광진구"
+    },
+    {
+      "name": "대치잉글리쉬파크 대치",
+      "institutionId": "baa9af5f-c82d-4dee-800d-383925519550",
+      "slug": "seoul-ek-gs-004",
+      "address": "서울 강남구 영동대로 229",
+      "region": "강남구"
+    },
+    {
+      "name": "잉글리쉬러닝베이 목동",
+      "institutionId": "e0d1f043-8c0e-42cd-b730-815875db9914",
+      "slug": "seoul-ek-nw-019",
+      "address": "서울 양천구 신목로 50 리더스빌딩 2층",
+      "region": "양천구"
+    },
+    {
+      "name": "파머스국제어학원 미아브랜치",
+      "institutionId": "1b1a38bb-29de-4c53-87d5-0d2d30fa01e9",
+      "slug": "seoul-ek-ne-018",
+      "address": "서울특별시 강북구 삼양로19길 214 2층 201호, 5층 501호",
+      "region": "강북구"
+    },
+    {
+      "name": "프랜시스파커 대치",
+      "institutionId": "125d3c9c-3b03-400d-8eb6-96b354ff63ed",
+      "slug": "seoul-ek-gs-009",
+      "address": "서울 강남구 도곡로 528",
+      "region": "강남구"
+    },
+    {
+      "name": "프랜시스파커 서초",
+      "institutionId": "743c232e-508e-4b59-b299-b94e200e1aa8",
+      "slug": "seoul-ek-gs-010",
+      "address": "서울 서초구 효령로 49 백제빌딩",
+      "region": "서초구"
+    },
+    {
+      "name": "프랜시스파커 강동송파",
+      "institutionId": "7811a6b4-a437-42aa-ad4c-af084c5169c1",
+      "slug": "seoul-ek-se-004",
+      "address": "서울특별시 강동구 풍성로 96 1~3층",
+      "region": "강동구"
+    },
+    {
+      "name": "프랜시스파커 위례송파",
+      "institutionId": "f50e5826-705c-4cad-a1cf-b46a50e1f0e4",
+      "slug": "seoul-ek-se-021",
+      "address": "서울특별시 송파구 위례서로 240 2층 206~212호",
+      "region": "송파구"
+    },
+    {
+      "name": "라이즈어학원 강서캠퍼스",
+      "institutionId": "681d6d9a-d57d-40e5-8b77-9dfbea282a69",
+      "slug": "seoul-ek-nw-025",
+      "address": "서울 강서구 공항대로45길 15 가양역 두산위브 3~6층",
+      "region": "강서구"
+    },
+    {
+      "name": "라이즈어학원 마포캠퍼스",
+      "institutionId": "5dfce925-3158-4060-ad86-09a6e1951ca3",
+      "slug": "seoul-ek-nw-013",
+      "address": "서울 마포구 신촌로 120 (노고산동) 송원빌딩 4~6층",
+      "region": "마포구"
+    },
+    {
+      "name": "라이즈어학원 목동캠퍼스",
+      "institutionId": "25614ce1-8f8d-4f31-90d1-938be49d6ac4",
+      "slug": "seoul-ek-nw-014",
+      "address": "서울 양천구 목동동로 177 삼성쉐르빌2 2층",
+      "region": "양천구"
+    },
+    {
+      "name": "프랜시스파커 강서캠퍼스",
+      "institutionId": "fd5829b9-615d-4337-a34c-a0a5b49abe6a",
+      "slug": "seoul-ek-nw-015",
+      "address": "서울 강서구 양천로30길 123-28 6층",
+      "region": "강서구"
+    },
+    {
+      "name": "프랜시스파커 목동캠퍼스",
+      "institutionId": "117286a9-3ba3-4bb7-8cd9-cc597f2f4aad",
+      "slug": "seoul-ek-nw-016",
+      "address": "서울 양천구 오목로 299 웨스턴에비뉴 5층",
+      "region": "양천구"
+    },
+    {
+      "name": "라이즈어학원 서대문캠퍼스",
+      "institutionId": "5326168c-9796-420d-a346-6913ce20f32b",
+      "slug": "seoul-ek-nw-024",
+      "address": "서울 서대문구 수색로4나길 11 (남가좌동) A동 136호",
+      "region": "서대문구"
+    },
+    {
+      "name": "더아이노블 강남",
+      "institutionId": "16d6e78e-0df0-4dbe-a749-63f3b69adeec",
+      "slug": "seoul-ek-gs-020",
+      "address": "서울 강남구 남부순환로378길 20",
+      "region": "강남구"
+    },
+    {
+      "name": "메이플베어 강남",
+      "institutionId": "22922a4b-c1fc-4ce6-b0fd-b1a20767e661",
+      "slug": "seoul-ek-gs-003",
+      "address": "서울특별시 강남구 선릉로10길 18-4 2층",
+      "region": "강남구"
+    },
+    {
+      "name": "메이플베어 송파",
+      "institutionId": "bbf342ad-af39-4064-bfec-aa8ca5926694",
+      "slug": "seoul-ek-se-002",
+      "address": "서울특별시 송파구 백제고분로 482",
+      "region": "송파구"
+    },
+    {
+      "name": "엘란어학원 목동",
+      "institutionId": "dbd236da-58e5-415b-901f-a755005bacce",
+      "slug": "seoul-ek-nw-018",
+      "address": "서울 양천구 목동동로 233-1 현대드림타워 4층",
+      "region": "양천구"
+    },
+    {
+      "name": "월넛어학원 목동",
+      "institutionId": "212c4e2e-4a1a-4283-8506-2aabec8d1cd7",
+      "slug": "seoul-ek-nw-017",
+      "address": "서울 양천구 오목로 299 이스턴에비뉴 복합상가 121호",
+      "region": "양천구"
+    },
+    {
+      "name": "폴리어학원 강서캠퍼스",
+      "institutionId": "d6c664b7-e7f2-46ee-86de-0941f3540c06",
+      "slug": "seoul-ek-nw-001",
+      "address": "서울 강서구 공항대로41길 34 7층",
+      "region": "강서구"
+    },
+    {
+      "name": "폴리어학원 광진캠퍼스",
+      "institutionId": "4d9a1f63-726a-4e99-a819-0d03a181fea1",
+      "slug": "seoul-ek-ne-013",
+      "address": "서울특별시 광진구 자양로 113 구의 현대 하이엘 2층",
+      "region": "광진구"
+    },
+    {
+      "name": "폴리어학원 마포캠퍼스",
+      "institutionId": "d7635b5c-b2f0-4e0d-a229-9405cb273521",
+      "slug": "seoul-ek-nw-002",
+      "address": "서울 마포구 독막로 320 4층",
+      "region": "마포구"
+    },
+    {
+      "name": "폴리어학원 목동캠퍼스",
+      "institutionId": "6753f385-d3a0-43b2-b1fa-85b30f6748ad",
+      "slug": "seoul-ek-nw-003",
+      "address": "서울 양천구 목동동로 233-3 4층",
+      "region": "양천구"
+    },
+    {
+      "name": "폴리어학원 성동캠퍼스",
+      "institutionId": "e43b4c43-1fb7-4931-a218-5852c17fd2f0",
+      "slug": "seoul-ek-nw-005",
+      "address": "서울 중구 다산로 162 1·2층",
+      "region": "중구"
+    },
+    {
+      "name": "폴리어학원 성북캠퍼스",
+      "institutionId": "091c90a1-f960-4d8c-a0ac-161c965cf010",
+      "slug": "seoul-ek-ne-011",
+      "address": "서울특별시 성북구 동소문로 63 드림트리빌딩 3층",
+      "region": "성북구"
+    },
+    {
+      "name": "폴리어학원 은평캠퍼스",
+      "institutionId": "080d4d74-ce97-4b49-acad-e58791799806",
+      "slug": "seoul-ek-nw-006",
+      "address": "서울 은평구 진관2로 29-21 드림스퀘어 5층",
+      "region": "은평구"
+    },
+    {
+      "name": "폴리어학원 중계캠퍼스",
+      "institutionId": "7ca1184b-f94c-4f73-9ce5-14cc9707eed5",
+      "slug": "seoul-ek-ne-010",
+      "address": "서울특별시 노원구 노원로 236 5층 일부, 6층",
+      "region": "노원구"
+    },
+    {
+      "name": "폴리어학원 동대문캠퍼스",
+      "institutionId": "592fa3f1-fcec-4054-b2d5-8d7345e4d053",
+      "slug": "seoul-ek-ne-012",
+      "address": "서울 동대문구 장안벚꽃로1길 7 장안힐스테이트 상가동 3층",
+      "region": "동대문구"
+    },
+    {
+      "name": "폴리어학원 서대문캠퍼스",
+      "institutionId": "e1553666-6bb3-4cc7-8807-2f0ed9c29f9a",
+      "slug": "seoul-ek-nw-004",
+      "address": "서울 서대문구 응암로 76 새호빌딩 5·6층",
+      "region": "서대문구"
+    },
+    {
+      "name": "더아이노블 한남본원어학원",
+      "institutionId": "e4e19d51-563d-401b-85ed-542f73ec2b6a",
+      "slug": "seoul-ek-ne-023",
+      "address": "서울특별시 성동구 독서당로 223 상가동 106~108호",
+      "region": "성동구"
+    },
+    {
+      "name": "킹스키즈 강남",
+      "institutionId": "07065132-e2e4-448a-8134-2a8ec41cc183",
+      "slug": "seoul-ek-gs-007",
+      "address": "서울 강남구 도곡로73길 31-1",
+      "region": "강남구"
+    },
+    {
+      "name": "킹스키즈 개포",
+      "institutionId": "608d976f-e5b6-426b-a8b1-d9a098010ef2",
+      "slug": "seoul-ek-gs-014",
+      "address": "서울 강남구 논현로8길 5",
+      "region": "강남구"
+    },
+    {
+      "name": "킹스키즈 대치",
+      "institutionId": "367da7c2-4245-4d80-93e7-b592c59ff47c",
+      "slug": "seoul-ek-gs-006",
+      "address": "서울 강남구 영동대로50길 14",
+      "region": "강남구"
+    },
+    {
+      "name": "킹스키즈 송파",
+      "institutionId": "7292bc6d-9812-4ca2-9fee-108b8d711167",
+      "slug": "seoul-ek-se-023",
+      "address": "서울특별시 송파구 중대로 180",
+      "region": "송파구"
+    },
+    {
+      "name": "라이즈 성북",
+      "institutionId": "052d4a37-673e-43bf-9e59-08a076fdfbcd",
+      "slug": "seoul-ek-ne-014",
+      "address": "서울 성북구 삼선동3가 95 JH빌딩 2~4층",
+      "region": "성북구"
+    },
+    {
+      "name": "라이즈 강동캠퍼스",
+      "institutionId": "f1acdd40-79e6-4aff-85a9-032f4f5c3790",
+      "slug": "seoul-ek-se-005",
+      "address": "서울특별시 강동구 양재대로 1544 KT&G강동지사 1층·4층",
+      "region": "강동구"
+    },
+    {
+      "name": "라이즈 송파캠퍼스",
+      "institutionId": "7133b65c-ea23-4f35-bef6-22e67d3d0b97",
+      "slug": "seoul-ek-se-006",
+      "address": "서울특별시 송파구 백제고분로 170",
+      "region": "송파구"
+    },
+    {
+      "name": "라이즈 프리머스 강남",
+      "institutionId": "8d4d0ffc-dc10-4f18-b2ce-df1388bf2c3c",
+      "slug": "seoul-ek-gs-008",
+      "address": "서울 강남구 도곡로37길 5 라이즈빌딩",
+      "region": "강남구"
+    },
+    {
+      "name": "키즈빌 이시에스 어학원",
+      "institutionId": "3557705d-2a9f-4124-89ab-2bbeb8b3acae",
+      "slug": "seoul-ek-se-014",
+      "address": "서울특별시 구로구 새말로 52 종우빌딩 4층",
+      "region": "구로구"
+    },
+    {
+      "name": "코니스 몬테소리 국제유아스쿨",
+      "institutionId": "1c9343ca-1b4a-4bf0-ad31-bdec04c58940",
+      "slug": "seoul-ek-nw-020",
+      "address": "서울 종로구 평창12길 18",
+      "region": "종로구"
+    },
+    {
+      "name": "폴리 관악캠퍼스",
+      "institutionId": "b65e4615-2034-4d81-8139-67d056b56560",
+      "slug": "seoul-ek-se-008",
+      "address": "서울특별시 관악구 관악로30길 12 우성타운상가 3층",
+      "region": "관악구"
+    },
+    {
+      "name": "폴리 송파캠퍼스",
+      "institutionId": "c0d4e76c-4202-4303-a8fe-8ecef71d4c6e",
+      "slug": "seoul-ek-se-007",
+      "address": "서울특별시 송파구 오금로 233 4~6층",
+      "region": "송파구"
+    },
+    {
+      "name": "ANKids",
+      "institutionId": "06576abb-4ce3-5a34-b0fc-5d1b42407066",
+      "slug": "ankids",
+      "address": "강남구 압구정로18길 25, 2층",
+      "region": "강남구"
+    },
+    {
+      "name": "AppleTree 개포",
+      "institutionId": "708af46a-1fb6-4b41-b77e-8e25797b51b8",
+      "slug": "seoul-ek-gs-012",
+      "address": "서울 강남구 개포로 408",
+      "region": "강남구"
+    },
+    {
+      "name": "AppleTree 압구정",
+      "institutionId": "eca3199f-0d55-5872-972a-9927eb5f6277",
+      "slug": "appletree-apgujeong",
+      "address": "강남구 압구정로 206",
+      "region": "강남구"
+    },
+    {
+      "name": "BIS",
+      "institutionId": "08d0793c-7739-51e1-8758-5143f3517400",
+      "slug": "bis",
+      "address": "서초구 고무래로10길 27, 2층",
+      "region": "서초구"
+    },
+    {
+      "name": "C-Gate",
+      "institutionId": "27240645-4da3-5206-85f7-cd301909b51d",
+      "slug": "c-gate",
+      "address": "강남구 압구정로18길 25, 3~4층",
+      "region": "강남구"
+    },
+    {
+      "name": "DEP 도산·대치잉글리쉬파크 압구정",
+      "institutionId": "0b7e747f-d0b0-53d4-9a69-5631e92e8309",
+      "slug": "dep-dosan-daechi-english-park-apgujeong",
+      "address": "강남구 언주로164길 16",
+      "region": "강남구"
+    },
+    {
+      "name": "DFI어학원",
+      "institutionId": "3cf36e28-4a7f-41ba-be55-772edeb7da1d",
+      "slug": "seoul-ek-se-017",
+      "address": "서울특별시 동작구 동작대로13길 18",
+      "region": "동작구"
+    },
+    {
+      "name": "ECY키즈스쿨",
+      "institutionId": "b7c8758f-79f2-4a39-9b8d-8412dac61271",
+      "slug": "seoul-ek-ne-025",
+      "address": "서울 도봉구 도봉로167길 13",
+      "region": "도봉구"
+    },
+    {
+      "name": "EELC Kinder",
+      "institutionId": "10e46cdb-462f-514b-a861-c0eed7a6fef8",
+      "slug": "eelc-kinder",
+      "address": "서초구 고무래로10-5, 5~6층",
+      "region": "서초구"
+    },
+    {
+      "name": "Gate 압구정",
+      "institutionId": "955ab9b9-06a9-509f-997c-25611be80184",
+      "slug": "gate-apgujeong",
+      "address": "강남구 압구정로 206",
+      "region": "강남구"
+    },
+    {
+      "name": "GATE 대치",
+      "institutionId": "697e874d-04e3-4e62-a0de-dd0f1370383b",
+      "slug": "seoul-ek-gs-011",
+      "address": "서울 강남구 도곡로 313 2층, 4~7층",
+      "region": "강남구"
+    },
+    {
+      "name": "GEA 강남잉글리쉬아카데미",
+      "institutionId": "a62fa855-05d9-5b15-9c07-eca89377bdd4",
+      "slug": "gea-gangnam-english-academy",
+      "address": "강남구 언주로164길 12",
+      "region": "강남구"
+    },
+    {
+      "name": "GIPS 성북어학원",
+      "institutionId": "dc57c141-5ff6-4b1a-869b-e43463586085",
+      "slug": "seoul-ek-ne-020",
+      "address": "서울특별시 성북구 정릉로 250 외 5필지 4층",
+      "region": "성북구"
+    },
+    {
+      "name": "GIS 그림아이어학원",
+      "institutionId": "d0885e47-2e6b-4423-895d-0334d62787bd",
+      "slug": "seoul-ek-se-022",
+      "address": "서울특별시 송파구 동남로23나길 6 1~2층",
+      "region": "송파구"
+    },
+    {
+      "name": "i-Garten 반포",
+      "institutionId": "77a1ba4c-cd3d-5c19-a7eb-ae1d12cef07d",
+      "slug": "i-garten-banpo",
+      "address": "서초구 고무래로10길 27, 5~6층",
+      "region": "서초구"
+    },
+    {
+      "name": "iGarten 강남대치",
+      "institutionId": "e2a2cca7-8f57-4573-8daf-da14b0250768",
+      "slug": "seoul-ek-gs-025",
+      "address": "서울 강남구 개포로 264 1~2층",
+      "region": "강남구"
+    },
+    {
+      "name": "Little Learners",
+      "institutionId": "f53c09f2-8eb2-51c8-9017-58d24d02ff55",
+      "slug": "little-learners",
+      "address": "서초구 서래로5길 61",
+      "region": "서초구"
+    },
+    {
+      "name": "LS 압구정",
+      "institutionId": "6a83a220-2cd7-580a-9567-e5970b264c0f",
+      "slug": "ls-apgujeong",
+      "address": "강남구 압구정로30길 62, 1~2층",
+      "region": "강남구"
+    },
+    {
+      "name": "PODO Club",
+      "institutionId": "da029601-bbbd-5bfc-837b-205385e581f9",
+      "slug": "podo-club",
+      "address": "강남구 논현로153길 45",
+      "region": "강남구"
+    },
+    {
+      "name": "PSA 개포",
+      "institutionId": "d848da28-9a73-453b-b6f7-cd86f7b5b106",
+      "slug": "psa-gaepo",
+      "address": "서울특별시 강남구 개포로 408 (개포동, 한국외국인학교) PSA개포",
+      "region": "강남구"
+    },
+    {
+      "name": "PSA 목동",
+      "institutionId": "d4150f08-82d5-4ca1-8dd6-e34ccb319ef6",
+      "slug": "psa-mokdong",
+      "address": "서울특별시 양천구 중앙로 181 (신정동, 복합메디컬타운) 2층",
+      "region": "양천구"
+    },
+    {
+      "name": "PSA 서초",
+      "institutionId": "1d33f72d-c1e5-4254-8eb9-66b727926657",
+      "slug": "psa-seocho",
+      "address": "서울특별시 서초구 효령로 231 (서초동, 진양제약사옥) PSA 3층",
+      "region": "서초구"
+    },
+    {
+      "name": "PSA 용산",
+      "institutionId": "43ce06d7-595e-4e28-9ebd-2d8b11788b5f",
+      "slug": "psa-yongsan",
+      "address": "서울특별시 용산구 녹사평대로 245 (용산동2가, 한신아파트) 상가 3동",
+      "region": "용산구"
+    },
+    {
+      "name": "PSA 압구정",
+      "institutionId": "fc8f4337-ed63-5739-8c11-72b81d6bf3f9",
+      "slug": "psa-apgujeong",
+      "address": "강남구 압구정로 206, 2~3층",
+      "region": "강남구"
+    },
+    {
+      "name": "Revere",
+      "institutionId": "04ed72b6-30f8-5dd5-8abb-60eecfa66e9a",
+      "slug": "revere",
+      "address": "강남구 도산대로23길 42",
+      "region": "강남구"
+    },
+    {
+      "name": "RISE 서초",
+      "institutionId": "e0452cb1-bdef-5d71-bc74-3f2a04f0db05",
+      "slug": "rise-seocho",
+      "address": "서초구 고무래로10길 26, 2층",
+      "region": "서초구"
+    },
+    {
+      "name": "서초SCE",
+      "institutionId": "dbd4efe6-e7b7-527e-ba5b-a8175942335b",
+      "slug": "seocho-sce",
+      "address": "서초구 서초중앙로 225, 3층",
+      "region": "서초구"
+    },
+    {
+      "name": "SIE.K",
+      "institutionId": "37093d39-1f36-4edb-bafd-0273e48016e8",
+      "slug": "seoul-ek-gs-024",
+      "address": "서울 강남구 테헤란로113길 7 본관 4~6층",
+      "region": "강남구"
+    },
+    {
+      "name": "서강SLP 강남",
+      "institutionId": "b314b514-a340-4c95-8d72-b816b35ffc06",
+      "slug": "seoul-ek-gs-019",
+      "address": "서울 강남구 개포로 626",
+      "region": "강남구"
+    },
+    {
+      "name": "서강SLP 노원",
+      "institutionId": "074854b8-8b3c-4ce4-a531-79ee642d3b04",
+      "slug": "seoul-ek-ne-008",
+      "address": "서울 노원구 노원로 248 401호",
+      "region": "노원구"
+    },
+    {
+      "name": "서강SLP 서초",
+      "institutionId": "495bfbc7-4f05-5ecc-93dd-92bfac9d40a4",
+      "slug": "seogang-slp-seocho",
+      "address": "서초구 고무래로 6-10",
+      "region": "서초구"
+    },
+    {
+      "name": "서강SLP 성북",
+      "institutionId": "aae3c95a-5b7a-4544-8228-5a2614dcd26b",
+      "slug": "seoul-ek-ne-009",
+      "address": "서울 성북구 동소문로 43 흥화브라운 동소문빌딩 3층",
+      "region": "성북구"
+    },
+    {
+      "name": "서강SLP 강서학당",
+      "institutionId": "d7d43c00-9305-43be-9abb-60eb815fce0b",
+      "slug": "seoul-ek-nw-007",
+      "address": "서울 강서구 강서로 392-11 진성프라자 3층",
+      "region": "강서구"
+    },
+    {
+      "name": "서강SLP 공덕학당",
+      "institutionId": "50d1714f-e426-4dc8-921f-8ed2dddcb9b9",
+      "slug": "seoul-ek-nw-010",
+      "address": "서울 마포구 독막로 275 광성벤쳐프라자 2·3층",
+      "region": "마포구"
+    },
+    {
+      "name": "서강SLP 관악학당",
+      "institutionId": "ca8ba9db-0431-4cc3-942c-115f62771205",
+      "slug": "seoul-ek-se-009",
+      "address": "서울특별시 관악구 은천로 81 은천빌딩 2~3층",
+      "region": "관악구"
+    },
+    {
+      "name": "서강SLP 동작학당",
+      "institutionId": "fbd0041c-8f86-4a68-ac74-fdf152a20778",
+      "slug": "seoul-ek-se-010",
+      "address": "서울특별시 동작구 상도로 34 산맥빌딩 2~3층",
+      "region": "동작구"
+    },
+    {
+      "name": "서강SLP 목동학당",
+      "institutionId": "dc15aadb-94da-4247-ba72-14eee1712e85",
+      "slug": "seoul-ek-nw-008",
+      "address": "서울 양천구 목동동로 435 화성프라자 7층",
+      "region": "양천구"
+    },
+    {
+      "name": "서강SLP 성동학당",
+      "institutionId": "3a333bc3-ff8d-4c1d-9fc6-5ebad1454535",
+      "slug": "seoul-ek-nw-023",
+      "address": "서울 중구 왕십리로 407 상가동 2층",
+      "region": "중구"
+    },
+    {
+      "name": "서강SLP 은평학당",
+      "institutionId": "beebcff0-5f76-40e7-92e9-ec126c47bcc0",
+      "slug": "seoul-ek-nw-011",
+      "address": "서울 은평구 연서로 161 BYC빌딩 5층",
+      "region": "은평구"
+    },
+    {
+      "name": "서강SLP 서대문학당",
+      "institutionId": "57153446-a43f-414b-b920-f46c6a574167",
+      "slug": "seoul-ek-nw-009",
+      "address": "서울 서대문구 연희로 113 삼양빌딩 2·3층",
+      "region": "서대문구"
+    },
+    {
+      "name": "서강SLP 영등포학당",
+      "institutionId": "797b59eb-b847-4bbc-86c4-abb544e20354",
+      "slug": "seoul-ek-se-011",
+      "address": "서울특별시 영등포구 대림로 247 대림프라자 4~5층",
+      "region": "영등포구"
+    },
+    {
+      "name": "SOT",
+      "institutionId": "21d50cc1-9559-5216-8469-c9608cd423a4",
+      "slug": "sot",
+      "address": "서초구 서초중앙로31길 14-4",
+      "region": "서초구"
+    },
+    {
+      "name": "설리번 프렙·SPS",
+      "institutionId": "8d81faab-b63a-5266-9ac2-0678a1ad0cff",
+      "slug": "sullivan-prep-sps",
+      "address": "강남구 도산대로17길 21",
+      "region": "강남구"
+    },
+    {
+      "name": "Stella K 서초",
+      "institutionId": "8277e0ca-5134-5dc9-8092-4abb171640fb",
+      "slug": "stella-k-seocho",
+      "address": "서초구 신반포로 23, 3층",
+      "region": "서초구"
+    },
+    {
+      "name": "Wyatt",
+      "institutionId": "8fce1fb7-3606-5f04-8410-00fa8da1f377",
+      "slug": "wyatt",
+      "address": "서초구 동광로33길 10-6",
+      "region": "서초구"
+    },
+    {
+      "name": "YBM ECC 강동",
+      "institutionId": "cb9417fe-5240-4938-b4af-58d04c306116",
+      "slug": "seoul-ek-se-001",
+      "address": "서울특별시 강동구 양재대로 1590 수목빌딩 3~5층",
+      "region": "강동구"
+    },
+    {
+      "name": "YBM ECC 광진",
+      "institutionId": "a8337876-72f4-46b9-9719-73c25b30a38b",
+      "slug": "seoul-ek-ne-006",
+      "address": "서울특별시 광진구 아차산로 471 CS프라자 5층",
+      "region": "광진구"
+    },
+    {
+      "name": "YBM ECC 노원",
+      "institutionId": "507a0121-d44c-43df-9f72-6ed0cf508fab",
+      "slug": "seoul-ek-ne-001",
+      "address": "서울특별시 노원구 한글비석로 263 성모빌딩 6,7층",
+      "region": "노원구"
+    },
+    {
+      "name": "YBM ECC 대치",
+      "institutionId": "d08ab915-bf58-4432-a08c-f25cf4bbf720",
+      "slug": "seoul-ek-gs-005",
+      "address": "서울특별시 강남구 역삼로 442",
+      "region": "강남구"
+    },
+    {
+      "name": "YBM ECC 석계",
+      "institutionId": "5842babe-75da-4564-809f-44feb4d488fa",
+      "slug": "seoul-ek-ne-007",
+      "address": "서울특별시 성북구 화랑로 254 대성프라자 3층",
+      "region": "성북구"
+    },
+    {
+      "name": "YBM ECC 성동",
+      "institutionId": "fe0efc27-0b22-4586-bb1d-070811f617c5",
+      "slug": "seoul-ek-ne-005",
+      "address": "서울특별시 성동구 무학봉길 36",
+      "region": "성동구"
+    },
+    {
+      "name": "YBM ECC 성북",
+      "institutionId": "286b6f0c-22b1-4b11-9479-4d93b467ad1f",
+      "slug": "seoul-ek-ne-003",
+      "address": "서울특별시 성북구 동소문로 47 부라다리빙텔 2층",
+      "region": "성북구"
+    },
+    {
+      "name": "YBM ECC 쌍문",
+      "institutionId": "07d3be58-3f1a-4d35-8c0e-c0a892e778ea",
+      "slug": "seoul-ek-ne-002",
+      "address": "서울특별시 도봉구 도봉로136길 7 4층",
+      "region": "도봉구"
+    },
+    {
+      "name": "YBM ECC 동대문",
+      "institutionId": "e7eacf80-bc04-4068-8223-46762e3a2f4e",
+      "slug": "seoul-ek-ne-004",
+      "address": "서울특별시 동대문구 사가정로 80 카운티에비뉴 2층",
+      "region": "동대문구"
+    },
+    {
+      "name": "YBM ECC 여의도",
+      "institutionId": "80e393b5-a4af-4fa0-9bcb-45af57d8b122",
+      "slug": "seoul-ek-se-012",
+      "address": "서울특별시 영등포구 국제금융로 79 2층",
+      "region": "영등포구"
+    },
+    {
+      "name": "YBM ECC 송파잠실",
+      "institutionId": "93404cb9-4e1b-46c4-9f81-e280b0245a75",
+      "slug": "seoul-ek-se-003",
+      "address": "서울특별시 송파구 오금로 235 젬스빌딩 4층",
+      "region": "송파구"
+    },
+    {
+      "name": "YBM ECC 마포서대문",
+      "institutionId": "ad570bd7-c690-4b60-b71a-1042baf0d86b",
+      "slug": "seoul-ek-nw-012",
+      "address": "서울 서대문구 성산로 553 동문빌딩",
+      "region": "서대문구"
+    }
+  ]
+}

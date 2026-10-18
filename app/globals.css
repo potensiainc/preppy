@@ -2475,13 +2475,27 @@ h3 {
 
 .ek-summary-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
   gap: 1px;
   margin: 0;
   overflow: hidden;
   border: 1px solid var(--rule);
   border-radius: 12px;
   background: var(--rule);
+}
+
+.ek-session-card {
+  padding-block: 20px;
+  border-bottom: 1px solid var(--rule);
+  overflow-wrap: anywhere;
+  scroll-margin-top: 90px;
+}
+
+.ek-session-card a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-right: 16px;
 }
 
 .ek-summary-value {

@@ -363,7 +363,6 @@ describe("international school public query guard", () => {
 
     for (const filter of [
       { hasConfirmedTuition: true },
-      { minAge: 5 },
       { transport: "AVAILABLE" as const },
     ]) {
       const result = await listInstitutions(runtime.executor, {
@@ -375,6 +374,16 @@ describe("international school public query guard", () => {
       });
       expect(result.items.map((item) => item.id)).toEqual([kindergarten.id]);
     }
+    // Operating-age facts remain public; admission-age search requires a
+    // reviewed target on an eligible future session rather than this fact range.
+    const admissionAge = await listInstitutions(runtime.executor, {
+      category: "ENGLISH_KINDERGARTEN",
+      query: prefix,
+      minAge: 5,
+      page: 1,
+      pageSize: 50,
+    });
+    expect(admissionAge.items).toEqual([]);
   });
 
   it("requires complete official captures before a native opportunity is public", async () => {
