@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   CACHE_REVALIDATION_EVENT,
+  parseCacheRevalidationPayload,
   parseArticleCacheRevalidationOutboxInput,
   parseArticleCacheRevalidationPayload,
 } from "@/src/modules/cache/revalidation-contract";
@@ -122,4 +123,37 @@ describe("WP-13 cache revalidation contract", () => {
       ).toBeNull();
     },
   );
+});
+
+describe("admin correction cache V2 boundary", () => {
+  const correction = {
+    version: 2,
+    targetType: "OPPORTUNITY",
+    targetId: OPPORTUNITY_ID,
+    versionId: ARTICLE_ID,
+    reason: "ADMIN_CORRECTION",
+  };
+  it("preserves V1 compatibility and accepts only the closed V2 identity", () => {
+    expect(parseCacheRevalidationPayload(payload())).toEqual(payload());
+    expect(parseCacheRevalidationPayload(correction)).toEqual(correction);
+    expect(
+      parseCacheRevalidationPayload({
+        ...correction,
+        targetType: "INSTITUTION",
+      }),
+    ).not.toBeNull();
+  });
+  it.each([
+    { path: "/admin" },
+    { tags: ["arbitrary"] },
+    { targetType: "ARTICLE" },
+    { targetId: "not-uuid" },
+    { versionId: "not-uuid" },
+    { reason: "UNTRUSTED" },
+    { version: 3 },
+  ])("rejects injected paths, tags and invalid identity %j", (override) => {
+    expect(
+      parseCacheRevalidationPayload({ ...correction, ...override }),
+    ).toBeNull();
+  });
 });

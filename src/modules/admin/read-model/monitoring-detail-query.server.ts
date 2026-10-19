@@ -34,6 +34,7 @@ import { safeAbsoluteHttpUrl } from "./source-query.server";
 type AdminMonitoringObservationDTO = Readonly<{
   id: string;
   observedAt: string;
+  snapshotId: string | null;
   outcome: string;
   httpStatus: number | null;
   errorCode: string | null;
@@ -123,6 +124,7 @@ export type AdminMonitoringLegacyDetailDTO = AdminMonitoringBaseDetailDTO &
       knowledgeState: string;
       eventStatus: string;
       displayTitle: string;
+      officialNotes: string | null;
       eventStartDate: string | null;
       eventStartTime: string | null;
       eventEndDate: string | null;
@@ -145,6 +147,7 @@ export type AdminMonitoringFactDTO = Readonly<{
     versionId: string;
     versionNumber: number;
     displayText: string | null;
+    valueJson: Record<string, unknown>;
     verifiedAt: string | null;
     validFrom: string | null;
     validUntil: string | null;
@@ -306,6 +309,7 @@ async function loadLatestObservation(
     .select({
       id: sourceObservations.id,
       observedAt: sourceObservations.observedAt,
+      snapshotId: sourceObservations.snapshotId,
       outcome: sourceObservations.outcome,
       httpStatus: sourceObservations.httpStatus,
       errorCode: sourceObservations.errorCode,
@@ -319,6 +323,7 @@ async function loadLatestObservation(
     ? {
         id: row.id.toString(),
         observedAt: iso(row.observedAt)!,
+        snapshotId: row.snapshotId,
         outcome: row.outcome,
         httpStatus: row.httpStatus,
         errorCode: row.errorCode,
@@ -385,6 +390,7 @@ async function loadLegacyCurrent(
       knowledgeState: admissionEventVersions.knowledgeState,
       eventStatus: admissionEventVersions.eventStatus,
       displayTitle: admissionEventVersions.displayTitle,
+      officialNotes: admissionEventVersions.officialNotes,
       eventStartDate: admissionEventVersions.eventStartDate,
       eventStartTime: admissionEventVersions.eventStartTime,
       eventEndDate: admissionEventVersions.eventEndDate,
@@ -438,6 +444,7 @@ async function loadInstitutionFacts(
       versionId: institutionFactVersions.id,
       versionNumber: institutionFactVersions.versionNumber,
       displayText: institutionFactVersions.displayText,
+      valueJson: institutionFactVersions.valueJson,
       verifiedAt: institutionFactVersions.verifiedAt,
       validFrom: institutionFactVersions.validFrom,
       validUntil: institutionFactVersions.validUntil,
@@ -465,6 +472,7 @@ async function loadInstitutionFacts(
             versionId: row.versionId,
             versionNumber: row.versionNumber!,
             displayText: row.displayText,
+            valueJson: row.valueJson!,
             verifiedAt: iso(row.verifiedAt),
             validFrom: iso(row.validFrom),
             validUntil: iso(row.validUntil),

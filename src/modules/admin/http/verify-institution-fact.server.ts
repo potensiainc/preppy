@@ -1,6 +1,7 @@
 import "server-only";
 
 import { z } from "zod";
+import { adminCorrectionSchema } from "@/src/modules/monitoring/admin-correction";
 
 import type { AdminCommandContext } from "@/src/application/context";
 import { institutionFactTypeValues } from "@/src/db/schema";
@@ -53,6 +54,7 @@ const factPathSchema = z
 const factBodySchema = z
   .object({
     expectedCurrentVersionId: z.uuid().nullable(),
+    correction: adminCorrectionSchema.optional(),
     proposedState: z
       .object({
         valueJson: factValueSchema,

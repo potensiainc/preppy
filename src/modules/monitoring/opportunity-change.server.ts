@@ -1,5 +1,7 @@
 import "server-only";
 
+import type { AdminCorrection } from "./admin-correction";
+
 import { AuditWriter } from "@/src/application/audit-writer.server";
 import type { AdminCommandContext } from "@/src/application/context";
 import { OutboxWriter } from "@/src/application/outbox-writer.server";
@@ -25,6 +27,7 @@ type CommonChangeInput = Readonly<{
   changedFields: readonly string[];
   customerSignalEligible: boolean;
   auditReason?: string;
+  correctionReason?: AdminCorrection["reason"];
 }>;
 
 export type NativeChangeOrigin = CommonChangeInput &
@@ -123,15 +126,16 @@ export async function publishCanonicalOpportunityChange(
   await dependencies.writeAudit(
     {
       adminUserId: ctx.adminUserId,
-      actionType:
-        input.truthMode === "NATIVE"
+      actionType: input.correctionReason
+        ? "ADMIN_CORRECTION_NO_NOTIFY"
+        : input.truthMode === "NATIVE"
           ? "WP10B_VERIFY_NATIVE_OPPORTUNITY"
           : "WP10B_VERIFY_LEGACY_OPPORTUNITY",
       entityType: "OPPORTUNITY",
       entityId: input.opportunityId,
       correlationId: ctx.correlationId,
-      ...((input.auditReason ?? ctx.reason)
-        ? { reason: input.auditReason ?? ctx.reason }
+      ...((input.correctionReason ?? input.auditReason ?? ctx.reason)
+        ? { reason: input.correctionReason ?? input.auditReason ?? ctx.reason }
         : {}),
       occurredAt: ctx.occurredAt,
       metadata: {
@@ -148,7 +152,11 @@ export async function publishCanonicalOpportunityChange(
     executor,
   );
 
-  if (input.materiality === "NOTIFIABLE" && input.customerSignalEligible) {
+  if (
+    input.materiality === "NOTIFIABLE" &&
+    input.customerSignalEligible &&
+    !input.correctionReason
+  ) {
     await dependencies.enqueueOutbox(
       {
         eventType: "OPPORTUNITY_CHANGE_PUBLISHED",
@@ -169,7 +177,9 @@ export async function publishCanonicalOpportunityChange(
   return {
     change,
     outboxEnqueued:
-      input.materiality === "NOTIFIABLE" && input.customerSignalEligible,
+      input.materiality === "NOTIFIABLE" &&
+      input.customerSignalEligible &&
+      !input.correctionReason,
     created: true,
   };
 }

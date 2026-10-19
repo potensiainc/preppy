@@ -34,11 +34,14 @@ export async function generateMetadata({
 
 export default async function InstitutionDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ returnTo?: string | string[] }>;
 }) {
   const { slug } = await params;
   const data = await loadInstitution(slug);
+  const { returnTo } = await searchParams;
 
   const regionCode =
     data.institution.region &&
@@ -60,7 +63,10 @@ export default async function InstitutionDetailPage({
         ]}
         navigationKey={`INSTITUTION:${data.institution.id}`}
       />
-      <InstitutionDetailView data={data} />
+      <InstitutionDetailView
+        data={data}
+        returnTo={typeof returnTo === "string" ? returnTo : undefined}
+      />
     </>
   );
 }

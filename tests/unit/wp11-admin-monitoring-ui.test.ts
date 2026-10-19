@@ -30,9 +30,9 @@ async function importMonitoringInput(): Promise<MonitoringInputModule | null> {
 async function importMonitoringUi() {
   try {
     return await Promise.all([
-      vi.importActual<typeof import("@/app/admin/(protected)/monitoring/page-content")>(
-        "@/app/admin/(protected)/monitoring/page-content",
-      ),
+      vi.importActual<
+        typeof import("@/app/admin/(protected)/monitoring/page-content")
+      >("@/app/admin/(protected)/monitoring/page-content"),
       vi.importActual<
         typeof import("@/app/admin/_components/monitoring-detail")
       >("@/app/admin/_components/monitoring-detail"),
@@ -117,6 +117,7 @@ const nativeDetail = {
   institution: queueRow.institution,
   source: queueRow.source,
   latestObservation: {
+    snapshotId: "10101010-1010-4010-8010-101010101010",
     id: "42",
     observedAt: queueRow.lastCheckedAt,
     outcome: "CHANGED",
@@ -349,6 +350,9 @@ describe("WP-11 Admin Monitoring UI", () => {
     expect(markup).toContain("현재 기준 정보");
     expect(markup).toContain("최근 수집 결과");
     expect(markup).toContain("CHANGED");
+    expect(markup).toContain('name="snapshotId"');
+    expect(markup).not.toContain("CORRECTION_SOURCE_NO_NOTIFY");
+    expect(markup).toContain("출처나 근거만 바꾸는 정정은 지원하지 않아요.");
     expect(markup).toContain("변경 없음");
     expect(markup).toContain("변경 없음 기록");
     expect(markup).toMatch(
@@ -439,6 +443,7 @@ describe("WP-11 Admin Monitoring UI", () => {
         knowledgeState: "KNOWN",
         eventStatus: "ACTIVE",
         displayTitle: "2027 Legacy Applications",
+        officialNotes: "Keep original conditions & exceptions",
         eventStartDate: "2026-08-01",
         eventStartTime: "09:00:00",
         eventEndDate: "2026-08-31",
@@ -472,6 +477,7 @@ describe("WP-11 Admin Monitoring UI", () => {
     );
     expect(markup).toContain('name="eventStartTime"');
     expect(markup).toContain('value="09:00:00"');
+    expect(markup).toContain("Keep original conditions &amp; exceptions");
     expect(markup).not.toContain('name="businessState"');
   });
 
@@ -492,5 +498,52 @@ describe("WP-11 Admin Monitoring UI", () => {
     );
     expect(markup).not.toContain('name="materialityPair"');
     expect(markup).not.toContain("Materiality override");
+  });
+  it("preserves nested Fact JSON in the edit default and keeps correction opt-in", async () => {
+    const ui = await importMonitoringUi();
+    expect(ui).not.toBeNull();
+    if (!ui) return;
+    const valueJson = {
+      amount: 123,
+      nested: { values: [1, null, "condition & exception"] },
+    };
+    const markup = renderToStaticMarkup(
+      createElement(ui[1].MonitoringDetail, {
+        detail: {
+          ...nativeDetail,
+          kind: "INSTITUTION",
+          binding: {
+            ...nativeDetail.binding,
+            targetType: "INSTITUTION",
+            role: "OTHER",
+          },
+          currentTruth: {
+            operationalState: "ACTIVE",
+            publicationState: "PUBLISHED",
+          },
+          facts: [
+            {
+              factType: "TUITION",
+              expectedCurrentVersionId: nativeDetail.currentTruth.versionId,
+              current: {
+                versionId: nativeDetail.currentTruth.versionId,
+                versionNumber: 2,
+                displayText: "Original",
+                valueJson,
+                verifiedAt: nativeDetail.currentTruth.verifiedAt,
+                validFrom: null,
+                validUntil: null,
+              },
+            },
+          ],
+        },
+      }),
+    );
+    expect(markup).toContain("condition &amp; exception");
+    expect(markup).toContain("&quot;amount&quot;: 123");
+    expect(markup).toContain('name="correctionMode"');
+    expect(markup).not.toMatch(
+      /<input(?=[^>]*name="correctionMode")(?=[^>]*checked)[^>]*>/,
+    );
   });
 });

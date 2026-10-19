@@ -67,11 +67,24 @@ export function toInstitutionListInput(
   const districtInput = scalar(searchParams.district);
   const district =
     isEnglishKindergarten &&
+    (region === undefined || region === SEOUL_REGION_CODE) &&
     districtInput !== undefined &&
     seoulDistrictSet.has(districtInput)
       ? districtInput
       : undefined;
-  const effectiveRegion = isEnglishKindergarten ? SEOUL_REGION_CODE : region;
+  const effectiveRegion = isEnglishKindergarten
+    ? ["KR-11", "KR-41", "KR-28"].includes(region ?? "")
+      ? region
+      : SEOUL_REGION_CODE
+    : region;
+  const year = scalar(searchParams.admissionYear);
+  const admissionYear =
+    isEnglishKindergarten &&
+    year &&
+    /^20[0-9]{2}$/.test(year) &&
+    Number(year) >= 2026
+      ? Number(year)
+      : undefined;
   const hasConfirmedTuition =
     isEnglishKindergarten && scalar(searchParams.hasConfirmedTuition) === "true"
       ? true
@@ -117,6 +130,7 @@ export function toInstitutionListInput(
     ...(query === undefined ? {} : { query }),
     ...(hasConfirmedTuition === undefined ? {} : { hasConfirmedTuition }),
     ...(minAge === undefined ? {} : { minAge }),
+    ...(admissionYear === undefined ? {} : { admissionYear }),
     ...(transport === undefined ? {} : { transport }),
     ...(hasUpcomingInfoSession === undefined ? {} : { hasUpcomingInfoSession }),
     ...(sort === undefined ? {} : { sort }),

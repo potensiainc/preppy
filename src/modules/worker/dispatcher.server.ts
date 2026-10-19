@@ -4,6 +4,7 @@ import type { AnalyticsTracker } from "@/src/analytics/tracker";
 import type { TransactionManager } from "@/src/infrastructure/db/runtime.server";
 import type { EmailSender } from "@/src/modules/notification/email-sender";
 import type { CacheRevalidationClient } from "@/src/modules/cache/revalidation-client.server";
+import { cacheAggregateId } from "@/src/modules/cache/revalidation-contract";
 import { processCacheRevalidationEvent } from "@/src/modules/cache/process-revalidation.server";
 import { resolveOpportunityChangeEvent } from "@/src/modules/notification/resolver.server";
 import { processEmailDelivery } from "@/src/modules/notification/send-delivery.server";
@@ -96,7 +97,7 @@ export async function dispatchClaimedOutboxEvent(
 
   if (event.eventType === "CACHE_REVALIDATION_REQUESTED") {
     const payload = parseOutboxPayload(event.eventType, event.payload);
-    if (!payload || payload.articleId !== event.aggregateId) {
+    if (!payload || cacheAggregateId(payload) !== event.aggregateId) {
       return failMalformed(
         event,
         input.workerId,

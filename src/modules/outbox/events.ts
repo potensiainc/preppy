@@ -1,6 +1,6 @@
 import {
-  parseArticleCacheRevalidationPayload,
-  type ArticleCacheRevalidationPayloadV1,
+  parseCacheRevalidationPayload,
+  type CacheRevalidationPayload,
 } from "@/src/modules/cache/revalidation-contract";
 
 export const supportedOutboxEventTypes = [
@@ -28,7 +28,7 @@ export type OutboxEventPayloadMap = {
       payloadHash: string;
     }>;
   };
-  CACHE_REVALIDATION_REQUESTED: ArticleCacheRevalidationPayloadV1;
+  CACHE_REVALIDATION_REQUESTED: CacheRevalidationPayload;
 };
 
 const UUID_PATTERN =
@@ -141,7 +141,7 @@ export function parseOutboxPayload(
     return parseDeliveryPayload(value);
   }
   if (eventType === "CACHE_REVALIDATION_REQUESTED") {
-    return parseArticleCacheRevalidationPayload(value);
+    return parseCacheRevalidationPayload(value);
   }
   return null;
 }

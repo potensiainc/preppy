@@ -27,3 +27,6 @@
 **/PRODUCTION_BASELINE_AUDIT*
 **/PRODUCTION_EVIDENCE_ROLE_CORRECTION_REVIEW*
 **/production-evidence-role-review*
+
+# QA scripts depend on test-only fixtures and never belong in runtime images.
+scripts/qa/

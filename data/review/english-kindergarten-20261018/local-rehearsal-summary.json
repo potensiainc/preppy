@@ -1,0 +1,78 @@
+{
+  "localOnly": true,
+  "productionApplied": false,
+  "productionDryRun": false,
+  "schemaMigration": "0018_english_session_identity",
+  "runs": [
+    {
+      "artifactPath": "data/review/english-kindergarten-20261018/local-rehearsal/1792316245533",
+      "localOnly": true,
+      "productionApplied": false,
+      "productionDryRun": false,
+      "checksum": "fb9140e21c285bf4c95a34c6806b0d103fdadbeb0ae26370868989d6de1b178d",
+      "counts": {
+        "campusOperations": {
+          "CREATE_CAMPUS": 45,
+          "LINK_REVIEWED_IDENTITY": 34,
+          "UPDATE_ADDRESS": 1
+        },
+        "sessionOperations": {
+          "CREATE_SESSION": 213
+        },
+        "rejects": []
+      },
+      "applied": {
+        "createdCampuses": 45,
+        "updatedCampuses": 1,
+        "changedSessions": 213
+      },
+      "readback": "ALL_UNCHANGED",
+      "baselineQueues": {
+        "notifications": 0,
+        "deliveries": 0,
+        "notificationEvents": 0,
+        "cacheEvents": 0
+      },
+      "afterQueues": {
+        "notifications": 0,
+        "deliveries": 0,
+        "notificationEvents": 0,
+        "cacheEvents": 213
+      }
+    },
+    {
+      "artifactPath": "data/review/english-kindergarten-20261018/local-rehearsal/1792316311377",
+      "localOnly": true,
+      "productionApplied": false,
+      "productionDryRun": false,
+      "checksum": "fb9140e21c285bf4c95a34c6806b0d103fdadbeb0ae26370868989d6de1b178d",
+      "counts": {
+        "campusOperations": {
+          "UNCHANGED": 80
+        },
+        "sessionOperations": {
+          "UNCHANGED": 213
+        },
+        "rejects": []
+      },
+      "applied": {
+        "createdCampuses": 0,
+        "updatedCampuses": 0,
+        "changedSessions": 0
+      },
+      "readback": "ALL_UNCHANGED",
+      "baselineQueues": {
+        "notifications": 0,
+        "deliveries": 0,
+        "notificationEvents": 0,
+        "cacheEvents": 213
+      },
+      "afterQueues": {
+        "notifications": 0,
+        "deliveries": 0,
+        "notificationEvents": 0,
+        "cacheEvents": 213
+      }
+    }
+  ]
+}

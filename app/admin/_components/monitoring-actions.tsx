@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
 
+import { adminCorrectionSchema } from "@/src/modules/monitoring/admin-correction";
+
 import { isCanonicalAdminActionUrl } from "@/src/modules/admin/action-url";
 import type { AdminMonitoringDetailDTO } from "@/src/modules/admin/read-model/monitoring-detail-query.server";
 
@@ -16,6 +18,58 @@ type SubmitCandidate = (
   body: CandidateBodyBuilder,
   form: HTMLFormElement,
 ) => Promise<void>;
+
+export function correctionFromForm(form: FormData) {
+  if (form.get("correctionMode") === null) return {};
+  const parsed = adminCorrectionSchema.safeParse({
+    mode: form.get("correctionMode"),
+    reason: form.get("correctionReason"),
+  });
+  if (!parsed.success) throw new Error("정정 방식과 이유를 선택해 주세요.");
+  return { correction: parsed.data };
+}
+
+function CorrectionFields() {
+  const [enabled, setEnabled] = useState(false);
+  return (
+    <fieldset>
+      <legend>반영 방식</legend>
+      <p>
+        출처나 근거만 바꾸는 정정은 지원하지 않아요. 국제학교 정정은 확인한 원문
+        버전과 조회 기록이 함께 있어야 저장할 수 있어요.
+      </p>
+      <label>
+        <input
+          type="checkbox"
+          name="correctionMode"
+          value="ADMIN_CORRECTION_NO_NOTIFY"
+          checked={enabled}
+          onChange={(event) => setEnabled(event.target.checked)}
+        />
+        사용자 알림 없이 정정
+      </label>
+      <p>
+        공개 내용과 출처·변경 기록은 갱신하고, 이 정정의 사용자 알림은 생성하지
+        않아요. 중요도 재정의와 함께 선택할 수 없어요.
+      </p>
+      {enabled ? (
+        <label>
+          정정 이유
+          <select name="correctionReason" required defaultValue="">
+            <option value="" disabled>
+              이유를 선택해 주세요
+            </option>
+            <option value="CORRECTION_DATES_NO_NOTIFY">날짜·시각 정정</option>
+            <option value="CORRECTION_STATUS_NO_NOTIFY">
+              접수·진행 상태 정정
+            </option>
+            <option value="CORRECTION_CONTENT_NO_NOTIFY">내용 정정</option>
+          </select>
+        </label>
+      ) : null}
+    </fieldset>
+  );
+}
 
 function nullableString(form: FormData, name: string): string | null {
   const value = form.get(name);
@@ -156,9 +210,11 @@ function reloadDetailAfterAnnouncement(): void {
 
 function evidenceFromForm(form: FormData) {
   const observationId = nullableString(form, "observationId");
+  const snapshotId = nullableString(form, "snapshotId");
   return {
     evidenceRole: "PRIMARY",
     ...(observationId === null ? {} : { observationId }),
+    ...(snapshotId === null ? {} : { snapshotId }),
   };
 }
 
@@ -237,6 +293,7 @@ export function buildOpportunityCandidateBody(
     proposedState,
     sourceId,
     evidence: evidenceFromForm(form),
+    ...correctionFromForm(form),
     ...materiality,
   };
 }
@@ -279,6 +336,13 @@ function OpportunityCandidateForm({
         value={detail.expectedCurrentVersionId ?? ""}
       />
       <input type="hidden" name="sourceId" value={detail.source.id} />
+      {detail.latestObservation?.snapshotId ? (
+        <input
+          type="hidden"
+          name="snapshotId"
+          value={detail.latestObservation.snapshotId}
+        />
+      ) : null}
       {detail.latestObservation === null ? null : (
         <input
           type="hidden"
@@ -584,6 +648,7 @@ function OpportunityCandidateForm({
             <textarea
               id="legacy-official-notes"
               name="officialNotes"
+              defaultValue={detail.currentTruth?.officialNotes ?? ""}
               rows={3}
               maxLength={5000}
             />
@@ -602,6 +667,7 @@ function OpportunityCandidateForm({
           </select>
         </label>
       )}
+      <CorrectionFields />
       <button type="submit" disabled={pending}>
         {pending ? "검수 반영 중…" : "입학정보 검수 반영"}
       </button>
@@ -645,6 +711,7 @@ function FactCandidateForm({
               validFrom: nullableDateTime(form, "validFrom"),
               validUntil: nullableDateTime(form, "validUntil"),
             },
+            ...correctionFromForm(form),
             sourceId: requiredString(form, "sourceId"),
             evidence: evidenceFromForm(form),
           };
@@ -686,6 +753,13 @@ function FactCandidateForm({
         value={fact.expectedCurrentVersionId ?? ""}
       />
       <input type="hidden" name="sourceId" value={detail.source.id} />
+      {detail.latestObservation?.snapshotId ? (
+        <input
+          type="hidden"
+          name="snapshotId"
+          value={detail.latestObservation.snapshotId}
+        />
+      ) : null}
       {detail.latestObservation === null ? null : (
         <input
           type="hidden"
@@ -712,6 +786,7 @@ function FactCandidateForm({
           name="valueJson"
           rows={5}
           required
+          defaultValue={JSON.stringify(fact.current?.valueJson ?? {}, null, 2)}
           placeholder='{"currency":"KRW","amount":1200000}'
         />
       </label>
@@ -735,6 +810,7 @@ function FactCandidateForm({
           defaultValue={dateTimeValue(fact.current?.validUntil)}
         />
       </label>
+      <CorrectionFields />
       <button type="submit" disabled={pending}>
         {pending ? "검수 반영 중…" : "기본 정보 검수 반영"}
       </button>

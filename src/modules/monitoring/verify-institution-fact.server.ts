@@ -1,6 +1,9 @@
 import "server-only";
 
 import { z } from "zod";
+import { adminCorrectionSchema } from "@/src/modules/monitoring/admin-correction";
+
+import { enqueueDataRevalidation } from "@/src/modules/cache/data-revalidation.server";
 
 import { AuditWriter } from "@/src/application/audit-writer.server";
 import type { AdminCommandContext } from "@/src/application/context";
@@ -85,6 +88,7 @@ const verifyInstitutionFactInputSchema = z
     institutionId: z.uuid(),
     factType: z.enum(institutionFactTypeValues),
     expectedCurrentVersionId: z.uuid().nullable(),
+    correction: adminCorrectionSchema.optional(),
     proposedState: z
       .object({
         valueJson: factValueSchema,
@@ -207,6 +211,7 @@ async function validateProvenance(
   executor: TransactionExecutor,
   input: VerifyInstitutionFactInput,
   persistence: VerifyInstitutionFactPersistence,
+  requireCapturedEvidence: boolean,
 ) {
   const source = await persistence.findSourceForUpdate(
     executor,
@@ -225,13 +230,33 @@ async function validateProvenance(
     { institutionId: input.institutionId, sourceId: source.id },
   );
   if (!binding) throw new NotEligibleError();
+  if (
+    requireCapturedEvidence &&
+    (!input.evidence.observationId ||
+      !input.evidence.snapshotId ||
+      !["PRIMARY", "SECONDARY_OFFICIAL"].includes(source.authorityLevel) ||
+      ![
+        "OFFICIAL_ADMISSION_PAGE",
+        "OFFICIAL_NOTICE_BOARD",
+        "OFFICIAL_DOCUMENT",
+        "OFFICIAL_APPLICATION_PORTAL",
+        "OFFICIAL_SCHOOL_PAGE",
+        "OFFICIAL_SOCIAL",
+      ].includes(source.sourceType))
+  )
+    throw ValidationError.invalidRequest();
   if (input.evidence.observationId) {
     const observation = await persistence.findSourceObservation(
       executor,
       BigInt(input.evidence.observationId),
     );
     if (!observation) throw new NotFoundError();
-    if (observation.sourceId !== source.id) throw new NotEligibleError();
+    if (
+      observation.sourceId !== source.id ||
+      (requireCapturedEvidence &&
+        observation.snapshotId !== input.evidence.snapshotId)
+    )
+      throw new NotEligibleError();
   }
   if (input.evidence.snapshotId) {
     const snapshot = await persistence.findSourceSnapshot(
@@ -255,7 +280,14 @@ export async function verifyInstitutionFactInTransaction(
     input.institutionId,
   );
   if (!institution) throw new NotFoundError();
-  const source = await validateProvenance(executor, input, persistence);
+  const source = await validateProvenance(
+    executor,
+    input,
+    persistence,
+    Boolean(
+      input.correction && institution.category === "INTERNATIONAL_SCHOOL",
+    ),
+  );
 
   let fact = await persistence.findInstitutionFactForUpdate(executor, {
     institutionId: institution.id,
@@ -286,6 +318,7 @@ export async function verifyInstitutionFactInTransaction(
       validUntil: current.validUntil,
     };
     if (!compareFactTruth(existing, proposed)) {
+      if (input.correction) throw ValidationError.invalidRequest();
       const observation = await persistence.insertSourceObservation(executor, {
         sourceId: source.id,
         observedAt: ctx.occurredAt,
@@ -404,14 +437,29 @@ export async function verifyInstitutionFact(
     throw ValidationError.fromZodError(parsedInput.error);
   }
   try {
-    return await dependencies.transactionManager.run((executor) =>
-      verifyInstitutionFactInTransaction(
+    return await dependencies.transactionManager.run(async (executor) => {
+      const result = await verifyInstitutionFactInTransaction(
         executor,
-        parsedContext.data,
+        parsedInput.data.correction
+          ? {
+              ...parsedContext.data,
+              reason: parsedInput.data.correction.reason,
+            }
+          : parsedContext.data,
         parsedInput.data,
         dependencies.persistence,
-      ),
-    );
+      );
+      if (parsedInput.data.correction && result.outcome !== "NO_CHANGE") {
+        await enqueueDataRevalidation(executor, {
+          version: 2,
+          targetType: "INSTITUTION",
+          targetId: result.institutionId,
+          versionId: result.currentVersionId,
+          reason: "ADMIN_CORRECTION",
+        });
+      }
+      return result;
+    });
   } catch (error) {
     throw mapDatabaseError(databaseCause(error));
   }

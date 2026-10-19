@@ -52,6 +52,7 @@ const institutionListQuerySchema = z
     query: normalizedRequiredText(MAX_QUERY_LENGTH).optional(),
     hasConfirmedTuition: z.boolean().optional(),
     minAge: positiveInteger(MAX_CHILD_AGE).optional(),
+    admissionYear: z.coerce.number().int().min(2026).max(2100).optional(),
     transport: z.literal("AVAILABLE").optional(),
     hasUpcomingInfoSession: z.boolean().optional(),
     sort: z.enum(["NAME_ASC", "INFO_SESSION_ASC", "TUITION_ASC"]).optional(),
@@ -64,6 +65,7 @@ const institutionListQuerySchema = z
       value.hasConfirmedTuition !== undefined ||
       value.district !== undefined ||
       value.minAge !== undefined ||
+      value.admissionYear !== undefined ||
       value.transport !== undefined ||
       value.hasUpcomingInfoSession !== undefined ||
       value.sort !== undefined;
@@ -119,6 +121,9 @@ export function parseInstitutionListQuery(
       ? {}
       : { hasConfirmedTuition: parsed.data.hasConfirmedTuition }),
     ...(parsed.data.minAge === undefined ? {} : { minAge: parsed.data.minAge }),
+    ...(parsed.data.admissionYear === undefined
+      ? {}
+      : { admissionYear: parsed.data.admissionYear }),
     ...(parsed.data.transport === undefined
       ? {}
       : { transport: parsed.data.transport }),

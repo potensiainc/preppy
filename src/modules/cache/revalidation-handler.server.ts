@@ -2,7 +2,7 @@ import "server-only";
 
 import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 
-import { asc, eq } from "drizzle-orm";
+import { asc, eq, or } from "drizzle-orm";
 
 import {
   articleInstitutions,
@@ -16,8 +16,8 @@ import {
   type TransactionManager,
 } from "@/src/infrastructure/db/runtime.server";
 import {
-  parseArticleCacheRevalidationPayload,
-  type ArticleCacheRevalidationPayloadV1,
+  parseCacheRevalidationPayload,
+  type CacheRevalidationPayload,
 } from "@/src/modules/cache/revalidation-contract";
 import {
   getCacheRevalidationConfig,
@@ -46,7 +46,7 @@ class CacheRequestError extends Error {
 export type AuthenticatedCacheRevalidationRequest = Readonly<{
   eventId: string;
   timestamp: number;
-  payload: ArticleCacheRevalidationPayloadV1;
+  payload: CacheRevalidationPayload;
 }>;
 
 export type CacheInvalidationSet = Readonly<{
@@ -210,7 +210,7 @@ export async function readAuthenticatedCacheRevalidationRequest(
   } catch {
     throw new CacheRequestError(400);
   }
-  const payload = parseArticleCacheRevalidationPayload(rawPayload);
+  const payload = parseCacheRevalidationPayload(rawPayload);
   if (!payload) throw new CacheRequestError(400);
   const replayKey = createHash("sha256")
     .update(`${timestampHeader}:${signatureHeader}`)
@@ -227,9 +227,78 @@ export async function readAuthenticatedCacheRevalidationRequest(
 
 async function deriveInvalidationSet(
   transactionManager: Pick<TransactionManager, "run">,
-  payload: ArticleCacheRevalidationPayloadV1,
+  payload: CacheRevalidationPayload,
 ): Promise<CacheInvalidationSet> {
   return transactionManager.run(async (executor) => {
+    if (payload.version === 2) {
+      const [institution] =
+        payload.targetType === "INSTITUTION"
+          ? await executor.drizzle
+              .select({ id: institutions.id, slug: institutions.slug })
+              .from(institutions)
+              .where(eq(institutions.id, payload.targetId))
+              .limit(1)
+          : await executor.drizzle
+              .select({ id: institutions.id, slug: institutions.slug })
+              .from(opportunities)
+              .innerJoin(
+                institutions,
+                eq(institutions.id, opportunities.institutionId),
+              )
+              .where(eq(opportunities.id, payload.targetId))
+              .limit(1);
+      if (!institution) throw new CacheRequestError(404);
+      const opportunityRows = await executor.drizzle
+        .select({ id: opportunities.id, slug: opportunities.slug })
+        .from(opportunities)
+        .where(eq(opportunities.institutionId, institution.id))
+        .limit(501);
+      const articleRows = await executor.drizzle
+        .select({ id: articles.id, slug: articles.slug })
+        .from(articles)
+        .leftJoin(
+          articleInstitutions,
+          eq(articleInstitutions.articleId, articles.id),
+        )
+        .leftJoin(
+          articleOpportunities,
+          eq(articleOpportunities.articleId, articles.id),
+        )
+        .leftJoin(
+          opportunities,
+          eq(opportunities.id, articleOpportunities.opportunityId),
+        )
+        .where(
+          or(
+            eq(articleInstitutions.institutionId, institution.id),
+            eq(opportunities.institutionId, institution.id),
+          ),
+        )
+        .groupBy(articles.id, articles.slug)
+        .limit(501);
+      if (opportunityRows.length > 500 || articleRows.length > 500)
+        throw new CacheRequestError(503);
+      const paths = new Set([
+        "/",
+        "/sitemap.xml",
+        "/institutions",
+        "/opportunities",
+        "/curation/calendar",
+        "/curation/briefings",
+        "/curation/guides",
+        `/institutions/${institution.slug}`,
+      ]);
+      const tags = new Set([`institution:${institution.id}`, "seo:sitemap"]);
+      for (const row of opportunityRows) {
+        paths.add(`/opportunities/${row.slug}`);
+        tags.add(`opportunity:${row.id}`);
+      }
+      for (const row of articleRows) {
+        paths.add(`/articles/${row.slug}`);
+        tags.add(`article:${row.id}`);
+      }
+      return { paths: [...paths].sort(), tags: [...tags].sort() };
+    }
     const [article] = await executor.drizzle
       .select({ id: articles.id, slug: articles.slug })
       .from(articles)

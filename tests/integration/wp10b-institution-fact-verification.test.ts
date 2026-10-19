@@ -13,6 +13,7 @@ import {
   defaultVerifyInstitutionFactPersistence,
   verifyInstitutionFact,
 } from "@/src/modules/monitoring/verify-institution-fact.server";
+import { getInstitutionBySlug } from "@/src/modules/public/institution-query.server";
 import { assertDedicatedTestDatabaseUrl } from "@/tests/support/test-database";
 
 const databaseUrl = process.env.TEST_DATABASE_URL;
@@ -157,7 +158,9 @@ async function cleanup() {
         select id from institutions where slug like ${`${prefix}-%`}
       )
     `;
+    await transaction`delete from source_snapshots where source_id in(select id from sources where canonical_url like ${`https://official.example.test/${prefix}/%`})`;
     await transaction`delete from sources where canonical_url like ${`https://official.example.test/${prefix}/%`}`;
+    await transaction`delete from institution_registry_identities where institution_id in(select id from institutions where slug like ${`${prefix}-%`})`;
     await transaction`delete from institutions where slug like ${`${prefix}-%`}`;
     await transaction`delete from admin_users where external_auth_subject like ${`${prefix}-%`}`;
   });
@@ -411,6 +414,143 @@ describe("WP-10B Institution Fact verification", () => {
       evidence: 1,
       current_versions: 1,
       audits: 0,
+    });
+  });
+
+  it("requires an exactly linked official capture for international no-notify Fact correction", async () => {
+    const fixture = await createFixture(true);
+    await runtime.client`update institutions set category='INTERNATIONAL_SCHOOL' where id=${fixture.institutionId}`;
+    await runtime.client`insert into institution_registry_identities(institution_id,registry_name,registry_external_id,registry_record_url,registry_locator,metadata_json) values(${fixture.institutionId},'ISI',${fixture.institutionId},'https://isi.example.test/record','review','{}'::jsonb)`;
+    const body = {
+      ...input(fixture, 1300000),
+      correction: {
+        mode: "ADMIN_CORRECTION_NO_NOTIFY",
+        reason: "CORRECTION_CONTENT_NO_NOTIFY",
+      },
+    };
+    const ctx = createAdminCommandContext({ adminUserId: fixture.adminUserId });
+    await expect(
+      verifyInstitutionFact(ctx, body, {
+        transactionManager: runtime.transactionManager,
+      }),
+    ).rejects.toThrow();
+    const snapshotId = randomUUID(),
+      other = randomUUID();
+    await runtime.client`insert into source_snapshots(id,source_id,captured_at,content_hash) values(${snapshotId},${fixture.sourceId},now(),'linked-capture'),(${other},${fixture.sourceId},now(),'other-capture')`;
+    const observation =
+      await runtime.client`insert into source_observations(source_id,observed_at,outcome,snapshot_id) values(${fixture.sourceId},now(),'SUCCESS',${snapshotId}) returning id`;
+    const evidence = {
+      evidenceRole: "PRIMARY",
+      observationId: String(observation[0]!.id),
+      snapshotId,
+    };
+    await expect(
+      verifyInstitutionFact(
+        ctx,
+        { ...body, evidence: { ...evidence, snapshotId: other } },
+        { transactionManager: runtime.transactionManager },
+      ),
+    ).rejects.toThrow();
+    const result = await verifyInstitutionFact(
+      ctx,
+      { ...body, evidence },
+      { transactionManager: runtime.transactionManager },
+    );
+    expect(
+      (
+        await runtime.client`select source_observation_id,source_snapshot_id from institution_fact_version_evidence where institution_fact_version_id=${result.currentVersionId}`
+      )[0],
+    ).toMatchObject({ source_snapshot_id: snapshotId });
+    const detail = await getInstitutionBySlug(
+      runtime.executor,
+      `${prefix}-institution-${fixture.institutionId}`,
+    );
+    expect(
+      detail.verifiedFacts.some(
+        (fact) =>
+          fact.factType === "TUITION" && fact.displayValue === "KRW 1,300,000",
+      ),
+    ).toBe(true);
+  });
+  it("preserves the full nested Fact value and writes correction audit plus cache without notifications", async () => {
+    const fixture = await createFixture(true);
+    const body = {
+      ...input(fixture, 1300000),
+      correction: {
+        mode: "ADMIN_CORRECTION_NO_NOTIFY",
+        reason: "CORRECTION_CONTENT_NO_NOTIFY",
+      },
+    };
+    const value = {
+      currency: "KRW",
+      amount: 1300000,
+      exceptions: [null, { terms: ["original", "condition"], unknown: true }],
+    };
+    const result = await verifyInstitutionFact(
+      createAdminCommandContext({ adminUserId: fixture.adminUserId }),
+      { ...body, proposedState: { ...body.proposedState, valueJson: value } },
+      { transactionManager: runtime.transactionManager },
+    );
+    const rows =
+      await runtime.client`select value_json from institution_fact_versions where id=${result.currentVersionId}`;
+    expect(rows[0]!.value_json).toEqual(value);
+    const events =
+      await runtime.client`select event_type,payload from outbox_events where aggregate_id=${fixture.institutionId}`;
+    expect(events).toHaveLength(1);
+    expect(events[0]!.event_type).toBe("CACHE_REVALIDATION_REQUESTED");
+    expect(events[0]!.payload).toMatchObject({
+      targetType: "INSTITUTION",
+      versionId: result.currentVersionId,
+    });
+    const audits =
+      await runtime.client`select after_data from audit_logs where entity_id=${fixture.institutionId}`;
+    expect(
+      audits.some((a) => a.after_data.reason === body.correction.reason),
+    ).toBe(true);
+    expect(result.evidenceId).toBeTruthy();
+    await expect(
+      verifyInstitutionFact(
+        createAdminCommandContext({ adminUserId: fixture.adminUserId }),
+        body,
+        { transactionManager: runtime.transactionManager },
+      ),
+    ).rejects.toMatchObject({ code: "CONFLICT" });
+    await runtime.client`delete from outbox_events where aggregate_id=${fixture.institutionId}`;
+  });
+  it("rejects source-only Fact correction without a false NO_CHANGE success", async () => {
+    const fixture = await createFixture(true);
+    const sourceId = randomUUID();
+    await runtime.client`insert into sources (id, canonical_url, source_type, authority_level, lifecycle_status, source_name)
+      select ${sourceId}, ${`https://official.example.test/${prefix}/${sourceId}`}, source_type, authority_level, lifecycle_status, source_name
+      from sources where id=${fixture.sourceId}`;
+    await runtime.client`insert into institution_source_bindings (institution_id, source_id, role, is_primary, is_active)
+      values (${fixture.institutionId}, ${sourceId}, 'TUITION', false, true)`;
+    await expect(
+      verifyInstitutionFact(
+        createAdminCommandContext({ adminUserId: fixture.adminUserId }),
+        {
+          ...input(fixture, 1000000),
+          sourceId,
+          correction: {
+            mode: "ADMIN_CORRECTION_NO_NOTIFY",
+            reason: "CORRECTION_CONTENT_NO_NOTIFY",
+          },
+        },
+        { transactionManager: runtime.transactionManager },
+      ),
+    ).rejects.toMatchObject({ code: "VALIDATION_ERROR" });
+    const [counts] = await runtime.client`select
+      (select count(*)::int from institution_fact_versions where institution_fact_id=${fixture.factId}) as versions,
+      (select count(*)::int from institution_fact_version_evidence where institution_fact_version_id=${fixture.versionId}) as evidence,
+      (select count(*)::int from audit_logs where entity_id=${fixture.institutionId}) as audits,
+      (select count(*)::int from source_observations where source_id=${sourceId}) as observations,
+      (select count(*)::int from outbox_events where aggregate_id=${fixture.institutionId}) as cache`;
+    expect(counts).toEqual({
+      versions: 1,
+      evidence: 1,
+      audits: 0,
+      observations: 0,
+      cache: 0,
     });
   });
 });

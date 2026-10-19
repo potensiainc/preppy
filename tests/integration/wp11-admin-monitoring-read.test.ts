@@ -279,12 +279,15 @@ describe("WP-11 Admin Monitoring read projections", () => {
           (${opportunity.id}, ${sourceId}, 'PRIMARY_NOTICE', true, true, null),
           (${opportunity.id}, ${otherSourceId}, 'SUPPORTING', false, false, now())
       `);
+      const snapshotId = randomUUID();
+      await executor.raw(sql`insert into source_snapshots (id, source_id, captured_at, content_hash, normalized_text)
+        values (${snapshotId}, ${sourceId}, now(), 'test-hash', 'raw-captured-content-must-not-leak')`);
       await executor.raw(sql`
         insert into source_observations (
-          source_id, observed_at, outcome, http_status, error_message
+          source_id, observed_at, outcome, http_status, error_message, snapshot_id
         ) values (
           ${sourceId}, '2026-08-24T10:00:00.000Z', 'CHANGED', 200,
-          ${`${prefix}-raw-error-message-must-not-leak`}
+          ${`${prefix}-raw-error-message-must-not-leak`}, ${snapshotId}
         )
       `);
 
@@ -325,6 +328,7 @@ describe("WP-11 Admin Monitoring read projections", () => {
           targetAudience: "Families",
         },
         latestObservation: {
+          snapshotId,
           outcome: "CHANGED",
           httpStatus: 200,
         },
@@ -332,7 +336,9 @@ describe("WP-11 Admin Monitoring read projections", () => {
       expect(JSON.stringify(detail)).not.toContain(
         "raw-error-message-must-not-leak",
       );
-      expect(JSON.stringify(detail)).not.toContain("snapshot");
+      expect(JSON.stringify(detail)).not.toContain(
+        "raw-captured-content-must-not-leak",
+      );
       expect(JSON.stringify(detail)).not.toContain("evidence");
       expect(detail.schedule).toEqual({
         priority: canonicalSchedule!.priority,
@@ -364,7 +370,7 @@ describe("WP-11 Admin Monitoring read projections", () => {
   });
 
   it("loads bounded Institution facts with a nullable token for every canonical fact type", async () => {
-    // Mutation caught: Institution Fact creation loses its null token, current Fact token is guessed, or value_json/raw Source data leaks.
+    // Mutation caught: Institution Fact creation loses its null token, current Fact token is guessed, or the complete editable value_json is lost.
     const detailQuery = await importMonitoringDetail();
     expect(detailQuery).not.toBeNull();
     if (!detailQuery) return;
@@ -389,7 +395,7 @@ describe("WP-11 Admin Monitoring read projections", () => {
           is_current, value_json, display_text, verified_at
         ) values (
           ${factVersionId}, ${factId}, 1, 'VERIFIED', true,
-          ${JSON.stringify({ privateAmount: 999999 })}::jsonb,
+          ${JSON.stringify({ amount: 999999, nested: { values: [1, null, "condition"] } })}::jsonb,
           'Tuition confirmed by official notice', '2026-08-23T00:00:00.000Z'
         )
       `);
@@ -417,6 +423,10 @@ describe("WP-11 Admin Monitoring read projections", () => {
           versionId: factVersionId,
           versionNumber: 1,
           displayText: "Tuition confirmed by official notice",
+          valueJson: {
+            amount: 999999,
+            nested: { values: [1, null, "condition"] },
+          },
           verifiedAt: "2026-08-23T00:00:00.000Z",
           validFrom: null,
           validUntil: null,
@@ -434,7 +444,7 @@ describe("WP-11 Admin Monitoring read projections", () => {
         expectedCurrentVersionId: null,
         current: null,
       });
-      expect(JSON.stringify(detail)).not.toContain("privateAmount");
+      expect(JSON.stringify(detail)).toContain("condition");
     });
   });
 
@@ -544,9 +554,7 @@ describe("WP-11 Admin Monitoring read projections", () => {
           actionUrl: null,
         },
       });
-      expect(JSON.stringify(detail)).not.toContain(
-        "official-notes-must-not-leak",
-      );
+      expect(JSON.stringify(detail)).toContain("official-notes-must-not-leak");
     });
   });
 

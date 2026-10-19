@@ -212,11 +212,13 @@ async function addInformationSession({
   eventStartAt,
   applicationCloseAt,
   businessState = "UPCOMING",
+  targetAudience = null,
 }: {
   institutionId: string;
   eventStartAt: string;
   applicationCloseAt: string;
   businessState?: "UPCOMING" | "CANCELLED";
+  targetAudience?: string | null;
 }) {
   const id = randomUUID();
   const versionId = randomUUID();
@@ -236,13 +238,13 @@ async function addInformationSession({
       insert into opportunity_versions (
         id, opportunity_id, truth_mode, version_number, verification_state,
         business_state, is_current, title, summary, event_start_at,
-        application_close_at, action_url, verified_at
+        application_close_at, action_url, verified_at, target_audience
       ) values (
         ${versionId}, ${id}, 'NATIVE', 1, 'VERIFIED', ${businessState}, true,
         '2026학년도 입학설명회', '사전 신청이 필요한 설명회예요.',
         ${eventStartAt}, ${applicationCloseAt},
         'https://apply.example.test/information-session',
-        '2026-08-27T08:09:10.000Z'
+        '2026-08-27T08:09:10.000Z', ${targetAudience}
       )
     `;
     await transaction`
@@ -363,6 +365,12 @@ describe("English-kindergarten public query", () => {
       displayText: "셔틀을 운영하지 않아요.",
     });
 
+    await addInformationSession({
+      institutionId: matching.id,
+      eventStartAt: new Date(Date.now() + 86400000 * 30).toISOString(),
+      applicationCloseAt: new Date(Date.now() + 86400000 * 20).toISOString(),
+      targetAudience: "2027학년도 · 기관 표기 4세 · 대상 원문: 4세 대상",
+    });
     const result = await listInstitutions(runtime.executor, {
       category: "ENGLISH_KINDERGARTEN",
       query: prefix,
@@ -454,9 +462,10 @@ describe("English-kindergarten public query", () => {
       status: "CHECKED_NOT_FOUND",
       source: tuition,
     });
+    const upcomingStart = new Date(Date.now() + 86400000 * 30).toISOString();
     const nextSession = await addInformationSession({
       institutionId: institution.id,
-      eventStartAt: "2026-10-15T01:00:00.000Z",
+      eventStartAt: upcomingStart,
       applicationCloseAt: "2026-10-01T14:59:59.000Z",
     });
     await addInformationSession({
@@ -475,7 +484,7 @@ describe("English-kindergarten public query", () => {
     expect(detail.englishKindergarten).toMatchObject({
       nextInformationSession: {
         id: nextSession.id,
-        eventStartsAt: "2026-10-15T01:00:00.000Z",
+        eventStartsAt: upcomingStart,
         applicationClosesAt: "2026-10-01T14:59:59.000Z",
       },
       sections: expect.arrayContaining([

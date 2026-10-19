@@ -1,8 +1,14 @@
 import "server-only";
 
+import { reviewedSourceEligibility } from "@/src/modules/english-kindergarten/reviewed-source-policy";
+import { enqueueDataRevalidation } from "@/src/modules/cache/data-revalidation.server";
+
 import { createHash } from "node:crypto";
 
 import { z } from "zod";
+import { eq } from "drizzle-orm";
+import { institutions, opportunities } from "@/src/db/schema";
+import { adminCorrectionSchema } from "@/src/modules/monitoring/admin-correction";
 
 import { AuditWriter } from "@/src/application/audit-writer.server";
 import type { AdminCommandContext } from "@/src/application/context";
@@ -104,6 +110,7 @@ const verifyNativeOpportunityInputSchema = z
   .object({
     opportunityId: z.uuid(),
     expectedCurrentVersionId: z.uuid().nullable(),
+    correction: adminCorrectionSchema.optional(),
     proposedState: proposedNativeStateSchema,
     sourceId: z.uuid(),
     evidence: z
@@ -251,6 +258,7 @@ const verifyLegacyOpportunityInputSchema = z
   .object({
     opportunityId: z.uuid(),
     expectedCurrentVersionId: z.uuid().nullable(),
+    correction: adminCorrectionSchema.optional(),
     proposedState: proposedLegacyStateSchema,
     sourceId: z.uuid(),
     evidence: z
@@ -288,6 +296,7 @@ const verifyOpportunityInputSchema = z
   .object({
     opportunityId: z.uuid(),
     expectedCurrentVersionId: z.uuid().nullable(),
+    correction: adminCorrectionSchema.optional(),
     proposedState: z.unknown(),
     sourceId: z.uuid(),
     evidence: z.unknown(),
@@ -442,6 +451,7 @@ async function validateProvenance(
   opportunityId: string,
   input: VerifyNativeOpportunityInput | VerifyLegacyOpportunityInput,
   persistence: VerifyOpportunityPersistence,
+  reviewedEnglishSession = false,
 ) {
   const source = await persistence.findSourceForUpdate(
     executor,
@@ -449,7 +459,9 @@ async function validateProvenance(
   );
   if (!source) throw new NotFoundError();
   if (
-    source.lifecycleStatus !== "ACTIVE" ||
+    (reviewedEnglishSession
+      ? Boolean(reviewedSourceEligibility(source))
+      : source.lifecycleStatus !== "ACTIVE") ||
     source.authorityLevel === "DISCOVERY_ONLY" ||
     source.sourceType === "THIRD_PARTY_DISCOVERY"
   ) {
@@ -463,6 +475,35 @@ async function validateProvenance(
     },
   );
   if (!binding) throw new NotEligibleError();
+  // A new current version must retain the captured evidence required by public reads.
+  let requireCapturedEvidence = false;
+  if (input.correction) {
+    const [institution] = await executor.drizzle
+      .select({ category: institutions.category })
+      .from(opportunities)
+      .innerJoin(institutions, eq(institutions.id, opportunities.institutionId))
+      .where(eq(opportunities.id, opportunityId))
+      .limit(1);
+    requireCapturedEvidence =
+      reviewedEnglishSession ||
+      institution?.category === "INTERNATIONAL_SCHOOL";
+    if (
+      requireCapturedEvidence &&
+      (!["PRIMARY", "SECONDARY_OFFICIAL"].includes(source.authorityLevel) ||
+        !input.evidence.observationId ||
+        !input.evidence.snapshotId ||
+        ![
+          "OFFICIAL_ADMISSION_PAGE",
+          "OFFICIAL_NOTICE_BOARD",
+          "OFFICIAL_DOCUMENT",
+          "OFFICIAL_APPLICATION_PORTAL",
+          "OFFICIAL_SCHOOL_PAGE",
+          "OFFICIAL_SOCIAL",
+        ].includes(source.sourceType))
+    ) {
+      throw ValidationError.invalidRequest();
+    }
+  }
   if (input.evidence.observationId) {
     const observation = await persistence.findSourceObservation(
       executor,
@@ -470,6 +511,11 @@ async function validateProvenance(
     );
     if (!observation) throw new NotFoundError();
     if (observation.sourceId !== source.id) throw new NotEligibleError();
+    if (
+      requireCapturedEvidence &&
+      observation.snapshotId !== input.evidence.snapshotId
+    )
+      throw new NotEligibleError();
   }
   if (input.evidence.snapshotId) {
     const snapshot = await persistence.findSourceSnapshot(
@@ -482,12 +528,30 @@ async function validateProvenance(
   return source;
 }
 
+/** Explicit reviewed-session import boundary; no HTTP option enables it.
+ * General verification, legacy verification and collection retain ACTIVE-only policy. */
+export async function verifyReviewedEnglishSessionOpportunityInTransaction(
+  executor: TransactionExecutor,
+  ctx: AdminCommandContext,
+  input: VerifyNativeOpportunityInput,
+) {
+  return verifyNativeOpportunityInTransaction(
+    executor,
+    ctx,
+    input,
+    undefined,
+    undefined,
+    true,
+  );
+}
+
 export async function verifyNativeOpportunityInTransaction(
   executor: TransactionExecutor,
   ctx: AdminCommandContext,
   input: VerifyNativeOpportunityInput,
   persistence: VerifyOpportunityPersistence = defaultVerifyOpportunityPersistence,
   canonicalChangeDependencies?: CanonicalChangeDependencies,
+  reviewedEnglishSession = false,
 ): Promise<VerificationResult> {
   const opportunity = await persistence.findOpportunityForUpdate(
     executor,
@@ -495,6 +559,20 @@ export async function verifyNativeOpportunityInTransaction(
   );
   if (!opportunity) throw new NotFoundError();
   if (opportunity.truthMode !== "NATIVE") throw new NotEligibleError();
+  if (reviewedEnglishSession) {
+    const [institution] = await executor.drizzle
+      .select({ category: institutions.category })
+      .from(institutions)
+      .where(eq(institutions.id, opportunity.institutionId))
+      .limit(1);
+    if (
+      opportunity.kind !== "INFORMATION_SESSION" ||
+      opportunity.publicationState !== "PUBLISHED" ||
+      institution?.category !== "ENGLISH_KINDERGARTEN" ||
+      input.correction?.mode !== "ADMIN_CORRECTION_NO_NOTIFY"
+    )
+      throw new NotEligibleError();
+  }
   const current = await persistence.findCurrentNativeVersionForUpdate(
     executor,
     opportunity.id,
@@ -504,6 +582,7 @@ export async function verifyNativeOpportunityInTransaction(
     opportunity.id,
     input,
     persistence,
+    reviewedEnglishSession,
   );
   const candidate = input.proposedState;
   const candidateFingerprint = fingerprint(candidate);
@@ -564,6 +643,9 @@ export async function verifyNativeOpportunityInTransaction(
           summary: "NEW_OPPORTUNITY: initial verified truth",
           changedFields: ["INITIAL_TRUTH"],
           customerSignalEligible: true,
+          ...(input.correction
+            ? { correctionReason: input.correction.reason }
+            : {}),
           ...(input.overrideReason
             ? { auditReason: input.overrideReason }
             : {}),
@@ -638,6 +720,8 @@ export async function verifyNativeOpportunityInTransaction(
             createOpportunityChangeOutboxDedupeKey(existingChange.id),
           )
         : null;
+      if (input.correction && existingOutbox !== null)
+        throw new ConflictError();
       return {
         opportunityId: opportunity.id,
         truthMode: "NATIVE",
@@ -660,6 +744,7 @@ export async function verifyNativeOpportunityInTransaction(
     candidate,
   );
   if (!signal) {
+    if (input.correction) throw ValidationError.invalidRequest();
     const observation = await persistence.insertSourceObservation(executor, {
       sourceId: source.id,
       observedAt: ctx.occurredAt,
@@ -760,6 +845,9 @@ export async function verifyNativeOpportunityInTransaction(
       summary: `${signal.changeType}: ${signal.changedFields.join(", ")}`,
       changedFields: signal.changedFields,
       customerSignalEligible: opportunity.publicationState === "PUBLISHED",
+      ...(input.correction
+        ? { correctionReason: input.correction.reason }
+        : {}),
       ...(input.overrideReason ? { auditReason: input.overrideReason } : {}),
     },
     canonicalChangeDependencies,
@@ -868,6 +956,7 @@ export async function verifyLegacyBackedOpportunityInTransaction(
       executor,
       createOpportunityChangeOutboxDedupeKey(existingChange.id),
     );
+    if (input.correction && existingOutbox !== null) throw new ConflictError();
     return {
       opportunityId: opportunity.id,
       truthMode: "LEGACY_BACKED",
@@ -887,6 +976,7 @@ export async function verifyLegacyBackedOpportunityInTransaction(
     input.proposedState,
   );
   if (!signal) {
+    if (input.correction) throw ValidationError.invalidRequest();
     const observation = await persistence.insertSourceObservation(executor, {
       sourceId: source.id,
       observedAt: ctx.occurredAt,
@@ -1000,6 +1090,9 @@ export async function verifyLegacyBackedOpportunityInTransaction(
       summary: `${signal.changeType}: ${signal.changedFields.join(", ")}`,
       changedFields: signal.changedFields,
       customerSignalEligible: opportunity.publicationState === "PUBLISHED",
+      ...(input.correction
+        ? { correctionReason: input.correction.reason }
+        : {}),
       ...(input.overrideReason ? { auditReason: input.overrideReason } : {}),
     },
     canonicalChangeDependencies,
@@ -1032,8 +1125,29 @@ export async function verifyOpportunity(
   if (!parsedInput.success) {
     throw ValidationError.fromZodError(parsedInput.error);
   }
+  if (
+    parsedInput.data.correction &&
+    (parsedInput.data.materialityOverride || parsedInput.data.overrideReason)
+  ) {
+    throw ValidationError.invalidRequest();
+  }
+  const context = parsedInput.data.correction
+    ? { ...parsedContext.data, reason: parsedInput.data.correction.reason }
+    : parsedContext.data;
   try {
     return await dependencies.transactionManager.run(async (executor) => {
+      const finish = async (result: VerificationResult) => {
+        if (parsedInput.data.correction && result.outcome === "CHANGED") {
+          await enqueueDataRevalidation(executor, {
+            version: 2,
+            targetType: "OPPORTUNITY",
+            targetId: result.opportunityId,
+            versionId: result.currentVersionId,
+            reason: "ADMIN_CORRECTION",
+          });
+        }
+        return result;
+      };
       const persistence =
         dependencies.persistence ?? defaultVerifyOpportunityPersistence;
       const opportunity = await persistence.findOpportunityForUpdate(
@@ -1048,12 +1162,14 @@ export async function verifyOpportunity(
         if (!nativeInput.success) {
           throw ValidationError.fromZodError(nativeInput.error);
         }
-        return verifyNativeOpportunityInTransaction(
-          executor,
-          parsedContext.data,
-          nativeInput.data,
-          persistence,
-          dependencies.canonicalChangeDependencies,
+        return finish(
+          await verifyNativeOpportunityInTransaction(
+            executor,
+            context,
+            nativeInput.data,
+            persistence,
+            dependencies.canonicalChangeDependencies,
+          ),
         );
       }
       const legacyInput = verifyLegacyOpportunityInputSchema.safeParse(
@@ -1062,12 +1178,14 @@ export async function verifyOpportunity(
       if (!legacyInput.success) {
         throw ValidationError.fromZodError(legacyInput.error);
       }
-      return verifyLegacyBackedOpportunityInTransaction(
-        executor,
-        parsedContext.data,
-        legacyInput.data,
-        persistence,
-        dependencies.canonicalChangeDependencies,
+      return finish(
+        await verifyLegacyBackedOpportunityInTransaction(
+          executor,
+          context,
+          legacyInput.data,
+          persistence,
+          dependencies.canonicalChangeDependencies,
+        ),
       );
     });
   } catch (error) {
