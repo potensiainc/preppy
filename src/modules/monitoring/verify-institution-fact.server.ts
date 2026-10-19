@@ -211,6 +211,7 @@ async function validateProvenance(
   executor: TransactionExecutor,
   input: VerifyInstitutionFactInput,
   persistence: VerifyInstitutionFactPersistence,
+  requireCapturedEvidence: boolean,
 ) {
   const source = await persistence.findSourceForUpdate(
     executor,
@@ -229,13 +230,33 @@ async function validateProvenance(
     { institutionId: input.institutionId, sourceId: source.id },
   );
   if (!binding) throw new NotEligibleError();
+  if (
+    requireCapturedEvidence &&
+    (!input.evidence.observationId ||
+      !input.evidence.snapshotId ||
+      !["PRIMARY", "SECONDARY_OFFICIAL"].includes(source.authorityLevel) ||
+      ![
+        "OFFICIAL_ADMISSION_PAGE",
+        "OFFICIAL_NOTICE_BOARD",
+        "OFFICIAL_DOCUMENT",
+        "OFFICIAL_APPLICATION_PORTAL",
+        "OFFICIAL_SCHOOL_PAGE",
+        "OFFICIAL_SOCIAL",
+      ].includes(source.sourceType))
+  )
+    throw ValidationError.invalidRequest();
   if (input.evidence.observationId) {
     const observation = await persistence.findSourceObservation(
       executor,
       BigInt(input.evidence.observationId),
     );
     if (!observation) throw new NotFoundError();
-    if (observation.sourceId !== source.id) throw new NotEligibleError();
+    if (
+      observation.sourceId !== source.id ||
+      (requireCapturedEvidence &&
+        observation.snapshotId !== input.evidence.snapshotId)
+    )
+      throw new NotEligibleError();
   }
   if (input.evidence.snapshotId) {
     const snapshot = await persistence.findSourceSnapshot(
@@ -259,7 +280,14 @@ export async function verifyInstitutionFactInTransaction(
     input.institutionId,
   );
   if (!institution) throw new NotFoundError();
-  const source = await validateProvenance(executor, input, persistence);
+  const source = await validateProvenance(
+    executor,
+    input,
+    persistence,
+    Boolean(
+      input.correction && institution.category === "INTERNATIONAL_SCHOOL",
+    ),
+  );
 
   let fact = await persistence.findInstitutionFactForUpdate(executor, {
     institutionId: institution.id,

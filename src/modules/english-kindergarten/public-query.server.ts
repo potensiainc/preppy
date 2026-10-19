@@ -1,5 +1,7 @@
 import "server-only";
 
+import { sessionTargetsAge } from "./session-state";
+
 import { sql } from "drizzle-orm";
 
 import type { DatabaseExecutor } from "@/src/infrastructure/db/runtime.server";
@@ -273,12 +275,14 @@ async function loadFacts(
 async function loadInformationSessions(
   executor: DatabaseExecutor,
   institutionIds: readonly string[],
-): Promise<Map<string, EnglishKindergartenInformationSessionDTO>> {
-  const result = new Map<string, EnglishKindergartenInformationSessionDTO>();
+): Promise<Map<string, EnglishKindergartenInformationSessionDTO[]>> {
+  const result = new Map<string, EnglishKindergartenInformationSessionDTO[]>();
   if (institutionIds.length === 0) return result;
   const rows = (await executor.raw(sql`
-    select distinct on (o.institution_id)
+    select distinct on (o.id)
       o.institution_id as "institutionId", o.id, o.slug, v.title,
+      v.event_end_at as "eventEndsAt", v.target_audience as "targetAudience", v.summary as "bookingNote",
+      v.application_open_at as "applicationOpensAt",
       v.business_state as "businessState", v.event_start_at as "eventStartsAt",
       v.application_close_at as "applicationClosesAt",
       v.action_url as "actionUrl", v.verified_at as "verifiedAt",
@@ -308,7 +312,7 @@ async function loadInformationSessions(
       and v.business_state <> 'CANCELLED'
       and v.event_start_at is not null
       and v.event_start_at >= now()
-    order by o.institution_id, v.event_start_at,
+    order by o.id, v.event_start_at,
       case when lower(e.evidence_role) = 'primary' then 0 else 1 end,
       case when s.authority_level = 'PRIMARY' then 0 else 1 end,
       s.canonical_url, s.id
@@ -317,6 +321,10 @@ async function loadInformationSessions(
     id: string;
     slug: string;
     title: string;
+    eventEndsAt: Date | string | null;
+    targetAudience: string | null;
+    bookingNote: string | null;
+    applicationOpensAt: Date | string | null;
     businessState: EnglishKindergartenInformationSessionDTO["businessState"];
     eventStartsAt: Date | string;
     applicationClosesAt: Date | string | null;
@@ -328,7 +336,12 @@ async function loadInformationSessions(
     authorityLevel: string;
   }>;
   for (const row of rows) {
-    result.set(row.institutionId, {
+    const session: EnglishKindergartenInformationSessionDTO = {
+      eventEndsAt: row.eventEndsAt === null ? null : rawIso(row.eventEndsAt),
+      targetAudience: row.targetAudience,
+      bookingNote: row.bookingNote,
+      applicationOpensAt:
+        row.applicationOpensAt === null ? null : rawIso(row.applicationOpensAt),
       id: row.id,
       slug: row.slug,
       title: row.title,
@@ -342,8 +355,14 @@ async function loadInformationSessions(
       lastCollectedAt: row.capturedAt === null ? null : rawIso(row.capturedAt),
       verifiedAt: rawIso(row.verifiedAt),
       officialSource: officialSourceDto(row),
-    });
+    };
+    result.set(row.institutionId, [
+      ...(result.get(row.institutionId) ?? []),
+      session,
+    ]);
   }
+  for (const sessions of result.values())
+    sessions.sort((a, b) => a.eventStartsAt.localeCompare(b.eventStartsAt));
   return result;
 }
 
@@ -360,6 +379,9 @@ function cardSummary(
   facts: EnglishKindergartenFactDTO[],
   coverage: EnglishKindergartenSectionDTO[],
   nextInformationSession: EnglishKindergartenInformationSessionDTO | null,
+  informationSessions: EnglishKindergartenInformationSessionDTO[] = nextInformationSession
+    ? [nextInformationSession]
+    : [],
 ): EnglishKindergartenCardSummaryDTO {
   const tuition = facts.find((fact) => fact.factType === "TUITION");
   const age = facts.find((fact) => fact.factType === "TARGET_AGE_GRADE");
@@ -404,6 +426,7 @@ function cardSummary(
             verifiedAt: null,
           },
     nextInformationSession,
+    informationSessions,
     coverage,
     lastContentCheckedAt: latest([
       ...coverage.map((item) => item.lastCheckedAt),
@@ -416,6 +439,8 @@ function cardSummary(
 export async function loadEnglishKindergartenCardSummaries(
   executor: DatabaseExecutor,
   institutionIds: readonly string[],
+  minAge?: number,
+  admissionYear?: number,
 ): Promise<Map<string, EnglishKindergartenCardSummaryDTO>> {
   const publicIds = await publishedEnglishKindergartenIds(
     executor,
@@ -433,7 +458,20 @@ export async function loadEnglishKindergartenCardSummaries(
       cardSummary(
         factsByInstitution.get(institutionId) ?? [],
         coverageByInstitution.get(institutionId) ?? [],
-        sessionsByInstitution.get(institutionId) ?? null,
+        (sessionsByInstitution.get(institutionId) ?? []).find(
+          (session) =>
+            (minAge === undefined ||
+              sessionTargetsAge(session.targetAudience, minAge)) &&
+            (admissionYear === undefined ||
+              session.targetAudience?.startsWith(`${admissionYear}학년도`)),
+        ) ?? null,
+        (sessionsByInstitution.get(institutionId) ?? []).filter(
+          (session) =>
+            (minAge === undefined ||
+              sessionTargetsAge(session.targetAudience, minAge)) &&
+            (admissionYear === undefined ||
+              session.targetAudience?.startsWith(`${admissionYear}학년도`)),
+        ),
       ),
     ]),
   );
@@ -541,10 +579,11 @@ export async function loadEnglishKindergartenDetail(
     ...cardSummary(
       facts,
       sections,
-      sessionsByInstitution.get(institutionId) ?? null,
+      sessionsByInstitution.get(institutionId)?.[0] ?? null,
     ),
     sections,
     facts,
+    informationSessions: sessionsByInstitution.get(institutionId) ?? [],
     reviewInsight: review,
   };
 }

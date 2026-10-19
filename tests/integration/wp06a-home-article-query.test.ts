@@ -10,6 +10,7 @@ import {
   getRuntimeDatabase,
 } from "@/src/infrastructure/db/runtime.server";
 import { getArticleBySlug } from "@/src/modules/public/article-query.server";
+import { getCurrentInformationSessionCards } from "@/src/modules/public/institution-query.server";
 import { getHomePage } from "@/src/modules/public/home-query.server";
 import { assertDedicatedTestDatabaseUrl } from "@/tests/support/test-database";
 
@@ -121,7 +122,10 @@ async function createNativeOpportunity(
   return { id, slug };
 }
 
-async function createLegacyOpportunity(institutionId: string) {
+async function createLegacyOpportunity(
+  institutionId: string,
+  closedNoEvidence = false,
+) {
   const schoolId = randomUUID();
   const cycleId = randomUUID();
   const eventId = randomUUID();
@@ -134,12 +138,14 @@ async function createLegacyOpportunity(institutionId: string) {
     await transaction`insert into institution_school_links (institution_id, school_id, link_reason) values (${institutionId}, ${schoolId}, 'test')`;
     await transaction`insert into admission_cycles (id, school_id, academic_year, lifecycle_status, admission_mode) values (${cycleId}, ${schoolId}, 2027, 'ACTIVE', 'FIXED_WINDOW')`;
     await transaction`insert into admission_events (id, admission_cycle_id, event_key, event_type, occurrence_no, canonical_title, is_public) values (${eventId}, ${cycleId}, ${`${prefix}-event-${eventId}`}, 'APPLICATION', 1, 'Legacy opportunity', true)`;
-    await transaction`insert into admission_event_versions (id, admission_event_id, version_no, is_current, verification_status, knowledge_state, event_status, display_title, registration_close_date, timezone, official_notes, verified_at) values (${versionId}, ${eventId}, 1, true, 'VERIFIED', 'KNOWN', 'ACTIVE', 'Legacy OPEN', '2026-09-02', 'Asia/Seoul', 'Verified legacy summary.', '2026-08-12T02:03:04.000Z')`;
+    await transaction`insert into admission_event_versions (id, admission_event_id, version_no, is_current, verification_status, knowledge_state, event_status, display_title, registration_close_date, event_start_date, timezone, official_notes, verified_at) values (${versionId}, ${eventId}, 1, true, 'VERIFIED', 'KNOWN', ${closedNoEvidence ? "CLOSED" : "ACTIVE"}, 'Legacy OPEN', '2026-09-02', ${closedNoEvidence ? new Date(Date.now() + 86400000 * 30).toISOString().slice(0, 10) : null}, 'Asia/Seoul', 'Verified legacy summary.', '2026-08-12T02:03:04.000Z')`;
     await transaction`insert into sources (id, canonical_url, source_type, authority_level, lifecycle_status, source_name) values (${sourceId}, ${`https://source.example.test/${prefix}/${sourceId}`}, 'OFFICIAL_ADMISSION_PAGE', 'PRIMARY', 'ACTIVE', 'Legacy official')`;
     await transaction`insert into source_monitor_configs (source_id, collection_strategy, monitoring_profile, is_enabled) values (${sourceId}, 'HTTP', 'STANDARD_SEASONAL', true)`;
-    await transaction`insert into source_bindings (source_id, school_id, source_role, priority, is_active) values (${sourceId}, ${schoolId}, 'PRIMARY_ADMISSIONS', 1, true)`;
-    await transaction`insert into event_version_evidence (event_version_id, source_id, is_primary) values (${versionId}, ${sourceId}, true)`;
-    await transaction`insert into opportunities (id, institution_id, slug, kind, truth_mode, publication_state, published_at) values (${id}, ${institutionId}, ${slug}, 'APPLICATION', 'LEGACY_BACKED', 'PUBLISHED', '2026-08-01T00:00:00.000Z')`;
+    if (!closedNoEvidence)
+      await transaction`insert into source_bindings (source_id, school_id, source_role, priority, is_active) values (${sourceId}, ${schoolId}, 'PRIMARY_ADMISSIONS', 1, true)`;
+    if (!closedNoEvidence)
+      await transaction`insert into event_version_evidence (event_version_id, source_id, is_primary) values (${versionId}, ${sourceId}, true)`;
+    await transaction`insert into opportunities (id, institution_id, slug, kind, truth_mode, publication_state, published_at) values (${id}, ${institutionId}, ${slug}, ${closedNoEvidence ? "INFORMATION_SESSION" : "APPLICATION"}, 'LEGACY_BACKED', 'PUBLISHED', '2026-08-01T00:00:00.000Z')`;
     await transaction`insert into opportunity_admission_event_links (opportunity_id, institution_id, truth_mode, admission_event_id, admission_cycle_id, school_id) values (${id}, ${institutionId}, 'LEGACY_BACKED', ${eventId}, ${cycleId}, ${schoolId})`;
   });
   return { id, slug };
@@ -200,6 +206,24 @@ async function cleanup(): Promise<void> {
 }
 
 describe("WP-06A Article and Home public queries", () => {
+  it("does not extend future CLOSED visibility to unevidenced legacy English sessions", async () => {
+    const institution = await createInstitution(
+      "Legacy English future closed",
+      "PUBLISHED",
+      "ENGLISH_KINDERGARTEN",
+    );
+    const session = await createLegacyOpportunity(institution.id, true);
+    const briefings = await getCurrentInformationSessionCards(
+      runtime.executor,
+      1,
+    );
+    expect(briefings.items.some((item) => item.id === session.id)).toBe(false);
+    const home = await getHomePage(runtime.executor);
+    expect(
+      home.currentOpportunities.some((item) => item.id === session.id),
+    ).toBe(false);
+  });
+
   beforeAll(async () => {
     await schemaLockSql`select pg_advisory_lock(hashtext('admissionradar-schema-tests'))`;
     await migrateDatabase(databaseUrl);

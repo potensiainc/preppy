@@ -13,6 +13,7 @@ import {
   defaultVerifyInstitutionFactPersistence,
   verifyInstitutionFact,
 } from "@/src/modules/monitoring/verify-institution-fact.server";
+import { getInstitutionBySlug } from "@/src/modules/public/institution-query.server";
 import { assertDedicatedTestDatabaseUrl } from "@/tests/support/test-database";
 
 const databaseUrl = process.env.TEST_DATABASE_URL;
@@ -157,7 +158,9 @@ async function cleanup() {
         select id from institutions where slug like ${`${prefix}-%`}
       )
     `;
+    await transaction`delete from source_snapshots where source_id in(select id from sources where canonical_url like ${`https://official.example.test/${prefix}/%`})`;
     await transaction`delete from sources where canonical_url like ${`https://official.example.test/${prefix}/%`}`;
+    await transaction`delete from institution_registry_identities where institution_id in(select id from institutions where slug like ${`${prefix}-%`})`;
     await transaction`delete from institutions where slug like ${`${prefix}-%`}`;
     await transaction`delete from admin_users where external_auth_subject like ${`${prefix}-%`}`;
   });
@@ -414,6 +417,61 @@ describe("WP-10B Institution Fact verification", () => {
     });
   });
 
+  it("requires an exactly linked official capture for international no-notify Fact correction", async () => {
+    const fixture = await createFixture(true);
+    await runtime.client`update institutions set category='INTERNATIONAL_SCHOOL' where id=${fixture.institutionId}`;
+    await runtime.client`insert into institution_registry_identities(institution_id,registry_name,registry_external_id,registry_record_url,registry_locator,metadata_json) values(${fixture.institutionId},'ISI',${fixture.institutionId},'https://isi.example.test/record','review','{}'::jsonb)`;
+    const body = {
+      ...input(fixture, 1300000),
+      correction: {
+        mode: "ADMIN_CORRECTION_NO_NOTIFY",
+        reason: "CORRECTION_CONTENT_NO_NOTIFY",
+      },
+    };
+    const ctx = createAdminCommandContext({ adminUserId: fixture.adminUserId });
+    await expect(
+      verifyInstitutionFact(ctx, body, {
+        transactionManager: runtime.transactionManager,
+      }),
+    ).rejects.toThrow();
+    const snapshotId = randomUUID(),
+      other = randomUUID();
+    await runtime.client`insert into source_snapshots(id,source_id,captured_at,content_hash) values(${snapshotId},${fixture.sourceId},now(),'linked-capture'),(${other},${fixture.sourceId},now(),'other-capture')`;
+    const observation =
+      await runtime.client`insert into source_observations(source_id,observed_at,outcome,snapshot_id) values(${fixture.sourceId},now(),'SUCCESS',${snapshotId}) returning id`;
+    const evidence = {
+      evidenceRole: "PRIMARY",
+      observationId: String(observation[0]!.id),
+      snapshotId,
+    };
+    await expect(
+      verifyInstitutionFact(
+        ctx,
+        { ...body, evidence: { ...evidence, snapshotId: other } },
+        { transactionManager: runtime.transactionManager },
+      ),
+    ).rejects.toThrow();
+    const result = await verifyInstitutionFact(
+      ctx,
+      { ...body, evidence },
+      { transactionManager: runtime.transactionManager },
+    );
+    expect(
+      (
+        await runtime.client`select source_observation_id,source_snapshot_id from institution_fact_version_evidence where institution_fact_version_id=${result.currentVersionId}`
+      )[0],
+    ).toMatchObject({ source_snapshot_id: snapshotId });
+    const detail = await getInstitutionBySlug(
+      runtime.executor,
+      `${prefix}-institution-${fixture.institutionId}`,
+    );
+    expect(
+      detail.verifiedFacts.some(
+        (fact) =>
+          fact.factType === "TUITION" && fact.displayValue === "KRW 1,300,000",
+      ),
+    ).toBe(true);
+  });
   it("preserves the full nested Fact value and writes correction audit plus cache without notifications", async () => {
     const fixture = await createFixture(true);
     const body = {

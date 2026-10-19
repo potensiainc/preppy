@@ -1,0 +1,18 @@
+{
+  "productCodeFrozen": true,
+  "unit": { "files": 169, "tests": 1621, "result": "PASS" },
+  "relatedIntegration": { "files": 9, "tests": 52, "result": "PASS", "database": "dedicated clean localhost test database" },
+  "typecheck": "PASS",
+  "productionBuild": "PASS",
+  "prebuild": "PASS",
+  "changedFileEslint": { "files": 23, "errors": 0, "result": "PASS" },
+  "wholeEslint": { "errors": 1, "file": "app/_components/analytics-provider.tsx", "line": 36, "rule": "prefer-rest-params", "unchangedFromBase": true },
+  "changedCodePrettier": "PASS",
+  "initialIntegrationProbe": "Two failures: legacy QA fixtures contaminated an unscoped total, and an old operating-age expectation conflicted with the new reviewed-session target-age contract. Product code unchanged; the contract test was made explicit and all nine files passed in a clean database.",
+  "screenshots": { "375-list.jpg": "375px content width, matching session list", "390-ecc.jpg": "390px content width, ECC session detail", "412-list.jpg": "412px content width, matching session list" },
+  "detailDomChecks": "PASS at375/390/412; screenshots may reflect a compositor frame from the list transition, so captions identify the actual visible screen.",
+  "externalObservation": "Final fresh-tab page observation denied by URL policy; click executed, final arrival unverified. No workaround. Exact local href checked at all widths; earlier successful official-page visit recorded separately.",
+  "productionApplied": false,
+  "productionDryRun": false,
+  "railwayChanged": false
+}

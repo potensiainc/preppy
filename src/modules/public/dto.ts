@@ -34,6 +34,7 @@ export type InstitutionListQuery = {
   query?: string;
   hasConfirmedTuition?: boolean;
   minAge?: number;
+  admissionYear?: number;
   transport?: TransportFilter;
   hasUpcomingInfoSession?: boolean;
   sort?: EnglishKindergartenSort;
@@ -78,6 +79,10 @@ export type EnglishKindergartenSectionDTO = {
 };
 
 export type EnglishKindergartenInformationSessionDTO = {
+  eventEndsAt?: string | null;
+  targetAudience?: string | null;
+  applicationOpensAt?: string | null;
+  bookingNote?: string | null;
   id: string;
   slug: string;
   title: string;
@@ -125,6 +130,7 @@ export type EnglishKindergartenCardSummaryDTO = {
     verifiedAt: string | null;
   };
   nextInformationSession: EnglishKindergartenInformationSessionDTO | null;
+  informationSessions?: EnglishKindergartenInformationSessionDTO[];
   coverage: EnglishKindergartenSectionDTO[];
   lastContentCheckedAt: string | null;
 };
@@ -147,6 +153,7 @@ export type EnglishKindergartenDetailDTO = EnglishKindergartenCardSummaryDTO & {
 };
 
 export type InstitutionCardDTO = {
+  matchedAlias?: string;
   id: string;
   slug: string;
   name: string;
@@ -170,6 +177,7 @@ export type InstitutionCardDTO = {
 };
 
 export type InstitutionListDTO = {
+  matchingSessionCount?: number;
   items: InstitutionCardDTO[];
   districtFacets: Array<{
     district: SeoulDistrict;
