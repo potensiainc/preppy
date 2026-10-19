@@ -29,6 +29,12 @@
 
 ## QA와 배포 조건
 
-최종 단위1655개, 로컬 격리 PostgreSQL 통합8개 통과. TypeScript·변경 파일lint·prebuild도 검증한다. 필수 배포 전 `npm run deploy:preflight`, 최신main 포함, 필수 CI, 단일 불변 이미지의 staging 검증 후 production 순서를 지킨다. 세 운영 플래그는 false로 유지한다.
+최종 단위1655개, 로컬 격리 PostgreSQL 통합10개 통과. TypeScript·변경 파일lint·prebuild도 검증한다. 필수 배포 전 `npm run deploy:preflight`, 최신main 포함, 필수 CI, 단일 불변 이미지의 staging 검증 후 production 순서를 지킨다. 세 운영 플래그는 false로 유지한다.
 
 지정 환경: DESKTOP-LLAQ2GV Chrome `포텐시아 주식회사` 프로필만 사용한다. 현재 inventory에서 프로필이 식별되지 않았고 후속 CUA 재조회가30초 timeout으로 실패했다. 다른 브라우저/계정으로 대체하지 않는다. 실제 viewport와 키보드/상세 복귀 QA가 끝나기 전 production 완료로 보고하지 않는다.
+
+## 직접 관련된 정렬 리뷰 수정
+
+영어유치원 설명회의 표시 날짜는 행사 시작일인데 SQL 정렬 키가 신청일 우선인 불일치를 로컬 DB 회귀 테스트로 재현했다. 해당 category/kind만 행사 시작일로 정렬 키를 맞춘다. 홈의 대표 회차 선택과 설명회 목록의 같은 상태 내 순서에 적용되며, 기존 상태 우선순위와 다른 기관 유형의 신청 마감일 기준은 유지한다. 이 읽기 모델 변경에는 DB/data migration이 없다.
+
+최초 UI 이미지3cc307f는 staging 배포8aedb86f-f865-4c76-9c52-e67ec7001a16에서 HTTP 필터/0건/다른큐레이션 분리 검증을 통과했다. 홈 제목·헤더 링크와 기존CSS규칙214개는 그대로이며 신규달력 전용 규칙56개가 추가돼 CSS번들명만 바뀌었다. 이는 실제 viewport QA나 이후 정렬 수정의 이미지 검증을 대체하지 않는다.

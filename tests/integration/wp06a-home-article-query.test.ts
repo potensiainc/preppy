@@ -90,6 +90,7 @@ async function createNativeOpportunity(
     kind?: "APPLICATION" | "INFORMATION_SESSION";
     title?: string;
     applicationCloseAt?: string;
+    eventStartAt?: string;
   }> = {},
 ) {
   const id = randomUUID();
@@ -111,9 +112,9 @@ async function createNativeOpportunity(
         ${published ? "2026-08-01T00:00:00.000Z" : null})
     `;
     await transaction`
-      insert into opportunity_versions (id, opportunity_id, truth_mode, version_number, verification_state, business_state, is_current, title, summary, application_close_at, action_url, verified_at)
+      insert into opportunity_versions (id, opportunity_id, truth_mode, version_number, verification_state, business_state, is_current, title, summary, application_close_at, event_start_at, action_url, verified_at)
       values (${versionId}, ${id}, 'NATIVE', 1, 'VERIFIED', ${state}, true, ${options.title ?? `Opportunity ${state}`},
-        'Verified summary.', ${options.applicationCloseAt ?? "2026-09-01T00:00:00.000Z"}, 'https://apply.example.test', '2026-08-11T02:03:04.000Z')
+        'Verified summary.', ${options.applicationCloseAt ?? "2026-09-01T00:00:00.000Z"}, ${options.eventStartAt ?? null}, 'https://apply.example.test', '2026-08-11T02:03:04.000Z')
     `;
     await transaction`
       insert into opportunity_version_evidence (opportunity_version_id, source_id, evidence_role)
@@ -377,6 +378,75 @@ describe("WP-06A Article and Home public queries", () => {
       native.id,
       legacy.id,
     ]);
+  });
+
+  it("ranks English sessions by displayed event start when booking dates are reversed", async () => {
+    const institution = await createInstitution(
+      "English event ordering",
+      "PUBLISHED",
+      "ENGLISH_KINDERGARTEN",
+    );
+    const earlierAt = new Date(Date.now() + 30 * 86400000).toISOString();
+    const laterAt = new Date(Date.now() + 40 * 86400000).toISOString();
+    const earlier = await createNativeOpportunity(
+      institution.id,
+      "UNKNOWN",
+      true,
+      {
+        kind: "INFORMATION_SESSION",
+        title: "Earlier event, later booking deadline",
+        applicationCloseAt: laterAt,
+        eventStartAt: earlierAt,
+      },
+    );
+    const later = await createNativeOpportunity(
+      institution.id,
+      "UNKNOWN",
+      true,
+      {
+        kind: "INFORMATION_SESSION",
+        title: "Later event, earlier booking deadline",
+        applicationCloseAt: earlierAt,
+        eventStartAt: laterAt,
+      },
+    );
+    const home = await getHomePage(runtime.executor);
+    const selected = home.currentOpportunities.filter(
+      (item) => item.institution.id === institution.id,
+    );
+    expect(selected.map((item) => item.id)).toEqual([earlier.id]);
+    expect(new Date(selected[0]!.keyDate!).toISOString()).toBe(earlierAt);
+    const briefings = await getCurrentInformationSessionCards(
+      runtime.executor,
+      1,
+    );
+    expect(
+      briefings.items
+        .filter((item) => item.institution.id === institution.id)
+        .map((item) => item.id),
+    ).toEqual([earlier.id, later.id]);
+  });
+
+  it("keeps application deadlines as the key for other institution categories", async () => {
+    const institution = await createInstitution("Private application ordering");
+    const sooner = new Date(Date.now() + 30 * 86400000).toISOString();
+    const later = new Date(Date.now() + 40 * 86400000).toISOString();
+    await createNativeOpportunity(institution.id, "UPCOMING", true, {
+      applicationCloseAt: later,
+      eventStartAt: sooner,
+    });
+    const earlierDeadline = await createNativeOpportunity(
+      institution.id,
+      "UPCOMING",
+      true,
+      { applicationCloseAt: sooner, eventStartAt: later },
+    );
+    const home = await getHomePage(runtime.executor);
+    const selected = home.currentOpportunities.filter(
+      (item) => item.institution.id === institution.id,
+    );
+    expect(selected.map((item) => item.id)).toEqual([earlierDeadline.id]);
+    expect(new Date(selected[0]!.keyDate!).toISOString()).toBe(sooner);
   });
 
   it("maps curated schedule filters to verified institution categories without writes", async () => {
