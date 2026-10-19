@@ -10,6 +10,7 @@ import {
   parseCalendarFilter,
 } from "@/app/_lib/calendar-institution-types";
 import type { OpportunityCardDTO } from "@/src/modules/public/dto";
+import { extractLiveAdmissionProposal } from "@/src/modules/live-admissions/extractor";
 
 function item(
   category: OpportunityCardDTO["institution"]["category"],
@@ -112,12 +113,29 @@ describe("calendar institution type discovery", () => {
       "category=ENGLISH_KINDERGARTEN",
     );
   });
-  it("retains available date/time precision without inventing a midnight time", () => {
+  it("does not infer published time precision from an ISO instant", () => {
     let $ = render();
-    expect($("article time").first().text()).toContain("10:00");
+    expect($("article time").first().text()).toBe("2026년 11월 7일");
     $ = render("ALL", [{ ...fixtures[0]!, keyDate: "2026-11-07" }]);
     expect($("article time").text()).not.toMatch(/00:00|10:00/);
     expect($("article time").attr("datetime")).toBe("2026-11-07");
+  });
+  it("does not display synthetic midnight from a real date-only extraction", () => {
+    const proposal = extractLiveAdmissionProposal({
+      html: "<h1>2027학년도 신입생 모집</h1><p>원서 접수: 2026년 11월 6일 ~ 2026년 11월 10일</p>",
+      sourceUrl: "https://school.example.test/admission",
+      classificationHint: "ADMISSIONS",
+      targetAcademicYearLabel: "2027학년도",
+      referenceTime: new Date("2026-10-19T00:00:00Z"),
+    });
+    expect(proposal.applicationOpenAt?.toISOString()).toBe(
+      "2026-11-05T15:00:00.000Z",
+    );
+    const $ = render("ALL", [
+      { ...fixtures[0]!, keyDate: proposal.applicationOpenAt!.toISOString() },
+    ]);
+    expect($("article > p time").text()).toBe("2026년 11월 6일");
+    expect($("article > p time").text()).not.toContain("00:00");
   });
   it("shows an unknown date rather than inventing one", () => {
     const $ = render("ALL", [{ ...fixtures[0]!, keyDate: null }]);
@@ -137,5 +155,8 @@ describe("calendar institution type discovery", () => {
     expect($.text()).toContain("홈에 소개된 0개 일정");
     expect($.text()).not.toContain("213");
     expect($("a[href='/institutions']").length).toBe(1);
+    expect(
+      $("a").filter((_, a) => $(a).text() === "전체 일정 보기").length,
+    ).toBe(0);
   });
 });

@@ -7,7 +7,7 @@ import {
   type CalendarFilter,
 } from "@/app/_lib/calendar-institution-types";
 import {
-  formatPublicDateTime,
+  formatPublicDate,
   opportunityKindLabel,
 } from "@/app/_lib/presentation";
 import { StateBadge, VerifiedAt } from "./public-cards";
@@ -70,7 +70,7 @@ export function CalendarCollection({
         <h2>
           {selected} <span>{collection.items.length}건</span>
         </h2>
-        <p>신청 기간과 행사 날짜는 상세 안내에서 각각 확인해 주세요.</p>
+        <p>신청 기간과 행사 날짜·시간은 상세 안내에서 각각 확인해 주세요.</p>
       </div>
       {collection.items.length === 0 ? (
         <div className={styles.empty}>
@@ -83,7 +83,9 @@ export function CalendarCollection({
             살펴보세요.
           </p>
           <div>
-            <Link href={calendarFilterHref("ALL")}>전체 일정 보기</Link>
+            {filter !== "ALL" ? (
+              <Link href={calendarFilterHref("ALL")}>전체 일정 보기</Link>
+            ) : null}
             <Link href="/institutions">학교·기관 살펴보기</Link>
           </div>
         </div>
@@ -109,7 +111,7 @@ export function CalendarCollection({
                     <span>주요 일정</span>
                     {item.keyDate ? (
                       <time dateTime={item.keyDate}>
-                        {formatPublicDateTime(item.keyDate)}
+                        {formatPublicDate(item.keyDate)}
                       </time>
                     ) : (
                       <strong>날짜 미확인</strong>
