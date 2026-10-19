@@ -12,6 +12,7 @@ import {
 import { getArticleBySlug } from "@/src/modules/public/article-query.server";
 import { getCurrentInformationSessionCards } from "@/src/modules/public/institution-query.server";
 import { getHomePage } from "@/src/modules/public/home-query.server";
+import { calendarCollection } from "@/app/_lib/calendar-institution-types";
 import { assertDedicatedTestDatabaseUrl } from "@/tests/support/test-database";
 
 const databaseUrl = process.env.TEST_DATABASE_URL;
@@ -376,6 +377,42 @@ describe("WP-06A Article and Home public queries", () => {
       native.id,
       legacy.id,
     ]);
+  });
+
+  it("maps curated schedule filters to verified institution categories without writes", async () => {
+    const categories = [
+      "ENGLISH_KINDERGARTEN",
+      "INTERNATIONAL_SCHOOL",
+      "PRIVATE_ELEMENTARY",
+    ] as const;
+    const created = [];
+    for (const category of categories) {
+      const institution = await createInstitution(
+        "Same international school name",
+        "PUBLISHED",
+        category,
+      );
+      const session = await createNativeOpportunity(institution.id, "UPCOMING");
+      created.push({ category, institution, session });
+    }
+    const before = await writeCounts();
+    const home = await getHomePage(runtime.executor);
+    for (const { category, session } of created) {
+      const result = calendarCollection(home.currentOpportunities, category);
+      if (category === "INTERNATIONAL_SCHOOL") {
+        // This fixture has no bound observation/snapshot: preserve the existing
+        // public evidence boundary rather than inventing a result for its filter.
+        expect(result.items.map((item) => item.id)).not.toContain(session.id);
+        expect(result.counts.INTERNATIONAL_SCHOOL).toBe(0);
+      } else {
+        expect(result.items.map((item) => item.id)).toContain(session.id);
+      }
+      expect(
+        result.items.every((item) => item.institution.category === category),
+      ).toBe(true);
+      expect(result.counts.ALL).toBe(home.currentOpportunities.length);
+    }
+    expect(await writeCounts()).toEqual(before);
   });
 
   it("keeps four published institutions per category when one category grows", async () => {

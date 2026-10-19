@@ -5,6 +5,8 @@ import { getCurrentInformationSessionCards } from "@/src/modules/public/institut
 import { getPublicExecutor } from "@/app/_lib/public-page.server";
 import { ArticleCard, OpportunityCard } from "@/app/_components/public-cards";
 import styles from "@/app/_components/curation.module.css";
+import { CalendarCollection } from "@/app/_components/calendar-collection";
+import { parseCalendarFilter } from "@/app/_lib/calendar-institution-types";
 export const dynamic = "force-dynamic";
 const topics = {
   calendar: {
@@ -42,11 +44,12 @@ export default async function CurationPage({
   searchParams,
 }: {
   params: Promise<{ topic: string }>;
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{ page?: string; category?: string | string[] }>;
 }) {
   const { topic } = await params;
   if (!isTopic(topic)) notFound();
-  const requestedPage = Number((await searchParams).page ?? "1");
+  const query = await searchParams;
+  const requestedPage = Number(query.page ?? "1");
   const page =
     Number.isSafeInteger(requestedPage) &&
     requestedPage >= 1 &&
@@ -81,7 +84,12 @@ export default async function CurationPage({
           </Link>
         ))}
       </nav>
-      {empty ? (
+      {topic === "calendar" ? (
+        <CalendarCollection
+          items={items}
+          filter={parseCalendarFilter(query.category)}
+        />
+      ) : empty ? (
         <div className={styles.empty}>
           <h2>
             {topic === "briefings" && page > 1
