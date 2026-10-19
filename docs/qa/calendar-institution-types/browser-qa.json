@@ -1,0 +1,79 @@
+{
+  "browser": "Chrome extension browser1 on DESKTOP-LLAQ2GV",
+  "owner": "Current local Chrome explicitly authorized by user at2026-10-19T15:26UTC; no profile/account switch",
+  "testedCommit": "3cc307f7c26444ac903dc5558557487068334eff",
+  "uiIdenticalToSortFix": "c94b9b6b7f08dbf3652a6f6b09d07665fbb97c7f",
+  "desktop": {
+    "width": 1440,
+    "clientWidth": 1425,
+    "scrollWidth": 1425,
+    "columns": 3
+  },
+  "mobile375": {
+    "width": 375,
+    "clientWidth": 360,
+    "scrollWidth": 360,
+    "cardWidth": 320,
+    "filterWidth": 155,
+    "filterHeight": 54
+  },
+  "otherWidths": [
+    {
+      "cardOverflow": false,
+      "clientWidth": 375,
+      "scrollWidth": 375,
+      "titleClipping": false,
+      "titles": [
+        {
+          "height": 25.5,
+          "lineHeight": "25.5px"
+        },
+        {
+          "height": 25.5,
+          "lineHeight": "25.5px"
+        },
+        {
+          "height": 25.5,
+          "lineHeight": "25.5px"
+        }
+      ],
+      "width": 390
+    },
+    {
+      "cardOverflow": false,
+      "clientWidth": 397,
+      "scrollWidth": 397,
+      "titleClipping": false,
+      "width": 412
+    }
+  ],
+  "longTitle": {
+    "clientHeight": 51,
+    "clientWidth": 282,
+    "height": 51,
+    "lineHeight": "25.5px",
+    "overflow": "visible",
+    "scrollHeight": 51,
+    "scrollWidth": 282,
+    "text": "쥬빌리프라임주니어 어학학원 2027학년도 설명회",
+    "textOverflow": "clip"
+  },
+  "filterCounts": {
+    "all": 12,
+    "english": 7,
+    "international": 0,
+    "elementary": 5
+  },
+  "realInteractions": {
+    "englishFilter": true,
+    "privateFilter": true,
+    "allFilter": true,
+    "zeroResultInternational": true,
+    "detailNavigation": true,
+    "browserBackFilterPreserved": true,
+    "refreshFilterPreserved": true,
+    "keyboardTabFocusVisible": true,
+    "keyboardEnterFilter": true
+  },
+  "allPassed": true
+}

@@ -344,7 +344,7 @@ async function getOpportunityTruths(
         case when i.category='ENGLISH_KINDERGARTEN' and o.kind='INFORMATION_SESSION' and v.event_start_at is not null then 'EVENT_START' when v.application_close_at is not null then 'APPLICATION_CLOSE' when v.application_open_at is not null then 'APPLICATION_OPEN' when v.event_start_at is not null then 'EVENT_START' when v.event_end_at is not null then 'EVENT_END' else null end as "keyDateKind",
         case when i.category='ENGLISH_KINDERGARTEN' and o.kind='INFORMATION_SESSION' then v.event_start_at else coalesce(v.application_close_at,v.application_open_at,v.event_start_at,v.event_end_at) end as "nativeKeyAt",
         null::date as "legacyKeyDate", null::time as "legacyKeyTime", null::text as "legacyTimezone",
-        coalesce(v.application_close_at,v.application_open_at,v.event_start_at,v.event_end_at)::text as "sortKey",
+        (case when i.category='ENGLISH_KINDERGARTEN' and o.kind='INFORMATION_SESSION' then v.event_start_at else coalesce(v.application_close_at,v.application_open_at,v.event_start_at,v.event_end_at) end)::text as "sortKey",
         v.event_start_at as "eventStartAt", i.category as "institutionCategory"
       from opportunities o join institutions i on i.id=o.institution_id and i.publication_state='PUBLISHED'
         and (i.category <> 'INTERNATIONAL_SCHOOL' or (
