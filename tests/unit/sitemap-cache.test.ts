@@ -20,6 +20,13 @@ async function loadSitemap() {
   return (await import("@/app/sitemap")).default;
 }
 
+async function loadSitemapWithInvalidation() {
+  const sitemap = await loadSitemap();
+  const { invalidatePublicSitemapCache } =
+    await import("@/src/modules/public/sitemap-cache.server");
+  return { sitemap, invalidate: invalidatePublicSitemapCache };
+}
+
 beforeEach(() => {
   vi.useFakeTimers({ toFake: ["Date"] });
   vi.setSystemTime(new Date("2026-10-19T00:00:00.000Z"));
@@ -84,5 +91,50 @@ describe("sitemap response cache", () => {
     const sitemap = await loadSitemap();
 
     await expect(sitemap()).rejects.toThrow("database unavailable");
+  });
+
+  it("rebuilds right after a publication invalidation within the TTL", async () => {
+    list
+      .mockResolvedValueOnce([{ url: "https://preppy.kr/old" }])
+      .mockResolvedValueOnce([{ url: "https://preppy.kr/new" }]);
+    const { sitemap, invalidate } = await loadSitemapWithInvalidation();
+
+    await sitemap();
+    invalidate();
+    await vi.waitFor(async () =>
+      expect(await sitemap()).toEqual([{ url: "https://preppy.kr/new" }]),
+    );
+    expect(list).toHaveBeenCalledTimes(2);
+  });
+
+  it("rebuilds again when an invalidation arrives during a build", async () => {
+    let finishFirst: (value: { url: string }[]) => void = () => undefined;
+    list
+      .mockReturnValueOnce(
+        new Promise((resolve) => {
+          finishFirst = resolve;
+        }),
+      )
+      .mockResolvedValueOnce([{ url: "https://preppy.kr/new" }]);
+    const { sitemap, invalidate } = await loadSitemapWithInvalidation();
+
+    const cold = sitemap();
+    invalidate();
+    finishFirst([{ url: "https://preppy.kr/old" }]);
+    expect(await cold).toEqual([{ url: "https://preppy.kr/old" }]);
+    await vi.waitFor(async () =>
+      expect(await sitemap()).toEqual([{ url: "https://preppy.kr/new" }]),
+    );
+    expect(list).toHaveBeenCalledTimes(2);
+  });
+
+  it("does nothing on invalidation before the first build", async () => {
+    list.mockResolvedValueOnce([{ url: "https://preppy.kr/" }]);
+    const { sitemap, invalidate } = await loadSitemapWithInvalidation();
+
+    invalidate();
+    expect(list).not.toHaveBeenCalled();
+    expect(await sitemap()).toEqual([{ url: "https://preppy.kr/" }]);
+    expect(list).toHaveBeenCalledTimes(1);
   });
 });
