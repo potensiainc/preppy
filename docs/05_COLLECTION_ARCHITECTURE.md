@@ -1,4 +1,4 @@
-# AdmissionRadar — Collection Architecture v0.1
+# PREPPY Legacy — Collection Architecture v0.1
 
 **Recommended file:** `docs/05_COLLECTION_ARCHITECTURE.md`
 **Status:** Pre-Implementation Architecture
@@ -16,7 +16,7 @@
 
 # 0. Purpose
 
-This document defines how AdmissionRadar discovers, collects, detects, extracts, and prepares admission information for verification.
+This document defines how PREPPY Legacy discovers, collects, detects, extracts, and prepares admission information for verification.
 
 The collection system exists to answer:
 
@@ -71,7 +71,7 @@ The Collector is not intended to:
 * collect personal applicant information;
 * replicate school websites.
 
-AdmissionRadar monitors a **small, curated Source Registry**.
+PREPPY Legacy monitors a **small, curated Source Registry**.
 
 ---
 
@@ -127,7 +127,7 @@ Do not build distributed crawler infrastructure for 50 schools.
 Recommended logical deployment:
 
 ```text
-AdmissionRadar Application
+PREPPY Legacy Application
 │
 ├── Public Web
 ├── Admin
@@ -315,7 +315,7 @@ These values are configuration defaults, not permanent business rules.
 
 # 10. Season-Aware Scheduling
 
-AdmissionRadar should not check every Source at the same frequency all year.
+PREPPY Legacy should not check every Source at the same frequency all year.
 
 Monitoring intensity can be based on:
 
@@ -413,7 +413,7 @@ HTTP `304 Not Modified` should create an observation but no new snapshot.
 
 # 15. Fetch Safety
 
-AdmissionRadar must:
+PREPPY Legacy must:
 
 * use reasonable request frequency;
 * identify itself appropriately where relevant;
@@ -1335,7 +1335,7 @@ Do not let a content model regenerate dates from prose.
 
 # 53. Source Discovery
 
-AdmissionRadar may identify new relevant Sources while monitoring.
+PREPPY Legacy may identify new relevant Sources while monitoring.
 
 Example:
 
@@ -1788,4 +1788,4 @@ Human handles consequential uncertainty.
 Verified structured data becomes public truth.
 ```
 
-This is AdmissionRadar's collection architecture.
+This is PREPPY Legacy's collection architecture.

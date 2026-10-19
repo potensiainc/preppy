@@ -209,7 +209,7 @@ async function counts(institutionId: string) {
 }
 
 beforeAll(async () => {
-  await lock`select pg_advisory_lock(hashtext('admissionradar-schema-tests'))`;
+  await lock`select pg_advisory_lock(hashtext('preppy-schema-tests'))`;
   await lock`select pg_advisory_lock(hashtext('preppy-private-elementary-bootstrap-tests'))`;
   await migrateDatabase(databaseUrl);
 });
@@ -247,7 +247,7 @@ afterEach(async () => {
 
 afterAll(async () => {
   await lock`select pg_advisory_unlock(hashtext('preppy-private-elementary-bootstrap-tests'))`;
-  await lock`select pg_advisory_unlock(hashtext('admissionradar-schema-tests'))`;
+  await lock`select pg_advisory_unlock(hashtext('preppy-schema-tests'))`;
   await lock.end({ timeout: 5 });
   await closeRuntimeDatabase();
 });

@@ -69,7 +69,7 @@ async function writeAlias(
 describe("Phase 0A database runtime", () => {
   beforeAll(async () => {
     await runtime.client`
-      select pg_advisory_lock(hashtext('admissionradar-schema-tests'))
+      select pg_advisory_lock(hashtext('preppy-schema-tests'))
     `;
     await migrateDatabase(databaseUrl);
   });
@@ -80,7 +80,7 @@ describe("Phase 0A database runtime", () => {
 
   afterAll(async () => {
     await runtime.client`
-      select pg_advisory_unlock(hashtext('admissionradar-schema-tests'))
+      select pg_advisory_unlock(hashtext('preppy-schema-tests'))
     `;
     await closeRuntimeDatabase();
   });

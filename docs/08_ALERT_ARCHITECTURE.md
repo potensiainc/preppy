@@ -1,4 +1,4 @@
-# AdmissionRadar — Alert Architecture v0.1
+# PREPPY Legacy — Alert Architecture v0.1
 
 **Recommended file:** `docs/08_ALERT_ARCHITECTURE.md`
 **Status:** Retention / Audience Architecture
@@ -20,7 +20,7 @@
 
 # 0. Purpose
 
-This document defines how AdmissionRadar turns anonymous search visitors into a reusable parent audience.
+This document defines how PREPPY Legacy turns anonymous search visitors into a reusable parent audience.
 
 Alert is not merely an email feature.
 
@@ -37,7 +37,7 @@ Verified admission change
 ↓
 Relevant Email
 ↓
-AdmissionRadar Return Visit
+PREPPY Legacy Return Visit
 ↓
 Additional School Discovery
 ↓
@@ -397,7 +397,7 @@ Example:
 
 Future:
 
-> 모든 AdmissionRadar 이메일 수신 중단
+> 모든 PREPPY Legacy 이메일 수신 중단
 
 may be added separately.
 
@@ -585,7 +585,7 @@ Retries update the same Delivery.
 
 External email systems cannot guarantee perfect exactly-once network behavior.
 
-AdmissionRadar should guarantee:
+PREPPY Legacy should guarantee:
 
 > **exactly one logical delivery record**
 
@@ -780,12 +780,12 @@ The exact provider should be selected during implementation/infrastructure phase
 
 # 37. Sender Identity
 
-Use a consistent AdmissionRadar sender.
+Use a consistent PREPPY Legacy sender.
 
 Example concept:
 
 ```text
-AdmissionRadar <alerts@admissionradar.kr>
+PREPPY Legacy <alerts@preppy.kr>
 ```
 
 Exact domain setup belongs to deployment.
@@ -823,7 +823,7 @@ Include enough information to establish urgency and trust.
 
 Then:
 
-> **AdmissionRadar에서 전체 일정 보기**
+> **PREPPY Legacy에서 전체 일정 보기**
 
 This supports return traffic.
 
@@ -834,7 +834,7 @@ This supports return traffic.
 Conceptual:
 
 ```text
-[AdmissionRadar]
+[PREPPY Legacy]
 
 경복초등학교 2027학년도
 입학설명회 일정이 발표됐습니다.
@@ -874,7 +874,7 @@ Changes should be visually explicit.
 
 # 42. Alert Example — Correction
 
-If AdmissionRadar previously sent incorrect critical information:
+If PREPPY Legacy previously sent incorrect critical information:
 
 ```text
 [정정 안내]
@@ -957,8 +957,8 @@ change
 Examples:
 
 ```text
-[AdmissionRadar] 경복초 2027 입학설명회 일정 발표
-[AdmissionRadar] 경복초 원서접수 마감일 변경
+[PREPPY Legacy] 경복초 2027 입학설명회 일정 발표
+[PREPPY Legacy] 경복초 원서접수 마감일 변경
 ```
 
 Avoid clickbait.
@@ -967,7 +967,7 @@ Avoid clickbait.
 
 # 47. Frequency
 
-AdmissionRadar alerts are event-driven, not newsletter-frequency emails.
+PREPPY Legacy alerts are event-driven, not newsletter-frequency emails.
 
 Do not send daily “nothing changed” messages.
 
@@ -1025,7 +1025,7 @@ A special issue:
 
 Registration opening can be known days in advance.
 
-Should AdmissionRadar alert twice?
+Should PREPPY Legacy alert twice?
 
 Example:
 
@@ -1093,7 +1093,7 @@ Not included in initial MVP.
 
 # 54. Alert Landing Destination
 
-Every Alert must link to the most relevant AdmissionRadar page.
+Every Alert must link to the most relevant PREPPY Legacy page.
 
 Preferred:
 
@@ -1321,7 +1321,7 @@ This allows:
 
 # 65. Multiple-School Expansion
 
-After a subscription verifies, AdmissionRadar may suggest:
+After a subscription verifies, PREPPY Legacy may suggest:
 
 ```text
 비슷한 사립초 일정도 확인하기
@@ -1339,7 +1339,7 @@ Admission alert consent should not silently mean:
 
 > marketing newsletter subscription.
 
-If `AdmissionRadar Weekly` is added later, treat newsletter consent separately unless a clear lawful/UX policy explicitly defines otherwise.
+If `PREPPY Legacy Weekly` is added later, treat newsletter consent separately unless a clear lawful/UX policy explicitly defines otherwise.
 
 Domain model may later add:
 
@@ -1539,7 +1539,7 @@ Templates and targets derive server-side.
 
 # 79. Link Safety
 
-CTA destination must be a known AdmissionRadar route.
+CTA destination must be a known PREPPY Legacy route.
 
 Official Source link may appear on landing page.
 
@@ -1768,7 +1768,7 @@ Newsletter is a separate distribution product.
 Potential:
 
 ```text
-AdmissionRadar Weekly
+PREPPY Legacy Weekly
 ```
 
 It may aggregate:
@@ -1924,7 +1924,7 @@ visitor
 → exactly one logical Delivery exists per eligible Subscription
 → email sends successfully
 → user clicks
-→ returns to correct AdmissionRadar page
+→ returns to correct PREPPY Legacy page
 → unsubscribe stops future delivery
 ```
 
@@ -1948,7 +1948,7 @@ If Alerts do not produce measurable return traffic, the retention hypothesis is 
 
 # 100. Final Alert Principle
 
-AdmissionRadar should not optimize for sending the most email.
+PREPPY Legacy should not optimize for sending the most email.
 
 It should optimize for:
 

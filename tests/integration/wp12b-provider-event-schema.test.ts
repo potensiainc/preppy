@@ -16,7 +16,7 @@ const schemaLockSql = postgres(databaseUrl, { max: 1 });
 describe("WP-12B provider event receipt schema", () => {
   beforeAll(async () => {
     await schemaLockSql`
-      select pg_advisory_lock(hashtext('admissionradar-schema-tests'))
+      select pg_advisory_lock(hashtext('preppy-schema-tests'))
     `;
     await migrateDatabase(databaseUrl);
   });
@@ -24,7 +24,7 @@ describe("WP-12B provider event receipt schema", () => {
   afterAll(async () => {
     await sql`delete from email_provider_events where provider_event_id like 'wp12b-schema-%'`;
     await schemaLockSql`
-      select pg_advisory_unlock(hashtext('admissionradar-schema-tests'))
+      select pg_advisory_unlock(hashtext('preppy-schema-tests'))
     `;
     await schemaLockSql.end({ timeout: 5 });
     await sql.end({ timeout: 5 });

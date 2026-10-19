@@ -1,4 +1,4 @@
-# AdmissionRadar — Implementation Decisions
+# PREPPY Legacy — Implementation Decisions
 
 **Status:** STEP 0 decision record  
 **Date:** 2026-08-14  
@@ -139,7 +139,7 @@ Admission Events and Facts use stable identity rows plus append-only version row
 
 **Reason**
 
-AdmissionRadar's durable asset is explainable admission history, including corrections and source changes.
+PREPPY Legacy's durable asset is explainable admission history, including corrections and source changes.
 
 **Tradeoff**
 

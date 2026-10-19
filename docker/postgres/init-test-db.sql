@@ -1,1 +1,1 @@
-CREATE DATABASE admissionradar_test;
+CREATE DATABASE preppy_test;

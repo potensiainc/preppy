@@ -78,7 +78,7 @@ describe("WP-16A Admin Operations observability", () => {
     const publicHealth = await import("@/app/api/health/route");
     expect(await (await publicHealth.GET()).json()).toEqual({
       status: "ok",
-      service: "admissionradar",
+      service: "preppy",
     });
   });
 });

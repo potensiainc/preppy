@@ -1,4 +1,4 @@
-# AdmissionRadar — Admin Operations v0.1
+# PREPPY Legacy — Admin Operations v0.1
 
 **Recommended file:** `docs/09_ADMIN_OPERATIONS.md`
 **Status:** Operations Design / Pre-Implementation
@@ -21,7 +21,7 @@
 
 # 0. Purpose
 
-This document defines how AdmissionRadar is operated day to day.
+This document defines how PREPPY Legacy is operated day to day.
 
 The Admin system exists to minimize:
 
@@ -135,7 +135,7 @@ It should show actionable work first.
 Recommended:
 
 ```text
-AdmissionRadar Operations
+PREPPY Legacy Operations
 2026.08.14
 
 ────────────────────────
@@ -2092,7 +2092,7 @@ Never edit old verified version in place.
 
 # 94. Operational Definition of Done
 
-AdmissionRadar Admin MVP is complete when one non-developer operator can:
+PREPPY Legacy Admin MVP is complete when one non-developer operator can:
 
 ```text
 identify today's priority work
@@ -2204,7 +2204,7 @@ Alert drafts
 The operator experience should eventually look like:
 
 ```text
-Open AdmissionRadar Admin
+Open PREPPY Legacy Admin
 
 3 things need attention.
 
@@ -2231,7 +2231,7 @@ Automation exists to remove the latter.
 
 # 99. Final Operations Principle
 
-AdmissionRadar does not need a powerful Admin because it has many employees.
+PREPPY Legacy does not need a powerful Admin because it has many employees.
 
 It needs a focused Admin precisely because it should **not need many employees**.
 
@@ -2257,4 +2257,4 @@ public pages
 Alerts
 ```
 
-That is the operational design of AdmissionRadar.
+That is the operational design of PREPPY Legacy.

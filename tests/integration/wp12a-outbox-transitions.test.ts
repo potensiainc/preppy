@@ -148,14 +148,14 @@ async function cleanup() {
 
 describe("WP-12A safe Outbox transitions", () => {
   beforeAll(async () => {
-    await lockClient`select pg_advisory_lock(hashtext('admissionradar-schema-tests'))`;
+    await lockClient`select pg_advisory_lock(hashtext('preppy-schema-tests'))`;
     await migrateDatabase(databaseUrl);
   });
 
   afterEach(cleanup);
 
   afterAll(async () => {
-    await lockClient`select pg_advisory_unlock(hashtext('admissionradar-schema-tests'))`;
+    await lockClient`select pg_advisory_unlock(hashtext('preppy-schema-tests'))`;
     await lockClient.end({ timeout: 5 });
     await sql.end({ timeout: 5 });
     await client.end({ timeout: 5 });

@@ -12,8 +12,7 @@ function toolMode(
     return {
       kind: "DOCKER_COMPOSE_LOCAL",
       service: environment.POSTGRES_DOCKER_SERVICE ?? "postgres",
-      databaseUser:
-        environment.POSTGRES_LOCAL_DATABASE_USER ?? "admissionradar",
+      databaseUser: environment.POSTGRES_LOCAL_DATABASE_USER ?? "preppy",
     };
   }
   throw new Error("Invalid PostgreSQL restore tool mode.");

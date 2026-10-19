@@ -1758,7 +1758,7 @@ Report exact branch/baseline/diff, package versions, migration/schema none, sani
 - Gates: typecheck PASS, lint PASS with 0 warnings, WP-13 scoped Prettier PASS,
   production build PASS. Repository-wide Prettier remains a pre-existing
   294-file baseline outside WP-13 scope and was not bulk-rewritten.
-- Browser: all six real fake-OIDC phases PASS on fresh `admissionradar_test`;
+- Browser: all six real fake-OIDC phases PASS on fresh `preppy_test`;
   unsafe content false, relations 1+1, cache events 6, audits 9, redirects
   A→C/B→C, Product signals 0, tablet/mobile accessibility assertions PASS,
   exact fixture listeners stopped. Evidence is outside tracked source at

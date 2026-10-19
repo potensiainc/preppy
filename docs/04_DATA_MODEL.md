@@ -64,7 +64,7 @@ GA4는 이 상태의 Source of Truth가 아니다.
 
 ## 1.2 Additive Migration First
 
-기존 AdmissionRadar table을 즉시 rename/drop하지 않는다.
+기존 PREPPY Legacy table을 즉시 rename/drop하지 않는다.
 
 새 canonical model을 먼저 추가하고:
 

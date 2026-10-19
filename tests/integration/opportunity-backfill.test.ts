@@ -186,7 +186,7 @@ async function productSideEffectCounts() {
 
 describe("Opportunity backfill", () => {
   beforeAll(async () => {
-    await rawSql`select pg_advisory_lock(hashtext('admissionradar-schema-tests'))`;
+    await rawSql`select pg_advisory_lock(hashtext('preppy-schema-tests'))`;
     await migrateDatabase(databaseUrl);
   });
 
@@ -195,7 +195,7 @@ describe("Opportunity backfill", () => {
   });
 
   afterAll(async () => {
-    await rawSql`select pg_advisory_unlock(hashtext('admissionradar-schema-tests'))`;
+    await rawSql`select pg_advisory_unlock(hashtext('preppy-schema-tests'))`;
     await rawSql.end({ timeout: 5 });
     await closeRuntimeDatabase();
   });

@@ -384,7 +384,7 @@ async function clearFixtures() {
 describe("WP-09 Follow commands", () => {
   beforeAll(async () => {
     await schemaLockSql`
-      select pg_advisory_lock(hashtext('admissionradar-schema-tests'))
+      select pg_advisory_lock(hashtext('preppy-schema-tests'))
     `;
     await migrateDatabase(databaseUrl);
   });
@@ -393,7 +393,7 @@ describe("WP-09 Follow commands", () => {
 
   afterAll(async () => {
     await schemaLockSql`
-      select pg_advisory_unlock(hashtext('admissionradar-schema-tests'))
+      select pg_advisory_unlock(hashtext('preppy-schema-tests'))
     `;
     await schemaLockSql.end({ timeout: 5 });
     await closeRuntimeDatabase();

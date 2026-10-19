@@ -12,8 +12,8 @@ if (!testDatabaseUrl) throw new Error("TEST_DATABASE_URL must be set");
 assertDedicatedTestDatabaseUrl(testDatabaseUrl);
 
 const base = new URL(testDatabaseUrl);
-const sourceName = "admissionradar_wp16a_rehearsal";
-const targetName = "admissionradar_wp16a_restore";
+const sourceName = "preppy_wp16a_rehearsal";
+const targetName = "preppy_wp16a_restore";
 const sourceUrl = new URL(base);
 sourceUrl.pathname = `/${sourceName}`;
 const targetUrl = new URL(base);
@@ -302,7 +302,7 @@ async function seedRepresentativeFixture() {
 
 describe("WP-16A real non-production backup/restore drill", () => {
   beforeAll(async () => {
-    await maintenance`select pg_advisory_lock(hashtext('admissionradar-schema-tests'))`;
+    await maintenance`select pg_advisory_lock(hashtext('preppy-schema-tests'))`;
     await recreate(sourceName);
     await recreate(targetName);
   }, 60_000);
@@ -310,7 +310,7 @@ describe("WP-16A real non-production backup/restore drill", () => {
   afterAll(async () => {
     await maintenance.unsafe(`drop database if exists "${targetName}"`);
     await maintenance.unsafe(`drop database if exists "${sourceName}"`);
-    await maintenance`select pg_advisory_unlock(hashtext('admissionradar-schema-tests'))`;
+    await maintenance`select pg_advisory_unlock(hashtext('preppy-schema-tests'))`;
     await maintenance.end({ timeout: 5 });
   }, 60_000);
 

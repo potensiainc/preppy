@@ -15,7 +15,7 @@ assertDedicatedTestDatabaseUrl(databaseUrl);
 const sql = postgres(databaseUrl, { max: 4 });
 const schemaLockSql = postgres(databaseUrl, { max: 1 });
 const prefix = "wp-04a-outbox-";
-const upgradeDatabaseName = "admissionradar_wp04a_upgrade_verify20260827";
+const upgradeDatabaseName = "preppy_wp04a_upgrade_verify20260827";
 const upgradeDatabaseUrl = new URL(databaseUrl);
 upgradeDatabaseUrl.pathname = `/${upgradeDatabaseName}`;
 assertDedicatedTestDatabaseUrl(upgradeDatabaseUrl.toString());
@@ -97,14 +97,14 @@ async function applyMigrationFile(
 
 describe("WP-04A PostgreSQL Outbox persistence hardening", () => {
   beforeAll(async () => {
-    await schemaLockSql`select pg_advisory_lock(hashtext('admissionradar-schema-tests'))`;
+    await schemaLockSql`select pg_advisory_lock(hashtext('preppy-schema-tests'))`;
     await migrateDatabase(databaseUrl);
   });
 
   afterEach(clearFixtures);
 
   afterAll(async () => {
-    await schemaLockSql`select pg_advisory_unlock(hashtext('admissionradar-schema-tests'))`;
+    await schemaLockSql`select pg_advisory_unlock(hashtext('preppy-schema-tests'))`;
     await schemaLockSql.end({ timeout: 5 });
     await sql.end({ timeout: 5 });
   });

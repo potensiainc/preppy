@@ -227,7 +227,7 @@ async function prepareOne() {
 }
 
 beforeAll(async () => {
-  await lock`select pg_advisory_lock(hashtext('admissionradar-schema-tests'))`;
+  await lock`select pg_advisory_lock(hashtext('preppy-schema-tests'))`;
   await lock`select pg_advisory_lock(hashtext('preppy-seed-import-tests'))`;
   await lock`select pg_advisory_lock(hashtext('preppy-live-admission-persistence-tests'))`;
   await migrateDatabase(databaseUrl);
@@ -304,7 +304,7 @@ afterAll(async () => {
   if (fixture !== undefined) await fixture.close();
   await lock`select pg_advisory_unlock(hashtext('preppy-live-admission-persistence-tests'))`;
   await lock`select pg_advisory_unlock(hashtext('preppy-seed-import-tests'))`;
-  await lock`select pg_advisory_unlock(hashtext('admissionradar-schema-tests'))`;
+  await lock`select pg_advisory_unlock(hashtext('preppy-schema-tests'))`;
   await lock.end({ timeout: 5 });
   await closeRuntimeDatabase();
 });

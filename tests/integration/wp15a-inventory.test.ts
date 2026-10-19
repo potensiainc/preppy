@@ -13,7 +13,7 @@ if (!testDatabaseUrl) throw new Error("TEST_DATABASE_URL must be set");
 assertDedicatedTestDatabaseUrl(testDatabaseUrl);
 
 const baseUrl = new URL(testDatabaseUrl);
-const databaseName = "admissionradar_wp15a_inventory_rehearsal";
+const databaseName = "preppy_wp15a_inventory_rehearsal";
 const readOnlyRole = "preppy_wp15a_inventory_read_only";
 const databaseUrl = new URL(baseUrl);
 databaseUrl.pathname = `/${databaseName}`;
@@ -24,7 +24,7 @@ const sql = postgres(databaseUrl.toString(), { max: 1 });
 
 describe("WP-15A safe production inventory", () => {
   beforeAll(async () => {
-    await maintenance`select pg_advisory_lock(hashtext('admissionradar-schema-tests'))`;
+    await maintenance`select pg_advisory_lock(hashtext('preppy-schema-tests'))`;
     await maintenance.unsafe(`drop database if exists ${databaseName}`);
     await maintenance.unsafe(`drop role if exists ${readOnlyRole}`);
     await maintenance.unsafe(`create role ${readOnlyRole} nologin`);
@@ -43,7 +43,7 @@ describe("WP-15A safe production inventory", () => {
     await sql.end({ timeout: 5 });
     await maintenance.unsafe(`drop database if exists ${databaseName}`);
     await maintenance.unsafe(`drop role if exists ${readOnlyRole}`);
-    await maintenance`select pg_advisory_unlock(hashtext('admissionradar-schema-tests'))`;
+    await maintenance`select pg_advisory_unlock(hashtext('preppy-schema-tests'))`;
     await maintenance.end({ timeout: 5 });
   });
 

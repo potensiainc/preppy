@@ -4,7 +4,7 @@
 > **Document Type:** Repository Validation  
 > **Date:** 2026-08-22  
 > **Validation Target:** `docs/02_TARGET_ARCHITECTURE.md`  
-> **Repository State:** AdmissionRadar STEP 0–2
+> **Repository State:** PREPPY Legacy STEP 0–2
 
 ---
 
@@ -20,7 +20,7 @@
 4. `00_PRODUCT_REQUIREMENTS_BASELINE.md`
 5. `02_TARGET_ARCHITECTURE.md`
 6. `01_EXISTING_ARCHITECTURE_AUDIT.md`
-7. 기존 AdmissionRadar Architecture 문서
+7. 기존 PREPPY Legacy Architecture 문서
 8. 현재 구현 코드
 
 현재 코드와 Target이 다르다는 사실 자체는 conflict가 아니다. 데이터 손실, history 파괴, FK 무결성 저하 또는 P0 제품 경계의 모순이 있을 때만 `CONFLICT`로 판정했다.

@@ -5,9 +5,9 @@ import { hasDeploymentEnvironmentMismatch } from "@/src/config/deployment-enviro
 export function GET(): NextResponse {
   if (hasDeploymentEnvironmentMismatch()) {
     return NextResponse.json(
-      { status: "misconfigured", service: "admissionradar" },
+      { status: "misconfigured", service: "preppy" },
       { status: 503 },
     );
   }
-  return NextResponse.json({ status: "ok", service: "admissionradar" });
+  return NextResponse.json({ status: "ok", service: "preppy" });
 }

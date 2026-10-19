@@ -2,7 +2,7 @@
 
 ## 0. Purpose and Scope
 
-이 문서는 `docs/04_DATA_MODEL.md`를 다시 설계하지 않는다. 확정된 물리 모델을 현재 AdmissionRadar Repository에 additive migration으로 적용하면서 기존 Trust, History, FK integrity, concurrency invariant를 보존할 수 있는지 검증한다.
+이 문서는 `docs/04_DATA_MODEL.md`를 다시 설계하지 않는다. 확정된 물리 모델을 현재 PREPPY Legacy Repository에 additive migration으로 적용하면서 기존 Trust, History, FK integrity, concurrency invariant를 보존할 수 있는지 검증한다.
 
 검증 기준일은 2026-08-22이다. 다음 입력을 실제 파일에서 확인했다.
 

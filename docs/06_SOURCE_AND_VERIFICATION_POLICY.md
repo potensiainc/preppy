@@ -1,4 +1,4 @@
-# AdmissionRadar — Source & Verification Policy v0.1
+# PREPPY Legacy — Source & Verification Policy v0.1
 
 **Recommended file:** `docs/06_SOURCE_AND_VERIFICATION_POLICY.md`
 **Status:** Trust Policy / Publication Gate
@@ -19,7 +19,7 @@
 
 This document defines:
 
-> **when AdmissionRadar is allowed to treat collected information as trusted admission information.**
+> **when PREPPY Legacy is allowed to treat collected information as trusted admission information.**
 
 Collection success does not equal verification.
 
@@ -37,7 +37,7 @@ For consequential admission information:
 
 > **Source authority + evidence + consistency + verification matter more than extraction confidence.**
 
-The most dangerous AdmissionRadar failure is not:
+The most dangerous PREPPY Legacy failure is not:
 
 > missing an announcement by several hours.
 
@@ -56,7 +56,7 @@ Who published it?
 Where was it published?
 Which admission cycle does it belong to?
 What exactly did the source say?
-When did AdmissionRadar observe it?
+When did PREPPY Legacy observe it?
 Was it independently reviewed where required?
 ```
 
@@ -64,7 +64,7 @@ Was it independently reviewed where required?
 
 # 3. Source Classes
 
-AdmissionRadar uses four operational source classes.
+PREPPY Legacy uses four operational source classes.
 
 ## S1 — Direct Authoritative
 
@@ -134,7 +134,7 @@ Examples:
 * forum;
 * unverified social account.
 
-S4 may point AdmissionRadar toward an official Source.
+S4 may point PREPPY Legacy toward an official Source.
 
 It is not trusted current admission evidence by itself.
 
@@ -472,7 +472,7 @@ Reviewer must select the correct domain interpretation.
 
 # 22. Not Announced Policy
 
-AdmissionRadar may publicly say:
+PREPPY Legacy may publicly say:
 
 > **아직 공식 일정이 발표되지 않았습니다.**
 
@@ -493,7 +493,7 @@ no conflicting known official evidence exists
 
 # 23. `NOT_ANNOUNCED` Is Not `NOT_FOUND`
 
-If AdmissionRadar does not know where a School publishes an event:
+If PREPPY Legacy does not know where a School publishes an event:
 
 Public state should not confidently say:
 
@@ -614,7 +614,7 @@ Avoid:
 
 unless there is a genuine deterministic official rule.
 
-AdmissionRadar should not manufacture precision.
+PREPPY Legacy should not manufacture precision.
 
 ---
 
@@ -929,7 +929,7 @@ rather than:
 
 > 귀하는 지원 가능합니다.
 
-AdmissionRadar is not making individual legal/admission eligibility decisions.
+PREPPY Legacy is not making individual legal/admission eligibility decisions.
 
 ---
 
@@ -975,7 +975,7 @@ To display:
 
 > Rolling Admission
 
-AdmissionRadar should have official evidence that the School uses rolling/open application behavior.
+PREPPY Legacy should have official evidence that the School uses rolling/open application behavior.
 
 Do not infer rolling admission merely because no deadline was found.
 
@@ -991,7 +991,7 @@ Official source indicates rolling availability.
 
 ## Unknown deadline
 
-AdmissionRadar has not found/verified closing information.
+PREPPY Legacy has not found/verified closing information.
 
 The UI must not conflate them.
 
@@ -1080,7 +1080,7 @@ If latest attempt failed, public wording may need to distinguish the situation.
 
 # 57. Corrections Policy
 
-If AdmissionRadar published incorrect information:
+If PREPPY Legacy published incorrect information:
 
 1. correct the structured Fact/Event via new version;
 2. preserve previous version;
@@ -1274,7 +1274,7 @@ For critical automated paths, version the extraction configuration and reevaluat
 
 # 67. Verification Auditability
 
-For every approved critical change, AdmissionRadar should be able to reconstruct:
+For every approved critical change, PREPPY Legacy should be able to reconstruct:
 
 ```text
 source
@@ -1413,7 +1413,7 @@ Historical evidence should remain stored even if:
 * School redesigns site;
 * Source URL changes.
 
-This is why AdmissionRadar stores Snapshots.
+This is why PREPPY Legacy stores Snapshots.
 
 ---
 
@@ -1425,7 +1425,7 @@ A parent blog states:
 
 > School X briefing registration opens Aug 20.
 
-AdmissionRadar may:
+PREPPY Legacy may:
 
 ```text
 discover claim
@@ -1521,7 +1521,7 @@ Review as soon as operationally practical and prioritize within the same operati
 
 Lower priority.
 
-AdmissionRadar does not need second-level real-time publishing.
+PREPPY Legacy does not need second-level real-time publishing.
 
 Accuracy remains the constraint.
 
@@ -1617,7 +1617,7 @@ VERIFIED
 
 # 85. Final Trust Principle
 
-AdmissionRadar's competitive advantage will eventually depend on speed.
+PREPPY Legacy's competitive advantage will eventually depend on speed.
 
 But it will survive only if users trust its dates.
 
@@ -1639,6 +1639,6 @@ A system that publishes six hours later but is trustworthy can become useful.
 
 A system that publishes instantly and gets one critical deadline wrong can destroy the entire brand.
 
-AdmissionRadar should automate **observation, comparison, extraction, and preparation aggressively**.
+PREPPY Legacy should automate **observation, comparison, extraction, and preparation aggressively**.
 
 It should automate **truth cautiously**.

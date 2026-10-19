@@ -578,7 +578,7 @@ Verification Check ≠ Version Creation
 
 # 14. Legacy-backed Opportunity Verification
 
-Legacy-backed flow는 기존 AdmissionRadar history engine을 보존한다.
+Legacy-backed flow는 기존 PREPPY Legacy history engine을 보존한다.
 
 ```text
 BEGIN

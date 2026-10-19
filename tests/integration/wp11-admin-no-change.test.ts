@@ -298,13 +298,13 @@ beforeAll(async () => {
   vi.stubEnv("DATABASE_MAX_CONNECTIONS", "6");
   vi.stubEnv("NODE_ENV", "test");
   await schemaLockSql`
-    select pg_advisory_lock(hashtext('admissionradar-schema-tests'))
+    select pg_advisory_lock(hashtext('preppy-schema-tests'))
   `;
   try {
     await migrateDatabase(databaseUrl);
   } finally {
     await schemaLockSql`
-      select pg_advisory_unlock(hashtext('admissionradar-schema-tests'))
+      select pg_advisory_unlock(hashtext('preppy-schema-tests'))
     `;
   }
 });

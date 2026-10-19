@@ -80,10 +80,10 @@ WP-00→18의 전체 방향은 current repository에서 실행 가능하다. Add
 | Outbox | status/available/processed/attempt basic skeleton | IMPLEMENTED+PARTIALLY_TESTED | hardening required |
 | Public runtime | `/api/health` only | IMPLEMENTED+TESTED | all Product routes absent |
 | Canonical target model | docs only | NOT_IMPLEMENTED | WP-01–04 required |
-| Test DB | Postgres 16 Docker + `admissionradar_test` guard | IMPLEMENTED+TESTED | adequate foundation |
+| Test DB | Postgres 16 Docker + `preppy_test` guard | IMPLEMENTED+TESTED | adequate foundation |
 | Browser E2E | no Playwright/Cypress config/package | NOT_FOUND | not an early blocker |
 
-Current public health returns `service: "admissionradar"`; package/database/migration naming also retains AdmissionRadar. Naming cleanup is not a first-phase requirement and must not be mixed with transaction infrastructure unless a validated product decision explicitly requires it.
+Current public health returns `service: "preppy"`; package/database/migration naming also retains PREPPY Legacy. Naming cleanup is not a first-phase requirement and must not be mixed with transaction infrastructure unless a validated product decision explicitly requires it.
 
 ---
 
@@ -570,7 +570,7 @@ no worker/provider connection
 no new framework/DI container
 no production pool-size guess presented as final
 no edits to 0000/0001 migrations
-no broad rename AdmissionRadar→PREPPY
+no broad rename PREPPY Legacy→PREPPY
 ```
 
 ## 14.5 Completion Report

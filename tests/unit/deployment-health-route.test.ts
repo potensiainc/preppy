@@ -12,7 +12,7 @@ describe("GET /api/deployment-health", () => {
     expect(response.status).toBe(503);
     await expect(response.json()).resolves.toEqual({
       status: "misconfigured",
-      service: "admissionradar",
+      service: "preppy",
     });
   });
 

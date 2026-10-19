@@ -169,7 +169,7 @@ async function cleanup() {
 describe("WP-10B Institution Fact verification", () => {
   beforeAll(async () => {
     await schemaLockSql`
-      select pg_advisory_lock(hashtext('admissionradar-schema-tests'))
+      select pg_advisory_lock(hashtext('preppy-schema-tests'))
     `;
     await migrateDatabase(databaseUrl);
   });
@@ -178,7 +178,7 @@ describe("WP-10B Institution Fact verification", () => {
 
   afterAll(async () => {
     await schemaLockSql`
-      select pg_advisory_unlock(hashtext('admissionradar-schema-tests'))
+      select pg_advisory_unlock(hashtext('preppy-schema-tests'))
     `;
     await schemaLockSql.end({ timeout: 5 });
     await closeRuntimeDatabase();

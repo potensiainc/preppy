@@ -93,7 +93,7 @@ async function resetPhase0BFixtures() {
 
 describe("Phase 0B Institution schema invariants", () => {
   beforeAll(async () => {
-    await sql`select pg_advisory_lock(hashtext('admissionradar-schema-tests'))`;
+    await sql`select pg_advisory_lock(hashtext('preppy-schema-tests'))`;
     await migrateDatabase(databaseUrl);
   });
 
@@ -102,7 +102,7 @@ describe("Phase 0B Institution schema invariants", () => {
   });
 
   afterAll(async () => {
-    await sql`select pg_advisory_unlock(hashtext('admissionradar-schema-tests'))`;
+    await sql`select pg_advisory_unlock(hashtext('preppy-schema-tests'))`;
     await sql.end({ timeout: 5 });
   });
 

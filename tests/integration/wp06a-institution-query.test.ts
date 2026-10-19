@@ -345,12 +345,12 @@ async function cleanup(): Promise<void> {
 
 describe("WP-06A Institution public query", () => {
   beforeAll(async () => {
-    await schemaLockSql`select pg_advisory_lock(hashtext('admissionradar-schema-tests'))`;
+    await schemaLockSql`select pg_advisory_lock(hashtext('preppy-schema-tests'))`;
     await migrateDatabase(databaseUrl);
   });
   afterEach(cleanup);
   afterAll(async () => {
-    await schemaLockSql`select pg_advisory_unlock(hashtext('admissionradar-schema-tests'))`;
+    await schemaLockSql`select pg_advisory_unlock(hashtext('preppy-schema-tests'))`;
     await schemaLockSql.end({ timeout: 5 });
     await closeRuntimeDatabase();
   });

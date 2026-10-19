@@ -1,4 +1,4 @@
-# AdmissionRadar — SEO Architecture v0.1
+# PREPPY Legacy — SEO Architecture v0.1
 
 **Recommended file:** `docs/07_SEO_ARCHITECTURE.md`
 **Status:** Acquisition Architecture / Pre-Implementation
@@ -18,7 +18,7 @@
 
 # 0. Purpose
 
-This document defines how AdmissionRadar turns verified admission data into durable organic acquisition assets.
+This document defines how PREPPY Legacy turns verified admission data into durable organic acquisition assets.
 
 SEO is not a separate content-marketing project.
 
@@ -54,7 +54,7 @@ The SEO system must optimize for:
 
 # 1. Core SEO Principle
 
-AdmissionRadar must not pursue:
+PREPPY Legacy must not pursue:
 
 > maximum number of indexed pages.
 
@@ -73,7 +73,7 @@ A page is worth indexing only when it answers a real admission question better t
 
 # 2. SEO Asset Hierarchy
 
-AdmissionRadar has four core indexable asset types.
+PREPPY Legacy has four core indexable asset types.
 
 ```text
 Category
@@ -309,7 +309,7 @@ until sufficiently enriched.
 Example pattern:
 
 ```text
-{학교명} 입학정보 2027 | 모집·설명회·원서접수 일정 | AdmissionRadar
+{학교명} 입학정보 2027 | 모집·설명회·원서접수 일정 | PREPPY Legacy
 ```
 
 But title generation must reflect actual data.
@@ -378,7 +378,7 @@ Initial curated pages:
 
 These must contain more than a list of School cards.
 
-They should provide aggregated AdmissionRadar intelligence.
+They should provide aggregated PREPPY Legacy intelligence.
 
 ---
 
@@ -612,7 +612,7 @@ Do not generate hundreds of AI guides.
 
 # 27. Live Data in Guides
 
-Where useful, Guide pages should embed structured live AdmissionRadar data.
+Where useful, Guide pages should embed structured live PREPPY Legacy data.
 
 Example:
 
@@ -637,7 +637,7 @@ Preferred:
 ```text
 Guide copy
 +
-live AdmissionRadar module
+live PREPPY Legacy module
 ```
 
 This reduces stale content.
@@ -646,7 +646,7 @@ This reduces stale content.
 
 # 29. Originality Standard
 
-Every indexable programmatic page must provide AdmissionRadar-specific value.
+Every indexable programmatic page must provide PREPPY Legacy-specific value.
 
 Possible unique components:
 
@@ -906,7 +906,7 @@ Do not fabricate author expertise or fake editorial metadata.
 
 # 43. Internal Linking Graph
 
-AdmissionRadar must intentionally create a strong graph.
+PREPPY Legacy must intentionally create a strong graph.
 
 ```text
 Category
@@ -1027,7 +1027,7 @@ Limit to a useful number.
 
 # 52. Content Freshness Model
 
-AdmissionRadar has three kinds of freshness.
+PREPPY Legacy has three kinds of freshness.
 
 ## Data Freshness
 
@@ -1233,7 +1233,7 @@ keyword list
 → auto publish thousands
 ```
 
-AdmissionRadar's programmatic advantage comes from:
+PREPPY Legacy's programmatic advantage comes from:
 
 ```text
 structured verified data
@@ -1502,7 +1502,7 @@ Every admission year enriches the same core asset.
 
 # 78. Final SEO Principle
 
-AdmissionRadar should not try to win because it publishes more text.
+PREPPY Legacy should not try to win because it publishes more text.
 
 It should win because:
 
