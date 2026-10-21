@@ -25,6 +25,9 @@ export const DEFAULT_PROCESS_LOCAL_MAX_BUCKETS = 10_000;
  * Per-process fixed-window protection only. It does not coordinate limits
  * across hosts, workers, restarts, or serverless instances.
  */
+// Process-local by design: correct only while web runs a single replica
+// (pinned in .railway/railway.ts and tests/unit/wp15b-railway-production).
+// Scaling web out needs a shared store behind the same interface.
 export class ProcessLocalRateLimiter implements RateLimiter {
   readonly enforcementScope = "process-local" as const;
   private readonly buckets = new Map<string, Bucket>();

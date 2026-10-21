@@ -21,6 +21,9 @@ type ReplayEntry = {
   status: "REGISTERED" | "CONSUMED";
 };
 
+// Process-local by design: correct only while web runs a single replica
+// (pinned in .railway/railway.ts and tests/unit/wp15b-railway-production).
+// Scaling web out needs a shared store behind the same interface.
 export class ProcessLocalAdminFlowReplayStore implements AdminFlowReplayStore {
   readonly enforcementScope = "process-local" as const;
   private readonly entries = new Map<string, ReplayEntry>();

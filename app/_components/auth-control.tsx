@@ -1,5 +1,10 @@
 "use client";
 
+// Parked: the Owner removed login from the public header (see AGENTS.md).
+// This control and /api/auth/session + /api/auth/logout are kept, tested,
+// so header login can return once the Owner approves it. Do not render it
+// from site-header, site-menu or site-footer without that approval.
+
 import { useEffect, useState } from "react";
 
 type Fetcher = typeof fetch;

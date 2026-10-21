@@ -13,6 +13,9 @@ export interface CacheReplayRegistry {
   ): CacheReplayConsumeResult;
 }
 
+// Process-local by design: correct only while web runs a single replica
+// (pinned in .railway/railway.ts and tests/unit/wp15b-railway-production).
+// Scaling web out needs a shared store behind the same interface.
 export class BoundedCacheReplayRegistry implements CacheReplayRegistry {
   private readonly entries = new Map<string, number>();
 
