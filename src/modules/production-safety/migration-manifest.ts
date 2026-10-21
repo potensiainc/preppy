@@ -95,10 +95,22 @@ export const KNOWN_HISTORICAL_LEDGER_ROWS = [
   },
 ] as const;
 
-export function isKnownHistoricalLedgerRow(row: {
-  hash: string;
-  createdAt: number | string;
-}): boolean {
+// The reviewed row is staging history only. Anything that runs as
+// production, or checks a production database, must keep treating it as an
+// unexpected migration.
+export function historicalLedgerRowsAllowed(
+  environment: Record<string, string | undefined> = process.env,
+): boolean {
+  return ![environment.RAILWAY_ENVIRONMENT_NAME, environment.PREPPY_ENVIRONMENT]
+    .map((value) => value?.trim().toLowerCase())
+    .includes("production");
+}
+
+export function isKnownHistoricalLedgerRow(
+  row: { hash: string; createdAt: number | string },
+  allowed: boolean = historicalLedgerRowsAllowed(),
+): boolean {
+  if (!allowed) return false;
   return KNOWN_HISTORICAL_LEDGER_ROWS.some(
     (known) =>
       known.hash === row.hash && known.createdAt === Number(row.createdAt),
@@ -107,6 +119,9 @@ export function isKnownHistoricalLedgerRow(row: {
 
 export function withoutKnownHistoricalLedgerRows<
   Row extends { hash: string; createdAt: number | string },
->(rows: readonly Row[]): Row[] {
-  return rows.filter((row) => !isKnownHistoricalLedgerRow(row));
+>(
+  rows: readonly Row[],
+  allowed: boolean = historicalLedgerRowsAllowed(),
+): Row[] {
+  return rows.filter((row) => !isKnownHistoricalLedgerRow(row, allowed));
 }

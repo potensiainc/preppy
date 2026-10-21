@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto";
+
 import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
@@ -34,6 +36,26 @@ describe("legacy model audit", () => {
     }
     for (const row of audit.opportunitiesByTruthMode)
       expect(["NATIVE", "LEGACY_BACKED"]).toContain(row.truthMode);
+  });
+
+  it("counts a recent update of an old row as a recent write", async () => {
+    const id = randomUUID();
+    await sql`insert into guides
+        (id, slug, title, summary, body_markdown, status, created_at, updated_at)
+      values (${id}, ${`legacy-audit-${id}`}, 'legacy audit', 'summary', 'body',
+        'DRAFT', '2020-01-01T00:00:00Z', '2020-01-01T00:00:00Z')`;
+    try {
+      const before = (await auditLegacyModel(sql)).tables.find(
+        ({ table }) => table === "guides",
+      )!;
+      await sql`update guides set updated_at = now() where id = ${id}`;
+      const after = (await auditLegacyModel(sql)).tables.find(
+        ({ table }) => table === "guides",
+      )!;
+      expect(after.writesLast90Days).toBe(before.writesLast90Days! + 1);
+    } finally {
+      await sql`delete from guides where id = ${id}`;
+    }
   });
 
   it("only reads: the transaction rejects writes", async () => {

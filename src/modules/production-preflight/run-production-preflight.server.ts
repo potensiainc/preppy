@@ -111,7 +111,8 @@ function migrationInventory(
   }
   return compareMigrationLedgers(
     repository,
-    withoutKnownHistoricalLedgerRows(rows).map((row, index) => ({
+    // Production preflight never accepts staging-only ledger history.
+    withoutKnownHistoricalLedgerRows(rows, false).map((row, index) => ({
       identifier: repository[index]?.identifier ?? `database_only_${row.id}`,
       hash: row.hash,
       appliedOrder: index,

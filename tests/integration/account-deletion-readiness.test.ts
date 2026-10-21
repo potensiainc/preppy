@@ -88,6 +88,18 @@ describe("account deletion readiness", () => {
     ).resolves.toBe(true);
   });
 
+  it("is not ready while the relink trigger is disabled", async () => {
+    await fullClient`alter table auth_identities disable trigger block_deleting_kakao_identity_before_insert`;
+    try {
+      await expect(
+        isAccountDeletionSchemaReady(executorFor(fullClient)),
+      ).resolves.toBe(false);
+    } finally {
+      await fullClient`alter table auth_identities enable trigger block_deleting_kakao_identity_before_insert`;
+      resetAccountDeletionReadinessCache();
+    }
+  });
+
   it("is not ready without migration 0017", async () => {
     await expect(
       isAccountDeletionSchemaReady(executorFor(partial)),

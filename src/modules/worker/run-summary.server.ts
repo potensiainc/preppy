@@ -10,14 +10,15 @@ export type WorkerRunCounts = Readonly<{ failed: number }>;
 
 export type WorkerRunHealth = Readonly<{
   deadLettered: number;
+  failedEvents: number;
   held: Readonly<{ emailDelivery: number; cacheRevalidation: number }>;
 }>;
 
 export const WORKER_EXIT_OK = 0;
 export const WORKER_EXIT_PARTIAL_FAILURE = 3;
 
-// Dead letters stamped at or after the run start belong to this run, because
-// every transition of a run uses the run's own `now`.
+// Dead letters and FAILED transitions stamped at or after the run start
+// belong to this run, because every transition of a run uses its own `now`.
 export async function readWorkerRunHealth(
   transactionManager: Pick<TransactionManager, "run">,
   input: Readonly<{
@@ -35,6 +36,9 @@ export async function readWorkerRunHealth(
         count(*) filter (where dead_lettered_at >= ${since}::timestamptz)::int
           as "deadLettered",
         count(*) filter (
+          where status='FAILED' and last_error_at >= ${since}::timestamptz
+        )::int as "failedEvents",
+        count(*) filter (
           where status='PENDING' and event_type='DELIVERY_EMAIL_SEND'
         )::int as "heldEmail",
         count(*) filter (
@@ -44,6 +48,7 @@ export async function readWorkerRunHealth(
     `,
       z.object({
         deadLettered: z.number().int(),
+        failedEvents: z.number().int(),
         heldEmail: z.number().int(),
         heldCache: z.number().int(),
       }),
@@ -51,6 +56,7 @@ export async function readWorkerRunHealth(
   );
   return {
     deadLettered: row?.deadLettered ?? 0,
+    failedEvents: row?.failedEvents ?? 0,
     held: {
       emailDelivery: input.emailSendEnabled ? 0 : (row?.heldEmail ?? 0),
       cacheRevalidation: input.cacheRevalidationEnabled
@@ -64,12 +70,12 @@ export async function readWorkerRunHealth(
 // records it as a failed cron execution instead of a silent success.
 export function workerExitDecision(
   counts: WorkerRunCounts,
-  health: Pick<WorkerRunHealth, "deadLettered">,
+  health: Pick<WorkerRunHealth, "deadLettered" | "failedEvents">,
 ): Readonly<{
   exitCode: number;
   exitReason: "OK" | "EVENT_FAILED" | "DEAD_LETTERED";
 }> {
-  if (counts.failed > 0) {
+  if (counts.failed > 0 || health.failedEvents > 0) {
     return {
       exitCode: WORKER_EXIT_PARTIAL_FAILURE,
       exitReason: "EVENT_FAILED",

@@ -7,6 +7,7 @@ import {
 } from "@/src/config/runtime-env";
 import { heldOutboxEventTypes } from "@/src/modules/production-safety/operational-snapshot.server";
 import { runWorkerOnce } from "@/src/modules/worker/run-once.server";
+import { preHandoffTimeoutCode } from "@/src/modules/notification/send-delivery.server";
 import { workerExitDecision } from "@/src/modules/worker/run-summary.server";
 
 describe("notification maximum signal age", () => {
@@ -39,21 +40,33 @@ describe("notification maximum signal age", () => {
 
 describe("worker exit decision", () => {
   it("succeeds when nothing failed or dead-lettered", () => {
-    expect(workerExitDecision({ failed: 0 }, { deadLettered: 0 })).toEqual({
+    expect(
+      workerExitDecision({ failed: 0 }, { deadLettered: 0, failedEvents: 0 }),
+    ).toEqual({
       exitCode: 0,
       exitReason: "OK",
     });
   });
 
   it("reports a partial failure when an event threw", () => {
-    expect(workerExitDecision({ failed: 1 }, { deadLettered: 0 })).toEqual({
+    expect(
+      workerExitDecision({ failed: 1 }, { deadLettered: 0, failedEvents: 0 }),
+    ).toEqual({
       exitCode: 3,
       exitReason: "EVENT_FAILED",
     });
   });
 
+  it("reports a partial failure when the run moved work to FAILED", () => {
+    expect(
+      workerExitDecision({ failed: 0 }, { deadLettered: 0, failedEvents: 1 }),
+    ).toEqual({ exitCode: 3, exitReason: "EVENT_FAILED" });
+  });
+
   it("reports a partial failure when the run dead-lettered work", () => {
-    expect(workerExitDecision({ failed: 0 }, { deadLettered: 2 })).toEqual({
+    expect(
+      workerExitDecision({ failed: 0 }, { deadLettered: 2, failedEvents: 0 }),
+    ).toEqual({
       exitCode: 3,
       exitReason: "DEAD_LETTERED",
     });
@@ -123,5 +136,45 @@ describe("worker claim scope", () => {
       "OPPORTUNITY_CHANGE_PUBLISHED",
       "DELIVERY_EMAIL_SEND",
     ]);
+  });
+});
+
+describe("worker configuration errors", () => {
+  it("exits 2 without opening the database for an invalid signal age", async () => {
+    vi.stubEnv("WORKER_ENABLED", "true");
+    vi.stubEnv("EMAIL_SEND_ENABLED", "false");
+    vi.stubEnv("CACHE_REVALIDATION_ENABLED", "false");
+    vi.stubEnv("NOTIFICATION_MAX_SIGNAL_AGE_HOURS", "0");
+    vi.stubEnv("DATABASE_URL", "");
+    try {
+      const { runWorkerCommand } = await import("@/scripts/worker");
+      await expect(
+        runWorkerCommand(["--once", "--fake-outcome=ACCEPTED"]),
+      ).resolves.toEqual({
+        exitCode: 2,
+        output: "Invalid worker configuration.",
+      });
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+});
+
+describe("pre-handoff timeouts", () => {
+  it("maps lock and statement timeouts, including wrapped driver errors", () => {
+    expect(preHandoffTimeoutCode({ code: "55P03" })).toBe(
+      "RECIPIENT_LOCK_TIMEOUT",
+    );
+    expect(
+      preHandoffTimeoutCode(
+        new Error("query failed", { cause: { code: "57014" } }),
+      ),
+    ).toBe("PRE_HANDOFF_STATEMENT_TIMEOUT");
+  });
+
+  it("leaves every other error to the existing failure handling", () => {
+    expect(preHandoffTimeoutCode({ code: "23505" })).toBeNull();
+    expect(preHandoffTimeoutCode(new Error("boom"))).toBeNull();
+    expect(preHandoffTimeoutCode(null)).toBeNull();
   });
 });

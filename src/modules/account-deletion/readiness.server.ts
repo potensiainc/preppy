@@ -32,6 +32,7 @@ export async function isAccountDeletionSchemaReady(
           select 1 from pg_trigger
           where tgrelid = 'public.auth_identities'::regclass
             and tgname = 'block_deleting_kakao_identity_before_insert'
+            and tgenabled = 'O'
             and not tgisinternal
         ) as ready
     `)) as unknown as Array<{ ready: boolean }>;

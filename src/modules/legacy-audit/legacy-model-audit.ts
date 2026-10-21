@@ -64,17 +64,26 @@ export async function auditLegacyModel(
     const since = new Date(now.getTime() - 90 * 86_400_000).toISOString();
     const tables = [];
     for (const table of LEGACY_MODEL_TABLES) {
-      const [shape] = await tx<{ present: boolean; hasCreatedAt: boolean }[]>`
+      const [shape] = await tx<
+        { present: boolean; hasCreatedAt: boolean; hasUpdatedAt: boolean }[]
+      >`
         select to_regclass(${`public.${table}`}) is not null as present,
           exists (select 1 from information_schema.columns
             where table_schema = 'public' and table_name = ${table}
-              and column_name = 'created_at') as "hasCreatedAt"`;
+              and column_name = 'created_at') as "hasCreatedAt",
+          exists (select 1 from information_schema.columns
+            where table_schema = 'public' and table_name = ${table}
+              and column_name = 'updated_at') as "hasUpdatedAt"`;
       if (!shape?.present) continue;
+      // An update is a write too: use the later of creation and update.
+      const writtenAt = shape.hasUpdatedAt
+        ? "greatest(created_at, updated_at)"
+        : "created_at";
       const [stats] = shape.hasCreatedAt
         ? await tx.unsafe(
             `select count(*)::int as rows,
-               count(*) filter (where created_at >= $1::timestamptz)::int as recent,
-               max(created_at)::text as latest
+               count(*) filter (where ${writtenAt} >= $1::timestamptz)::int as recent,
+               max(${writtenAt})::text as latest
              from public.${quote(table)}`,
             [since],
           )

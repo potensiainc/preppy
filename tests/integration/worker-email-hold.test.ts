@@ -168,6 +168,44 @@ describe("worker email hold while sending is disabled", () => {
     });
   });
 
+  it("exits non-zero when a run leaves email work FAILED", async () => {
+    const signal = await followedSignal(1);
+    const sender = new FakeEmailSender([
+      {
+        kind: "RESULT_UNKNOWN",
+        provider: "FAKE",
+        errorCode: "PROVIDER_RESULT_UNKNOWN",
+      },
+    ]);
+    const dependencies = {
+      transactionManager: transactions,
+      sender,
+      tracker: new TestAnalyticsTracker(),
+      cacheRevalidator,
+    };
+    await runWorkerOnce(
+      config(true, new Date("2026-08-24T02:00:00.000Z")),
+      dependencies,
+    );
+    await fixtures.discoverGeneratedIds(signal.changeId);
+    const runStartedAt = new Date("2026-08-24T02:01:00.000Z");
+    const result = await runWorkerOnce(
+      config(true, runStartedAt),
+      dependencies,
+    );
+    const health = await readWorkerRunHealth(transactions, {
+      runStartedAt,
+      emailSendEnabled: true,
+      cacheRevalidationEnabled: false,
+    });
+    expect(result).toMatchObject({ processed: 1, failed: 0 });
+    expect(health.failedEvents).toBeGreaterThanOrEqual(1);
+    expect(workerExitDecision(result, health)).toEqual({
+      exitCode: 3,
+      exitReason: "EVENT_FAILED",
+    });
+  });
+
   it("exits non-zero when a run dead-letters email work", async () => {
     const signal = await followedSignal(1);
     const sender = new FakeEmailSender([

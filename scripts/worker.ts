@@ -109,7 +109,12 @@ export async function runWorkerCommand(arguments_: readonly string[]) {
       }),
     };
   }
-  const maxSignalAgeMs = parseNotificationMaxSignalAgeMs(process.env);
+  let maxSignalAgeMs: number;
+  try {
+    maxSignalAgeMs = parseNotificationMaxSignalAgeMs(process.env);
+  } catch {
+    return { exitCode: 2, output: "Invalid worker configuration." };
+  }
   const runtime = getRuntimeDatabase();
   try {
     const sender: EmailSender =
@@ -157,6 +162,7 @@ export async function runWorkerCommand(arguments_: readonly string[]) {
       output: JSON.stringify({
         ...result,
         deadLettered: health.deadLettered,
+        failedEvents: health.failedEvents,
         held: health.held,
         exitReason: decision.exitReason,
       }),

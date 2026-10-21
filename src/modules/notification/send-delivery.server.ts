@@ -78,15 +78,27 @@ const DEFAULT_RECIPIENT_LOCK_TIMEOUT_MS = 3_000;
 const HANDOFF_STATEMENT_TIMEOUT_MS = 15_000;
 const HANDOFF_IDLE_TIMEOUT_MS = 20_000;
 
-function isLockTimeout(error: unknown): boolean {
+// lock_timeout (55P03) or statement_timeout (57014) before the provider is
+// called means nothing was sent.
+const PRE_HANDOFF_TIMEOUT_CODES = new Map([
+  ["55P03", "RECIPIENT_LOCK_TIMEOUT"],
+  ["57014", "PRE_HANDOFF_STATEMENT_TIMEOUT"],
+]);
+
+export function preHandoffTimeoutCode(error: unknown): string | null {
   for (
     let current: unknown = error, depth = 0;
     current !== null && typeof current === "object" && depth < 5;
     current = (current as { cause?: unknown }).cause, depth += 1
   ) {
-    if ((current as { code?: unknown }).code === "55P03") return true;
+    const code = (current as { code?: unknown }).code;
+    const mapped =
+      typeof code === "string"
+        ? PRE_HANDOFF_TIMEOUT_CODES.get(code)
+        : undefined;
+    if (mapped) return mapped;
   }
-  return false;
+  return null;
 }
 const EMAIL_HOLD_DELAY_MS = 300_000;
 
@@ -431,13 +443,14 @@ export async function processEmailDelivery(
       }
     })
     .catch((error: unknown): SendEmailResult => {
-      // Waiting for the recipient row timed out before the provider was
-      // called, so nothing was sent and the attempt is safely retryable.
-      if (!providerCalled && isLockTimeout(error)) {
+      // A lock or statement timeout before the provider was called means
+      // nothing was sent, so the attempt is safely retryable.
+      const timeoutCode = providerCalled ? null : preHandoffTimeoutCode(error);
+      if (timeoutCode) {
         return {
           kind: "RETRYABLE_FAILURE",
           provider: dependencies.sender.provider,
-          errorCode: "RECIPIENT_LOCK_TIMEOUT",
+          errorCode: timeoutCode,
         };
       }
       throw error;

@@ -1,4 +1,5 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
+import { withoutKnownHistoricalLedgerRows } from "@/src/modules/production-safety/migration-manifest";
 import {
   loadMigrationSpecs,
   planFullMigrations,
@@ -54,6 +55,32 @@ describe("migration execution guards", () => {
         { id: 2, hash: "d".repeat(64), created_at: articleTags.created_at },
       ]),
     ).toThrow("UNKNOWN_MIGRATION_HASH");
+  });
+  it("rejects the article-tags row whenever the runner acts as production", () => {
+    const staging = [
+      ...rows([...Array(18).keys()]),
+      { id: 19, ...articleTags },
+      { ...rows([18])[0]!, id: 20 },
+    ];
+    for (const [name, value] of [
+      ["RAILWAY_ENVIRONMENT_NAME", "production"],
+      ["PREPPY_ENVIRONMENT", "PRODUCTION"],
+    ] as const) {
+      vi.stubEnv(name, value);
+      try {
+        expect(() => planFullMigrations(specs, staging)).toThrow(
+          "UNKNOWN_MIGRATION_HASH",
+        );
+      } finally {
+        vi.unstubAllEnvs();
+      }
+    }
+    expect(
+      withoutKnownHistoricalLedgerRows(
+        [{ hash: articleTags.hash, createdAt: articleTags.created_at }],
+        false,
+      ),
+    ).toHaveLength(1);
   });
   it("accepts 0017 appended after a scoped 0018 and nothing else out of order", () => {
     const production = rows([...Array(17).keys(), 18, 17]);

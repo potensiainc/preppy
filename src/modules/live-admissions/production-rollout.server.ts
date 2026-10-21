@@ -154,6 +154,8 @@ export async function assertProductionRolloutMigrationReady(
         select hash, created_at as "createdAt"
         from drizzle.__drizzle_migrations order by created_at, id
       `)) as unknown as Array<{ hash: string; createdAt: string }>,
+      // The production rollout never accepts staging-only ledger history.
+      false,
     );
   } catch {
     throw new ProductionFiveSchoolRolloutError(
