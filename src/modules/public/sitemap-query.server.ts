@@ -245,6 +245,8 @@ export async function listPublicSitemapEntries(
     { url: `${origin}/institutions` },
     { url: `${origin}/articles` },
     { url: `${origin}/opportunities` },
+    { url: `${origin}/guides/english-kindergarten-checklist` },
+    { url: `${origin}/compare/english-kindergarten/yangcheon` },
   ];
   await appendInstitutions(executor, origin, output);
   await appendOpportunities(executor, origin, output);

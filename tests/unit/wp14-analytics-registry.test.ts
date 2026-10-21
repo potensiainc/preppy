@@ -46,6 +46,17 @@ const validPayloads = {
   article_to_follow: { articleId: A, institutionId: B },
   hero_primary_cta_click: { cta: "INSTITUTIONS" },
   hero_secondary_cta_click: { cta: "CURRENT_OPPORTUNITIES" },
+  guide_view: { guide: "EK_CHECKLIST", entry: "BUBUILD_EK_VIDEO" },
+  guide_cta_click: {
+    guide: "EK_CHECKLIST",
+    entry: "OTHER",
+    target: "COMPARE",
+  },
+  compare_view: {
+    category: "ENGLISH_KINDERGARTEN",
+    district: "YANGCHEON",
+    entry: "BUBUILD_EK_VIDEO",
+  },
 } as const satisfies Record<AnalyticsEventName, object>;
 
 describe("WP-14 canonical analytics registry", () => {
