@@ -22,6 +22,7 @@ export type WorkerDispatchDependencies = Readonly<{
   sender: EmailSender;
   tracker: AnalyticsTracker;
   emailSendEnabled: boolean;
+  maxSignalAgeMs?: number;
   appBaseUrl?: string;
   cacheRevalidator: CacheRevalidationClient;
 }>;
@@ -88,6 +89,9 @@ export async function dispatchClaimedOutboxEvent(
         sender: dependencies.sender,
         tracker: dependencies.tracker,
         sendEnabled: dependencies.emailSendEnabled,
+        ...(dependencies.maxSignalAgeMs === undefined
+          ? {}
+          : { maxSignalAgeMs: dependencies.maxSignalAgeMs }),
         ...(dependencies.appBaseUrl === undefined
           ? {}
           : { appBaseUrl: dependencies.appBaseUrl }),

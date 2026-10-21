@@ -1,7 +1,10 @@
 import { pathToFileURL } from "node:url";
 
 import { getServerAnalyticsTracker } from "@/src/analytics/runtime.server";
-import { getSideEffectEnv } from "@/src/config/runtime-env";
+import {
+  getSideEffectEnv,
+  parseNotificationMaxSignalAgeMs,
+} from "@/src/config/runtime-env";
 import { getCacheRevalidationConfig } from "@/src/modules/cache/config.server";
 import {
   HttpCacheRevalidationClient,
@@ -26,6 +29,10 @@ import {
   type FakeWorkerOutcome,
 } from "@/src/modules/worker/cli";
 import { runWorkerOnce } from "@/src/modules/worker/run-once.server";
+import {
+  readWorkerRunHealth,
+  workerExitDecision,
+} from "@/src/modules/worker/run-summary.server";
 
 class RepeatingFakeEmailSender implements EmailSender {
   readonly provider = "FAKE";
@@ -102,6 +109,7 @@ export async function runWorkerCommand(arguments_: readonly string[]) {
       }),
     };
   }
+  const maxSignalAgeMs = parseNotificationMaxSignalAgeMs(process.env);
   const runtime = getRuntimeDatabase();
   try {
     const sender: EmailSender =
@@ -116,6 +124,7 @@ export async function runWorkerCommand(arguments_: readonly string[]) {
           secret: getCacheRevalidationConfig().secret,
         })
       : disabledCacheRevalidator;
+    const runStartedAt = new Date();
     const result = await runWorkerOnce(
       {
         enabled: sideEffects.WORKER_ENABLED,
@@ -124,19 +133,34 @@ export async function runWorkerCommand(arguments_: readonly string[]) {
         workerId: cli.workerId,
         batchSize: cli.batchSize,
         leaseDurationMs: cli.leaseDurationMs,
-        now: new Date(),
+        now: runStartedAt,
       },
       {
         transactionManager: runtime.transactionManager,
         sender,
         tracker: getServerAnalyticsTracker(),
         cacheRevalidator,
+        maxSignalAgeMs,
         ...(process.env.APP_BASE_URL === undefined
           ? {}
           : { appBaseUrl: process.env.APP_BASE_URL }),
       },
     );
-    return { exitCode: 0, output: JSON.stringify(result) };
+    const health = await readWorkerRunHealth(runtime.transactionManager, {
+      runStartedAt,
+      emailSendEnabled: sideEffects.EMAIL_SEND_ENABLED,
+      cacheRevalidationEnabled: sideEffects.CACHE_REVALIDATION_ENABLED,
+    });
+    const decision = workerExitDecision(result, health);
+    return {
+      exitCode: decision.exitCode,
+      output: JSON.stringify({
+        ...result,
+        deadLettered: health.deadLettered,
+        held: health.held,
+        exitReason: decision.exitReason,
+      }),
+    };
   } finally {
     await closeRuntimeDatabase();
   }

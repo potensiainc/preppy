@@ -3,7 +3,12 @@ import "server-only";
 import { sql } from "drizzle-orm";
 
 import type { DatabaseExecutor } from "@/src/infrastructure/db/runtime.server";
-import { getOperationalSnapshot } from "@/src/modules/production-safety/operational-snapshot.server";
+import { getSideEffectEnv } from "@/src/config/runtime-env";
+import {
+  getOperationalSnapshot,
+  heldOutboxEventTypes,
+  type HeldOutboxEventType,
+} from "@/src/modules/production-safety/operational-snapshot.server";
 
 import type {
   AdminDataQualityDTO,
@@ -77,6 +82,15 @@ function unavailableHealth(
   };
 }
 
+function currentHeldEventTypes(): HeldOutboxEventType[] {
+  try {
+    return heldOutboxEventTypes(getSideEffectEnv());
+  } catch {
+    // An invalid flag is reported by startup checks; health stays readable.
+    return [];
+  }
+}
+
 export async function getAdminHealthBundle(
   executor: DatabaseExecutor,
   dependencies: AdminHealthDependencies,
@@ -105,7 +119,10 @@ export async function getAdminHealthBundle(
         now: dependencies.now,
         detailLimit: 20,
       }),
-      getOperationalSnapshot(executor, { now: dependencies.now }),
+      getOperationalSnapshot(executor, {
+        now: dependencies.now,
+        heldEventTypes: currentHeldEventTypes(),
+      }),
     ]);
   const dataQuality =
     dataQualityResult.status === "fulfilled"

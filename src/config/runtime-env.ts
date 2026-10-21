@@ -58,6 +58,28 @@ const sideEffectEnvSchema = z.object({
   CACHE_REVALIDATION_ENABLED: disabledByDefaultBoolean,
 });
 
+export const DEFAULT_NOTIFICATION_MAX_SIGNAL_AGE_HOURS = 72;
+
+const notificationMaxSignalAgeSchema = z
+  .string()
+  .regex(/^[1-9][0-9]{0,2}$/)
+  .transform(Number)
+  .refine((hours) => hours <= 720)
+  .optional()
+  .transform((hours) => hours ?? DEFAULT_NOTIFICATION_MAX_SIGNAL_AGE_HOURS);
+
+// A notification older than this is never emailed: a long worker or email
+// outage must not deliver stale schedule changes as if they were new.
+export function parseNotificationMaxSignalAgeMs(
+  environment: Record<string, string | undefined>,
+): number {
+  return (
+    notificationMaxSignalAgeSchema.parse(
+      environment.NOTIFICATION_MAX_SIGNAL_AGE_HOURS,
+    ) * 3_600_000
+  );
+}
+
 export type RuntimeDatabaseEnv = z.infer<typeof runtimeDatabaseEnvSchema>;
 export type SideEffectEnv = z.infer<typeof sideEffectEnvSchema>;
 

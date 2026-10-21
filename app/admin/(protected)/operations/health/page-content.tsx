@@ -86,6 +86,14 @@ export function AdminOperationsHealthView({
                 </strong>
               </article>
               <article>
+                <p>보류 중인 메일 발송</p>
+                <strong>{operational.outbox.heldEmailDelivery}</strong>
+              </article>
+              <article>
+                <p>보류 중인 캐시 갱신</p>
+                <strong>{operational.outbox.heldCacheRevalidation}</strong>
+              </article>
+              <article>
                 <p>장시간 처리 중</p>
                 <strong>{operational.outbox.staleProcessing}</strong>
               </article>
@@ -118,6 +126,10 @@ export function AdminOperationsHealthView({
                 <strong>{operational.monitoring.sourceUnavailable}</strong>
               </article>
             </div>
+            <p className="admin-cell-note">
+              메일 발송이나 캐시 갱신이 꺼져 있으면 해당 작업은 보내지 않고
+              보류해요. 보류 중인 작업은 워커 지연에서 빠져요.
+            </p>
             <p className="admin-cell-note">
               각 지표는 쿼리 실행 시점의 값이에요. 분석 전송은 성공이 보장되지
               않으며 실패 기록은 저장하지 않아요.

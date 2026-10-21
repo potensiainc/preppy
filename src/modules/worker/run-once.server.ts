@@ -33,6 +33,7 @@ export type WorkerRunOnceDependencies = Readonly<{
   tracker: AnalyticsTracker;
   cacheRevalidator: CacheRevalidationClient;
   appBaseUrl?: string;
+  maxSignalAgeMs?: number;
   recoverStale?: typeof recoverStaleOutboxLeases;
   claimBatch?: typeof claimOutboxBatch;
   dispatch?: typeof dispatchClaimedOutboxEvent;
@@ -100,11 +101,14 @@ export async function runWorkerOnce(
   const recover = dependencies.recoverStale ?? recoverStaleOutboxLeases;
   const claim = dependencies.claimBatch ?? claimOutboxBatch;
   const dispatch = dependencies.dispatch ?? dispatchClaimedOutboxEvent;
-  const enabledEventTypes = parsed.cacheRevalidationEnabled
-    ? supportedOutboxEventTypes
-    : supportedOutboxEventTypes.filter(
-        (eventType) => eventType !== "CACHE_REVALIDATION_REQUESTED",
-      );
+  // Disabled side effects keep their events PENDING instead of consuming
+  // them, so turning a capability on later delivers the held work.
+  const enabledEventTypes = supportedOutboxEventTypes.filter(
+    (eventType) =>
+      (parsed.cacheRevalidationEnabled ||
+        eventType !== "CACHE_REVALIDATION_REQUESTED") &&
+      (parsed.emailSendEnabled || eventType !== "DELIVERY_EMAIL_SEND"),
+  );
   const recovered = await recover(dependencies.transactionManager, {
     eventTypes: enabledEventTypes,
     cutoff: new Date(parsed.now.getTime() - parsed.leaseDurationMs),
@@ -131,6 +135,9 @@ export async function runWorkerOnce(
           tracker: dependencies.tracker,
           emailSendEnabled: parsed.emailSendEnabled,
           cacheRevalidator: dependencies.cacheRevalidator,
+          ...(dependencies.maxSignalAgeMs === undefined
+            ? {}
+            : { maxSignalAgeMs: dependencies.maxSignalAgeMs }),
           ...(dependencies.appBaseUrl === undefined
             ? {}
             : { appBaseUrl: dependencies.appBaseUrl }),

@@ -101,12 +101,12 @@ npm run test:db
 
 부수 효과 플래그는 기본값이 모두 `false`예요.
 
-| 플래그                       | 켜면 일어나는 일                                                                                                            |
-| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `WORKER_ENABLED`             | worker가 outbox 이벤트를 처리해요. `false`면 DB에 접속하지 않고 종료해요                                                    |
-| `EMAIL_SEND_ENABLED`         | Resend로 알림 메일을 보내요. **worker가 켜진 상태에서 `false`면 대기 중인 메일은 보내지 않고 영구히 `SUPPRESSED` 처리돼요** |
-| `CACHE_REVALIDATION_ENABLED` | worker가 캐시 갱신 이벤트를 처리해요. `false`면 해당 이벤트는 `PENDING`으로 남아요                                          |
-| `ANALYTICS_ENABLED`          | 프로덕션에서 GA4 이벤트를 보내요                                                                                            |
+| 플래그                       | 켜면 일어나는 일                                                                                 |
+| ---------------------------- | ------------------------------------------------------------------------------------------------ |
+| `WORKER_ENABLED`             | worker가 outbox 이벤트를 처리해요. `false`면 DB에 접속하지 않고 종료해요                         |
+| `EMAIL_SEND_ENABLED`         | Resend로 알림 메일을 보내요. `false`면 worker가 발송 작업을 처리하지 않고 `PENDING`으로 보류해요 |
+| `CACHE_REVALIDATION_ENABLED` | worker가 캐시 갱신 이벤트를 처리해요. `false`면 해당 이벤트는 `PENDING`으로 남아요               |
+| `ANALYTICS_ENABLED`          | 프로덕션에서 GA4 이벤트를 보내요                                                                 |
 
 탈퇴 기능은 `ACCOUNT_DELETION_ENABLED=true`와 `ACCOUNT_DELETION_READINESS=verified`가 모두 설정됐을 때만 동작해요. 이 기능은 마이그레이션 `0017`이 적용된 DB가 필요해요.
 
@@ -134,7 +134,11 @@ worker:once → OPPORTUNITY_CHANGE_PUBLISHED → notifications · notification_d
 Resend webhook → POST /api/webhooks/resend → 발송 상태 갱신
 ```
 
-worker는 한 번 처리하고 종료해요. 주기 실행은 Railway cron 설정에 의존하고, cron 설정은 IaC 파일에 포함돼 있지 않아요.
+worker는 한 번 처리하고 종료해요. 주기 실행은 Railway cron 설정(`*/5 * * * *`, 재시작 정책 `NEVER`)에 의존하고, cron 설정은 IaC 파일에 포함돼 있지 않아 배포 때마다 직접 확인해요.
+
+- 종료 코드: `0` 정상, `3` 이벤트 처리 실패 또는 이번 실행에서 dead letter 발생, `2` 설정·인자 오류, `124` 시간 초과
+- `NOTIFICATION_MAX_SIGNAL_AGE_HOURS`(기본 72, 1~720)보다 오래된 알림은 보내지 않고 `SUPPRESSED`로 기록해요. outbox에는 `STALE_SIGNAL_EXPIRED`가 남아요.
+- 관리자 운영 화면은 꺼진 기능 때문에 보류된 작업을 따로 보여주고, 그 밖의 작업이 15분 넘게 대기하면 `OUTBOX_WORKER_LAG` 경보를 띄워요.
 
 ## 배포
 

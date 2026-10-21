@@ -42,6 +42,7 @@ type ProcessEmailDeliveryDependencies = Readonly<{
   sender: EmailSender;
   tracker: AnalyticsTracker;
   sendEnabled?: boolean;
+  maxSignalAgeMs?: number;
   appBaseUrl?: string;
   afterAttemptStarted?: () => Promise<void>;
   afterProviderCall?: (result: SendEmailResult) => Promise<void>;
@@ -67,6 +68,9 @@ function validateInput(input: ProcessEmailDeliveryInput) {
     throw ValidationError.invalidRequest();
   }
 }
+
+const DEFAULT_MAX_SIGNAL_AGE_MS = 72 * 3_600_000;
+const EMAIL_HOLD_DELAY_MS = 300_000;
 
 function retryDelayMs(attemptCount: number) {
   return attemptCount <= 1 ? 60_000 : 300_000;
@@ -116,6 +120,11 @@ export async function processEmailDelivery(
 ) {
   validateInput(input);
   if (!PROVIDER_PATTERN.test(dependencies.sender.provider)) {
+    throw ValidationError.invalidRequest();
+  }
+  const maxSignalAgeMs =
+    dependencies.maxSignalAgeMs ?? DEFAULT_MAX_SIGNAL_AGE_MS;
+  if (!Number.isSafeInteger(maxSignalAgeMs) || maxSignalAgeMs < 3_600_000) {
     throw ValidationError.invalidRequest();
   }
   const nowIso = input.now.toISOString();
@@ -168,6 +177,30 @@ export async function processEmailDelivery(
     if (delivery.status !== "QUEUED") throw new ConflictError();
 
     if (dependencies.sendEnabled === false) {
+      // The worker does not claim email work while sending is disabled. If
+      // one is reached anyway, hold it: a disabled switch must never discard
+      // a queued email permanently.
+      await rescheduleOutboxEvent(executor, {
+        eventId: input.eventId,
+        workerId: input.workerId,
+        now: input.now,
+        availableAt: new Date(input.now.getTime() + EMAIL_HOLD_DELAY_MS),
+        errorCode: "EMAIL_SEND_DISABLED",
+      });
+      return { kind: "HELD" } as const;
+    }
+
+    const [signal] = (await executor.raw(sql`
+      select n.signal_published_at as "signalPublishedAt"
+      from notification_deliveries d
+      join notifications n on n.id = d.notification_id
+      where d.id=${input.deliveryId}
+    `)) as unknown as Array<{ signalPublishedAt: Date | string }>;
+    if (!signal) throw new NotFoundError();
+    if (
+      input.now.getTime() - new Date(signal.signalPublishedAt).getTime() >
+      maxSignalAgeMs
+    ) {
       await executor.raw(sql`
         update notification_deliveries
         set status='SUPPRESSED', suppress_reason='OTHER',
@@ -179,7 +212,16 @@ export async function processEmailDelivery(
         workerId: input.workerId,
         now: input.now,
       });
-      return { kind: "SUPPRESSED", reason: "OTHER" } as const;
+      await executor.raw(sql`
+        update outbox_events set last_error_code='STALE_SIGNAL_EXPIRED',
+          last_error_at=${nowIso}::timestamptz
+        where id=${input.eventId} and status='PROCESSED'
+      `);
+      return {
+        kind: "SUPPRESSED",
+        reason: "OTHER",
+        detail: "STALE_SIGNAL_EXPIRED",
+      } as const;
     }
 
     const eligibility = await evaluateDeliveryEligibility(

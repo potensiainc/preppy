@@ -84,6 +84,94 @@ describe("WP-16A operational snapshot", () => {
     expect(snapshot.outbox.workerLagSeconds).toBe(2147483647);
   });
 
+  it("separates held email work from worker lag and alerts on a real stall", async () => {
+    const now = new Date("2099-08-24T12:00:00.000Z");
+    const heldEventTypes = [
+      "DELIVERY_EMAIL_SEND",
+      "CACHE_REVALIDATION_REQUESTED",
+    ] as const;
+    const baseline = await getOperationalSnapshot(runtime.executor, {
+      now,
+      heldEventTypes,
+    });
+    const twentyMinutesAgo = new Date(
+      now.getTime() - 20 * 60_000,
+    ).toISOString();
+    for (const eventType of [
+      "DELIVERY_EMAIL_SEND",
+      "OPPORTUNITY_CHANGE_PUBLISHED",
+    ]) {
+      await runtime.client`
+        insert into outbox_events (
+          id, event_type, aggregate_type, aggregate_id, payload, status,
+          available_at, attempt_count, max_attempts, created_at
+        ) values (
+          ${randomUUID()}, ${eventType}, 'WP16A_FIXTURE', ${randomUUID()},
+          '{}'::jsonb, 'PENDING', ${twentyMinutesAgo}, 0, 3, ${twentyMinutesAgo}
+        )
+      `;
+    }
+
+    const held = await getOperationalSnapshot(runtime.executor, {
+      now,
+      heldEventTypes,
+    });
+    expect(held.outbox.heldEmailDelivery).toBe(
+      baseline.outbox.heldEmailDelivery + 1,
+    );
+    expect(held.outbox.heldCacheRevalidation).toBe(
+      baseline.outbox.heldCacheRevalidation,
+    );
+    expect(held.outbox.workerLagSeconds).toBeGreaterThanOrEqual(1_200);
+    expect(held.alerts).toEqual(
+      expect.arrayContaining([
+        { code: "OUTBOX_WORKER_LAG", severity: "WARNING", count: 1 },
+      ]),
+    );
+
+    const notHeld = await getOperationalSnapshot(runtime.executor, { now });
+    expect(notHeld.outbox.heldEmailDelivery).toBe(0);
+    expect(notHeld.outbox.heldCacheRevalidation).toBe(0);
+  });
+
+  it("does not raise a worker lag alert for held work alone", async () => {
+    const now = new Date("2026-08-25T12:00:00.000Z");
+    const heldEventTypes = [
+      "DELIVERY_EMAIL_SEND",
+      "CACHE_REVALIDATION_REQUESTED",
+    ] as const;
+    const baseline = await getOperationalSnapshot(runtime.executor, {
+      now,
+      heldEventTypes,
+    });
+    const anHourAgo = new Date(now.getTime() - 3_600_000).toISOString();
+    await runtime.client`
+      insert into outbox_events (
+        id, event_type, aggregate_type, aggregate_id, payload, status,
+        available_at, attempt_count, max_attempts, created_at
+      ) values (
+        ${randomUUID()}, 'DELIVERY_EMAIL_SEND', 'WP16A_FIXTURE', ${randomUUID()},
+        '{}'::jsonb, 'PENDING', ${anHourAgo}, 0, 3, ${anHourAgo}
+      )
+    `;
+
+    const snapshot = await getOperationalSnapshot(runtime.executor, {
+      now,
+      heldEventTypes,
+    });
+    expect(snapshot.outbox.heldEmailDelivery).toBe(
+      baseline.outbox.heldEmailDelivery + 1,
+    );
+    expect(snapshot.outbox.workerLagSeconds).toBe(
+      baseline.outbox.workerLagSeconds,
+    );
+    expect(
+      snapshot.alerts.filter(({ code }) => code === "OUTBOX_WORKER_LAG"),
+    ).toEqual(
+      baseline.alerts.filter(({ code }) => code === "OUTBOX_WORKER_LAG"),
+    );
+  });
+
   it("counts queue, provider, monitoring, and cache failure states without mutation", async () => {
     const now = new Date("2026-08-25T12:00:00.000Z");
     const nowIso = now.toISOString();
