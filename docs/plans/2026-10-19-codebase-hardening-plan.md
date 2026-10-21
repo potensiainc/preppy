@@ -682,3 +682,37 @@
 - 관리자 문구가 추가되는 항목(4, 10, 14)은 정책 7장 기준으로 검수해요.
 - 각 PR은 `UX Writing: PASS`, `FIX_REQUIRED`, `N/A — 사유` 중 하나를 실제 검증과 함께 기록해요. 수행하지 않은 화면 검사를 PASS로 기록하지 않아요.
 - 근거 정책: [docs/PREPPY_UX_WRITING_POLICY.md](../PREPPY_UX_WRITING_POLICY.md) (전체 확인)
+
+## 18. 진행 기록 (2026-10-21)
+
+Owner 결정(2026-10-21)을 반영했어요.
+- 0017은 운영에 적용해요.
+- staging c157은 staging 기록으로만 인정해요.
+- 오래된 알림 기준은 72시간으로 유지해요.
+- 새 CI job을 main 필수 체크로 지정해요.
+- `/api/auth/session`, `/api/auth/logout`은 유지해요.
+
+메일 재대조 위치는 담당자 판단으로 정했어요. 지금은 web에 두고, 메일 발송이 꺼져 있거나 Resend 설정이 없으면 외부 호출 전에 막아요. worker로 옮기려면 새 outbox 이벤트 종류(스키마 변경)가 필요해서 다음 스키마 변경 묶음으로 넘겨요.
+
+| 묶음 | 항목 | 결과 | 커밋 |
+|---|---|---|---|
+| A | 3, 7 | 완료. 하드코딩 제거, 공용 DB를 지우던 테스트 격리, 스냅샷 int 범위 초과 수정, 시드 시간 의존 제거, CI `db-integration` | `77aba68`, `1981a70` |
+| B | 1, 4 | 완료 | `a9c8f62` |
+| C | 2, 5, 10 | 완료 | `f62a09a` |
+| D | 6 | 완료 | `d3ccad6` |
+| E | 8 | 완료(안 A) | `eca5b36` |
+| F | 9-1, 15 | 완료. AuthControl은 Owner의 라우트 유지 결정에 맞춰 "보류" 주석만 달았어요 | `b1f11e2` |
+| Owner 결정 | 0017 적용 명령, c157 인정 | 완료(코드). 운영 실행은 운영자 작업이에요 | `79da6b3` |
+| G | 14-1 | 완료(`admin:provision`) | `79e47ac` |
+| G | 13 | 1단계 완료. outbox·worker 경로부터 적용했고, lint 규칙은 기존 595곳 때문에 보류해요 | `5043fdc` |
+| G | 12 | 스키마 분리 완료. 나머지 대형 파일은 기능 작업과 함께 나눠요 | `d2dd90d` |
+| G | 11-1 | 완료(`data:audit-legacy-model`). 11-2~5는 운영 집계 결과를 보고 결정해요 | `d1462d3` |
+| 보류 | 9-2, 14-2 | 스키마 변경(0019)이 필요해요. 운영 0017 적용 전에 0019를 추가하면 관리자 스냅샷 MISMATCH와 실시간 모집 반영 차단이 생기고, 지금은 이득이 없어요(replica 1, 관리자 소수). 0017 운영 적용 이후 필요할 때 진행해요 | — |
+
+### 운영자 작업 (이 세션에서 할 수 없어요)
+
+1. Railway staging·production에 shared variable `PREPPY_ENVIRONMENT`(`staging`/`production`)를 설정한 뒤 IaC를 적용하고, 헬스체크 `/api/release-integrity`가 통과하는지 확인해요.
+2. 운영 백업과 복원 검증 영수증을 만든 뒤 `npm run db:migrate:account-deletion -- --target production …` dry-run 결과를 검토하고 `--apply`로 적용해요([런북](../SCOPED_ACCOUNT_DELETION_MIGRATION.md)).
+3. GitHub main 보호 규칙에서 `db-integration`을 필수 체크로 지정해요.
+4. `npm run data:audit-legacy-model`을 staging·production 읽기 전용 계정으로 실행하고, 결과로 11-2 이후 범위를 정해요.
+5. 운영 cron(`*/5 * * * *`, 재시작 `NEVER`)이 worker exit 3을 실패로 표시하는지 staging에서 확인해요.
