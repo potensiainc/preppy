@@ -68,7 +68,9 @@ The command acquires the same transaction advisory lock as the full runner plus 
 
 Historical Git commit `1a3d850a9c694e2c2d192f646b4bbee98eb2a970` contains `src/db/migrations/0018_article_tags.sql`, blob `1c7ba3c35ccbdff596501bba3c0d1fa556ecd807`. Its exact SHA256 is `c15754b2f47e236cf7f308f5e7a5d7c279eba015369efc4f5ef51c8b1d1120c6`, journal timestamp `1790477016170`. It adds `articles.tags text[] NOT NULL DEFAULT '{}'` and a cardinality-at-most-10 CHECK. Both the source hash and the live staging column/validated CHECK match. This is a different historical 0018 line, not the English identity migration.
 
-Staging already had canonical 0017 before its manual English 0018 application. That application used canonical hash `6782...` and the original timestamp, so it introduced no earlier known gap and does not replay. However c157 is not in the current authoritative manifest. Its row and article schema are preserved; neither command auto-adopts or whitelists it. Full/scoped execution there remains blocked by UNKNOWN_MIGRATION_HASH pending a separately reviewed lineage decision. Do not delete that row, rename historical migrations or fake an approval to obtain a green result.
+Staging already had canonical 0017 before its manual English 0018 application. That application used canonical hash `6782...` and the original timestamp, so it introduced no earlier known gap and does not replay.
+
+**Owner decision (2026-10-21):** keep c157 as reviewed staging history. `KNOWN_HISTORICAL_LEDGER_ROWS` in `src/modules/production-safety/migration-manifest.ts` recognises that row only when both the exact hash `c157...` and timestamp `1790477016170` match; the same hash under any other timestamp is still `UNKNOWN_MIGRATION_HASH`. The row never counts as a repository migration, `articles.tags` stays a staging-only column outside the Drizzle schema, and production is unaffected. The row and column are preserved; do not delete or rewrite them.
 
 ## Validation and boundaries
 

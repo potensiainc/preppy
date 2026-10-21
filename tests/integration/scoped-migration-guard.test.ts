@@ -177,8 +177,18 @@ describe("serialized migration execution against backed-up/restored isolated dat
     expect((await runFullMigrations(client, specs)).applied).toEqual([]);
     expect(await ledger()).toEqual(before);
   });
-  it("rejects an unknown historical article-tags hash before any pending DDL", async () => {
+  it("keeps the reviewed staging article-tags row and still applies pending migrations in order", async () => {
     await client`insert into drizzle.__drizzle_migrations(hash,created_at) values('c15754b2f47e236cf7f308f5e7a5d7c279eba015369efc4f5ef51c8b1d1120c6',1790477016170)`;
+    const before = await ledger();
+    expect((await runFullMigrations(client, specs)).applied).toEqual([
+      "0017_account_deletion",
+      "0018_english_session_identity",
+    ]);
+    expect((await ledger()).slice(0, before.length)).toEqual(before);
+    expect(await identityTables()).toBe(3);
+  });
+  it("rejects the article-tags hash under any other timestamp before DDL", async () => {
+    await client`insert into drizzle.__drizzle_migrations(hash,created_at) values('c15754b2f47e236cf7f308f5e7a5d7c279eba015369efc4f5ef51c8b1d1120c6',1790477016171)`;
     const before = await ledger();
     await expect(runFullMigrations(client, specs)).rejects.toThrow(
       "UNKNOWN_MIGRATION_HASH",

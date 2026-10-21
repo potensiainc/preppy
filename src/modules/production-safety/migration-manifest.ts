@@ -81,3 +81,32 @@ export const EXPECTED_REPOSITORY_MIGRATIONS = [
     hash: "6782c831e6d28b646aca6edc92e7b086406f7b973e29621bac4d77d303e6fcf8",
   },
 ] as const satisfies readonly RepositoryMigration[];
+
+// Ledger rows that are not repository migrations but are reviewed history.
+// Staging applied a since-renamed 0018_article_tags (articles.tags) before
+// the current 0018 existed. The Owner approved keeping that row: it is
+// recognised only when both the exact SQL hash and the original journal
+// timestamp match, and it never counts as a repository migration.
+export const KNOWN_HISTORICAL_LEDGER_ROWS = [
+  {
+    label: "0018_article_tags (historical, staging only)",
+    hash: "c15754b2f47e236cf7f308f5e7a5d7c279eba015369efc4f5ef51c8b1d1120c6",
+    createdAt: 1790477016170,
+  },
+] as const;
+
+export function isKnownHistoricalLedgerRow(row: {
+  hash: string;
+  createdAt: number | string;
+}): boolean {
+  return KNOWN_HISTORICAL_LEDGER_ROWS.some(
+    (known) =>
+      known.hash === row.hash && known.createdAt === Number(row.createdAt),
+  );
+}
+
+export function withoutKnownHistoricalLedgerRows<
+  Row extends { hash: string; createdAt: number | string },
+>(rows: readonly Row[]): Row[] {
+  return rows.filter((row) => !isKnownHistoricalLedgerRow(row));
+}

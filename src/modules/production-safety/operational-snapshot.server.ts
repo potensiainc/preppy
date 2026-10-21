@@ -5,7 +5,10 @@ import { sql } from "drizzle-orm";
 import type { DatabaseExecutor } from "@/src/infrastructure/db/runtime.server";
 import { isAccountDeletionSchemaReady } from "@/src/modules/account-deletion/readiness.server";
 import { countMonitoringDueStates } from "@/src/modules/monitoring/queue-query.server";
-import { EXPECTED_REPOSITORY_MIGRATIONS } from "@/src/modules/production-safety/migration-manifest";
+import {
+  EXPECTED_REPOSITORY_MIGRATIONS,
+  withoutKnownHistoricalLedgerRows,
+} from "@/src/modules/production-safety/migration-manifest";
 import { DEFAULT_WORKER_LEASE_DURATION_MS } from "@/src/modules/worker/cli";
 
 export type OperationalAlert = Readonly<{
@@ -159,7 +162,7 @@ export async function getOperationalSnapshot(
   const held = [...(options.heldEventTypes ?? [])];
   const heldArray = `{${held.join(",")}}`;
   const monitoringCounter = options.countMonitoring ?? countMonitoringDueStates;
-  const [rows, migrationRows, monitoring] = await Promise.all([
+  const [rows, ledgerRows, monitoring] = await Promise.all([
     executor.raw(sql`
       select
         count(*) filter (where e.status='PENDING')::int as "outboxPending",
@@ -217,12 +220,14 @@ export async function getOperationalSnapshot(
       from outbox_events e
     `) as unknown as Promise<AggregateRow[]>,
     executor.raw(sql`
-      select hash from drizzle.__drizzle_migrations order by created_at, id
-    `) as unknown as Promise<Array<{ hash: string }>>,
+      select hash, created_at as "createdAt"
+      from drizzle.__drizzle_migrations order by created_at, id
+    `) as unknown as Promise<Array<{ hash: string; createdAt: string }>>,
     monitoringCounter({ executor, now: options.now }),
   ]);
   const row = rows[0];
   if (!row) throw new Error("Operational snapshot aggregate is unavailable.");
+  const migrationRows = withoutKnownHistoricalLedgerRows(ledgerRows);
   const migrationStatus =
     migrationRows.length === repository.length &&
     migrationRows.every(

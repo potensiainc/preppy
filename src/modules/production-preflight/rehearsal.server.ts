@@ -29,6 +29,7 @@ import {
   buildPreflightReport,
   exitCodeForPreflight,
 } from "@/src/modules/production-preflight/report";
+import { withoutKnownHistoricalLedgerRows } from "@/src/modules/production-safety/migration-manifest";
 
 export type ProductSignalSnapshot = {
   opportunityChanges: number;
@@ -168,7 +169,7 @@ function compareAppliedRows(
   }
   return compareMigrationLedgers(
     repository,
-    rows.map((row, index) => ({
+    withoutKnownHistoricalLedgerRows(rows).map((row, index) => ({
       identifier: repository[index]?.identifier ?? `database_only_${row.id}`,
       hash: row.hash,
       appliedOrder: index,

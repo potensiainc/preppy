@@ -122,7 +122,7 @@ npm run test:db
 - `npm run db:migrate`는 SQL 해시, journal 시각, 적용 순서를 검증해요. 중간에 빠진 마이그레이션이 있으면 DDL 실행 전에 `MIGRATION_GAP_REQUIRES_REVIEW`로 멈춰요.
 - 이미 기록된 마이그레이션 SQL은 해시로 검증되므로 수정하지 않아요.
 
-> **운영 DB에 전체 마이그레이션을 실행하지 않아요.** 운영 환경은 `0018`만 별도로 적용했고 `0017`은 보류 상태예요. 마이그레이션 작업 전에는 [docs/SCOPED_ENGLISH_SESSION_MIGRATION.md](docs/SCOPED_ENGLISH_SESSION_MIGRATION.md)를 먼저 읽고, 운영 변경은 별도 승인을 받아요.
+> **운영 DB에 전체 마이그레이션을 바로 실행하지 않아요.** 운영 환경은 `0018`을 별도로 적용해서 `0017`이 빠져 있어요. Owner 결정에 따라 `0017`은 `npm run db:migrate:account-deletion`(기본 dry-run, 검증된 백업 영수증 필요)으로 적용해요. 작업 전에 [docs/SCOPED_ACCOUNT_DELETION_MIGRATION.md](docs/SCOPED_ACCOUNT_DELETION_MIGRATION.md)와 [docs/SCOPED_ENGLISH_SESSION_MIGRATION.md](docs/SCOPED_ENGLISH_SESSION_MIGRATION.md)를 먼저 읽어요. staging의 과거 `0018_article_tags` 기록은 정확한 해시와 시각이 일치할 때만 검토된 이력으로 인정돼요.
 
 모든 journal 항목에는 drizzle snapshot이 있어요(`tests/unit/migration-snapshots.test.ts`가 확인해요). 0018 SQL은 손으로 작성해서 실제 DB의 제약 이름은 PostgreSQL 기본값(`*_pkey`, `*_fkey`)이고, snapshot에는 drizzle 기본 이름이 기록돼 있어요. 이 제약을 이름으로 바꾸는 마이그레이션을 만들 때는 실제 이름을 확인해요. `npm run db:generate` 결과는 항상 검토한 뒤 적용해요.
 
