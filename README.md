@@ -124,7 +124,7 @@ npm run test:db
 
 > **운영 DB에 전체 마이그레이션을 실행하지 않아요.** 운영 환경은 `0018`만 별도로 적용했고 `0017`은 보류 상태예요. 마이그레이션 작업 전에는 [docs/SCOPED_ENGLISH_SESSION_MIGRATION.md](docs/SCOPED_ENGLISH_SESSION_MIGRATION.md)를 먼저 읽고, 운영 변경은 별도 승인을 받아요.
 
-`0018`에는 drizzle snapshot(`meta/0018_snapshot.json`)이 없어요. `npm run db:generate` 결과는 반드시 검토하고 그대로 적용하지 않아요.
+모든 journal 항목에는 drizzle snapshot이 있어요(`tests/unit/migration-snapshots.test.ts`가 확인해요). 0018 SQL은 손으로 작성해서 실제 DB의 제약 이름은 PostgreSQL 기본값(`*_pkey`, `*_fkey`)이고, snapshot에는 drizzle 기본 이름이 기록돼 있어요. 이 제약을 이름으로 바꾸는 마이그레이션을 만들 때는 실제 이름을 확인해요. `npm run db:generate` 결과는 항상 검토한 뒤 적용해요.
 
 ## 비동기 처리 (worker)
 
