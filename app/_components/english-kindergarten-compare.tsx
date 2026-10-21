@@ -42,7 +42,18 @@ function Gap({
     <>
       <span className="ek-compare__gap">{gap.value}</span>
       {gap.note ? <span className="ek-compare__note">{gap.note}</span> : null}
+      <CheckedAt value={gap.checkedAt} />
     </>
+  );
+}
+
+/** Each compared value shows its own check date, never the row's latest. */
+function CheckedAt({ value }: { value: string | null }) {
+  if (!value) return null;
+  return (
+    <span className="ek-compare__note">
+      내용 확인 <time dateTime={value}>{formatPublicDate(value)}</time>
+    </span>
   );
 }
 
@@ -68,30 +79,40 @@ function CompareRow({
           <span className="ek-compare__note">{institution.address}</span>
         ) : null}
       </th>
-      <td data-label="월 원비">
+      <td data-label="원비">
         {summary.tuition ? (
-          <span>
-            {summary.tuition.displayText ?? formatTuitionValue(summary.tuition)}
-          </span>
+          <>
+            <span>
+              {summary.tuition.displayText ??
+                formatTuitionValue(summary.tuition)}
+            </span>
+            <CheckedAt value={summary.tuition.verifiedAt} />
+          </>
         ) : (
           <Gap summary={summary} section="TUITION" />
         )}
       </td>
       <td data-label="운영 연령">
         {summary.ageRange ? (
-          <span>
-            {summary.ageRange.displayText ?? formatAgeRange(summary.ageRange)}
-          </span>
+          <>
+            <span>
+              {summary.ageRange.displayText ?? formatAgeRange(summary.ageRange)}
+            </span>
+            <CheckedAt value={summary.ageRange.verifiedAt} />
+          </>
         ) : (
           <Gap summary={summary} section="TARGET_AGE_GRADE" />
         )}
       </td>
       <td data-label="셔틀">
         {hasSummaryValue(summary, "TRANSPORT") ? (
-          <span>
-            {summary.transport.displayText ??
-              formatTransport(summary.transport)}
-          </span>
+          <>
+            <span>
+              {summary.transport.displayText ??
+                formatTransport(summary.transport)}
+            </span>
+            <CheckedAt value={summary.transport.verifiedAt} />
+          </>
         ) : (
           <Gap summary={summary} section="TRANSPORT" />
         )}
@@ -105,6 +126,7 @@ function CompareRow({
                 .filter(Boolean)
                 .join(" · ")}
             </span>
+            <CheckedAt value={session.verifiedAt} />
           </>
         ) : (
           <Gap summary={summary} section="INFORMATION_SESSION" />
@@ -127,15 +149,6 @@ function CompareRow({
           </>
         ) : (
           <span className="ek-compare__gap">아직 연결하지 않았어요</span>
-        )}
-      </td>
-      <td data-label="내용 확인">
-        {summary.lastContentCheckedAt ? (
-          <time dateTime={summary.lastContentCheckedAt}>
-            {formatPublicDate(summary.lastContentCheckedAt)}
-          </time>
-        ) : (
-          <span className="ek-compare__gap">확인 전</span>
         )}
       </td>
     </tr>
@@ -165,10 +178,18 @@ export function EnglishKindergartenCompareView({
             연령, 셔틀, 다음 설명회를 한 번에 비교해요.
           </p>
         </header>
+        {data.items.length < data.pagination.total ? (
+          <p className="ek-compare__notice">
+            이 표에는 정보가 확인된 순서로 {data.items.length}곳까지 보여드려요.
+            나머지 {data.pagination.total - data.items.length}곳은 목록에서
+            확인해 주세요.
+          </p>
+        ) : null}
         <p className="ek-compare__notice">
-          각 기관의 공식 안내를 기준으로 정리했어요. 원비와 일정은 달라질 수
-          있으니 신청 전에 공식 안내를 다시 확인해 주세요. 예약 상태와 잔여석은
-          기관 페이지에서 확인해 주세요.
+          각 기관의 공식 안내를 기준으로 정리했어요. 항목마다 내용을 확인한
+          날짜를 따로 적었어요. 원비와 일정은 달라질 수 있으니 신청 전에 공식
+          안내를 다시 확인해 주세요. 예약 상태와 잔여석은 기관 페이지에서 확인해
+          주세요.
         </p>
         <div className="ek-compare__table-wrap">
           <table className="ek-compare__table">
@@ -178,12 +199,11 @@ export function EnglishKindergartenCompareView({
             <thead>
               <tr>
                 <th scope="col">기관명</th>
-                <th scope="col">월 원비</th>
+                <th scope="col">원비</th>
                 <th scope="col">운영 연령</th>
                 <th scope="col">셔틀</th>
                 <th scope="col">다음 설명회</th>
                 <th scope="col">공식 안내</th>
-                <th scope="col">내용 확인</th>
               </tr>
             </thead>
             <tbody>

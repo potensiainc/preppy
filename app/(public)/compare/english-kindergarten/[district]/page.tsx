@@ -28,7 +28,7 @@ export async function generateMetadata({
   const config = compareDistricts[district];
   const path = `/compare/english-kindergarten/${district}`;
   const title = `${config.heading} | PREPPY`;
-  const description = `${config.areaLabel} 영어유치원의 월 원비, 운영 연령, 셔틀, 다음 설명회를 공식 안내 기준으로 한 표에서 비교해요.`;
+  const description = `${config.areaLabel} 영어유치원의 원비, 운영 연령, 셔틀, 다음 설명회를 공식 안내 기준으로 한 표에서 비교해요.`;
   return {
     title,
     description,

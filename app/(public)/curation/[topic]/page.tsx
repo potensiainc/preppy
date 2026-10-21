@@ -25,15 +25,6 @@ const ekSessionsHref = `/institutions?${new URLSearchParams({
   page: "1",
 }).toString()}`;
 
-/** Items whose key date has passed go after the ones still ahead. */
-function upcomingFirst<T extends { keyDate: string | null }>(
-  items: readonly T[],
-  now = new Date(),
-): T[] {
-  const passed = (item: T) =>
-    item.keyDate !== null && new Date(item.keyDate) < now;
-  return [...items.filter((item) => !passed(item)), ...items.filter(passed)];
-}
 export const dynamic = "force-dynamic";
 const topics = {
   calendar: {
@@ -88,9 +79,7 @@ export default async function CurationPage({
     topic === "briefings"
       ? await getCurrentInformationSessionCards(executor, page)
       : null;
-  const items = upcomingFirst(
-    briefings?.items ?? data?.currentOpportunities ?? [],
-  );
+  const items = briefings?.items ?? data?.currentOpportunities ?? [];
   const ekSessions =
     topic === "calendar"
       ? upcomingSessionRows(

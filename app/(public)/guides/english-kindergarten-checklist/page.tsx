@@ -76,10 +76,10 @@ const checklist: readonly ChecklistItem[] = [
       "중도에 그만둘 때의 환불 기준도 함께 확인해 주세요.",
     ],
     where: {
-      text: "비교표의 월 원비 열과 기관 상세의 원비 항목에서 확인할 수 있어요. 공식 안내에 원비가 없는 기관은 원내 문의가 필요하다고 표시해요.",
+      text: "비교표의 원비 열과 기관 상세의 원비 항목에서 확인할 수 있어요. 공식 안내에 원비가 없는 기관은 원내 문의가 필요하다고 표시해요.",
       href: YANGCHEON_COMPARE_HREF,
       target: "COMPARE",
-      label: "비교표에서 월 원비 보기",
+      label: "비교표에서 원비 보기",
     },
   },
   {

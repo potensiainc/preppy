@@ -27,6 +27,7 @@ import type {
   OfficialSourceDTO,
 } from "@/src/modules/public/dto";
 import { SEOUL_REGION_CODE } from "@/src/modules/public/location";
+import { isCompareDistrictKey } from "@/app/_lib/english-kindergarten-compare";
 import {
   hasSummaryValue,
   isUncheckedSummary,
@@ -1199,10 +1200,16 @@ export function EnglishKindergartenDetailView({
   const profile = data.englishKindergarten;
   if (!profile) return null;
   const institution = data.institution;
-  const listHref =
-    returnTo?.startsWith("/institutions?") &&
-    new URLSearchParams(returnTo.split("?")[1]).get("category") ===
-      "ENGLISH_KINDERGARTEN"
+  const compareKey = returnTo?.match(
+    /^\/compare\/english-kindergarten\/([a-z]+)$/,
+  )?.[1];
+  const returnsToCompare =
+    compareKey !== undefined && isCompareDistrictKey(compareKey);
+  const listHref = returnsToCompare
+    ? `/compare/english-kindergarten/${compareKey}`
+    : returnTo?.startsWith("/institutions?") &&
+        new URLSearchParams(returnTo.split("?")[1]).get("category") ===
+          "ENGLISH_KINDERGARTEN"
       ? returnTo
       : "/institutions?category=ENGLISH_KINDERGARTEN";
   const visibleSection = (id: string) =>
@@ -1222,7 +1229,7 @@ export function EnglishKindergartenDetailView({
     <PageContainer>
       <article className="ek-detail">
         <Link className="page-back" href={listHref}>
-          ← 영어유치원 목록
+          {returnsToCompare ? "← 영어유치원 비교표" : "← 영어유치원 목록"}
         </Link>
         <header className="ek-detail__hero">
           <p className="eyebrow">영어유치원 정보</p>

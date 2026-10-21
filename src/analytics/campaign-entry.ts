@@ -14,14 +14,19 @@ export function campaignEntryFromSearch(search: string): CampaignEntry {
     : "OTHER";
 }
 
-/** Keeps the campaign label for later pages in the same browser tab. */
+/**
+ * Keeps the campaign label for later pages in the same tab. A URL that carries
+ * its own campaign parameters replaces the stored label, even with OTHER.
+ */
 export function resolveCampaignEntry(
   search: string,
   storage: Pick<Storage, "getItem" | "setItem"> | null,
 ): CampaignEntry {
+  const params = new URLSearchParams(search);
+  const hasCampaign = params.has("utm_source") || params.has("utm_campaign");
   const fromUrl = campaignEntryFromSearch(search);
   try {
-    if (fromUrl !== "OTHER") {
+    if (hasCampaign) {
       storage?.setItem(ENTRY_STORAGE_KEY, fromUrl);
       return fromUrl;
     }

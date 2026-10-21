@@ -6,7 +6,11 @@ import type {
 export type SummarySection =
   "TUITION" | "TARGET_AGE_GRADE" | "TRANSPORT" | "INFORMATION_SESSION";
 
-export type SummaryGap = Readonly<{ value: string; note: string | null }>;
+export type SummaryGap = Readonly<{
+  value: string;
+  note: string | null;
+  checkedAt: string | null;
+}>;
 
 const inquiryNotes: Record<SummarySection, string> = {
   TUITION: "원비는 원내에 문의해 주세요.",
@@ -15,13 +19,18 @@ const inquiryNotes: Record<SummarySection, string> = {
   INFORMATION_SESSION: "설명회 일정은 원내에 문의해 주세요.",
 };
 
+function coverageRecord(
+  summary: Pick<EnglishKindergartenCardSummaryDTO, "coverage">,
+  section: SummarySection,
+): EnglishKindergartenSectionDTO | null {
+  return summary.coverage.find((item) => item.section === section) ?? null;
+}
+
 function coverageStatus(
   summary: Pick<EnglishKindergartenCardSummaryDTO, "coverage">,
   section: SummarySection,
 ): EnglishKindergartenSectionDTO["status"] | null {
-  return (
-    summary.coverage.find((item) => item.section === section)?.status ?? null
-  );
+  return coverageRecord(summary, section)?.status ?? null;
 }
 
 export function hasSummaryValue(
@@ -47,11 +56,10 @@ export function hasSummaryValue(
  * Explains why a card value is missing without turning "not checked" or
  * "page failed to load" into "does not exist".
  */
-export function summaryGap(
-  summary: EnglishKindergartenCardSummaryDTO,
+function baseGap(
+  status: EnglishKindergartenSectionDTO["status"] | null,
   section: SummarySection,
-): SummaryGap {
-  const status = coverageStatus(summary, section);
+): Omit<SummaryGap, "checkedAt"> {
   if (status === "CHECKED_NOT_FOUND") {
     return {
       value:
@@ -74,6 +82,31 @@ export function summaryGap(
     return { value: "등록된 예정 설명회가 없어요", note: null };
   }
   return { value: "아직 확인하지 않았어요", note: null };
+}
+
+/**
+ * Explains why a card value is missing without turning "not checked" or
+ * "page failed to load" into "does not exist". A coverage record's academic
+ * year and public note stay attached so the scope of the check is not lost.
+ */
+export function summaryGap(
+  summary: EnglishKindergartenCardSummaryDTO,
+  section: SummarySection,
+): SummaryGap {
+  const record = coverageRecord(summary, section);
+  const status = record?.status ?? null;
+  const gap = baseGap(status, section);
+  if (record === null || status === "NOT_RESEARCHED") {
+    return { ...gap, checkedAt: null };
+  }
+  const note = [record.publicNote, gap.note].filter(Boolean).join(" ");
+  return {
+    value: record.academicYearLabel
+      ? `${record.academicYearLabel} 기준 · ${gap.value}`
+      : gap.value,
+    note: note || null,
+    checkedAt: record.lastCheckedAt,
+  };
 }
 
 export const summarySections: readonly SummarySection[] = [

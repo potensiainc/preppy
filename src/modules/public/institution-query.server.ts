@@ -338,6 +338,12 @@ async function getOpportunityTruths(
           : "opportunityIds" in target
             ? sql`id, section`
             : sql`"institutionId", section`;
+  // Home and briefings show what is still ahead first; a passed key date
+  // moves the item back before the limit applies.
+  const passedOrder =
+    projection === "HOME" || projection === "BRIEFINGS"
+      ? sql`case when "keyPassed" then 1 else 0 end,`
+      : sql``;
   const rows = (await executor.raw(sql`
     with candidates as (
       select o.id, o.institution_id as "institutionId", o.slug, o.kind, v.id as "versionId", 'NATIVE' as mode, v.title, v.business_state as state, v.summary, v.target_audience as "targetAudience", v.action_url as "actionUrl", v.verified_at as "verifiedAt",
@@ -345,7 +351,8 @@ async function getOpportunityTruths(
         case when i.category='ENGLISH_KINDERGARTEN' and o.kind='INFORMATION_SESSION' then v.event_start_at else coalesce(v.application_close_at,v.application_open_at,v.event_start_at,v.event_end_at) end as "nativeKeyAt",
         null::date as "legacyKeyDate", null::time as "legacyKeyTime", null::text as "legacyTimezone",
         coalesce(v.application_close_at,v.application_open_at,v.event_start_at,v.event_end_at)::text as "sortKey",
-        v.event_start_at as "eventStartAt", i.category as "institutionCategory"
+        v.event_start_at as "eventStartAt", i.category as "institutionCategory",
+        coalesce((case when i.category='ENGLISH_KINDERGARTEN' and o.kind='INFORMATION_SESSION' then v.event_start_at else coalesce(v.application_close_at,v.application_open_at,v.event_start_at,v.event_end_at) end) < now(), false) as "keyPassed"
       from opportunities o join institutions i on i.id=o.institution_id and i.publication_state='PUBLISHED'
         and (i.category <> 'INTERNATIONAL_SCHOOL' or (
           i.operational_state='ACTIVE' and exists (
@@ -378,7 +385,8 @@ async function getOpportunityTruths(
         case when v.registration_close_date is not null then v.registration_close_time when v.registration_open_date is not null then v.registration_open_time when v.event_start_date is not null then v.event_start_time when v.event_end_date is not null then v.event_end_time else null end,
         v.timezone,
         coalesce(v.registration_close_date::text || coalesce('T' || v.registration_close_time::text, ''), v.registration_open_date::text || coalesce('T' || v.registration_open_time::text, ''), v.event_start_date::text || coalesce('T' || v.event_start_time::text, ''), v.event_end_date::text || coalesce('T' || v.event_end_time::text, '')),
-        (v.event_start_date + coalesce(v.event_start_time, time '00:00')) at time zone v.timezone, i.category
+        (v.event_start_date + coalesce(v.event_start_time, time '00:00')) at time zone v.timezone, i.category,
+        coalesce(coalesce(v.registration_close_date, v.registration_open_date, v.event_start_date, v.event_end_date) < (now() at time zone v.timezone)::date, false)
       from opportunities o join institutions i on i.id=o.institution_id and i.publication_state='PUBLISHED'
         and (i.category <> 'INTERNATIONAL_SCHOOL' or (
           i.operational_state='ACTIVE' and exists (
@@ -398,8 +406,8 @@ async function getOpportunityTruths(
             and source.source_type in ('OFFICIAL_ADMISSION_PAGE','OFFICIAL_NOTICE_BOARD','OFFICIAL_DOCUMENT','OFFICIAL_APPLICATION_PORTAL','OFFICIAL_SCHOOL_PAGE','OFFICIAL_SOCIAL')
             and source.authority_level in ('PRIMARY','SECONDARY_OFFICIAL')
         ))
-    ), sectioned as (select *, ${section} as section from candidates), ranked as (select *, row_number() over (partition by ${partition} order by case state when 'OPEN' then 0 when 'UPCOMING' then 1 when 'CLOSED' then 2 when 'COMPLETED' then 3 when 'CANCELLED' then 4 else 5 end, "sortKey", title, id) rn from sectioned)
-    select * from ranked where section is not null and rn <= ${rankLimit} order by case state when 'OPEN' then 0 when 'UPCOMING' then 1 when 'CLOSED' then 2 when 'COMPLETED' then 3 when 'CANCELLED' then 4 else 5 end, "sortKey", title, id ${overallLimit}
+    ), sectioned as (select *, ${section} as section from candidates), ranked as (select *, row_number() over (partition by ${partition} order by ${passedOrder} case state when 'OPEN' then 0 when 'UPCOMING' then 1 when 'CLOSED' then 2 when 'COMPLETED' then 3 when 'CANCELLED' then 4 else 5 end, "sortKey", title, id) rn from sectioned)
+    select * from ranked where section is not null and rn <= ${rankLimit} order by ${passedOrder} case state when 'OPEN' then 0 when 'UPCOMING' then 1 when 'CLOSED' then 2 when 'COMPLETED' then 3 when 'CANCELLED' then 4 else 5 end, "sortKey", title, id ${overallLimit}
   `)) as unknown as Array<{
     id: string;
     institutionId: string;

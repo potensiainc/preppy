@@ -135,6 +135,11 @@ describe("YouTube campaign entry label", () => {
       ),
     ).toBe("BUBUILD_EK_VIDEO");
     expect(resolveCampaignEntry("", storage)).toBe("BUBUILD_EK_VIDEO");
+    // A later, different campaign replaces the stored label.
+    expect(
+      resolveCampaignEntry("?utm_source=naver&utm_campaign=another", storage),
+    ).toBe("OTHER");
+    expect(resolveCampaignEntry("", storage)).toBe("OTHER");
     const blocked = {
       getItem: () => {
         throw new Error("blocked");
@@ -165,6 +170,7 @@ describe("English-kindergarten card gaps", () => {
     expect(summaryGap(value, "TUITION")).toEqual({
       value: "확인한 공식 안내에 없어요",
       note: "원비는 원내에 문의해 주세요.",
+      checkedAt: "2026-10-21T01:00:00.000Z",
     });
     expect(summaryGap(value, "TRANSPORT").value).toBe(
       "공식 페이지를 불러오지 못했어요",
@@ -204,6 +210,26 @@ describe("English-kindergarten card gaps", () => {
         }),
       ),
     ).toEqual(["원비 확인됨", "설명회 일정 있음"]);
+  });
+});
+
+describe("coverage scope in gaps", () => {
+  it("keeps the checked academic year and public note with the reason", () => {
+    const value = summary({
+      coverage: [
+        {
+          ...coverage("TUITION", "CHECKED_NOT_FOUND"),
+          academicYearLabel: "2026학년도",
+          publicNote: "2027학년도 원비는 설명회에서 안내한다고 해요.",
+        },
+      ],
+    });
+    expect(summaryGap(value, "TUITION")).toEqual({
+      value: "2026학년도 기준 · 확인한 공식 안내에 없어요",
+      note: "2027학년도 원비는 설명회에서 안내한다고 해요. 원비는 원내에 문의해 주세요.",
+      checkedAt: "2026-10-21T01:00:00.000Z",
+    });
+    expect(summaryGap(summary(), "TUITION").checkedAt).toBeNull();
   });
 });
 
