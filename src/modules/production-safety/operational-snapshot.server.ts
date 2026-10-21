@@ -3,6 +3,7 @@ import "server-only";
 import { sql } from "drizzle-orm";
 
 import type { DatabaseExecutor } from "@/src/infrastructure/db/runtime.server";
+import { isAccountDeletionSchemaReady } from "@/src/modules/account-deletion/readiness.server";
 import { countMonitoringDueStates } from "@/src/modules/monitoring/queue-query.server";
 import { EXPECTED_REPOSITORY_MIGRATIONS } from "@/src/modules/production-safety/migration-manifest";
 import { DEFAULT_WORKER_LEASE_DURATION_MS } from "@/src/modules/worker/cli";
@@ -135,6 +136,7 @@ export async function getOperationalSnapshot(
     leaseDurationMs?: number;
     countMonitoring?: typeof countMonitoringDueStates;
     heldEventTypes?: readonly HeldOutboxEventType[];
+    accountDeletionEnabled?: boolean;
   }>,
 ): Promise<OperationalSnapshot> {
   if (!Number.isFinite(options.now.getTime())) {
@@ -266,6 +268,18 @@ export async function getOperationalSnapshot(
       transportFailureCount: null,
       readinessImpact: "BEST_EFFORT",
     },
-    alerts: alertsFor(row, migrationStatus, monitoring.overdue),
+    alerts: [
+      ...alertsFor(row, migrationStatus, monitoring.overdue),
+      ...(options.accountDeletionEnabled &&
+      !(await isAccountDeletionSchemaReady(executor))
+        ? [
+            {
+              code: "ACCOUNT_DELETION_SCHEMA_MISSING",
+              severity: "CRITICAL",
+              count: 1,
+            } as const,
+          ]
+        : []),
+    ],
   };
 }

@@ -4,6 +4,7 @@ import { z } from "zod";
 
 import { getServerAnalyticsTracker } from "@/src/analytics/runtime.server";
 import type { AdminCommandContext } from "@/src/application/context";
+import { NotEligibleError } from "@/src/application/errors";
 import { getRuntimeDatabase } from "@/src/infrastructure/db/runtime.server";
 import { getAdminLogoutConfig } from "@/src/modules/admin/auth/config.server";
 import {
@@ -11,7 +12,10 @@ import {
   type AdminCommandRequestDependencies,
 } from "@/src/modules/admin/http/command-handler.server";
 import { reconcileUnknownResendAttempt } from "@/src/modules/notification/reconcile-resend.server";
-import { getResendSendConfig } from "@/src/modules/notification/resend-config.server";
+import {
+  getResendSendConfig,
+  isEmailSendAvailable,
+} from "@/src/modules/notification/resend-config.server";
 import { ResendEmailSender } from "@/src/modules/notification/resend-email-sender.server";
 import {
   cancelAdminOutboxEvent,
@@ -78,6 +82,8 @@ function defaultReconcile(
   context: AdminCommandContext,
   input: Parameters<ReconcileCommand>[1],
 ) {
+  // Refuse before any provider call when sending is off or unconfigured.
+  if (!isEmailSendAvailable()) throw new NotEligibleError();
   return reconcileUnknownResendAttempt(context, input, {
     transactionManager: getRuntimeDatabase().transactionManager,
     sender: new ResendEmailSender(getResendSendConfig()),

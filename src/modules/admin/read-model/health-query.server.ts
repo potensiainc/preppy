@@ -4,6 +4,7 @@ import { sql } from "drizzle-orm";
 
 import type { DatabaseExecutor } from "@/src/infrastructure/db/runtime.server";
 import { getSideEffectEnv } from "@/src/config/runtime-env";
+import { isAccountDeletionEnabled } from "@/src/modules/account-deletion/runtime.server";
 import {
   getOperationalSnapshot,
   heldOutboxEventTypes,
@@ -122,6 +123,7 @@ export async function getAdminHealthBundle(
       getOperationalSnapshot(executor, {
         now: dependencies.now,
         heldEventTypes: currentHeldEventTypes(),
+        accountDeletionEnabled: isAccountDeletionEnabled(),
       }),
     ]);
   const dataQuality =

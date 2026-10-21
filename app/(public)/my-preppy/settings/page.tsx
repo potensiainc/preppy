@@ -3,7 +3,7 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { getAuthRuntime } from "@/src/modules/auth/runtime.server";
 import { USER_SESSION_COOKIE_NAME } from "@/src/modules/auth/session.server";
-import { isAccountDeletionEnabled } from "@/src/modules/account-deletion/runtime.server";
+import { isAccountDeletionAvailable } from "@/src/modules/account-deletion/runtime.server";
 import { DeletionControl } from "./deletion-control";
 import styles from "./settings.module.css";
 export const dynamic = "force-dynamic";
@@ -39,7 +39,7 @@ export default async function AccountSettingsPage() {
       <section>
         <h2>회원 탈퇴</h2>
         <DeletionControl
-          enabled={isAccountDeletionEnabled()}
+          enabled={await isAccountDeletionAvailable()}
           authenticated={authenticated}
         />
       </section>

@@ -45,6 +45,17 @@ export function parseResendSendConfig(
   return sendSchema.parse(environment);
 }
 
+// Manual provider calls (such as Admin reconciliation) obey the same email
+// switch as the worker and need a complete Resend send configuration.
+export function isEmailSendAvailable(
+  environment: Record<string, string | undefined> = process.env,
+): boolean {
+  return (
+    environment.EMAIL_SEND_ENABLED === "true" &&
+    sendSchema.safeParse(environment).success
+  );
+}
+
 export function getResendSendConfig(): ResendSendConfig {
   return parseResendSendConfig(process.env);
 }

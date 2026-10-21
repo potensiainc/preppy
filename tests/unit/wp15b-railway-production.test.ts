@@ -66,7 +66,7 @@ describe("WP-15B Railway production contract", () => {
     expect(web).toMatchObject({
       build: "npm run build",
       start: "npm run start",
-      healthcheck: "/api/health",
+      healthcheck: "/api/release-integrity",
       healthcheckTimeout: 120,
       replicas: 1,
     });
@@ -89,6 +89,8 @@ describe("WP-15B Railway production contract", () => {
       EMAIL_SEND_ENABLED: "false",
       ANALYTICS_ENABLED: "false",
       CACHE_REVALIDATION_ENABLED: "false",
+      ACCOUNT_DELETION_ENABLED: "false",
+      PREPPY_ENVIRONMENT: { reference: "shared:PREPPY_ENVIRONMENT" },
     });
     expect(worker.env).toMatchObject({
       NODE_ENV: "production",
@@ -98,6 +100,8 @@ describe("WP-15B Railway production contract", () => {
       EMAIL_SEND_ENABLED: "false",
       ANALYTICS_ENABLED: "false",
       CACHE_REVALIDATION_ENABLED: "false",
+      ACCOUNT_DELETION_ENABLED: "false",
+      PREPPY_ENVIRONMENT: { reference: "shared:PREPPY_ENVIRONMENT" },
     });
     expect(web.env?.DATABASE_URL).not.toBe(worker.env?.DATABASE_URL);
 
@@ -112,6 +116,7 @@ describe("WP-15B Railway production contract", () => {
       "EMAIL_SEND_ENABLED",
       "ANALYTICS_ENABLED",
       "CACHE_REVALIDATION_ENABLED",
+      "ACCOUNT_DELETION_ENABLED",
     ]);
     for (const resource of [web, worker]) {
       for (const [name, value] of Object.entries(resource.env ?? {})) {

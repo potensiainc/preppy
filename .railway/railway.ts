@@ -6,17 +6,23 @@ export default defineRailway((context) => {
     EMAIL_SEND_ENABLED: "false",
     ANALYTICS_ENABLED: "false",
     CACHE_REVALIDATION_ENABLED: "false",
+    // Account deletion needs migration 0017; it stays off until the
+    // deletion readiness check passes in that environment.
+    ACCOUNT_DELETION_ENABLED: "false",
   } as const;
 
   const web = service("web", {
     build: "npm run build",
     start: "npm run start",
-    healthcheck: "/api/health",
+    // release-integrity verifies the environment name, approved icons and
+    // the absent header login; /api/health is liveness only.
+    healthcheck: "/api/release-integrity",
     healthcheckTimeout: 120,
     replicas: 1,
     env: {
       NODE_ENV: "production",
       RAILPACK_NODE_NPM_INSTALL: "npm ci",
+      PREPPY_ENVIRONMENT: context.shared.PREPPY_ENVIRONMENT,
       DATABASE_URL: context.shared.PREPPY_WEB_DATABASE_URL,
       DATABASE_MAX_CONNECTIONS:
         context.shared.PREPPY_WEB_DATABASE_MAX_CONNECTIONS,
@@ -47,6 +53,7 @@ export default defineRailway((context) => {
     env: {
       NODE_ENV: "production",
       RAILPACK_NODE_NPM_INSTALL: "npm ci",
+      PREPPY_ENVIRONMENT: context.shared.PREPPY_ENVIRONMENT,
       DATABASE_URL: context.shared.PREPPY_WORKER_DATABASE_URL,
       DATABASE_MAX_CONNECTIONS:
         context.shared.PREPPY_WORKER_DATABASE_MAX_CONNECTIONS,

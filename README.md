@@ -101,14 +101,16 @@ npm run test:db
 
 부수 효과 플래그는 기본값이 모두 `false`예요.
 
-| 플래그                       | 켜면 일어나는 일                                                                                 |
-| ---------------------------- | ------------------------------------------------------------------------------------------------ |
-| `WORKER_ENABLED`             | worker가 outbox 이벤트를 처리해요. `false`면 DB에 접속하지 않고 종료해요                         |
-| `EMAIL_SEND_ENABLED`         | Resend로 알림 메일을 보내요. `false`면 worker가 발송 작업을 처리하지 않고 `PENDING`으로 보류해요 |
-| `CACHE_REVALIDATION_ENABLED` | worker가 캐시 갱신 이벤트를 처리해요. `false`면 해당 이벤트는 `PENDING`으로 남아요               |
-| `ANALYTICS_ENABLED`          | 프로덕션에서 GA4 이벤트를 보내요                                                                 |
+| 플래그                       | 켜면 일어나는 일                                                                                                                                                                     |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `WORKER_ENABLED`             | worker가 outbox 이벤트를 처리해요. `false`면 DB에 접속하지 않고 종료해요                                                                                                             |
+| `EMAIL_SEND_ENABLED`         | Resend로 알림 메일을 보내요. `false`면 worker가 발송 작업을 처리하지 않고 `PENDING`으로 보류해요                                                                                     |
+| `CACHE_REVALIDATION_ENABLED` | worker가 캐시 갱신 이벤트를 처리하고, web의 `/api/internal/cache/revalidate`가 요청을 받아요. `false`면 이벤트는 `PENDING`으로 남고 web은 503으로 거절해요. web과 worker를 함께 켜요 |
+| `ANALYTICS_ENABLED`          | 프로덕션에서 GA4 이벤트를 보내요                                                                                                                                                     |
 
-탈퇴 기능은 `ACCOUNT_DELETION_ENABLED=true`와 `ACCOUNT_DELETION_READINESS=verified`가 모두 설정됐을 때만 동작해요. 이 기능은 마이그레이션 `0017`이 적용된 DB가 필요해요.
+탈퇴 기능은 `ACCOUNT_DELETION_ENABLED=true`, `ACCOUNT_DELETION_READINESS=verified`이고 DB에 마이그레이션 `0017`의 테이블·제약·트리거가 실제로 있을 때만 동작해요. 플래그가 켜져 있어도 0017이 없으면 API는 503을 반환하고, 화면에는 문의처 안내만 보여요. 관리자 운영 화면에는 `ACCOUNT_DELETION_SCHEMA_MISSING` 경보가 떠요. 탈퇴 후속 처리는 `npm run account-deletion:once`로 실행해요.
+
+관리자 화면의 Resend 결과 대조는 `EMAIL_SEND_ENABLED=true`이고 web에 `RESEND_API_KEY`와 `EMAIL_FROM`이 있을 때만 실행돼요.
 
 ## 데이터베이스와 마이그레이션
 
@@ -149,7 +151,7 @@ worker는 한 번 처리하고 종료해요. 주기 실행은 Railway cron 설�
 3. 같은 커밋을 staging에서 검증한 뒤 production에 배포해요.
 4. 배포 커밋과 환경별 배포 ID를 기록해요.
 
-- staging/production web의 Railway Healthcheck Path는 `/api/release-integrity`로 유지해요. 이 경로는 배포 환경 일치, 브랜드 아이콘, 헤더 로그인 미노출을 검사해요. `/api/health`는 항상 200을 반환하는 liveness 확인용이에요.
+- staging/production web의 Railway Healthcheck Path는 `/api/release-integrity`로 유지해요(`.railway/railway.ts`에도 같은 값이에요). 이 경로는 배포 환경 일치, 브랜드 아이콘, 헤더 로그인 미노출을 검사해요. 환경 일치 검사를 위해 shared variable `PREPPY_ENVIRONMENT`를 각 환경 이름(`staging`, `production`)으로 설정해야 해요. `/api/health`는 항상 200을 반환하는 liveness 확인용이에요.
 - Owner가 지시하기 전까지 공개 헤더에 카카오 로그인 UI를 추가하지 않아요.
 - 빌드·시작 과정에서는 마이그레이션이 실행되지 않아요.
 

@@ -154,7 +154,7 @@ No domain, DNS record, certificate, provider callback, or webhook registration i
 
 ## Web service configuration
 
-The IaC file defines one replica, `npm run build`, `npm run start`, `/api/health`, and a 120-second deployment healthcheck timeout. `/api/health` remains liveness-only.
+The IaC file defines one replica, `npm run build`, `npm run start`, the `/api/release-integrity` deployment healthcheck, and a 120-second healthcheck timeout. `/api/release-integrity` also requires `PREPPY_ENVIRONMENT` to match the Railway environment name, so set that shared variable in both staging and production before applying the IaC. `/api/health` remains liveness-only and is not the deployment healthcheck.
 
 The IaC file intentionally omits a GitHub source and domains. During later provisioning:
 
