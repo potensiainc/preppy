@@ -1,12 +1,14 @@
 import "server-only";
 
 import { sql } from "drizzle-orm";
+import { z } from "zod";
 
 import { ConflictError, ValidationError } from "@/src/application/errors";
 import type {
   TransactionExecutor,
   TransactionManager,
 } from "@/src/infrastructure/db/runtime.server";
+import { dbTimestamp, queryRows } from "@/src/infrastructure/db/typed-query";
 import {
   isSupportedOutboxEventType,
   supportedOutboxEventTypes,
@@ -27,11 +29,27 @@ export type ClaimedOutboxEvent = Readonly<{
   payload: Record<string, unknown>;
   attemptCount: number;
   maxAttempts: number | null;
-  availableAt: Date;
-  createdAt: Date;
-  lockedAt: Date;
+  availableAt: string;
+  createdAt: string;
+  lockedAt: string;
   lockedBy: string;
 }>;
+
+const claimedOutboxEventSchema = z
+  .object({
+    id: z.string(),
+    eventType: z.enum(supportedOutboxEventTypes),
+    aggregateType: z.string(),
+    aggregateId: z.string(),
+    payload: z.record(z.string(), z.unknown()),
+    attemptCount: z.number().int(),
+    maxAttempts: z.number().int().nullable(),
+    availableAt: dbTimestamp,
+    createdAt: dbTimestamp,
+    lockedAt: dbTimestamp,
+    lockedBy: z.string(),
+  })
+  .strict();
 
 export type ClaimOutboxBatchInput = Readonly<{
   eventTypes: readonly SupportedOutboxEventType[];
@@ -203,7 +221,7 @@ async function requireOwnedProcessingUpdate(
   executor: TransactionExecutor,
   query: ReturnType<typeof sql>,
 ) {
-  const rows = (await executor.raw(query)) as unknown as Array<{ id: string }>;
+  const rows = await queryRows(executor, query, z.object({ id: z.string() }));
   if (rows.length !== 1) throw new ConflictError();
   return rows[0]!;
 }
@@ -221,7 +239,9 @@ export async function claimOutboxBatch(
   const nowIso = parsed.now.toISOString();
 
   return transactionManager.run(async (executor) => {
-    const rows = (await executor.raw(sql`
+    const rows = await queryRows(
+      executor,
+      sql`
       with due as (
         select id
         from outbox_events
@@ -253,7 +273,9 @@ export async function claimOutboxBatch(
       )
       select * from claimed
       order by "availableAt" asc, "createdAt" asc, id asc
-    `)) as unknown as ClaimedOutboxEvent[];
+    `,
+      claimedOutboxEventSchema,
+    );
     return rows;
   });
 }
@@ -359,7 +381,9 @@ export async function recoverStaleOutboxLeases(
   );
 
   return transactionManager.run(async (executor) => {
-    const [counts] = (await executor.raw(sql`
+    const [counts] = await queryRows(
+      executor,
+      sql`
       with stale as (
         select event.id, event.event_type, event.aggregate_id,
           event.attempt_count, event.max_attempts,
@@ -418,11 +442,13 @@ export async function recoverStaleOutboxLeases(
         count(*) filter (where status='FAILED')::int as failed,
         count(*) filter (where status='DEAD_LETTER')::int as "deadLettered"
       from recovered
-    `)) as unknown as Array<{
-      pending: number;
-      failed: number;
-      deadLettered: number;
-    }>;
+    `,
+      z.object({
+        pending: z.number().int(),
+        failed: z.number().int(),
+        deadLettered: z.number().int(),
+      }),
+    );
     return counts ?? { pending: 0, failed: 0, deadLettered: 0 };
   });
 }

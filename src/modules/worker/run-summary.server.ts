@@ -1,8 +1,10 @@
 import "server-only";
 
 import { sql } from "drizzle-orm";
+import { z } from "zod";
 
 import type { TransactionManager } from "@/src/infrastructure/db/runtime.server";
+import { queryOne } from "@/src/infrastructure/db/typed-query";
 
 export type WorkerRunCounts = Readonly<{ failed: number }>;
 
@@ -25,8 +27,10 @@ export async function readWorkerRunHealth(
   }>,
 ): Promise<WorkerRunHealth> {
   const since = input.runStartedAt.toISOString();
-  const [row] = (await transactionManager.run((executor) =>
-    executor.raw(sql`
+  const row = await transactionManager.run((executor) =>
+    queryOne(
+      executor,
+      sql`
       select
         count(*) filter (where dead_lettered_at >= ${since}::timestamptz)::int
           as "deadLettered",
@@ -37,12 +41,14 @@ export async function readWorkerRunHealth(
           where status='PENDING' and event_type='CACHE_REVALIDATION_REQUESTED'
         )::int as "heldCache"
       from outbox_events
-    `),
-  )) as unknown as Array<{
-    deadLettered: number;
-    heldEmail: number;
-    heldCache: number;
-  }>;
+    `,
+      z.object({
+        deadLettered: z.number().int(),
+        heldEmail: z.number().int(),
+        heldCache: z.number().int(),
+      }),
+    ),
+  );
   return {
     deadLettered: row?.deadLettered ?? 0,
     held: {
