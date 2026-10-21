@@ -27,6 +27,13 @@ import type {
   OfficialSourceDTO,
 } from "@/src/modules/public/dto";
 import { SEOUL_REGION_CODE } from "@/src/modules/public/location";
+import {
+  hasSummaryValue,
+  isUncheckedSummary,
+  summaryBadges,
+  summaryGap,
+  type SummarySection,
+} from "@/app/_lib/english-kindergarten-summary";
 
 const detailAnchors = [
   ["tuition", "원비"],
@@ -219,16 +226,15 @@ function SummaryGrid({
 }: {
   summary: EnglishKindergartenCardSummaryDTO;
 }) {
-  const session = summary.nextInformationSession;
-  const knownTransport =
-    summary.transport.verifiedAt && summary.transport.state !== "UNKNOWN";
-  if (!summary.tuition && !summary.ageRange && !knownTransport && !session) {
+  if (isUncheckedSummary(summary)) {
     return (
       <p className="ek-card__checked">
-        PREPPY에 등록된 원비·운영 연령·셔틀·설명회 정보가 없어요.
+        원비·운영 연령·셔틀·설명회를 아직 확인하지 않았어요.
       </p>
     );
   }
+  const session = summary.nextInformationSession;
+  const gap = (section: SummarySection) => summaryGap(summary, section);
   return (
     <dl className="ek-summary-grid">
       {session ? (
@@ -239,7 +245,13 @@ function SummaryGrid({
             .filter(Boolean)
             .join(" · ")}
         />
-      ) : null}
+      ) : (
+        <SummaryValue
+          label="다음 설명회"
+          value={gap("INFORMATION_SESSION").value}
+          note={gap("INFORMATION_SESSION").note}
+        />
+      )}
       {summary.tuition ? (
         <SummaryValue
           label="원비"
@@ -247,7 +259,13 @@ function SummaryGrid({
             summary.tuition.displayText ?? formatTuitionValue(summary.tuition)
           }
         />
-      ) : null}
+      ) : (
+        <SummaryValue
+          label="원비"
+          value={gap("TUITION").value}
+          note={gap("TUITION").note}
+        />
+      )}
       {summary.ageRange ? (
         <SummaryValue
           label="운영 연령"
@@ -256,16 +274,44 @@ function SummaryGrid({
           }
           note={ageBasisLabels[summary.ageRange.basis]}
         />
-      ) : null}
-      {knownTransport ? (
+      ) : (
+        <SummaryValue
+          label="운영 연령"
+          value={gap("TARGET_AGE_GRADE").value}
+          note={gap("TARGET_AGE_GRADE").note}
+        />
+      )}
+      {hasSummaryValue(summary, "TRANSPORT") ? (
         <SummaryValue
           label="셔틀"
           value={
             summary.transport.displayText ?? formatTransport(summary.transport)
           }
         />
-      ) : null}
+      ) : (
+        <SummaryValue
+          label="셔틀"
+          value={gap("TRANSPORT").value}
+          note={gap("TRANSPORT").note}
+        />
+      )}
     </dl>
+  );
+}
+
+function SummaryBadges({
+  summary,
+}: {
+  summary: EnglishKindergartenCardSummaryDTO;
+}) {
+  const badges = summaryBadges(summary);
+  if (badges.length === 0) return null;
+  return (
+    <ul className="ek-badges" aria-label="확인된 정보">
+      {badges.map((badge) => (
+        <li key={badge}>{badge}</li>
+      ))}
+    </ul>
   );
 }
 
@@ -299,6 +345,7 @@ function EnglishKindergartenCard({
           {institution.address ? (
             <p className="ek-card__address">{institution.address}</p>
           ) : null}
+          <SummaryBadges summary={summary} />
         </div>
         <FollowCta
           institutionId={institution.id}
@@ -321,11 +368,7 @@ function EnglishKindergartenCard({
           <Link href={detailHref}>기관의 전체 설명회 일정 보기</Link>
         </div>
       ) : null}
-      {(summary.tuition ||
-        summary.ageRange ||
-        summary.transport.verifiedAt ||
-        summary.nextInformationSession) &&
-      summary.lastContentCheckedAt ? (
+      {!isUncheckedSummary(summary) && summary.lastContentCheckedAt ? (
         <p className="ek-card__checked">
           내용 확인{" "}
           <time dateTime={summary.lastContentCheckedAt}>
@@ -456,8 +499,9 @@ export function EnglishKindergartenListView({
               <select
                 id="ek-sort"
                 name="sort"
-                defaultValue={filters.sort ?? "NAME_ASC"}
+                defaultValue={filters.sort ?? "INFO_FIRST"}
               >
+                <option value="INFO_FIRST">정보 확인된 곳 먼저</option>
                 <option value="NAME_ASC">가나다순</option>
                 <option value="TUITION_ASC">월 원비 낮은 순</option>
                 <option value="INFO_SESSION_ASC">설명회 빠른 순</option>
@@ -693,7 +737,7 @@ function formatMoneyRange(
   return cadence ? `${cadenceLabels[cadence]} ${amount}` : amount;
 }
 
-function formatTuitionValue(value: {
+export function formatTuitionValue(value: {
   academicYearLabel: string | null;
   validityNote?: string | null;
   billingCadence: keyof typeof cadenceLabels | null;
@@ -709,7 +753,7 @@ function formatTuitionValue(value: {
   return basis ? `${basis} · ${amount}` : amount;
 }
 
-function formatAgeRange(value: {
+export function formatAgeRange(value: {
   min: number;
   max: number;
   basis: keyof typeof ageBasisLabels;
@@ -729,7 +773,7 @@ function formatAgeRange(value: {
     : label;
 }
 
-function formatTransport(value: {
+export function formatTransport(value: {
   state: "AVAILABLE" | "NOT_AVAILABLE" | "UNKNOWN";
   serviceAreas: string[];
 }) {

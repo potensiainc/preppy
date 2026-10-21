@@ -5,6 +5,35 @@ import { getCurrentInformationSessionCards } from "@/src/modules/public/institut
 import { getPublicExecutor } from "@/app/_lib/public-page.server";
 import { ArticleCard, OpportunityCard } from "@/app/_components/public-cards";
 import styles from "@/app/_components/curation.module.css";
+import {
+  EnglishKindergartenUpcomingSessions,
+  upcomingSessionRows,
+} from "@/app/_components/english-kindergarten-upcoming";
+import { listInstitutions } from "@/src/modules/public/institution-query.server";
+import { SEOUL_REGION_CODE } from "@/src/modules/public/location";
+
+const UPCOMING_EK_SESSION_LIMIT = 8;
+const ekSessionsParams = {
+  category: "ENGLISH_KINDERGARTEN",
+  region: SEOUL_REGION_CODE,
+  admissionYear: "2027",
+  hasUpcomingInfoSession: "true",
+  sort: "INFO_SESSION_ASC",
+} as const;
+const ekSessionsHref = `/institutions?${new URLSearchParams({
+  ...ekSessionsParams,
+  page: "1",
+}).toString()}`;
+
+/** Items whose key date has passed go after the ones still ahead. */
+function upcomingFirst<T extends { keyDate: string | null }>(
+  items: readonly T[],
+  now = new Date(),
+): T[] {
+  const passed = (item: T) =>
+    item.keyDate !== null && new Date(item.keyDate) < now;
+  return [...items.filter((item) => !passed(item)), ...items.filter(passed)];
+}
 export const dynamic = "force-dynamic";
 const topics = {
   calendar: {
@@ -59,7 +88,21 @@ export default async function CurationPage({
     topic === "briefings"
       ? await getCurrentInformationSessionCards(executor, page)
       : null;
-  const items = briefings?.items ?? data?.currentOpportunities ?? [];
+  const items = upcomingFirst(
+    briefings?.items ?? data?.currentOpportunities ?? [],
+  );
+  const ekSessions =
+    topic === "calendar"
+      ? upcomingSessionRows(
+          await listInstitutions(executor, {
+            ...ekSessionsParams,
+            admissionYear: 2027,
+            hasUpcomingInfoSession: true,
+            pageSize: 50,
+          }),
+          UPCOMING_EK_SESSION_LIMIT,
+        )
+      : [];
   const empty =
     topic === "guides" ? !data?.latestArticles.length : !items.length;
   return (
@@ -81,6 +124,12 @@ export default async function CurationPage({
           </Link>
         ))}
       </nav>
+      {topic === "calendar" ? (
+        <EnglishKindergartenUpcomingSessions
+          rows={ekSessions}
+          moreHref={ekSessionsHref}
+        />
+      ) : null}
       {empty ? (
         <div className={styles.empty}>
           <h2>

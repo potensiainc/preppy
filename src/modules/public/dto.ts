@@ -43,7 +43,7 @@ export type InstitutionListQuery = {
 };
 
 export type EnglishKindergartenSort =
-  "NAME_ASC" | "INFO_SESSION_ASC" | "TUITION_ASC";
+  "INFO_FIRST" | "NAME_ASC" | "INFO_SESSION_ASC" | "TUITION_ASC";
 
 export type TransportFilter = "AVAILABLE";
 

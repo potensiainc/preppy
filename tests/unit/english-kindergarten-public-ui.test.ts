@@ -310,7 +310,7 @@ describe("English-kindergarten public experience", () => {
     expect($(".ek-card__region").text()).toBe("서초구");
     expect($("body").text()).not.toContain("KR-11");
     expect($("#ek-result-title").text()).toBe("서초구 영어유치원 1곳");
-    expect($("[name='sort'] option:selected").attr("value")).toBe("NAME_ASC");
+    expect($("[name='sort'] option:selected").attr("value")).toBe("INFO_FIRST");
     expect($("main, body").text()).toContain("월 원비");
     expect($("main, body").text()).toContain("2026학년도 월 185만 원이에요.");
     expect($("main, body").text()).toContain("운영 연령");

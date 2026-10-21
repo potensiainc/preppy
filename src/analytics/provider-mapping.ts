@@ -120,5 +120,31 @@ export function toGa4Event(event: CapturedAnalyticsEvent): Ga4Event {
     case "hero_primary_cta_click":
     case "hero_secondary_cta_click":
       return { name: event.name, params: { cta: event.properties.cta } };
+    case "guide_view":
+      return {
+        name: event.name,
+        params: {
+          guide: event.properties.guide,
+          entry: event.properties.entry,
+        },
+      };
+    case "guide_cta_click":
+      return {
+        name: event.name,
+        params: {
+          guide: event.properties.guide,
+          entry: event.properties.entry,
+          target: event.properties.target,
+        },
+      };
+    case "compare_view":
+      return {
+        name: event.name,
+        params: {
+          category: event.properties.category,
+          district: event.properties.district,
+          entry: event.properties.entry,
+        },
+      };
   }
 }

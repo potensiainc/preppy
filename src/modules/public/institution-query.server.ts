@@ -1025,6 +1025,30 @@ function informationSessionOrder(query: InstitutionListQuery) {
   )`;
 }
 
+/**
+ * Number of card facts a parent can actually see (tuition, age, shuttle) plus
+ * one for an upcoming session. Mirrors the card's own official-evidence rules.
+ */
+function englishKindergartenInformationScore(query: InstitutionListQuery) {
+  const session = informationSessionOrder(query);
+  return sql<number>`((
+    select count(distinct f.fact_type)
+    from institution_facts f
+    join institution_fact_versions v on v.institution_fact_id = f.id
+      and v.is_current = true and v.verification_state = 'VERIFIED'
+      and v.verified_at is not null
+    where f.institution_id = ${institutions.id}
+      and f.fact_type in ('TUITION', 'TARGET_AGE_GRADE', 'TRANSPORT')
+      and exists (
+        select 1 from institution_fact_version_evidence evidence
+        join sources source on source.id = evidence.source_id
+        where evidence.institution_fact_version_id = v.id
+          and source.source_type in ('OFFICIAL_ADMISSION_PAGE','OFFICIAL_NOTICE_BOARD','OFFICIAL_DOCUMENT','OFFICIAL_APPLICATION_PORTAL','OFFICIAL_SCHOOL_PAGE','OFFICIAL_SOCIAL')
+          and source.authority_level in ('PRIMARY','SECONDARY_OFFICIAL')
+      )
+  ) + case when ${session} is null then 0 else 1 end)`;
+}
+
 function listOrder(query: InstitutionListQuery) {
   if (
     query.category === "ENGLISH_KINDERGARTEN" &&
@@ -1047,6 +1071,19 @@ function listOrder(query: InstitutionListQuery) {
   ) {
     const session = informationSessionOrder(query);
     return [
+      asc(sql`case when ${session} is null then 1 else 0 end`),
+      asc(session),
+      asc(institutions.displayName),
+      asc(institutions.id),
+    ];
+  }
+  if (
+    query.category === "ENGLISH_KINDERGARTEN" &&
+    (query.sort === "INFO_FIRST" || query.sort === undefined)
+  ) {
+    const session = informationSessionOrder(query);
+    return [
+      desc(englishKindergartenInformationScore(query)),
       asc(sql`case when ${session} is null then 1 else 0 end`),
       asc(session),
       asc(institutions.displayName),
