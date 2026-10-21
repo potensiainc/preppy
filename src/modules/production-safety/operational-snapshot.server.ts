@@ -135,13 +135,15 @@ export async function getOperationalSnapshot(
           where e.status='PROCESSING'
             and e.locked_at < ${staleBeforeIso}::timestamptz
         )::int as "outboxStaleProcessing",
-        extract(epoch from (${nowIso}::timestamptz - min(e.locked_at) filter (
+        -- Ages are clamped to the int range so one very old row cannot make
+        -- the whole health snapshot fail with "integer out of range".
+        least(extract(epoch from (${nowIso}::timestamptz - min(e.locked_at) filter (
           where e.status='PROCESSING'
             and e.locked_at < ${staleBeforeIso}::timestamptz
-        )))::int as "oldestStaleProcessingAgeSeconds",
-        extract(epoch from (${nowIso}::timestamptz - min(e.available_at) filter (
+        ))), 2147483647)::int as "oldestStaleProcessingAgeSeconds",
+        least(extract(epoch from (${nowIso}::timestamptz - min(e.available_at) filter (
           where e.status='PENDING' and e.available_at <= ${nowIso}::timestamptz
-        )))::int as "workerLagSeconds",
+        ))), 2147483647)::int as "workerLagSeconds",
         (select count(*)::int from notification_deliveries where status='FAILED')
           as "failedDeliveries",
         (select count(*)::int from notification_delivery_attempts

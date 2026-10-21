@@ -10,6 +10,9 @@ import {
 } from "@/src/infrastructure/db/runtime.server";
 import { getOperationalSnapshot } from "@/src/modules/production-safety/operational-snapshot.server";
 import { assertDedicatedTestDatabaseUrl } from "@/tests/support/test-database";
+import { EXPECTED_REPOSITORY_MIGRATIONS } from "@/src/modules/production-safety/migration-manifest";
+
+const LATEST_MIGRATION = EXPECTED_REPOSITORY_MIGRATIONS.at(-1)!.identifier;
 
 const databaseUrl = process.env.TEST_DATABASE_URL;
 if (!databaseUrl) throw new Error("TEST_DATABASE_URL must be set");
@@ -62,6 +65,23 @@ describe("WP-16A operational snapshot", () => {
     await lock`select pg_advisory_unlock(hashtext('preppy-schema-tests'))`;
     await lock.end({ timeout: 5 });
     await closeRuntimeDatabase();
+  });
+
+  it("clamps a decades-old pending age instead of failing the snapshot", async () => {
+    const now = new Date("2099-08-24T12:00:00.000Z");
+    await runtime.client`
+      insert into outbox_events (
+        id, event_type, aggregate_type, aggregate_id, payload, status,
+        available_at, attempt_count, max_attempts, created_at
+      ) values (
+        ${randomUUID()}, 'OPPORTUNITY_CHANGE_PUBLISHED', 'WP16A_FIXTURE',
+        ${randomUUID()}, '{}'::jsonb, 'PENDING', '2026-01-01T00:00:00.000Z',
+        0, 3, '2026-01-01T00:00:00.000Z'
+      )
+    `;
+
+    const snapshot = await getOperationalSnapshot(runtime.executor, { now });
+    expect(snapshot.outbox.workerLagSeconds).toBe(2147483647);
   });
 
   it("counts queue, provider, monitoring, and cache failure states without mutation", async () => {
@@ -231,7 +251,7 @@ describe("WP-16A operational snapshot", () => {
     const snapshot = await getOperationalSnapshot(runtime.executor, { now });
     expect(snapshot.migration).toEqual({
       status: "MATCH",
-      latest: "0017_account_deletion",
+      latest: LATEST_MIGRATION,
     });
     expect(snapshot.outbox).toMatchObject({
       pending: baseline.outbox.pending + 1,

@@ -17,6 +17,9 @@ import { afterAll, afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { migrateDatabase } from "@/src/db/migrate";
 import { assertDedicatedTestDatabaseUrl } from "@/tests/support/test-database";
+import { EXPECTED_REPOSITORY_MIGRATIONS } from "@/src/modules/production-safety/migration-manifest";
+
+const MIGRATION_COUNT = EXPECTED_REPOSITORY_MIGRATIONS.length;
 
 const databaseUrl = process.env.TEST_DATABASE_URL;
 if (!databaseUrl) throw new Error("TEST_DATABASE_URL must be set");
@@ -120,13 +123,13 @@ describe("WP-10A Source binding migration", () => {
   it("migrates a fresh database through the current repository migration and re-runs as a ledger no-op", async () => {
     await migrateDatabase(migrationDatabaseUrl.toString());
     expect(await migrationState()).toEqual({
-      migrationCount: 18,
+      migrationCount: MIGRATION_COUNT,
       institutionBindings: "institution_source_bindings",
       opportunityBindings: "opportunity_source_bindings",
     });
 
     await migrateDatabase(migrationDatabaseUrl.toString());
-    expect((await migrationState()).migrationCount).toBe(18);
+    expect((await migrationState()).migrationCount).toBe(MIGRATION_COUNT);
   });
 
   it("upgrades 0008 data additively without automatic backfill", async () => {
@@ -181,13 +184,13 @@ describe("WP-10A Source binding migration", () => {
       `;
       expect(preserved).toEqual({ legacyBindings: 1, canonicalBindings: 0 });
       expect(await migrationState()).toEqual({
-        migrationCount: 18,
+        migrationCount: MIGRATION_COUNT,
         institutionBindings: "institution_source_bindings",
         opportunityBindings: "opportunity_source_bindings",
       });
 
       await migrateDatabase(migrationDatabaseUrl.toString());
-      expect((await migrationState()).migrationCount).toBe(18);
+      expect((await migrationState()).migrationCount).toBe(MIGRATION_COUNT);
     } finally {
       await sql.end({ timeout: 5 });
       await rm(preWp10aFolder, { recursive: true, force: true });

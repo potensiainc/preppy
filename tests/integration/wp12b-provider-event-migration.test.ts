@@ -17,6 +17,9 @@ import { afterAll, afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { migrateDatabase } from "@/src/db/migrate";
 import { assertDedicatedTestDatabaseUrl } from "@/tests/support/test-database";
+import { EXPECTED_REPOSITORY_MIGRATIONS } from "@/src/modules/production-safety/migration-manifest";
+
+const MIGRATION_COUNT = EXPECTED_REPOSITORY_MIGRATIONS.length;
 
 const databaseUrl = process.env.TEST_DATABASE_URL;
 if (!databaseUrl) throw new Error("TEST_DATABASE_URL must be set");
@@ -114,11 +117,11 @@ describe("WP-12B provider event migration", () => {
   it("migrates a fresh database through the current repository migration and re-runs as a ledger no-op", async () => {
     await migrateDatabase(migrationUrl.toString());
     expect(await state()).toEqual({
-      migrationCount: 18,
+      migrationCount: MIGRATION_COUNT,
       receiptTable: "email_provider_events",
     });
     await migrateDatabase(migrationUrl.toString());
-    expect((await state()).migrationCount).toBe(18);
+    expect((await state()).migrationCount).toBe(MIGRATION_COUNT);
   });
 
   it("upgrades 0009 additively while preserving existing Outbox rows", async () => {
@@ -142,11 +145,11 @@ describe("WP-12B provider event migration", () => {
         select count(*)::int count from outbox_events where id=${eventId}`;
       expect(preserved?.count).toBe(1);
       expect(await state()).toEqual({
-        migrationCount: 18,
+        migrationCount: MIGRATION_COUNT,
         receiptTable: "email_provider_events",
       });
       await migrateDatabase(migrationUrl.toString());
-      expect((await state()).migrationCount).toBe(18);
+      expect((await state()).migrationCount).toBe(MIGRATION_COUNT);
     } finally {
       await sql.end({ timeout: 5 });
       await rm(folder, { recursive: true, force: true });

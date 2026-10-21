@@ -25,3 +25,38 @@ jobs:
       - run: npm run prebuild
       - run: npm run test:unit
       - run: npm run typecheck
+
+  db-integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: preppy_test
+          POSTGRES_USER: preppy
+          POSTGRES_PASSWORD: preppy
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U preppy -d preppy_test"
+          --health-interval 2s
+          --health-timeout 3s
+          --health-retries 30
+    env:
+      TEST_DATABASE_URL: postgres://preppy:preppy@127.0.0.1:5432/preppy_test
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          package-manager-cache: false
+      - name: Install PostgreSQL 16 client tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends postgresql-client-16
+          pg_dump --version
+      - run: npm ci --no-audit --no-fund
+      - run: npm run test:db

@@ -82,6 +82,13 @@ npm run dev
 | `npm run db:migrate`                 | 전체 마이그레이션 실행 (아래 주의사항 확인)                                                     |
 | `npm run deploy:preflight`           | 배포 직전 기준선 검사                                                                           |
 
+DB 통합 테스트는 파일 단위로 순차 실행해요. 일부 테스트가 `127.0.0.1` 접속만 허용하므로 `localhost` 대신 IP를 써요.
+
+```sh
+export TEST_DATABASE_URL=postgres://preppy:preppy@127.0.0.1:55433/preppy_test
+npm run test:db
+```
+
 데이터 import·수집·운영 점검 명령은 `package.json`의 `data:*`, `collector:*`, `db:*` 스크립트를 확인해요. 대부분 dry-run이 기본이고 적용에는 명시적인 플래그가 필요해요.
 
 ## 환경변수

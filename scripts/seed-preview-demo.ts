@@ -64,7 +64,7 @@ export const PREVIEW_DEMO_FIXTURE = {
       title: "숲속영유 2027 입학 설명회",
       type: "INFORMATION_SESSION",
       summary: "프레피 Preview 전용 합성 설명회 일정입니다.",
-      closesAt: "2026-09-05T09:00:00.000Z",
+      closesInDays: 11,
     },
     {
       id: "52000000-0000-4000-8000-000000000002",
@@ -73,7 +73,7 @@ export const PREVIEW_DEMO_FIXTURE = {
       title: "리버영유 가을 오픈하우스",
       type: "OPEN_HOUSE",
       summary: "교실과 교육 과정을 살펴보는 합성 Preview 행사입니다.",
-      closesAt: "2026-09-12T09:00:00.000Z",
+      closesInDays: 18,
     },
     {
       id: "52000000-0000-4000-8000-000000000003",
@@ -82,7 +82,7 @@ export const PREVIEW_DEMO_FIXTURE = {
       title: "한빛사립초 2027 신입생 지원",
       type: "APPLICATION",
       summary: "사립초 지원 흐름을 검토하기 위한 합성 Preview 모집입니다.",
-      closesAt: "2026-09-19T09:00:00.000Z",
+      closesInDays: 25,
     },
     {
       id: "52000000-0000-4000-8000-000000000004",
@@ -91,7 +91,7 @@ export const PREVIEW_DEMO_FIXTURE = {
       title: "새봄사립초 입학 평가 안내",
       type: "ASSESSMENT",
       summary: "평가 일정 UI 확인을 위한 합성 Preview 정보입니다.",
-      closesAt: "2026-10-03T09:00:00.000Z",
+      closesInDays: 39,
     },
     {
       id: "52000000-0000-4000-8000-000000000005",
@@ -100,7 +100,7 @@ export const PREVIEW_DEMO_FIXTURE = {
       title: "글로벌스쿨 우선 지원 마감",
       type: "DEADLINE",
       summary: "국제학교 마감 카드 검토를 위한 합성 Preview 정보입니다.",
-      closesAt: "2026-10-17T09:00:00.000Z",
+      closesInDays: 53,
     },
     {
       id: "52000000-0000-4000-8000-000000000006",
@@ -109,7 +109,7 @@ export const PREVIEW_DEMO_FIXTURE = {
       title: "브릿지국제학교 2027 지원",
       type: "APPLICATION",
       summary: "국제학교 지원 상세 화면을 위한 합성 Preview 모집입니다.",
-      closesAt: "2026-10-31T09:00:00.000Z",
+      closesInDays: 67,
     },
   ] satisfies ReadonlyArray<{
     id: string;
@@ -118,7 +118,7 @@ export const PREVIEW_DEMO_FIXTURE = {
     title: string;
     type: PreviewOpportunityType;
     summary: string;
-    closesAt: string;
+    closesInDays: number;
   }>,
   articles: [
     {
@@ -276,11 +276,20 @@ export async function inspectPreviewDemo(
   };
 }
 
+// Demo schedules stay in the future relative to the seed time, so a preview
+// seeded today keeps showing current cards instead of silently expiring.
+export function previewClosesAt(now: Date, closesInDays: number): string {
+  const closesAt = new Date(now.getTime() + closesInDays * 86_400_000);
+  closesAt.setUTCHours(9, 0, 0, 0);
+  return closesAt.toISOString();
+}
+
 export async function seedPreviewDemo(
   sql: postgres.Sql,
-  input: Readonly<{ appBaseUrl: string }>,
+  input: Readonly<{ appBaseUrl: string; now?: Date }>,
 ): Promise<PreviewDemoReport> {
   const appBaseUrl = normalizeAppBaseUrl(input.appBaseUrl);
+  const now = input.now ?? new Date();
   return sql.begin(async (transaction) => {
     const captureBySourceId = new Map<
       string,
@@ -501,8 +510,8 @@ export async function seedPreviewDemo(
         ) values (
           ${versionId}, ${opportunity.id}, 'NATIVE', 1, 'VERIFIED', 'OPEN', true,
           ${opportunity.title}, ${opportunity.summary}, '2027학년도 지원 가정',
-          ${opportunity.closesAt}, '2026-08-25T00:00:00.000Z',
-          ${opportunity.closesAt},
+          ${previewClosesAt(now, opportunity.closesInDays)}, '2026-08-25T00:00:00.000Z',
+          ${previewClosesAt(now, opportunity.closesInDays)},
           ${`${appBaseUrl}/institutions/${PREVIEW_DEMO_FIXTURE.institutions[index].slug}`},
           '서울 · 온라인 병행', '2026-08-25T02:00:00.000Z',
           '2026-08-25T00:00:00.000Z'

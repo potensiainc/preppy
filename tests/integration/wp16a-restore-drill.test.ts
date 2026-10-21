@@ -6,6 +6,9 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { runRestoreDrill } from "@/src/modules/production-safety/restore-drill.server";
 import { runRehearsal } from "@/src/modules/production-preflight/rehearsal.server";
 import { assertDedicatedTestDatabaseUrl } from "@/tests/support/test-database";
+import { EXPECTED_REPOSITORY_MIGRATIONS } from "@/src/modules/production-safety/migration-manifest";
+
+const LATEST_MIGRATION = EXPECTED_REPOSITORY_MIGRATIONS.at(-1)!.identifier;
 
 const testDatabaseUrl = process.env.TEST_DATABASE_URL;
 if (!testDatabaseUrl) throw new Error("TEST_DATABASE_URL must be set");
@@ -335,7 +338,7 @@ describe("WP-16A real non-production backup/restore drill", () => {
       externalSideEffectsEnabled: false,
       sourceDatabaseLabel: sourceName,
       artifactPathClass: "OS_TEMP/WP16A",
-      migrationLatest: "0017_account_deletion",
+      migrationLatest: LATEST_MIGRATION,
       criticalTableCountsMatch: true,
       invariants: "PASS",
       readSmoke: "PASS",

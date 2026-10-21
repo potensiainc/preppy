@@ -6,6 +6,10 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { institutionIdForSchool } from "@/src/infrastructure/db/institution-backfill.server";
 import { runRehearsal } from "@/src/modules/production-preflight/rehearsal.server";
 import { assertDedicatedTestDatabaseUrl } from "@/tests/support/test-database";
+import { EXPECTED_REPOSITORY_MIGRATIONS } from "@/src/modules/production-safety/migration-manifest";
+
+const MIGRATION_COUNT = EXPECTED_REPOSITORY_MIGRATIONS.length;
+const LATEST_MIGRATION = EXPECTED_REPOSITORY_MIGRATIONS.at(-1)!.identifier;
 
 const testDatabaseUrl = process.env.TEST_DATABASE_URL;
 if (!testDatabaseUrl) throw new Error("TEST_DATABASE_URL must be set");
@@ -43,9 +47,7 @@ describe("WP-15A full non-production rehearsal", () => {
     });
 
     expect(result.stages?.baseline.appliedMigrations).toBe(0);
-    expect(result.report.migrations.latestApplied).toBe(
-      "0017_account_deletion",
-    );
+    expect(result.report.migrations.latestApplied).toBe(LATEST_MIGRATION);
     expect(result.stages?.productSignalsUnchanged).toBe(true);
     expect(result.stages?.secondPass).toMatchObject({
       institution: { created: 0, linked: 0 },
@@ -210,7 +212,7 @@ describe("WP-15A full non-production rehearsal", () => {
       now,
     });
 
-    expect(result.stages?.baseline.appliedMigrations).toBe(18);
+    expect(result.stages?.baseline.appliedMigrations).toBe(MIGRATION_COUNT);
     expect(result.stages?.firstPass).toMatchObject({
       institution: { created: 1, linked: 1 },
       opportunity: { created: 1, linked: 1 },

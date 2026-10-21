@@ -15,10 +15,16 @@ import {
   ledgerFingerprint,
   runScopedEnglishIdentityMigration,
 } from "@/src/db/scoped-english-identity-migration";
-const url = process.env.TEST_DATABASE_URL!;
-assertDedicatedTestDatabaseUrl(url);
-if (new URL(url).hostname !== "127.0.0.1")
+const sharedUrl = process.env.TEST_DATABASE_URL!;
+assertDedicatedTestDatabaseUrl(sharedUrl);
+if (new URL(sharedUrl).hostname !== "127.0.0.1")
   throw Error("LOCAL_MIGRATION_TEST_ONLY");
+// This suite creates and drops its whole database, so it must never reuse the
+// shared TEST_DATABASE_URL database that other suites depend on.
+const ownUrl = new URL(sharedUrl);
+ownUrl.pathname = ownUrl.pathname + "_scoped_test";
+const url = ownUrl.toString();
+assertDedicatedTestDatabaseUrl(url);
 const quote = (v: string) => '"' + v.replaceAll('"', '""') + '"';
 const name = new URL(url).pathname.slice(1),
   restoreName = name + "_restore_test",
