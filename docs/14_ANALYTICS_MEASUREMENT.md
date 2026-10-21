@@ -75,6 +75,16 @@ are rejected before provider mapping.
 | `article_to_follow` | Client-owned | Article-context Follow CTA click | `article_id`, `institution_id` |
 | `hero_primary_cta_click` | Client-owned | Home primary CTA click | `cta=INSTITUTIONS` |
 | `hero_secondary_cta_click` | Client-owned | Home secondary CTA click | `cta=CURRENT_OPPORTUNITIES` |
+| `guide_view` | Client-owned | consented `/guides/english-kindergarten-checklist` render, once per navigation | `guide=EK_CHECKLIST`, `entry` |
+| `guide_cta_click` | Client-owned | guide link click to the comparison table, calendar, list, or detail | `guide`, `entry`, `target` |
+| `compare_view` | Client-owned | consented Yangcheon English-kindergarten comparison render | `category`, `district=YANGCHEON`, `entry` |
+
+`entry` is an allowlisted campaign label, never the URL. It is
+`BUBUILD_EK_VIDEO` only when the landing URL carries
+`utm_source=youtube` and `utm_campaign=bubuild_ek_video`; the label is kept in
+`sessionStorage` for later pages in the same tab. Every other visit is `OTHER`.
+`page_location` stays the origin root, so GA4 traffic-source reports do not
+see the UTM values; read campaign results from the `entry` event parameter.
 
 The plain `/institutions` list view has no canonical list-view event. It emits
 only `search` and/or `filter` when applicable; no new event is invented.

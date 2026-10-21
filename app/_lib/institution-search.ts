@@ -32,7 +32,7 @@ const MAX_CHILD_AGE = 20;
 
 const englishKindergartenSorts = new Set<
   NonNullable<InstitutionListQuery["sort"]>
->(["NAME_ASC", "INFO_SESSION_ASC", "TUITION_ASC"]);
+>(["INFO_FIRST", "NAME_ASC", "INFO_SESSION_ASC", "TUITION_ASC"]);
 
 function scalar(value: string | string[] | undefined): string | undefined {
   return typeof value === "string" ? value : undefined;

@@ -212,6 +212,9 @@ describe("WP-05 analytics", () => {
       "article_to_follow",
       "hero_primary_cta_click",
       "hero_secondary_cta_click",
+      "guide_view",
+      "guide_cta_click",
+      "compare_view",
     ]);
   });
 

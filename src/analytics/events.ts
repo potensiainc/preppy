@@ -22,6 +22,9 @@ export const analyticsEventNames = [
   "article_to_follow",
   "hero_primary_cta_click",
   "hero_secondary_cta_click",
+  "guide_view",
+  "guide_cta_click",
+  "compare_view",
 ] as const;
 
 export type AnalyticsEventName = (typeof analyticsEventNames)[number];
@@ -40,6 +43,17 @@ const category = z.enum([
   "ENGLISH_KINDERGARTEN",
   "PRIVATE_ELEMENTARY",
   "INTERNATIONAL_SCHOOL",
+]);
+const guide = z.enum(["EK_CHECKLIST"]);
+// Allowlisted campaign entry labels; raw URL query values are never sent.
+const entry = z.enum(["BUBUILD_EK_VIDEO", "OTHER"]);
+const guideCtaTarget = z.enum([
+  "COMPARE",
+  "CALENDAR",
+  "INSTITUTION_LIST",
+  "INSTITUTION_DETAIL",
+  "PRIVATE_ELEMENTARY_CALENDAR",
+  "ARTICLES",
 ]);
 const regionCode = z
   .string()
@@ -154,6 +168,15 @@ export const analyticsEventSchemas = {
   hero_primary_cta_click: z.object({ cta: z.literal("INSTITUTIONS") }).strict(),
   hero_secondary_cta_click: z
     .object({ cta: z.literal("CURRENT_OPPORTUNITIES") })
+    .strict(),
+  guide_view: z.object({ guide, entry }).strict(),
+  guide_cta_click: z.object({ guide, entry, target: guideCtaTarget }).strict(),
+  compare_view: z
+    .object({
+      category: z.literal("ENGLISH_KINDERGARTEN"),
+      district: z.enum(["YANGCHEON", "GANGNAM", "SEOCHO", "SONGPA"]),
+      entry,
+    })
     .strict(),
 } as const;
 

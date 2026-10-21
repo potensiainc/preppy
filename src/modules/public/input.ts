@@ -55,7 +55,9 @@ const institutionListQuerySchema = z
     admissionYear: z.coerce.number().int().min(2026).max(2100).optional(),
     transport: z.literal("AVAILABLE").optional(),
     hasUpcomingInfoSession: z.boolean().optional(),
-    sort: z.enum(["NAME_ASC", "INFO_SESSION_ASC", "TUITION_ASC"]).optional(),
+    sort: z
+      .enum(["INFO_FIRST", "NAME_ASC", "INFO_SESSION_ASC", "TUITION_ASC"])
+      .optional(),
     page: positiveInteger(MAX_INSTITUTION_PAGE).optional(),
     pageSize: positiveInteger(MAX_INSTITUTION_PAGE_SIZE).optional(),
   })
