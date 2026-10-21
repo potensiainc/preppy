@@ -357,6 +357,68 @@ describe("WP-12A crash-safe email delivery", () => {
     expect(sender.snapshot()).toHaveLength(0);
   });
 
+  it("retries without a provider call when the recipient row stays locked", async () => {
+    const fixture = await queuedDelivery();
+    const sender = new FakeEmailSender([]);
+    const holder = postgres(databaseUrl!, { max: 1 });
+    try {
+      const result = await holder.begin(async (transaction) => {
+        await transaction`select id from users where id=${fixture.follower.userId} for update`;
+        return processEmailDelivery(
+          transactions,
+          {
+            eventId: fixture.sendEvent.id,
+            deliveryId: fixture.deliveryId,
+            workerId: "worker-send",
+            now: new Date("2026-08-24T02:03:00.000Z"),
+          },
+          {
+            sender,
+            tracker: new TestAnalyticsTracker(),
+            recipientLockTimeoutMs: 300,
+          },
+        );
+      });
+      expect(result).toEqual({ kind: "RETRYABLE_FAILURE" });
+    } finally {
+      await holder.end({ timeout: 5 });
+    }
+    expect(sender.snapshot()).toHaveLength(0);
+    expect(
+      await persisted(fixture.deliveryId, fixture.sendEvent.id),
+    ).toMatchObject({
+      delivery_status: "QUEUED",
+      event_status: "PENDING",
+      attempt_status: "FAILED_RETRYABLE",
+      attempt_error: "RECIPIENT_LOCK_TIMEOUT",
+    });
+  });
+
+  it("rejects an out-of-range recipient lock timeout before any work", async () => {
+    const fixture = await queuedDelivery();
+    for (const recipientLockTimeoutMs of [0, 99, 10_001, 1.5]) {
+      await expect(
+        processEmailDelivery(
+          transactions,
+          {
+            eventId: fixture.sendEvent.id,
+            deliveryId: fixture.deliveryId,
+            workerId: "worker-send",
+            now: new Date("2026-08-24T02:03:00.000Z"),
+          },
+          {
+            sender: new FakeEmailSender([]),
+            tracker: new TestAnalyticsTracker(),
+            recipientLockTimeoutMs,
+          },
+        ),
+      ).rejects.toMatchObject({ code: "VALIDATION_ERROR" });
+    }
+    expect(
+      await persisted(fixture.deliveryId, fixture.sendEvent.id),
+    ).toMatchObject({ event_status: "PROCESSING", attempt_status: null });
+  });
+
   it("orders tied latest consent decisions by decided_at then id", async () => {
     const fixture = await queuedDelivery();
     const decidedAt = new Date("2026-08-24T02:02:00.000Z");

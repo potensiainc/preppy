@@ -18,7 +18,10 @@ import {
 
 export const RESEND_PROVIDER = "RESEND";
 const DEFAULT_ENDPOINT = "https://api.resend.com/emails";
-const DEFAULT_TIMEOUT_MS = 10_000;
+// The provider call runs while the recipient row is locked; keep it short.
+const DEFAULT_TIMEOUT_MS = 5_000;
+const MIN_TIMEOUT_MS = 1;
+const MAX_TIMEOUT_MS = 10_000;
 const DEFAULT_MAX_RESPONSE_BYTES = 16_384;
 const PROVIDER_MESSAGE_ID = /^[\x21-\x7e]{1,255}$/;
 const MAX_RETRY_AFTER_MS = 300_000;
@@ -172,6 +175,13 @@ export class ResendEmailSender implements EmailSender {
   ) {
     this.endpoint = options.endpoint ?? DEFAULT_ENDPOINT;
     this.timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+    if (
+      !Number.isSafeInteger(this.timeoutMs) ||
+      this.timeoutMs < MIN_TIMEOUT_MS ||
+      this.timeoutMs > MAX_TIMEOUT_MS
+    ) {
+      throw new Error("Invalid Resend timeout.");
+    }
     this.maxResponseBytes =
       options.maxResponseBytes ?? DEFAULT_MAX_RESPONSE_BYTES;
     this.fetchImplementation = options.fetchImplementation ?? fetch;

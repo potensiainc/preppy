@@ -34,7 +34,7 @@ describe("drizzle migration snapshots", () => {
   });
 
   it("records every schema table in the latest snapshot", () => {
-    const schemaTables = Object.values(schema)
+    const schemaTables = (Object.values(schema) as unknown[])
       .filter(
         (value): value is PgTable =>
           typeof value === "object" &&

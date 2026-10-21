@@ -43,6 +43,7 @@ type ProcessEmailDeliveryDependencies = Readonly<{
   tracker: AnalyticsTracker;
   sendEnabled?: boolean;
   maxSignalAgeMs?: number;
+  recipientLockTimeoutMs?: number;
   appBaseUrl?: string;
   afterAttemptStarted?: () => Promise<void>;
   afterProviderCall?: (result: SendEmailResult) => Promise<void>;
@@ -70,6 +71,23 @@ function validateInput(input: ProcessEmailDeliveryInput) {
 }
 
 const DEFAULT_MAX_SIGNAL_AGE_MS = 72 * 3_600_000;
+// The handoff transaction holds the recipient's users row while the provider
+// is called. These bounds keep a slow provider or a long-held row from
+// pinning a connection and blocking that user's own requests.
+const DEFAULT_RECIPIENT_LOCK_TIMEOUT_MS = 3_000;
+const HANDOFF_STATEMENT_TIMEOUT_MS = 15_000;
+const HANDOFF_IDLE_TIMEOUT_MS = 20_000;
+
+function isLockTimeout(error: unknown): boolean {
+  for (
+    let current: unknown = error, depth = 0;
+    current !== null && typeof current === "object" && depth < 5;
+    current = (current as { cause?: unknown }).cause, depth += 1
+  ) {
+    if ((current as { code?: unknown }).code === "55P03") return true;
+  }
+  return false;
+}
 const EMAIL_HOLD_DELAY_MS = 300_000;
 
 function retryDelayMs(attemptCount: number) {
@@ -125,6 +143,15 @@ export async function processEmailDelivery(
   const maxSignalAgeMs =
     dependencies.maxSignalAgeMs ?? DEFAULT_MAX_SIGNAL_AGE_MS;
   if (!Number.isSafeInteger(maxSignalAgeMs) || maxSignalAgeMs < 3_600_000) {
+    throw ValidationError.invalidRequest();
+  }
+  const recipientLockTimeoutMs =
+    dependencies.recipientLockTimeoutMs ?? DEFAULT_RECIPIENT_LOCK_TIMEOUT_MS;
+  if (
+    !Number.isSafeInteger(recipientLockTimeoutMs) ||
+    recipientLockTimeoutMs < 100 ||
+    recipientLockTimeoutMs > 10_000
+  ) {
     throw ValidationError.invalidRequest();
   }
   const nowIso = input.now.toISOString();
@@ -339,61 +366,82 @@ export async function processEmailDelivery(
   // The configured provider must enforce a bounded HTTP timeout; account
   // deletion waits for an already-started handoff before acknowledging receipt.
   let finalSuppressReason: NotificationDeliverySuppressReason = "USER_INACTIVE";
-  const providerResult = await transactionManager.run(async (executor) => {
-    await executor.raw(sql`
+  let providerCalled = false;
+  const providerResult = await transactionManager
+    .run(async (executor) => {
+      await executor.raw(sql`
+      select
+        set_config('lock_timeout', ${`${recipientLockTimeoutMs}ms`}, true),
+        set_config('statement_timeout', ${`${HANDOFF_STATEMENT_TIMEOUT_MS}ms`}, true),
+        set_config('idle_in_transaction_session_timeout', ${`${HANDOFF_IDLE_TIMEOUT_MS}ms`}, true)
+    `);
+      await executor.raw(sql`
       select u.id from users u join notification_deliveries d on d.user_id=u.id
       where d.id=${input.deliveryId} for update of u
     `);
-    const [owned] = (await executor.raw(sql`
+      const [owned] = (await executor.raw(sql`
       select id from outbox_events where id=${input.eventId}
       and status='PROCESSING' and locked_by=${input.workerId} for update
     `)) as unknown as Array<{ id: string }>;
-    if (!owned) return null;
-    const eligibility = await evaluateDeliveryEligibility(
-      executor,
-      input.deliveryId,
-    );
-    if (
-      !eligibility?.eligible ||
-      eligibility.emailNormalized !== prepared.message.to
-    ) {
-      const reason =
-        eligibility && !eligibility.eligible
-          ? eligibility.reason
-          : "EMAIL_UNAVAILABLE";
-      finalSuppressReason = reason;
-      await executor.raw(sql`
+      if (!owned) return null;
+      const eligibility = await evaluateDeliveryEligibility(
+        executor,
+        input.deliveryId,
+      );
+      if (
+        !eligibility?.eligible ||
+        eligibility.emailNormalized !== prepared.message.to
+      ) {
+        const reason =
+          eligibility && !eligibility.eligible
+            ? eligibility.reason
+            : "EMAIL_UNAVAILABLE";
+        finalSuppressReason = reason;
+        await executor.raw(sql`
         update notification_delivery_attempts set attempt_status='FAILED_TERMINAL',
         completed_at=${nowIso}::timestamptz,error_code='RECIPIENT_NO_LONGER_ELIGIBLE'
         where id=${prepared.attemptId} and attempt_status='STARTED'
       `);
-      await executor.raw(sql`
+        await executor.raw(sql`
         update notification_deliveries set status='SUPPRESSED',suppress_reason=${reason},
         suppressed_at=${nowIso}::timestamptz where id=${input.deliveryId} and status='QUEUED'
       `);
-      await completeOutboxEvent(executor, {
-        eventId: input.eventId,
-        workerId: input.workerId,
-        now: input.now,
-      });
-      return null;
-    }
-    try {
-      return safeResult(
-        await dependencies.sender.send(prepared.message, {
-          deliveryId: input.deliveryId,
-          attemptNumber: prepared.attemptNumber,
-        }),
-        dependencies.sender.provider,
-      );
-    } catch {
-      return {
-        kind: "RESULT_UNKNOWN",
-        provider: dependencies.sender.provider,
-        errorCode: "PROVIDER_RESULT_UNKNOWN",
-      } as const;
-    }
-  });
+        await completeOutboxEvent(executor, {
+          eventId: input.eventId,
+          workerId: input.workerId,
+          now: input.now,
+        });
+        return null;
+      }
+      providerCalled = true;
+      try {
+        return safeResult(
+          await dependencies.sender.send(prepared.message, {
+            deliveryId: input.deliveryId,
+            attemptNumber: prepared.attemptNumber,
+          }),
+          dependencies.sender.provider,
+        );
+      } catch {
+        return {
+          kind: "RESULT_UNKNOWN",
+          provider: dependencies.sender.provider,
+          errorCode: "PROVIDER_RESULT_UNKNOWN",
+        } as const;
+      }
+    })
+    .catch((error: unknown): SendEmailResult => {
+      // Waiting for the recipient row timed out before the provider was
+      // called, so nothing was sent and the attempt is safely retryable.
+      if (!providerCalled && isLockTimeout(error)) {
+        return {
+          kind: "RETRYABLE_FAILURE",
+          provider: dependencies.sender.provider,
+          errorCode: "RECIPIENT_LOCK_TIMEOUT",
+        };
+      }
+      throw error;
+    });
   if (!providerResult)
     return { kind: "SUPPRESSED", reason: finalSuppressReason } as const;
   await dependencies.afterProviderCall?.(providerResult);
