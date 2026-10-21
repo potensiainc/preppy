@@ -35,7 +35,7 @@ describe("typed raw queries", () => {
     await expect(failure).rejects.toMatchObject({
       code: "DATABASE_CONTRACT_VIOLATION",
     });
-    const error = await failure.catch((caught: Error) => caught);
+    const error = (await failure.catch((caught: unknown) => caught)) as Error;
     expect(error.message).not.toContain("parent@example.test");
     expect(error.message).toContain("0.count");
   });
