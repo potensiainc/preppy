@@ -26,6 +26,7 @@
     "db:migrate:english-session-identity": "tsx scripts/db/migrate-english-session-identity.ts",
     "db:migrate:account-deletion": "tsx scripts/db/migrate-account-deletion.ts",
     "db:check": "tsx scripts/db/check-connection.ts",
+    "admin:provision": "tsx --tsconfig scripts/db/tsconfig.json scripts/db/provision-admin.ts",
     "db:backfill:institutions": "tsx --tsconfig scripts/db/tsconfig.json scripts/db/backfill-institutions.ts",
     "db:backfill:opportunities": "tsx --tsconfig scripts/db/tsconfig.json scripts/db/backfill-opportunities.ts",
     "db:backfill:source-bindings": "tsx --tsconfig scripts/db/tsconfig.json scripts/db/backfill-source-bindings.ts",

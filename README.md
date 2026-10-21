@@ -89,6 +89,8 @@ export TEST_DATABASE_URL=postgres://preppy:preppy@127.0.0.1:55433/preppy_test
 npm run test:db
 ```
 
+관리자 계정은 `npm run admin:provision -- --subject <OIDC sub> --email <주소> --display-name <이름>`으로 추가해요. 비활성화는 `--disable`을 붙여요. 기본은 미리보기이고 `--apply`를 붙여야 반영돼요. 마지막 활성 관리자는 비활성화할 수 없고, 변경은 이메일 없이 `audit_logs`에 남아요.
+
 데이터 import·수집·운영 점검 명령은 `package.json`의 `data:*`, `collector:*`, `db:*` 스크립트를 확인해요. 대부분 dry-run이 기본이고 적용에는 명시적인 플래그가 필요해요.
 
 ## 환경변수
