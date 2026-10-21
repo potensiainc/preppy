@@ -18,7 +18,7 @@ describe("DB integration test contract", () => {
   it("checks every pull request with a real PostgreSQL integration job", () => {
     const workflow = read(".github/workflows/public-release-guard.yml");
     expect(workflow).toContain("  db-integration:");
-    expect(workflow).toContain("image: postgres:16-alpine");
+    expect(workflow).toContain('"postgres:${major}-alpine"');
     expect(workflow).toContain(
       "TEST_DATABASE_URL: postgres://preppy:preppy@127.0.0.1:5432/preppy_test",
     );

@@ -29,20 +29,6 @@ jobs:
   db-integration:
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    services:
-      postgres:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_DB: preppy_test
-          POSTGRES_USER: preppy
-          POSTGRES_PASSWORD: preppy
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U preppy -d preppy_test"
-          --health-interval 2s
-          --health-timeout 3s
-          --health-retries 30
     env:
       TEST_DATABASE_URL: postgres://preppy:preppy@127.0.0.1:5432/preppy_test
     steps:
@@ -53,10 +39,24 @@ jobs:
         with:
           node-version: "22"
           package-manager-cache: false
-      - name: Install PostgreSQL 16 client tools
+      # pg_dump/pg_restore must match the server major version, so the
+      # server image follows the client tools the runner image provides.
+      - name: Start PostgreSQL matching the client tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends postgresql-client-16
-          pg_dump --version
+          sudo apt-get install -y --no-install-recommends postgresql-client
+          major=$(pg_dump --version | sed -E 's/.* ([0-9]+)(\.[0-9]+)*.*/\1/')
+          echo "PostgreSQL client major: $major"
+          docker run -d --name preppy-test-db -p 5432:5432 \
+            -e POSTGRES_DB=preppy_test -e POSTGRES_USER=preppy \
+            -e POSTGRES_PASSWORD=preppy "postgres:${major}-alpine"
+          for attempt in $(seq 1 30); do
+            if pg_isready -h 127.0.0.1 -p 5432 -U preppy -d preppy_test; then
+              exit 0
+            fi
+            sleep 2
+          done
+          docker logs preppy-test-db
+          exit 1
       - run: npm ci --no-audit --no-fund
       - run: npm run test:db
