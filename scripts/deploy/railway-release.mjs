@@ -118,15 +118,16 @@ async function serviceState(request, environmentId, serviceId) {
   const data = await request(
     `query($s: String!, $e: String!) {
       serviceInstance(serviceId: $s, environmentId: $e) {
-        source { image }
-        latestDeployment { id status }
+        latestDeployment { id status meta }
       }
     }`,
     { s: serviceId, e: environmentId },
   );
   const instance = data.serviceInstance;
   return {
-    image: instance.source?.image ?? null,
+    // The image the deployment actually ran, not the service's configured
+    // source, which changes before a deploy request succeeds.
+    image: instance.latestDeployment?.meta?.image ?? null,
     deploymentId: instance.latestDeployment?.id ?? null,
     status: instance.latestDeployment?.status ?? null,
   };

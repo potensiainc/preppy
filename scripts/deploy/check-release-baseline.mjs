@@ -35,21 +35,21 @@ export function checkReleaseBaseline() {
     dirty: git("status", "--porcelain").length > 0,
     includesMain,
   });
+  // Guard diagnostics go to stderr so stdout carries only the JSON result.
   execFileSync(
     process.execPath,
     [path.join(root, "scripts/deploy/assert-header-auth-absence.mjs")],
-    { cwd: root, stdio: "inherit" },
+    { cwd: root, stdio: ["ignore", 2, 2] },
   );
   execFileSync(
     process.execPath,
     [path.join(root, "scripts/deploy/assert-brand-icons.mjs")],
-    { cwd: root, stdio: "inherit" },
+    { cwd: root, stdio: ["ignore", 2, 2] },
   );
   const release = {
     gitSha: git("rev-parse", "HEAD"),
     mainSha: git("rev-parse", "origin/main"),
   };
-  process.stdout.write(`${JSON.stringify(release)}\n`);
   return release;
 }
 
@@ -57,4 +57,4 @@ if (
   process.argv[1] &&
   path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)
 )
-  checkReleaseBaseline();
+  process.stdout.write(`${JSON.stringify(checkReleaseBaseline())}\n`);
