@@ -8,6 +8,10 @@ export function parseReleaseArgs(argv: string[]): {
   apply: boolean;
 };
 export function assertStagingVerified(
-  stagingWeb: { image: string | null; status: string | null },
+  stagingServices: { image: string | null; status: string | null }[],
   image: string,
+): void;
+export function assertImageBuiltFrom(
+  image: string,
+  publishedDigest: string,
 ): void;

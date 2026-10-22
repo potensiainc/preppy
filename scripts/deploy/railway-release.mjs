@@ -40,12 +40,52 @@ export function parseReleaseArgs(argv) {
   return { target, image, apply: argv.includes("--apply") };
 }
 
-// Production only receives the exact image Staging already serves healthily.
-export function assertStagingVerified(stagingWeb, image) {
-  if (stagingWeb.image !== image || stagingWeb.status !== "SUCCESS")
+// Production only receives the exact image both Staging services already
+// run healthily, so a failed Staging worker cannot be skipped.
+export function assertStagingVerified(stagingServices, image) {
+  if (
+    !stagingServices.every(
+      (service) => service.image === image && service.status === "SUCCESS",
+    )
+  )
     throw new Error(
       "Deploy and verify this image on staging before production.",
     );
+}
+
+// release-image publishes main and other branches; only the image built
+// from the preflighted commit may ship.
+export function assertImageBuiltFrom(image, publishedDigest) {
+  if (image !== `ghcr.io/potensiainc/preppy@${publishedDigest}`)
+    throw new Error(
+      "--image must be the release-image digest of the checked-out commit.",
+    );
+}
+
+async function publishedDigestFor(gitSha) {
+  const repository = "potensiainc/preppy";
+  const auth = await fetch(
+    `https://ghcr.io/token?scope=repository:${repository}:pull`,
+  );
+  const { token } = await auth.json();
+  const response = await fetch(
+    `https://ghcr.io/v2/${repository}/manifests/sha-${gitSha}`,
+    {
+      method: "HEAD",
+      headers: {
+        authorization: `Bearer ${token}`,
+        accept: [
+          "application/vnd.oci.image.index.v1+json",
+          "application/vnd.oci.image.manifest.v1+json",
+          "application/vnd.docker.distribution.manifest.v2+json",
+        ].join(", "),
+      },
+    },
+  );
+  const digest = response.headers.get("docker-content-digest");
+  if (!response.ok || !digest)
+    throw new Error(`No release image was published for commit ${gitSha}.`);
+  return digest;
 }
 
 function client(token) {
@@ -102,11 +142,17 @@ async function waitForDeployment(request, deploymentId) {
     if (TERMINAL.has(deployment.status)) return deployment.status;
     await new Promise((resolve) => setTimeout(resolve, 10_000));
   }
+  // A queued deployment can resume later and cut over on its own; cancel it
+  // so a timeout never leaves web and worker on different images.
+  await request("mutation($id: String!) { deploymentCancel(id: $id) }", {
+    id: deploymentId,
+  });
   return "TIMED_OUT";
 }
 
 async function release({ target, image, apply }) {
   const baseline = checkReleaseBaseline();
+  assertImageBuiltFrom(image, await publishedDigestFor(baseline.gitSha));
   const config = RELEASE_TARGETS[target];
   const request = client(tokenFor(target));
   const { projectToken } = await request(
@@ -119,13 +165,19 @@ async function release({ target, image, apply }) {
     throw new Error(`The ${config.tokenVariable} token is not for ${target}.`);
 
   if (target === "production") {
-    const stagingConfig = RELEASE_TARGETS.staging;
-    const stagingWeb = await serviceState(
-      client(tokenFor("staging")),
-      stagingConfig.environmentId,
-      stagingConfig.web,
+    const staging = RELEASE_TARGETS.staging;
+    const stagingRequest = client(tokenFor("staging"));
+    assertStagingVerified(
+      [
+        await serviceState(stagingRequest, staging.environmentId, staging.web),
+        await serviceState(
+          stagingRequest,
+          staging.environmentId,
+          staging.worker,
+        ),
+      ],
+      image,
     );
-    assertStagingVerified(stagingWeb, image);
   }
 
   const before = {

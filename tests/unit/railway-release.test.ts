@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  assertImageBuiltFrom,
   assertStagingVerified,
   parseReleaseArgs,
 } from "../../scripts/deploy/railway-release.mjs";
@@ -35,18 +36,28 @@ describe("railway image release", () => {
     },
   );
 
-  it("promotes to production only what staging serves healthily", () => {
+  it("promotes to production only what both staging services run healthily", () => {
+    const healthy = { image, status: "SUCCESS" };
     expect(() =>
-      assertStagingVerified({ image, status: "SUCCESS" }, image),
+      assertStagingVerified([healthy, healthy], image),
     ).not.toThrow();
     expect(() =>
-      assertStagingVerified({ image, status: "FAILED" }, image),
+      assertStagingVerified([healthy, { image, status: "FAILED" }], image),
     ).toThrow("staging");
     expect(() =>
       assertStagingVerified(
-        { image: image.replace("a", "b"), status: "SUCCESS" },
+        [healthy, { image: image.replace("a", "b"), status: "SUCCESS" }],
         image,
       ),
     ).toThrow("staging");
+  });
+
+  it("ships only the image built from the checked-out commit", () => {
+    expect(() =>
+      assertImageBuiltFrom(image, `sha256:${"a".repeat(64)}`),
+    ).not.toThrow();
+    expect(() =>
+      assertImageBuiltFrom(image, `sha256:${"b".repeat(64)}`),
+    ).toThrow("checked-out commit");
   });
 });
