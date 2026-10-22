@@ -1251,7 +1251,7 @@ Google / Naver 검색
 
 ## REPLACE
 
-이전 AdmissionRadar 가정 또는 현재 프레피의 Product Contract와 충돌하여 유지 비용보다 재설계 가치가 높다.
+이전 PREPPY Legacy 가정 또는 현재 프레피의 Product Contract와 충돌하여 유지 비용보다 재설계 가치가 높다.
 
 Architecture Audit 시 최소한 다음 질문에 답해야 한다.
 

@@ -13,8 +13,8 @@ os.environ.setdefault("APP_BASE_URL", "http://127.0.0.1:3311")
 os.environ.setdefault("ADMIN_AUTH_ISSUER", "http://127.0.0.1:3312")
 os.environ.setdefault(
     "DATABASE_URL",
-    "postgres://admissionradar:admissionradar@localhost:55433/"
-    "admissionradar_wp11_browser_verify13",
+    "postgres://preppy:preppy@localhost:55433/"
+    "preppy_wp11_browser_verify13",
 )
 os.environ.setdefault("WP11_BROWSER_EVIDENCE_DIR", str(Path.cwd() / ".evidence"))
 

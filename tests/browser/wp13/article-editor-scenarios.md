@@ -4,7 +4,7 @@
 
 PASS — 2026-08-25. The fixture ran in six isolated phases (`EDITOR`,
 `PUBLIC`, `STALE_SLUG`, `UNPUBLISH`, `REPUBLISH`, `FINAL`) against a freshly
-recreated `admissionradar_test` database migrated through existing `0010`.
+recreated `preppy_test` database migrated through existing `0010`.
 The application used `http://localhost:3411`; the real fake OIDC issuer used
 `http://127.0.0.1:3412`. `localhost` is intentional because Next 16 rejects
 development client chunks requested through a different loopback origin.

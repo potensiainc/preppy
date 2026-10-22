@@ -9,6 +9,7 @@ import {
 } from "@/app/admin/_components/read-ui";
 import { AdminOutboxActions } from "@/app/admin/_components/outbox-actions";
 import { getAdminExecutor } from "@/app/admin/_lib/admin-page.server";
+import { isEmailSendAvailable } from "@/src/modules/notification/resend-config.server";
 import type {
   AdminOutboxDTO,
   AdminPageDTO,
@@ -22,9 +23,11 @@ import {
 export function AdminOutboxView({
   data,
   query = { page: 1, pageSize: 20 },
+  emailSendAvailable = false,
 }: {
   data: AdminPageDTO<AdminOutboxDTO>;
   query?: AdminOutboxInput;
+  emailSendAvailable?: boolean;
 }) {
   return (
     <div className="admin-page admin-operations-page">
@@ -95,7 +98,10 @@ export function AdminOutboxView({
                     </span>
                   </td>
                   <td>
-                    <AdminOutboxActions item={item} />
+                    <AdminOutboxActions
+                      item={item}
+                      emailSendAvailable={emailSendAvailable}
+                    />
                   </td>
                 </tr>
               ))}
@@ -121,5 +127,11 @@ export default async function AdminOutboxPage({
 }) {
   const query = parseAdminOutboxInput(await searchParams);
   const data = await listAdminOutbox(getAdminExecutor(), query);
-  return <AdminOutboxView data={data} query={query} />;
+  return (
+    <AdminOutboxView
+      data={data}
+      query={query}
+      emailSendAvailable={isEmailSendAvailable()}
+    />
+  );
 }

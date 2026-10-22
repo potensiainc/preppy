@@ -6,13 +6,17 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { institutionIdForSchool } from "@/src/infrastructure/db/institution-backfill.server";
 import { runRehearsal } from "@/src/modules/production-preflight/rehearsal.server";
 import { assertDedicatedTestDatabaseUrl } from "@/tests/support/test-database";
+import { EXPECTED_REPOSITORY_MIGRATIONS } from "@/src/modules/production-safety/migration-manifest";
+
+const MIGRATION_COUNT = EXPECTED_REPOSITORY_MIGRATIONS.length;
+const LATEST_MIGRATION = EXPECTED_REPOSITORY_MIGRATIONS.at(-1)!.identifier;
 
 const testDatabaseUrl = process.env.TEST_DATABASE_URL;
 if (!testDatabaseUrl) throw new Error("TEST_DATABASE_URL must be set");
 assertDedicatedTestDatabaseUrl(testDatabaseUrl);
 
 const baseUrl = new URL(testDatabaseUrl);
-const databaseName = "admissionradar_wp15a_full_rehearsal";
+const databaseName = "preppy_wp15a_full_rehearsal";
 const databaseUrl = new URL(baseUrl);
 databaseUrl.pathname = `/${databaseName}`;
 const maintenanceUrl = new URL(baseUrl);
@@ -22,7 +26,7 @@ let sql: ReturnType<typeof postgres>;
 
 describe("WP-15A full non-production rehearsal", () => {
   beforeAll(async () => {
-    await maintenance`select pg_advisory_lock(hashtext('admissionradar-schema-tests'))`;
+    await maintenance`select pg_advisory_lock(hashtext('preppy-schema-tests'))`;
     await maintenance.unsafe(`drop database if exists ${databaseName}`);
     await maintenance.unsafe(`create database ${databaseName}`);
     sql = postgres(databaseUrl.toString(), { max: 1 });
@@ -31,7 +35,7 @@ describe("WP-15A full non-production rehearsal", () => {
   afterAll(async () => {
     await sql.end({ timeout: 5 });
     await maintenance.unsafe(`drop database if exists ${databaseName}`);
-    await maintenance`select pg_advisory_unlock(hashtext('admissionradar-schema-tests'))`;
+    await maintenance`select pg_advisory_unlock(hashtext('preppy-schema-tests'))`;
     await maintenance.end({ timeout: 5 });
   });
 
@@ -43,9 +47,7 @@ describe("WP-15A full non-production rehearsal", () => {
     });
 
     expect(result.stages?.baseline.appliedMigrations).toBe(0);
-    expect(result.report.migrations.latestApplied).toBe(
-      "0017_account_deletion",
-    );
+    expect(result.report.migrations.latestApplied).toBe(LATEST_MIGRATION);
     expect(result.stages?.productSignalsUnchanged).toBe(true);
     expect(result.stages?.secondPass).toMatchObject({
       institution: { created: 0, linked: 0 },
@@ -210,7 +212,7 @@ describe("WP-15A full non-production rehearsal", () => {
       now,
     });
 
-    expect(result.stages?.baseline.appliedMigrations).toBe(18);
+    expect(result.stages?.baseline.appliedMigrations).toBe(MIGRATION_COUNT);
     expect(result.stages?.firstPass).toMatchObject({
       institution: { created: 1, linked: 1 },
       opportunity: { created: 1, linked: 1 },

@@ -3,8 +3,12 @@ import "server-only";
 import { sql } from "drizzle-orm";
 
 import type { DatabaseExecutor } from "@/src/infrastructure/db/runtime.server";
+import { isAccountDeletionSchemaReady } from "@/src/modules/account-deletion/readiness.server";
 import { countMonitoringDueStates } from "@/src/modules/monitoring/queue-query.server";
-import { EXPECTED_REPOSITORY_MIGRATIONS } from "@/src/modules/production-safety/migration-manifest";
+import {
+  EXPECTED_REPOSITORY_MIGRATIONS,
+  withoutKnownHistoricalLedgerRows,
+} from "@/src/modules/production-safety/migration-manifest";
 import { DEFAULT_WORKER_LEASE_DURATION_MS } from "@/src/modules/worker/cli";
 
 export type OperationalAlert = Readonly<{
@@ -28,6 +32,8 @@ export type OperationalSnapshot = Readonly<{
     staleProcessing: number;
     oldestStaleProcessingAgeSeconds: number | null;
     workerLagSeconds: number | null;
+    heldEmailDelivery: number;
+    heldCacheRevalidation: number;
   }>;
   notification: Readonly<{
     failedDeliveries: number;
@@ -59,6 +65,8 @@ type AggregateRow = {
   outboxStaleProcessing: number;
   oldestStaleProcessingAgeSeconds: number | null;
   workerLagSeconds: number | null;
+  heldEmailDelivery: number;
+  heldCacheRevalidation: number;
   failedDeliveries: number;
   resultUnknown: number;
   providerEventFailed: number;
@@ -68,6 +76,28 @@ type AggregateRow = {
   cacheDeadLetter: number;
   cacheStaleProcessing: number;
 };
+
+// The worker cron runs every five minutes; three missed runs is a stall.
+export const WORKER_LAG_ALERT_SECONDS = 900;
+
+export type HeldOutboxEventType =
+  "DELIVERY_EMAIL_SEND" | "CACHE_REVALIDATION_REQUESTED";
+
+// Event types whose capability flag is off are held on purpose. They are
+// counted separately and kept out of the worker-lag alert.
+export function heldOutboxEventTypes(
+  flags: Readonly<{
+    EMAIL_SEND_ENABLED: boolean;
+    CACHE_REVALIDATION_ENABLED: boolean;
+  }>,
+): HeldOutboxEventType[] {
+  return [
+    ...(flags.EMAIL_SEND_ENABLED ? [] : ["DELIVERY_EMAIL_SEND" as const]),
+    ...(flags.CACHE_REVALIDATION_ENABLED
+      ? []
+      : ["CACHE_REVALIDATION_REQUESTED" as const]),
+  ];
+}
 
 function alertsFor(
   row: AggregateRow,
@@ -84,6 +114,9 @@ function alertsFor(
       severity: "CRITICAL",
       count: row.resultUnknown,
     });
+  }
+  if ((row.workerLagSeconds ?? 0) > WORKER_LAG_ALERT_SECONDS) {
+    alerts.push({ code: "OUTBOX_WORKER_LAG", severity: "WARNING", count: 1 });
   }
   for (const [count, code] of [
     [row.outboxDeadLetter, "OUTBOX_DEAD_LETTER"],
@@ -105,6 +138,8 @@ export async function getOperationalSnapshot(
     now: Date;
     leaseDurationMs?: number;
     countMonitoring?: typeof countMonitoringDueStates;
+    heldEventTypes?: readonly HeldOutboxEventType[];
+    accountDeletionEnabled?: boolean;
   }>,
 ): Promise<OperationalSnapshot> {
   if (!Number.isFinite(options.now.getTime())) {
@@ -124,8 +159,10 @@ export async function getOperationalSnapshot(
     options.now.getTime() - leaseDurationMs,
   ).toISOString();
   const repository = EXPECTED_REPOSITORY_MIGRATIONS;
+  const held = [...(options.heldEventTypes ?? [])];
+  const heldArray = `{${held.join(",")}}`;
   const monitoringCounter = options.countMonitoring ?? countMonitoringDueStates;
-  const [rows, migrationRows, monitoring] = await Promise.all([
+  const [rows, ledgerRows, monitoring] = await Promise.all([
     executor.raw(sql`
       select
         count(*) filter (where e.status='PENDING')::int as "outboxPending",
@@ -135,13 +172,24 @@ export async function getOperationalSnapshot(
           where e.status='PROCESSING'
             and e.locked_at < ${staleBeforeIso}::timestamptz
         )::int as "outboxStaleProcessing",
-        extract(epoch from (${nowIso}::timestamptz - min(e.locked_at) filter (
+        -- Ages are clamped to the int range so one very old row cannot make
+        -- the whole health snapshot fail with "integer out of range".
+        least(extract(epoch from (${nowIso}::timestamptz - min(e.locked_at) filter (
           where e.status='PROCESSING'
             and e.locked_at < ${staleBeforeIso}::timestamptz
-        )))::int as "oldestStaleProcessingAgeSeconds",
-        extract(epoch from (${nowIso}::timestamptz - min(e.available_at) filter (
+        ))), 2147483647)::int as "oldestStaleProcessingAgeSeconds",
+        least(extract(epoch from (${nowIso}::timestamptz - min(e.available_at) filter (
           where e.status='PENDING' and e.available_at <= ${nowIso}::timestamptz
-        )))::int as "workerLagSeconds",
+            and not (e.event_type = any(${heldArray}::text[]))
+        ))), 2147483647)::int as "workerLagSeconds",
+        count(*) filter (
+          where e.status='PENDING' and e.event_type='DELIVERY_EMAIL_SEND'
+            and e.event_type = any(${heldArray}::text[])
+        )::int as "heldEmailDelivery",
+        count(*) filter (
+          where e.status='PENDING' and e.event_type='CACHE_REVALIDATION_REQUESTED'
+            and e.event_type = any(${heldArray}::text[])
+        )::int as "heldCacheRevalidation",
         (select count(*)::int from notification_deliveries where status='FAILED')
           as "failedDeliveries",
         (select count(*)::int from notification_delivery_attempts
@@ -172,12 +220,14 @@ export async function getOperationalSnapshot(
       from outbox_events e
     `) as unknown as Promise<AggregateRow[]>,
     executor.raw(sql`
-      select hash from drizzle.__drizzle_migrations order by created_at, id
-    `) as unknown as Promise<Array<{ hash: string }>>,
+      select hash, created_at as "createdAt"
+      from drizzle.__drizzle_migrations order by created_at, id
+    `) as unknown as Promise<Array<{ hash: string; createdAt: string }>>,
     monitoringCounter({ executor, now: options.now }),
   ]);
   const row = rows[0];
   if (!row) throw new Error("Operational snapshot aggregate is unavailable.");
+  const migrationRows = withoutKnownHistoricalLedgerRows(ledgerRows);
   const migrationStatus =
     migrationRows.length === repository.length &&
     migrationRows.every(
@@ -201,6 +251,8 @@ export async function getOperationalSnapshot(
       staleProcessing: row.outboxStaleProcessing,
       oldestStaleProcessingAgeSeconds: row.oldestStaleProcessingAgeSeconds,
       workerLagSeconds: row.workerLagSeconds,
+      heldEmailDelivery: row.heldEmailDelivery,
+      heldCacheRevalidation: row.heldCacheRevalidation,
     },
     notification: {
       failedDeliveries: row.failedDeliveries,
@@ -221,6 +273,18 @@ export async function getOperationalSnapshot(
       transportFailureCount: null,
       readinessImpact: "BEST_EFFORT",
     },
-    alerts: alertsFor(row, migrationStatus, monitoring.overdue),
+    alerts: [
+      ...alertsFor(row, migrationStatus, monitoring.overdue),
+      ...(options.accountDeletionEnabled &&
+      !(await isAccountDeletionSchemaReady(executor))
+        ? [
+            {
+              code: "ACCOUNT_DELETION_SCHEMA_MISSING",
+              severity: "CRITICAL",
+              count: 1,
+            } as const,
+          ]
+        : []),
+    ],
   };
 }

@@ -108,7 +108,7 @@ describe("WP-12A bounded worker runner", () => {
     await runWorkerOnce(
       {
         enabled: true,
-        emailSendEnabled: false,
+        emailSendEnabled: true,
         cacheRevalidationEnabled: false,
         workerId: "worker-capability",
         batchSize: 10,

@@ -6,22 +6,22 @@ describe("assertDedicatedTestDatabaseUrl", () => {
   it("accepts explicit test and verification database names", () => {
     expect(() =>
       assertDedicatedTestDatabaseUrl(
-        "postgres://user:secret@localhost/admissionradar_test",
+        "postgres://user:secret@localhost/preppy_test",
       ),
     ).not.toThrow();
     expect(() =>
       assertDedicatedTestDatabaseUrl(
-        "postgres://user:secret@localhost/admissionradar_verify3",
+        "postgres://user:secret@localhost/preppy_verify3",
       ),
     ).not.toThrow();
   });
 
   it("rejects development, staging, and production-looking names", () => {
     for (const databaseName of [
-      "admissionradar",
-      "admissionradar_development",
-      "admissionradar_staging",
-      "admissionradar_production",
+      "preppy",
+      "preppy_development",
+      "preppy_staging",
+      "preppy_production",
     ]) {
       expect(() =>
         assertDedicatedTestDatabaseUrl(

@@ -26,7 +26,7 @@
 8. Notification eligibility와 delivery 의미
 9. Article과 Institution/Opportunity의 구조적 관계
 10. Domain Event와 integration boundary
-11. Legacy AdmissionRadar와 PREPPY canonical model 사이의 domain-level compatibility 규칙
+11. PREPPY Legacy와 PREPPY canonical model 사이의 domain-level compatibility 규칙
 
 이 문서에서 결정하지 않는 것:
 
@@ -117,9 +117,9 @@ PREPPY의 코드, 문서, Admin UI, Analytics에서 가능한 한 다음 용어�
 | NotificationDelivery | Notification을 특정 User에게 특정 channel로 전달하는 시도와 결과 |
 | Article | SEO Acquisition과 사용자 판단을 돕는 canonical Editorial Content |
 | Publication State | Public Web에 노출 가능한지에 관한 제품 상태 |
-| Legacy School | 기존 AdmissionRadar `schools` identity |
-| AdmissionEvent | 기존 AdmissionRadar 입학 event identity |
-| AdmissionCycle | 기존 AdmissionRadar의 학년도/지원주기 grouping |
+| Legacy School | 기존 PREPPY Legacy `schools` identity |
+| AdmissionEvent | 기존 PREPPY Legacy 입학 event identity |
+| AdmissionCycle | 기존 PREPPY Legacy의 학년도/지원주기 grouping |
 | Native Opportunity | legacy AdmissionEvent 없이 PREPPY가 직접 truth/history를 소유하는 Opportunity |
 | Legacy-backed Opportunity | 기존 AdmissionEvent history를 verified truth persistence로 사용하는 Opportunity |
 

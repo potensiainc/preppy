@@ -153,11 +153,11 @@ async function legacyAggregate(executor: QueryExecutor = sql) {
 
 describe("WP-02B canonical truth/history schema invariants", () => {
   beforeAll(async () => {
-    await sql`select pg_advisory_lock(hashtext('admissionradar-schema-tests'))`;
+    await sql`select pg_advisory_lock(hashtext('preppy-schema-tests'))`;
     await migrateDatabase(databaseUrl);
   });
   afterAll(async () => {
-    await sql`select pg_advisory_unlock(hashtext('admissionradar-schema-tests'))`;
+    await sql`select pg_advisory_unlock(hashtext('preppy-schema-tests'))`;
     await sql.end({ timeout: 5 });
   });
 

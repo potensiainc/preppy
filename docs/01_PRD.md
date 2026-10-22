@@ -1,4 +1,4 @@
-# AdmissionRadar — Product Requirements Document v0.1
+# PREPPY Legacy — Product Requirements Document v0.1
 
 **Recommended file:** `docs/01_PRD.md`
 **Status:** Draft for Implementation Design
@@ -11,9 +11,9 @@
 
 # 0. Purpose
 
-This PRD defines the MVP requirements for AdmissionRadar.
+This PRD defines the MVP requirements for PREPPY Legacy.
 
-AdmissionRadar is:
+PREPPY Legacy is:
 
 > **a continuously updated admission intelligence database that helps parents discover important school admission schedules and receive alerts when meaningful changes occur.**
 
@@ -42,7 +42,7 @@ The MVP should not attempt to maximize feature breadth.
 The MVP should prove:
 
 1. users search for this information;
-2. AdmissionRadar can provide better structured information than individual school websites;
+2. PREPPY Legacy can provide better structured information than individual school websites;
 3. users are willing to subscribe to alerts;
 4. updates can create repeat visits;
 5. maintaining approximately 50 schools is operationally viable.
@@ -64,7 +64,7 @@ The user should immediately understand:
 * which important dates are still unknown;
 * what happened in previous years;
 * when new information may reasonably appear;
-* whether AdmissionRadar is currently monitoring the school;
+* whether PREPPY Legacy is currently monitoring the school;
 * how to receive an alert when something changes.
 
 ---
@@ -73,7 +73,7 @@ The user should immediately understand:
 
 The MVP succeeds if a parent can:
 
-1. discover AdmissionRadar through search or direct navigation;
+1. discover PREPPY Legacy through search or direct navigation;
 2. find a relevant school;
 3. understand the current admission status in less than approximately 10 seconds;
 4. inspect historical and upcoming admission events;
@@ -81,9 +81,9 @@ The MVP succeeds if a parent can:
 6. open the original official source;
 7. subscribe to a school alert using only an email address;
 8. receive an alert after a verified meaningful update;
-9. return to the relevant AdmissionRadar page from the email.
+9. return to the relevant PREPPY Legacy page from the email.
 
-Operationally, AdmissionRadar must be able to:
+Operationally, PREPPY Legacy must be able to:
 
 1. maintain approximately 50 schools;
 2. monitor relevant official sources;
@@ -298,7 +298,7 @@ Normalization is required so events can be displayed across schools in one calen
 
 # 9. Admission Status Model
 
-AdmissionRadar must use standardized states.
+PREPPY Legacy must use standardized states.
 
 ## `NOT_ANNOUNCED`
 
@@ -459,7 +459,7 @@ School Detail / Update Detail
 ```text
 Official source changes
   ↓
-AdmissionRadar detects
+PREPPY Legacy detects
   ↓
 Verification
   ↓
@@ -1076,7 +1076,7 @@ Email must include:
 * academic year
 * reason for notification
 * key changed fact
-* CTA back to AdmissionRadar
+* CTA back to PREPPY Legacy
 * unsubscribe path
 
 Example conceptual structure:
@@ -1091,7 +1091,7 @@ Example conceptual structure:
 신청 시작:
 2026.08.20
 
-[AdmissionRadar에서 자세히 보기]
+[PREPPY Legacy에서 자세히 보기]
 ```
 
 Do not reproduce the entire page.
@@ -1498,7 +1498,7 @@ unsubscribed user
 → verified meaningful change occurs
 → alert is generated
 → email is sent
-→ link returns user to relevant AdmissionRadar page
+→ link returns user to relevant PREPPY Legacy page
 → unsubscribe works
 ```
 
@@ -1524,7 +1524,7 @@ without touching application code or the database directly.
 
 # 51. Reliability Requirements
 
-AdmissionRadar should prioritize correctness over apparent real-time speed.
+PREPPY Legacy should prioritize correctness over apparent real-time speed.
 
 MVP does not require:
 

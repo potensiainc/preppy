@@ -43,7 +43,7 @@ describe("WP-16A PostgreSQL tool safety", () => {
     const command = buildPostgresBackupCommand(url, {
       kind: "DOCKER_COMPOSE_LOCAL",
       service: "postgres",
-      databaseUser: "admissionradar",
+      databaseUser: "preppy",
     });
     expect(command).toEqual({
       command: "docker",
@@ -56,7 +56,7 @@ describe("WP-16A PostgreSQL tool safety", () => {
         "--format=custom",
         "--no-owner",
         "--no-acl",
-        "--username=admissionradar",
+        "--username=preppy",
         "--dbname=preppy_rehearsal",
       ],
       environment: {},
@@ -69,7 +69,7 @@ describe("WP-16A PostgreSQL tool safety", () => {
       buildPostgresBackupCommand(url, {
         kind: "DOCKER_COMPOSE_LOCAL",
         service: "postgres; whoami",
-        databaseUser: "admissionradar",
+        databaseUser: "preppy",
       }),
     ).toThrow(/invalid docker compose tool configuration/i);
     expect(() =>
@@ -78,7 +78,7 @@ describe("WP-16A PostgreSQL tool safety", () => {
         {
           kind: "DOCKER_COMPOSE_LOCAL",
           service: "postgres",
-          databaseUser: "admissionradar",
+          databaseUser: "preppy",
         },
       ),
     ).toThrow(/local database/i);

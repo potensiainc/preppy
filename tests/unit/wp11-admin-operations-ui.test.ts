@@ -262,7 +262,7 @@ describe("WP-11/WP-12B Operations UI", () => {
       "utf8",
     );
     expect(publicHealth).toBe(
-      'import { NextResponse } from "next/server";\n\nexport function GET(): NextResponse {\n  return NextResponse.json({\n    status: "ok",\n    service: "admissionradar",\n  });\n}\n',
+      'import { NextResponse } from "next/server";\n\nexport function GET(): NextResponse {\n  return NextResponse.json({\n    status: "ok",\n    service: "preppy",\n  });\n}\n',
     );
 
     const adminHealthPage = await readFile(

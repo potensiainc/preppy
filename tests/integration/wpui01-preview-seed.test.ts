@@ -16,6 +16,7 @@ import { getOpportunityBySlug } from "@/src/modules/public/opportunity-query.ser
 import {
   PREVIEW_DEMO_FIXTURE,
   inspectPreviewDemo,
+  previewClosesAt,
   seedPreviewDemo,
 } from "@/scripts/seed-preview-demo";
 import { assertDedicatedTestDatabaseUrl } from "@/tests/support/test-database";
@@ -72,8 +73,9 @@ afterAll(async () => {
 
 describe("WP-UI-01 Railway Preview demo seed", () => {
   it("is deterministic and idempotent while satisfying public projections", async () => {
-    const first = await seedPreviewDemo(sql, { appBaseUrl });
-    const second = await seedPreviewDemo(sql, { appBaseUrl });
+    const now = new Date();
+    const first = await seedPreviewDemo(sql, { appBaseUrl, now });
+    const second = await seedPreviewDemo(sql, { appBaseUrl, now });
     const inspected = await inspectPreviewDemo(sql);
 
     expect(first).toEqual(second);
@@ -123,5 +125,26 @@ describe("WP-UI-01 Railway Preview demo seed", () => {
       appBaseUrl,
     );
     expect(article.kind).toBe("ARTICLE");
+  });
+
+  it("keeps every demo schedule current when first seeded on a later date", async () => {
+    // Verified versions are immutable, so a later anchor needs a fresh seed.
+    await cleanup();
+    const later = new Date(Date.now() + 200 * 86_400_000);
+    await seedPreviewDemo(sql, { appBaseUrl, now: later });
+
+    const home = await getHomePage(runtime.executor);
+    expect(home.currentOpportunities).toHaveLength(6);
+    const [row] = await sql<{ closesAt: Date }[]>`
+      select application_close_at as "closesAt" from opportunity_versions
+      where opportunity_id = ${PREVIEW_DEMO_FIXTURE.opportunities[0].id}
+        and is_current
+    `;
+    expect(row!.closesAt.toISOString()).toBe(
+      previewClosesAt(
+        later,
+        PREVIEW_DEMO_FIXTURE.opportunities[0].closesInDays,
+      ),
+    );
   });
 });

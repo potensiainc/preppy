@@ -29,6 +29,9 @@ import {
   startHttpCollectorFixture,
   type HttpCollectorFixture,
 } from "@/tests/support/http-collector-fixture";
+import { EXPECTED_REPOSITORY_MIGRATIONS } from "@/src/modules/production-safety/migration-manifest";
+
+const LATEST_MIGRATION = EXPECTED_REPOSITORY_MIGRATIONS.at(-1)!.identifier;
 
 const databaseUrl = process.env.TEST_DATABASE_URL;
 if (!databaseUrl) {
@@ -227,7 +230,7 @@ async function prepareOne() {
 }
 
 beforeAll(async () => {
-  await lock`select pg_advisory_lock(hashtext('admissionradar-schema-tests'))`;
+  await lock`select pg_advisory_lock(hashtext('preppy-schema-tests'))`;
   await lock`select pg_advisory_lock(hashtext('preppy-seed-import-tests'))`;
   await lock`select pg_advisory_lock(hashtext('preppy-live-admission-persistence-tests'))`;
   await migrateDatabase(databaseUrl);
@@ -304,7 +307,7 @@ afterAll(async () => {
   if (fixture !== undefined) await fixture.close();
   await lock`select pg_advisory_unlock(hashtext('preppy-live-admission-persistence-tests'))`;
   await lock`select pg_advisory_unlock(hashtext('preppy-seed-import-tests'))`;
-  await lock`select pg_advisory_unlock(hashtext('admissionradar-schema-tests'))`;
+  await lock`select pg_advisory_unlock(hashtext('preppy-schema-tests'))`;
   await lock.end({ timeout: 5 });
   await closeRuntimeDatabase();
 });
@@ -320,7 +323,7 @@ describe("one-time production five-school rollout on disposable PostgreSQL", () 
       mode: "inspect",
       migration: {
         status: "MATCH",
-        latest: "0017_account_deletion",
+        latest: LATEST_MIGRATION,
       },
       records: [{ state: "READY", stage: "PREPARE" }],
     });

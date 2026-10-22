@@ -73,7 +73,7 @@ function candidate(slug: string, variant: "A" | "B", institutionId?: string) {
 describe("WP-13 Article concurrent stale-write safety", () => {
   beforeAll(async () => {
     await schemaLockSql`
-      select pg_advisory_lock(hashtext('admissionradar-schema-tests'))
+      select pg_advisory_lock(hashtext('preppy-schema-tests'))
     `;
     await migrateDatabase(databaseUrl);
     await runtime.client`insert into admin_users(
@@ -102,7 +102,7 @@ describe("WP-13 Article concurrent stale-write safety", () => {
       await transaction`delete from admin_users where id=${adminId}`;
     });
     await schemaLockSql`
-      select pg_advisory_unlock(hashtext('admissionradar-schema-tests'))
+      select pg_advisory_unlock(hashtext('preppy-schema-tests'))
     `;
     await schemaLockSql.end({ timeout: 5 });
     await closeRuntimeDatabase();

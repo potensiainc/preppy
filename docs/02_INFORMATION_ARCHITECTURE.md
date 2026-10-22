@@ -1,4 +1,4 @@
-# AdmissionRadar — Information Architecture v0.1
+# PREPPY Legacy — Information Architecture v0.1
 
 **Recommended file:** `docs/02_INFORMATION_ARCHITECTURE.md`
 **Version:** 0.1
@@ -11,7 +11,7 @@
 
 # 0. IA Objective
 
-AdmissionRadar's Information Architecture must support three simultaneous goals:
+PREPPY Legacy's Information Architecture must support three simultaneous goals:
 
 1. **A parent must find admission information immediately.**
 2. **Search engines must understand stable, valuable admission pages.**
@@ -52,7 +52,7 @@ Guides
 Desktop:
 
 ```text
-AdmissionRadar
+PREPPY Legacy
 
 입학 캘린더
 학교 찾기
@@ -148,7 +148,7 @@ Answer:
 
 > **“지금 입학 준비에서 무엇을 봐야 하는가?”**
 
-The homepage is a live admission radar.
+The homepage is a live PREPPY Legacy.
 
 It is not primarily a brand introduction page.
 
@@ -801,7 +801,7 @@ Detailed explanation
 
 ────────────────
 
-Current AdmissionRadar data
+Current PREPPY Legacy data
 
 ────────────────
 
@@ -820,7 +820,7 @@ Related guides
 Alert CTA
 ```
 
-Where useful, guides should include live structured AdmissionRadar data.
+Where useful, guides should include live structured PREPPY Legacy data.
 
 Example:
 
@@ -978,7 +978,7 @@ The user must be able to unsubscribe without logging in.
 Recommended:
 
 ```text
-AdmissionRadar
+PREPPY Legacy
 
 서비스
 - 입학 캘린더
@@ -990,7 +990,7 @@ AdmissionRadar
 - 국제학교·외국인학교
 
 정보
-- AdmissionRadar 소개
+- PREPPY Legacy 소개
 - 데이터 출처 정책
 - 개인정보처리방침
 - 이용약관
@@ -1035,7 +1035,7 @@ This page should explain:
 * corrections;
 * last checked concept.
 
-This is useful because AdmissionRadar deals with consequential dates.
+This is useful because PREPPY Legacy deals with consequential dates.
 
 ---
 
@@ -1506,7 +1506,7 @@ Example:
 ```text
 2027학년도 모집 일정은 아직 공식 발표되지 않았습니다.
 
-AdmissionRadar가 공식 모집 페이지를 확인하고 있습니다.
+PREPPY Legacy가 공식 모집 페이지를 확인하고 있습니다.
 
 지난해 모집공고:
 2025년 10월
@@ -1549,7 +1549,7 @@ School URL should generally remain accessible if it has historical value.
 State:
 
 ```text
-현재 AdmissionRadar의 적극적인 모니터링 대상이 아닙니다.
+현재 PREPPY Legacy의 적극적인 모니터링 대상이 아닙니다.
 ```
 
 Do not return a 404 merely because monitoring stopped.

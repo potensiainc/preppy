@@ -2,19 +2,19 @@ services:
   postgres:
     image: postgres:16-alpine
     environment:
-      POSTGRES_DB: admissionradar
-      POSTGRES_USER: admissionradar
-      POSTGRES_PASSWORD: admissionradar
+      POSTGRES_DB: preppy
+      POSTGRES_USER: preppy
+      POSTGRES_PASSWORD: preppy
     ports:
       - "55433:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U admissionradar -d admissionradar"]
+      test: ["CMD-SHELL", "pg_isready -U preppy -d preppy"]
       interval: 2s
       timeout: 3s
       retries: 20
     volumes:
-      - admissionradar_postgres:/var/lib/postgresql/data
+      - preppy_postgres:/var/lib/postgresql/data
       - ./docker/postgres/init-test-db.sql:/docker-entrypoint-initdb.d/10-create-test-db.sql:ro
 
 volumes:
-  admissionradar_postgres:
+  preppy_postgres:

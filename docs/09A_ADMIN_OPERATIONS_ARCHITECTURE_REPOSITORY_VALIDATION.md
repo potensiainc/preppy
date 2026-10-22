@@ -4,7 +4,7 @@
 
 이 문서는 `docs/09_ADMIN_OPERATIONS_ARCHITECTURE.md`를 다시 설계하지 않는다. 09의 command-oriented Admin, monitoring queue, verification, notification/outbox operations, support, audit, health, backup/restore와 runbook을 현재 PREPPY repository와 대조한다.
 
-사용자가 제공한 `C:/Users/USER/Downloads/09_ADMIN_OPERATIONS_ARCHITECTURE.md`와 repository의 `docs/09_ADMIN_OPERATIONS_ARCHITECTURE.md`는 SHA-256 `39758E2F...B788EB2`로 동일하다. 기존 `docs/09_ADMIN_OPERATIONS.md`는 legacy AdmissionRadar 운영 문서이며 runtime 구현이 아니다. Canonical cutover 이후에는 09 Architecture가 신규 write contract를 우선한다.
+사용자가 제공한 `C:/Users/USER/Downloads/09_ADMIN_OPERATIONS_ARCHITECTURE.md`와 repository의 `docs/09_ADMIN_OPERATIONS_ARCHITECTURE.md`는 SHA-256 `39758E2F...B788EB2`로 동일하다. 기존 `docs/09_ADMIN_OPERATIONS.md`는 PREPPY Legacy 운영 문서이며 runtime 구현이 아니다. Canonical cutover 이후에는 09 Architecture가 신규 write contract를 우선한다.
 
 Evidence:
 
@@ -47,7 +47,7 @@ Architecture blocker와 required amendment는 없다. 10 PRD 작성은 가능하
 | Target Institution/Opportunity/Fact | 04/04A only | DOCUMENTED / NOT_IMPLEMENTED | canonical Admin command 전제 |
 | Current Outbox | basic status/available/attempt/index | IMPLEMENTED + partially TESTED | dedupe/lease/dead-letter/worker 미구현 |
 | Alert/Delivery | legacy Cycle/Subscription graph | IMPLEMENTED + TESTED | canonical Notification Admin으로 재사용 금지 |
-| Health endpoint | static `{status:'ok',service:'admissionradar'}` | IMPLEMENTED + TESTED | liveness only; DB/worker/provider health 아님 |
+| Health endpoint | static `{status:'ok',service:'preppy'}` | IMPLEMENTED + TESTED | liveness only; DB/worker/provider health 아님 |
 | Article/CMS | legacy Guides/Updates schema; target Article only documented | NOT_IMPLEMENTED | editor/sanitizer/preview/renderer 없음 |
 | Migration tooling | Drizzle generate/migrate, DB connection check | IMPLEMENTED | preflight/backup/post-verify orchestration 없음 |
 | Test DB safety | dedicated test DB name validation + Docker test DB | IMPLEMENTED + TESTED | non-prod DB separation 기반 |

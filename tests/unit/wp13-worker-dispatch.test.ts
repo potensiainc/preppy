@@ -24,9 +24,9 @@ function event(
     },
     attemptCount: 1,
     maxAttempts: 3,
-    availableAt: new Date(),
-    createdAt: new Date(),
-    lockedAt: new Date(),
+    availableAt: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
+    lockedAt: new Date().toISOString(),
     lockedBy: "worker-cache",
     ...overrides,
   };

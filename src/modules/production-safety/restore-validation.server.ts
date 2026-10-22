@@ -11,6 +11,7 @@ import { collectInvariantChecks } from "@/src/modules/production-preflight/invar
 import { loadRepositoryMigrationManifest } from "@/src/modules/production-preflight/migrations";
 import { runWithRehearsalReadOnlyDatabase } from "@/src/modules/production-preflight/read-only-database.server";
 import { runRehearsalSmoke } from "@/src/modules/production-preflight/rehearsal-smoke.server";
+import { withoutKnownHistoricalLedgerRows } from "@/src/modules/production-safety/migration-manifest";
 
 export type RestoreSnapshot = Readonly<{
   migrationLatest: string;
@@ -34,13 +35,13 @@ export async function collectRestoreSnapshot(
     return await client.begin(
       "isolation level repeatable read read only",
       async (transaction) => {
-        const rows = await transaction<
-          Array<{ hash: string; createdAt: string }>
-        >`
-          select hash, created_at::text as "createdAt"
-          from drizzle.__drizzle_migrations
-          order by created_at, id
-        `;
+        const rows = withoutKnownHistoricalLedgerRows(
+          await transaction<Array<{ hash: string; createdAt: string }>>`
+            select hash, created_at::text as "createdAt"
+            from drizzle.__drizzle_migrations
+            order by created_at, id
+          `,
+        );
         const ledgerMatches =
           rows.length === repository.length &&
           rows.every((row, index) => row.hash === repository[index]?.hash);

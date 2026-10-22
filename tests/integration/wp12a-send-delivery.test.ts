@@ -93,12 +93,12 @@ async function persisted(deliveryId: string, eventId: string) {
 
 describe("WP-12A crash-safe email delivery", () => {
   beforeAll(async () => {
-    await lockClient`select pg_advisory_lock(hashtext('admissionradar-schema-tests'))`;
+    await lockClient`select pg_advisory_lock(hashtext('preppy-schema-tests'))`;
     await migrateDatabase(databaseUrl);
   });
   afterEach(() => fixtures.cleanup());
   afterAll(async () => {
-    await lockClient`select pg_advisory_unlock(hashtext('admissionradar-schema-tests'))`;
+    await lockClient`select pg_advisory_unlock(hashtext('preppy-schema-tests'))`;
     await lockClient.end({ timeout: 5 });
     await sql.end({ timeout: 5 });
     await client.end({ timeout: 5 });
@@ -255,7 +255,88 @@ describe("WP-12A crash-safe email delivery", () => {
     },
   );
 
-  it("suppresses the delivery kill switch before provider or Attempt work", async () => {
+  it("holds the delivery when sending is disabled instead of suppressing it", async () => {
+    const fixture = await queuedDelivery();
+    const sender = new FakeEmailSender([]);
+    const now = new Date("2026-08-24T02:03:00.000Z");
+    const result = await processEmailDelivery(
+      transactions,
+      {
+        eventId: fixture.sendEvent.id,
+        deliveryId: fixture.deliveryId,
+        workerId: "worker-send",
+        now,
+      },
+      {
+        sender,
+        tracker: new TestAnalyticsTracker(),
+        sendEnabled: false,
+      },
+    );
+    expect(result).toEqual({ kind: "HELD" });
+    expect(sender.snapshot()).toHaveLength(0);
+    const state = await persisted(fixture.deliveryId, fixture.sendEvent.id);
+    expect(state).toMatchObject({
+      delivery_status: "QUEUED",
+      suppress_reason: null,
+      event_status: "PENDING",
+      event_error: "EMAIL_SEND_DISABLED",
+      attempt_status: null,
+    });
+    expect(state.available_at.getTime()).toBe(now.getTime() + 300_000);
+  });
+
+  it("never emails a notification older than the maximum signal age", async () => {
+    const fixture = await queuedDelivery();
+    const sender = new FakeEmailSender([]);
+    // The fixture signal is published at 01:00; 73 hours later is stale.
+    const result = await processEmailDelivery(
+      transactions,
+      {
+        eventId: fixture.sendEvent.id,
+        deliveryId: fixture.deliveryId,
+        workerId: "worker-send",
+        now: new Date("2026-08-27T02:00:00.000Z"),
+      },
+      { sender, tracker: new TestAnalyticsTracker() },
+    );
+    expect(result).toEqual({
+      kind: "SUPPRESSED",
+      reason: "OTHER",
+      detail: "STALE_SIGNAL_EXPIRED",
+    });
+    expect(sender.snapshot()).toHaveLength(0);
+    expect(
+      await persisted(fixture.deliveryId, fixture.sendEvent.id),
+    ).toMatchObject({
+      delivery_status: "SUPPRESSED",
+      suppress_reason: "OTHER",
+      event_status: "PROCESSED",
+      event_error: "STALE_SIGNAL_EXPIRED",
+      attempt_status: null,
+    });
+  });
+
+  it("still emails a notification just inside the maximum signal age", async () => {
+    const fixture = await queuedDelivery();
+    const sender = new FakeEmailSender([
+      { kind: "ACCEPTED", provider: "FAKE", providerMessageId: "fake-age-ok" },
+    ]);
+    const result = await processEmailDelivery(
+      transactions,
+      {
+        eventId: fixture.sendEvent.id,
+        deliveryId: fixture.deliveryId,
+        workerId: "worker-send",
+        now: new Date("2026-08-27T00:59:00.000Z"),
+      },
+      { sender, tracker: new TestAnalyticsTracker() },
+    );
+    expect(result).toEqual({ kind: "ACCEPTED" });
+    expect(sender.snapshot()).toHaveLength(1);
+  });
+
+  it("applies a shorter configured maximum signal age", async () => {
     const fixture = await queuedDelivery();
     const sender = new FakeEmailSender([]);
     const result = await processEmailDelivery(
@@ -264,24 +345,78 @@ describe("WP-12A crash-safe email delivery", () => {
         eventId: fixture.sendEvent.id,
         deliveryId: fixture.deliveryId,
         workerId: "worker-send",
-        now: new Date("2026-08-24T02:03:00.000Z"),
+        now: new Date("2026-08-24T03:01:00.000Z"),
       },
       {
         sender,
         tracker: new TestAnalyticsTracker(),
-        sendEnabled: false,
+        maxSignalAgeMs: 2 * 3_600_000,
       },
     );
-    expect(result).toEqual({ kind: "SUPPRESSED", reason: "OTHER" });
+    expect(result).toMatchObject({ kind: "SUPPRESSED" });
+    expect(sender.snapshot()).toHaveLength(0);
+  });
+
+  it("retries without a provider call when the recipient row stays locked", async () => {
+    const fixture = await queuedDelivery();
+    const sender = new FakeEmailSender([]);
+    const holder = postgres(databaseUrl!, { max: 1 });
+    try {
+      const result = await holder.begin(async (transaction) => {
+        await transaction`select id from users where id=${fixture.follower.userId} for update`;
+        return processEmailDelivery(
+          transactions,
+          {
+            eventId: fixture.sendEvent.id,
+            deliveryId: fixture.deliveryId,
+            workerId: "worker-send",
+            now: new Date("2026-08-24T02:03:00.000Z"),
+          },
+          {
+            sender,
+            tracker: new TestAnalyticsTracker(),
+            recipientLockTimeoutMs: 300,
+          },
+        );
+      });
+      expect(result).toEqual({ kind: "RETRYABLE_FAILURE" });
+    } finally {
+      await holder.end({ timeout: 5 });
+    }
     expect(sender.snapshot()).toHaveLength(0);
     expect(
       await persisted(fixture.deliveryId, fixture.sendEvent.id),
     ).toMatchObject({
-      delivery_status: "SUPPRESSED",
-      suppress_reason: "OTHER",
-      event_status: "PROCESSED",
-      attempt_status: null,
+      delivery_status: "QUEUED",
+      event_status: "PENDING",
+      attempt_status: "FAILED_RETRYABLE",
+      attempt_error: "RECIPIENT_LOCK_TIMEOUT",
     });
+  });
+
+  it("rejects an out-of-range recipient lock timeout before any work", async () => {
+    const fixture = await queuedDelivery();
+    for (const recipientLockTimeoutMs of [0, 99, 10_001, 1.5]) {
+      await expect(
+        processEmailDelivery(
+          transactions,
+          {
+            eventId: fixture.sendEvent.id,
+            deliveryId: fixture.deliveryId,
+            workerId: "worker-send",
+            now: new Date("2026-08-24T02:03:00.000Z"),
+          },
+          {
+            sender: new FakeEmailSender([]),
+            tracker: new TestAnalyticsTracker(),
+            recipientLockTimeoutMs,
+          },
+        ),
+      ).rejects.toMatchObject({ code: "VALIDATION_ERROR" });
+    }
+    expect(
+      await persisted(fixture.deliveryId, fixture.sendEvent.id),
+    ).toMatchObject({ event_status: "PROCESSING", attempt_status: null });
   });
 
   it("orders tied latest consent decisions by decided_at then id", async () => {

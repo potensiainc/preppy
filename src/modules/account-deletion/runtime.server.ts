@@ -8,14 +8,26 @@ import {
   eraseRequestedLocalAccount,
 } from "./repository.server";
 import { deletionKey } from "./crypto.server";
+import { isAccountDeletionSchemaReady } from "./readiness.server";
 export function isAccountDeletionEnabled() {
   return (
     process.env.ACCOUNT_DELETION_ENABLED === "true" &&
     process.env.ACCOUNT_DELETION_READINESS === "verified"
   );
 }
+// The flag says the owner wants the feature; the schema check proves the
+// database can actually run it.
+export async function isAccountDeletionAvailable(): Promise<boolean> {
+  if (!isAccountDeletionEnabled()) return false;
+  try {
+    return await isAccountDeletionSchemaReady(getRuntimeDatabase().executor);
+  } catch {
+    return false;
+  }
+}
+
 export async function deletionRoute(request: Request, method: "GET" | "POST") {
-  if (!isAccountDeletionEnabled())
+  if (!(await isAccountDeletionAvailable()))
     return deletionJson({ code: "DELETION_UNAVAILABLE" }, 503);
   try {
     const secret = process.env.ACCOUNT_DELETION_KEY ?? "";
@@ -39,7 +51,7 @@ export async function deletionRoute(request: Request, method: "GET" | "POST") {
 }
 
 export async function pendingCancellationRoute(request: Request) {
-  if (!isAccountDeletionEnabled())
+  if (!(await isAccountDeletionAvailable()))
     return deletionJson({ code: "DELETION_UNAVAILABLE" }, 503);
   try {
     const secret = process.env.ACCOUNT_DELETION_KEY ?? "";

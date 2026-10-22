@@ -4,7 +4,13 @@ import { useState } from "react";
 
 import type { AdminOutboxDTO } from "@/src/modules/admin/read-model/contracts";
 
-export function AdminOutboxActions({ item }: { item: AdminOutboxDTO }) {
+export function AdminOutboxActions({
+  item,
+  emailSendAvailable,
+}: {
+  item: AdminOutboxDTO;
+  emailSendAvailable: boolean;
+}) {
   const [pending, setPending] = useState<string | null>(null);
   const [message, setMessage] = useState("");
 
@@ -85,7 +91,17 @@ export function AdminOutboxActions({ item }: { item: AdminOutboxDTO }) {
       ) : null}
       {item.actions.canReconcileResend &&
       item.deliveryId !== null &&
-      item.latestAttempt !== null ? (
+      item.latestAttempt !== null &&
+      !emailSendAvailable ? (
+        <span className="admin-cell-note">
+          메일 발송이 꺼져 있어 Resend 결과를 대조할 수 없어요. 발송을 켠 뒤
+          다시 시도해 주세요.
+        </span>
+      ) : null}
+      {item.actions.canReconcileResend &&
+      item.deliveryId !== null &&
+      item.latestAttempt !== null &&
+      emailSendAvailable ? (
         <button
           className="admin-button"
           type="button"

@@ -131,7 +131,7 @@ async function state(deliveryId: string, userId: string) {
 
 describe("WP-12B Resend webhook reconciliation", () => {
   beforeAll(async () => {
-    await lockClient`select pg_advisory_lock(hashtext('admissionradar-schema-tests'))`;
+    await lockClient`select pg_advisory_lock(hashtext('preppy-schema-tests'))`;
     await migrateDatabase(databaseUrl);
   });
 
@@ -141,7 +141,7 @@ describe("WP-12B Resend webhook reconciliation", () => {
   });
 
   afterAll(async () => {
-    await lockClient`select pg_advisory_unlock(hashtext('admissionradar-schema-tests'))`;
+    await lockClient`select pg_advisory_unlock(hashtext('preppy-schema-tests'))`;
     await lockClient.end({ timeout: 5 });
     await sql.end({ timeout: 5 });
     await client.end({ timeout: 5 });

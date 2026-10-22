@@ -1,4 +1,4 @@
-# AdmissionRadar — MVP Implementation Plan v0.1
+# PREPPY Legacy — MVP Implementation Plan v0.1
 
 **Recommended file:** `docs/10_MVP_IMPLEMENTATION_PLAN.md`
 **Status:** Implementation Source of Truth
@@ -24,11 +24,11 @@
 
 # 0. Purpose
 
-This document translates AdmissionRadar's product, domain, data, collection, verification, SEO, alert, and operational specifications into a concrete implementation sequence.
+This document translates PREPPY Legacy's product, domain, data, collection, verification, SEO, alert, and operational specifications into a concrete implementation sequence.
 
 The implementation objective is not:
 
-> build every possible AdmissionRadar feature.
+> build every possible PREPPY Legacy feature.
 
 It is:
 
@@ -42,7 +42,7 @@ Codex must not skip ahead merely because later features are easier or more inter
 
 # 1. Implementation Philosophy
 
-AdmissionRadar should be built:
+PREPPY Legacy should be built:
 
 ```text
 Domain first
@@ -776,7 +776,7 @@ without SQL.
 
 ## Objective
 
-Make AdmissionRadar useful before automation.
+Make PREPPY Legacy useful before automation.
 
 Implement:
 
@@ -823,7 +823,7 @@ Fixture-based tests must prove:
 
 ## Objective
 
-Turn visitors into verified AdmissionRadar Subscribers.
+Turn visitors into verified PREPPY Legacy Subscribers.
 
 Implement:
 
@@ -1213,7 +1213,7 @@ Initial target:
 
 Do not auto-generate large content volumes.
 
-Where appropriate, embed live structured AdmissionRadar modules.
+Where appropriate, embed live structured PREPPY Legacy modules.
 
 ## Gate STEP-15
 
@@ -1712,7 +1712,7 @@ Do not prematurely optimize for millions of Schools.
 ```text
 Browser
 │
-├── Public AdmissionRadar
+├── Public PREPPY Legacy
 └── Admin
 
 Next.js Application
@@ -1752,7 +1752,7 @@ Boring infrastructure is desirable for this MVP.
 
 # 38. Final Implementation Principle
 
-AdmissionRadar must reach production with:
+PREPPY Legacy must reach production with:
 
 ```text
 50 reliable Schools

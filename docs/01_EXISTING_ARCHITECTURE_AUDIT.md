@@ -3,13 +3,13 @@
 **Status:** Architecture audit only  
 **Date:** 2026-08-22  
 **Decision baseline:** `00_PRODUCT_REQUIREMENTS_BASELINE.md`  
-**Audited implementation:** repository state through AdmissionRadar STEP 2
+**Audited implementation:** repository state through PREPPY Legacy STEP 2
 
 ## 1. Executive Summary
 
-현재 저장소는 PREPPY 애플리케이션이라기보다 **AdmissionRadar의 신뢰 가능한 입학 일정 데이터베이스 기반**이다. Next.js, PostgreSQL, Drizzle, 엄격한 데이터 제약, 출처 관찰, 버전 이력, 변경 탐지, 중복 방지형 알림 전달 모델은 재사용 가치가 높다. 특히 공식 출처와 검증된 사실을 분리하고, 현재값을 덮어쓰지 않고 버전으로 남기는 설계는 PREPPY의 Trust/Monitoring 핵심과 잘 맞는다.
+현재 저장소는 PREPPY 애플리케이션이라기보다 **PREPPY Legacy의 신뢰 가능한 입학 일정 데이터베이스 기반**이다. Next.js, PostgreSQL, Drizzle, 엄격한 데이터 제약, 출처 관찰, 버전 이력, 변경 탐지, 중복 방지형 알림 전달 모델은 재사용 가치가 높다. 특히 공식 출처와 검증된 사실을 분리하고, 현재값을 덮어쓰지 않고 버전으로 남기는 설계는 PREPPY의 Trust/Monitoring 핵심과 잘 맞는다.
 
-반면 PREPPY의 제품 루프를 성립시키는 `Institution`, 독립 `Opportunity`, Kakao 기반 `User`, 지속적 `Follow`, 채널 중립적 `Notification`, 통합 `Article CMS`는 없거나 AdmissionRadar 전제에 강하게 결합되어 있다. 실제 런타임은 STEP 0~2에 머물러 있어 Public UI, Admin, 인증, Email, CMS, SEO 렌더링, Analytics가 구현되지 않았다. 따라서 기존 코드를 전면 폐기할 이유는 없지만, **기능 개발을 계속하기 전에 핵심 도메인 경계를 재정렬해야 한다.**
+반면 PREPPY의 제품 루프를 성립시키는 `Institution`, 독립 `Opportunity`, Kakao 기반 `User`, 지속적 `Follow`, 채널 중립적 `Notification`, 통합 `Article CMS`는 없거나 PREPPY Legacy 전제에 강하게 결합되어 있다. 실제 런타임은 STEP 0~2에 머물러 있어 Public UI, Admin, 인증, Email, CMS, SEO 렌더링, Analytics가 구현되지 않았다. 따라서 기존 코드를 전면 폐기할 이유는 없지만, **기능 개발을 계속하기 전에 핵심 도메인 경계를 재정렬해야 한다.**
 
 ### Overall Verdict
 
@@ -37,7 +37,7 @@
 
 | 영역 | 현재 상태 | 판정 | 우선순위 | 핵심 근거 |
 |---|---|---:|---:|---|
-| Product/System Boundary | AdmissionRadar 단일 입학 레이더 중심 | MODIFY | P0 | PREPPY는 Discovery→Compare→Follow→Monitor→Return 루프 |
+| Product/System Boundary | PREPPY Legacy 단일 입학 레이더 중심 | MODIFY | P0 | PREPPY는 Discovery→Compare→Follow→Monitor→Return 루프 |
 | Frontend | Health endpoint 외 Public UI 없음 | NOT DESIGNED | P0 | README의 명시적 미구현 범위 |
 | Backend/API | DB bootstrap 외 도메인 API/service 없음 | NOT DESIGNED | P0 | 실제 route는 health뿐 |
 | Database Integrity | PostgreSQL 제약·트리거·통합 테스트 | KEEP | P0 | 현재값 유일성, lineage, cross-aggregate FK |
@@ -259,7 +259,7 @@ Audience 모듈을 대체하는 Identity/User 모듈에 붙인다. `AuthIdentity
 
 ### P0 Debt
 
-- package/service/docs의 `AdmissionRadar` naming이 새 제품 기준과 불일치한다.
+- package/service/docs의 `PREPPY Legacy` naming이 새 제품 기준과 불일치한다.
 - School type constraint가 영유를 거부한다.
 - audience/notification FK가 legacy cycle subscription에 강하게 결합되어 있다.
 - Article CMS와 Kakao auth가 전무하다.
@@ -417,7 +417,7 @@ Audience 모듈을 대체하는 Identity/User 모듈에 붙인다. `AuthIdentity
 - Subscriber/AdmissionCycle Subscription as primary audience model
 - Guides/Updates split as editorial CMS
 - old category priority, conversion flow, North Star assumptions
-- AdmissionRadar public route and product naming contracts
+- PREPPY Legacy public route and product naming contracts
 
 ### P0 Issues
 

@@ -372,7 +372,7 @@ describe("WP-10A deterministic Source binding backfill", () => {
       await maintenance.end({ timeout: 5 });
     }
     await schemaLockSql`
-      select pg_advisory_lock(hashtext('admissionradar-schema-tests'))
+      select pg_advisory_lock(hashtext('preppy-schema-tests'))
     `;
     await migrateDatabase(isolatedDatabaseUrl.toString());
   });
@@ -381,7 +381,7 @@ describe("WP-10A deterministic Source binding backfill", () => {
 
   afterAll(async () => {
     await schemaLockSql`
-      select pg_advisory_unlock(hashtext('admissionradar-schema-tests'))
+      select pg_advisory_unlock(hashtext('preppy-schema-tests'))
     `;
     await schemaLockSql.end({ timeout: 5 });
     await sql.end({ timeout: 5 });

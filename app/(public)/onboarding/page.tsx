@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { SignupCancellationControl } from "./signup-cancellation-control";
-import { isAccountDeletionEnabled } from "@/src/modules/account-deletion/runtime.server";
+import { isAccountDeletionAvailable } from "@/src/modules/account-deletion/runtime.server";
 import { OnboardingForm } from "@/app/(public)/onboarding/onboarding-form";
 import { getAuthRuntime } from "@/src/modules/auth/runtime.server";
 import { PENDING_FOLLOW_INTENT_COOKIE_NAME } from "@/src/modules/auth/pending-follow-intent.server";
@@ -36,7 +36,7 @@ export default async function OnboardingPage() {
         </p>
       </header>
       <OnboardingForm {...state} />
-      <SignupCancellationControl enabled={isAccountDeletionEnabled()} />
+      <SignupCancellationControl enabled={await isAccountDeletionAvailable()} />
     </div>
   );
 }

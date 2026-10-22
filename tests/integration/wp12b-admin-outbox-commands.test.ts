@@ -99,7 +99,7 @@ async function ambiguousEmailEvent() {
 
 describe("WP-12B Admin Outbox application commands", () => {
   beforeAll(async () => {
-    await lockClient`select pg_advisory_lock(hashtext('admissionradar-schema-tests'))`;
+    await lockClient`select pg_advisory_lock(hashtext('preppy-schema-tests'))`;
     await migrateDatabase(databaseUrl);
     await sql`
       insert into admin_users(id, external_auth_subject, email, display_name, status)
@@ -119,7 +119,7 @@ describe("WP-12B Admin Outbox application commands", () => {
   afterAll(async () => {
     await sql`delete from audit_logs where admin_user_id=${adminUserId}`;
     await sql`delete from admin_users where id=${adminUserId}`;
-    await lockClient`select pg_advisory_unlock(hashtext('admissionradar-schema-tests'))`;
+    await lockClient`select pg_advisory_unlock(hashtext('preppy-schema-tests'))`;
     await lockClient.end({ timeout: 5 });
     await sql.end({ timeout: 5 });
     await client.end({ timeout: 5 });

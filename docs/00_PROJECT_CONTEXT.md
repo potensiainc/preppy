@@ -1,4 +1,4 @@
-# AdmissionRadar — Project Context & Product Strategy v0.1
+# PREPPY Legacy — Project Context & Product Strategy v0.1
 
 **Recommended file:** `docs/00_PROJECT_CONTEXT.md`
 **Status:** Foundation / Source of Truth
@@ -10,7 +10,7 @@
 
 ## 0. Purpose of This Document
 
-This document defines **what AdmissionRadar is, why it exists, how it creates value, how it will make money, what it must not become, and how the product should evolve.**
+This document defines **what PREPPY Legacy is, why it exists, how it creates value, how it will make money, what it must not become, and how the product should evolve.**
 
 All future documents and implementation decisions must remain consistent with this document, including:
 
@@ -29,7 +29,7 @@ All future documents and implementation decisions must remain consistent with th
 
 When implementation convenience conflicts with the business model defined here, **the business model wins**.
 
-Codex must not reinterpret AdmissionRadar as:
+Codex must not reinterpret PREPPY Legacy as:
 
 * an admissions consulting service
 * a school recommendation engine
@@ -40,7 +40,7 @@ Codex must not reinterpret AdmissionRadar as:
 * a generic school directory
 * an education marketplace
 
-AdmissionRadar is an **admission schedule intelligence and discovery media product**.
+PREPPY Legacy is an **admission schedule intelligence and discovery media product**.
 
 ---
 
@@ -50,7 +50,7 @@ AdmissionRadar is an **admission schedule intelligence and discovery media produ
 
 English internal definition:
 
-> **AdmissionRadar is a free admission intelligence service that helps parents discover, track, and receive updates about important school admission schedules before they miss them.**
+> **PREPPY Legacy is a free admission intelligence service that helps parents discover, track, and receive updates about important school admission schedules before they miss them.**
 
 The primary object of the product is not the school.
 
@@ -71,13 +71,13 @@ Examples:
 * Registration
 * Additional Recruitment
 
-AdmissionRadar exists because these events are fragmented across school websites, admission portals, notices, PDFs, Instagram accounts, blogs, and other sources.
+PREPPY Legacy exists because these events are fragmented across school websites, admission portals, notices, PDFs, Instagram accounts, blogs, and other sources.
 
 ---
 
 # 2. Product Formula
 
-AdmissionRadar can be summarized internally as:
+PREPPY Legacy can be summarized internally as:
 
 > **Calendar + Search + Alert + SEO Media**
 
@@ -105,7 +105,7 @@ Answers:
 
 Answers:
 
-> “How does AdmissionRadar acquire users repeatedly without paying for every visitor?”
+> “How does PREPPY Legacy acquire users repeatedly without paying for every visitor?”
 
 These four functions together form the core business.
 
@@ -138,7 +138,7 @@ Existing alternatives generally require parents to:
 4. manually compare dates;
 5. remember deadlines themselves.
 
-AdmissionRadar removes this repeated checking.
+PREPPY Legacy removes this repeated checking.
 
 ---
 
@@ -239,7 +239,7 @@ For each school, historical admission data should ideally cover:
 
 > **the previous three admission cycles**
 
-This historical dataset is one of AdmissionRadar's first proprietary assets.
+This historical dataset is one of PREPPY Legacy's first proprietary assets.
 
 A site with 50 well-maintained schools is preferable to a site with 1,000 unreliable schools.
 
@@ -264,7 +264,7 @@ Examples:
 
 School profile information exists only to provide context for admission intelligence.
 
-AdmissionRadar must not become a generic school encyclopedia.
+PREPPY Legacy must not become a generic school encyclopedia.
 
 ---
 
@@ -316,7 +316,7 @@ Every important date should ultimately be normalized into an event.
 
 ## 7.4 Source Observation
 
-AdmissionRadar must know:
+PREPPY Legacy must know:
 
 > what official source was checked, when it was checked, and whether it changed.
 
@@ -338,7 +338,7 @@ No full account should be required in MVP.
 
 Most information services treat “not announced” as missing data.
 
-AdmissionRadar must treat it as **valuable product state**.
+PREPPY Legacy must treat it as **valuable product state**.
 
 Instead of:
 
@@ -379,7 +379,7 @@ Estimated dates must never visually appear as official dates.
 
 # 9. Radar State Model
 
-AdmissionRadar should eventually normalize schools or events into clear states.
+PREPPY Legacy should eventually normalize schools or events into clear states.
 
 Suggested conceptual states:
 
@@ -427,7 +427,7 @@ These states should drive both UI and alert logic.
 
 MVP consists of only six user-facing capabilities.
 
-## 10.1 Home / Admission Radar
+## 10.1 Home / PREPPY Legacy
 
 Primary entry point.
 
@@ -463,7 +463,7 @@ Avoid excessive filters.
 
 ## 10.3 School Directory
 
-Users can find schools being monitored by AdmissionRadar.
+Users can find schools being monitored by PREPPY Legacy.
 
 Purpose:
 
@@ -487,7 +487,7 @@ Each page should answer:
 5. When was the official source last checked?
 6. What changed recently?
 7. Where can I find the official source?
-8. Can AdmissionRadar alert me when something changes?
+8. Can PREPPY Legacy alert me when something changes?
 
 ---
 
@@ -527,7 +527,7 @@ No account registration.
 
 A verification mechanism may be used for email validity and consent.
 
-Alerts should drive users back to AdmissionRadar rather than reproducing the entire destination page inside the email.
+Alerts should drive users back to PREPPY Legacy rather than reproducing the entire destination page inside the email.
 
 ---
 
@@ -706,7 +706,7 @@ Guides support:
 
 # 14. SEO Product Principle
 
-AdmissionRadar must never adopt the strategy:
+PREPPY Legacy must never adopt the strategy:
 
 > “AI로 키워드 수천 개 뽑아서 페이지 수천 개 생성.”
 
@@ -731,7 +731,7 @@ Programmatic SEO is acceptable only when the underlying page contains genuine us
 
 # 15. Business Model
 
-AdmissionRadar is **free for parents**.
+PREPPY Legacy is **free for parents**.
 
 There is no paid consumer subscription in the initial business model.
 
@@ -781,11 +781,11 @@ Direct advertising should eventually produce materially higher revenue per user 
 
 ## 15.3 Revenue Stage 3 — Newsletter Sponsorship
 
-AdmissionRadar should build an email audience from alert subscriptions.
+PREPPY Legacy should build an email audience from alert subscriptions.
 
 Potential newsletter:
 
-> **AdmissionRadar Weekly**
+> **PREPPY Legacy Weekly**
 
 Example structure:
 
@@ -794,7 +794,7 @@ Example structure:
 * deadlines approaching
 * important updates
 * sponsor
-* links back to AdmissionRadar
+* links back to PREPPY Legacy
 
 The newsletter is free to users.
 
@@ -809,7 +809,7 @@ The primary growth loop is:
 ```text
 Google / Naver Search
         ↓
-AdmissionRadar landing page
+PREPPY Legacy landing page
         ↓
 User finds school or event
         ↓
@@ -819,11 +819,11 @@ Schedule not announced / future event exists
         ↓
 User subscribes to free alert
         ↓
-AdmissionRadar detects official update
+PREPPY Legacy detects official update
         ↓
 Email sent
         ↓
-User returns to AdmissionRadar
+User returns to PREPPY Legacy
         ↓
 More page views / ad impressions
         ↓
@@ -842,7 +842,7 @@ Future feature proposals should be evaluated partly on whether they strengthen t
 
 # 17. Core Business Assets
 
-AdmissionRadar's long-term moat is not its frontend or AI integration.
+PREPPY Legacy's long-term moat is not its frontend or AI integration.
 
 The main assets are:
 
@@ -885,7 +885,7 @@ This creates:
 
 ## Asset 4 — Source Monitoring Knowledge
 
-AdmissionRadar gradually learns:
+PREPPY Legacy gradually learns:
 
 * where schools publish admission information;
 * how each source behaves;
@@ -1038,7 +1038,7 @@ Unverified data must never appear publicly as confirmed admission information.
 
 # 22. Change Detection Is a Core Capability
 
-AdmissionRadar is not merely a crawler.
+PREPPY Legacy is not merely a crawler.
 
 Its valuable behavior is:
 
@@ -1097,7 +1097,7 @@ Not:
 
 # 24. Seasonal Strategy
 
-AdmissionRadar is seasonal, but seasonality is not considered a flaw.
+PREPPY Legacy is seasonal, but seasonality is not considered a flaw.
 
 The initial operating cycle:
 
@@ -1214,7 +1214,7 @@ The homepage is therefore a radar, not a brochure.
 
 # 27. School Detail Philosophy
 
-The school page is the core permanent unit of AdmissionRadar.
+The school page is the core permanent unit of PREPPY Legacy.
 
 It should emphasize:
 
@@ -1242,7 +1242,7 @@ Direct link to official information.
 
 ## Last Checked
 
-When AdmissionRadar last checked the relevant source.
+When PREPPY Legacy last checked the relevant source.
 
 ## Change History
 
@@ -1254,7 +1254,7 @@ Meaningful admission changes detected over time.
 
 Generic school description should remain short.
 
-AdmissionRadar is not Wikipedia for schools.
+PREPPY Legacy is not Wikipedia for schools.
 
 ---
 
@@ -1367,7 +1367,7 @@ Number of changes waiting for human review.
 
 ### Detection Latency
 
-Time between official publication and AdmissionRadar detection.
+Time between official publication and PREPPY Legacy detection.
 
 ### Publication Latency
 
@@ -1422,7 +1422,7 @@ The business needs repeat trust more than one extra page view.
 
 # 34. Technical Philosophy
 
-AdmissionRadar should begin as a simple web product.
+PREPPY Legacy should begin as a simple web product.
 
 Architecture should optimize for:
 
@@ -1524,7 +1524,7 @@ No unnecessary production code should be written until the above are coherent.
 
 Goal:
 
-> make AdmissionRadar useful before automation.
+> make PREPPY Legacy useful before automation.
 
 Build:
 
@@ -1558,7 +1558,7 @@ Build:
 
 Success condition:
 
-> AdmissionRadar is useful as a standalone website even without alerts.
+> PREPPY Legacy is useful as a standalone website even without alerts.
 
 ---
 
@@ -1575,7 +1575,7 @@ Build:
 
 Success condition:
 
-> users can rely on AdmissionRadar instead of repeatedly checking school sites.
+> users can rely on PREPPY Legacy instead of repeatedly checking school sites.
 
 ---
 
@@ -1668,7 +1668,7 @@ Expansion requires evidence that:
 
 # 37. MVP Definition of Done
 
-AdmissionRadar MVP is considered operational when:
+PREPPY Legacy MVP is considered operational when:
 
 * initial school directory exists;
 * current and historical admission cycles are represented;
@@ -1791,7 +1791,7 @@ Expansion should follow user demand and operational readiness.
 
 ## Risk 6 — Building the Wrong Product
 
-The biggest product risk is gradually turning AdmissionRadar into:
+The biggest product risk is gradually turning PREPPY Legacy into:
 
 > “학교 관련 정보는 뭐든 다 있는 사이트.”
 
@@ -1805,7 +1805,7 @@ The product must remain centered around:
 
 # 40. Strategic Identity
 
-AdmissionRadar should ultimately occupy this mental category:
+PREPPY Legacy should ultimately occupy this mental category:
 
 > **“입학 일정 확인할 때 가는 곳.”**
 
@@ -1827,7 +1827,7 @@ Not:
 
 The strongest brand association is:
 
-> **Admission Schedule = AdmissionRadar**
+> **Admission Schedule = PREPPY Legacy**
 
 ---
 
@@ -1835,7 +1835,7 @@ The strongest brand association is:
 
 Brand:
 
-# AdmissionRadar
+# PREPPY Legacy
 
 Primary Korean tagline:
 
@@ -1854,7 +1854,7 @@ Secondary CTA:
 
 # 42. Internal Product Positioning
 
-AdmissionRadar should be understood internally as:
+PREPPY Legacy should be understood internally as:
 
 > **a free admission information database that acquires high-intent parents through search, captures them through admission alerts, creates repeat traffic through verified updates, and monetizes that audience through advertising and sponsorship.**
 
@@ -1971,7 +1971,7 @@ Do not optimize architecture for hypothetical scale before actual traffic requir
 
 ### Rule 10
 
-When uncertain whether a feature belongs in AdmissionRadar, ask:
+When uncertain whether a feature belongs in PREPPY Legacy, ask:
 
 > **Does this help a parent discover, understand, or avoid missing an admission event?**
 
@@ -2029,7 +2029,7 @@ The implementation plan defines **the order in which Codex should build everythi
 
 The most important strategic distinction is:
 
-> **AdmissionRadar is not an alert service with school data attached.**
+> **PREPPY Legacy is not an alert service with school data attached.**
 
 It is:
 
@@ -2045,4 +2045,4 @@ Advertising monetizes attention.
 
 Historical data compounds the moat.
 
-That is AdmissionRadar.
+That is PREPPY Legacy.

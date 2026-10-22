@@ -21,6 +21,8 @@ describe("WP-16A Admin Operations observability", () => {
         staleProcessing: 3,
         oldestStaleProcessingAgeSeconds: 901,
         workerLagSeconds: 120,
+        heldEmailDelivery: 6,
+        heldCacheRevalidation: 0,
       },
       notification: { failedDeliveries: 2, resultUnknown: 1 },
       providerEvents: { failed: 1, orphan: 1 },
@@ -70,6 +72,8 @@ describe("WP-16A Admin Operations observability", () => {
       "점검 기한 초과",
       "발송 업체 이벤트 실패",
       "캐시 실패",
+      "보류 중인 메일 발송",
+      "보류 중인 캐시 갱신",
     ]) {
       expect(markup).toContain(label);
     }
@@ -78,7 +82,7 @@ describe("WP-16A Admin Operations observability", () => {
     const publicHealth = await import("@/app/api/health/route");
     expect(await (await publicHealth.GET()).json()).toEqual({
       status: "ok",
-      service: "admissionradar",
+      service: "preppy",
     });
   });
 });

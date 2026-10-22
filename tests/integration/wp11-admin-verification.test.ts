@@ -495,11 +495,11 @@ async function cleanup(): Promise<void> {
 }
 
 beforeAll(async () => {
-  await schemaLockSql`select pg_advisory_lock(hashtext('admissionradar-schema-tests'))`;
+  await schemaLockSql`select pg_advisory_lock(hashtext('preppy-schema-tests'))`;
   try {
     await migrateDatabase(databaseUrl);
   } finally {
-    await schemaLockSql`select pg_advisory_unlock(hashtext('admissionradar-schema-tests'))`;
+    await schemaLockSql`select pg_advisory_unlock(hashtext('preppy-schema-tests'))`;
   }
 });
 

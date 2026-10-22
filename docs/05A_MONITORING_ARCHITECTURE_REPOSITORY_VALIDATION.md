@@ -2,7 +2,7 @@
 
 ## 0. Purpose and Scope
 
-이 문서는 `docs/05_MONITORING_ARCHITECTURE.md`를 다시 설계하지 않는다. 확정된 Monitoring Architecture가 현재 AdmissionRadar Repository의 실제 schema, migration, runtime, test 자산 위에서 구현 가능한지 검증하고, 구현 시 필요한 조정만 식별한다.
+이 문서는 `docs/05_MONITORING_ARCHITECTURE.md`를 다시 설계하지 않는다. 확정된 Monitoring Architecture가 현재 PREPPY Legacy Repository의 실제 schema, migration, runtime, test 자산 위에서 구현 가능한지 검증하고, 구현 시 필요한 조정만 식별한다.
 
 검증 기준일은 2026-08-22이다. 다음 자료를 실제 파일에서 확인했다.
 

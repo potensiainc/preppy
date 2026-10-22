@@ -10,6 +10,9 @@ import {
 } from "@/src/modules/production-preflight/read-only-database.server";
 import { runProductionPreflight } from "@/src/modules/production-preflight/run-production-preflight.server";
 import { assertDedicatedTestDatabaseUrl } from "@/tests/support/test-database";
+import { EXPECTED_REPOSITORY_MIGRATIONS } from "@/src/modules/production-safety/migration-manifest";
+
+const LATEST_MIGRATION = EXPECTED_REPOSITORY_MIGRATIONS.at(-1)!.identifier;
 
 const testDatabaseUrl = process.env.TEST_DATABASE_URL;
 if (!testDatabaseUrl) throw new Error("TEST_DATABASE_URL must be set");
@@ -113,9 +116,7 @@ describe("WP-15A production connection gate", () => {
     expect(result.report.database.snapshotConsistency).toBe(
       "REPEATABLE_READ_READ_ONLY",
     );
-    expect(result.report.migrations.latestApplied).toBe(
-      "0017_account_deletion",
-    );
+    expect(result.report.migrations.latestApplied).toBe(LATEST_MIGRATION);
     expect(JSON.stringify(result.report)).not.toContain(readOnlyPassword);
     expect(JSON.stringify(result.report)).not.toContain("postgres://");
   });

@@ -10,7 +10,7 @@
 - PostgreSQL: `PostgreSQL 16.14 on x86_64-pc-linux-musl`
 - Disposable Compose project: `preppy-seed-acceptance`
 - Disposable container: `preppy-seed-acceptance-postgres-1`
-- Databases: `admissionradar_test`, plus disposable guard-compliant `_verifyN` databases for isolated rollback and regression runs
+- Databases: `preppy_test`, plus disposable guard-compliant `_verifyN` databases for isolated rollback and regression runs
 - Application/import connections: `TEST_DATABASE_URL` only; `DATABASE_URL` was removed from the command environment
 - Production DB used: **NO**
 - Production credentials used: **NO**
@@ -126,7 +126,7 @@ A material address conflict was injected for the canonical `simseok-e` identity.
 
 ## Rollback
 
-On a separately migrated blank `admissionradar_verify1` database, the importer's existing `afterDomainWrites` test seam threw `TEST_INDUCED_ROLLBACK`. PostgreSQL counts after the rejected transaction were:
+On a separately migrated blank `preppy_verify1` database, the importer's existing `afterDomainWrites` test seam threw `TEST_INDUCED_ROLLBACK`. PostgreSQL counts after the rejected transaction were:
 
 - Institutions: 0
 - Registry identities: 0

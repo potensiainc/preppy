@@ -4,7 +4,7 @@ import { parseDatabaseEnv, parseServerEnv } from "@/src/config/env";
 import type { AdminAuthConfig } from "@/src/modules/admin/auth/config.server";
 
 const validEnv = {
-  DATABASE_URL: "postgres://user:password@localhost:5432/admissionradar",
+  DATABASE_URL: "postgres://user:password@localhost:5432/preppy",
   APP_BASE_URL: "http://localhost:3000",
 };
 
@@ -21,7 +21,7 @@ describe("parseServerEnv", () => {
 
   it("rejects an invalid application base URL", () => {
     expect(() =>
-      parseServerEnv({ ...validEnv, APP_BASE_URL: "admissionradar" }),
+      parseServerEnv({ ...validEnv, APP_BASE_URL: "preppy" }),
     ).toThrow(/APP_BASE_URL/);
   });
 
@@ -29,7 +29,7 @@ describe("parseServerEnv", () => {
     expect(() =>
       parseServerEnv({
         ...validEnv,
-        DATABASE_URL: "postgresx://user:password@localhost/admissionradar",
+        DATABASE_URL: "postgresx://user:password@localhost/preppy",
       }),
     ).toThrow(/DATABASE_URL/);
   });
@@ -38,7 +38,7 @@ describe("parseServerEnv", () => {
     expect(() =>
       parseServerEnv({
         ...validEnv,
-        APP_BASE_URL: "ftp://admissionradar.example.com",
+        APP_BASE_URL: "ftp://preppy.example.com",
       }),
     ).toThrow(/APP_BASE_URL/);
   });

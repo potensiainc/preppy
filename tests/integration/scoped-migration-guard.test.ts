@@ -15,10 +15,16 @@ import {
   ledgerFingerprint,
   runScopedEnglishIdentityMigration,
 } from "@/src/db/scoped-english-identity-migration";
-const url = process.env.TEST_DATABASE_URL!;
-assertDedicatedTestDatabaseUrl(url);
-if (new URL(url).hostname !== "127.0.0.1")
+const sharedUrl = process.env.TEST_DATABASE_URL!;
+assertDedicatedTestDatabaseUrl(sharedUrl);
+if (new URL(sharedUrl).hostname !== "127.0.0.1")
   throw Error("LOCAL_MIGRATION_TEST_ONLY");
+// This suite creates and drops its whole database, so it must never reuse the
+// shared TEST_DATABASE_URL database that other suites depend on.
+const ownUrl = new URL(sharedUrl);
+ownUrl.pathname = ownUrl.pathname + "_scoped_test";
+const url = ownUrl.toString();
+assertDedicatedTestDatabaseUrl(url);
 const quote = (v: string) => '"' + v.replaceAll('"', '""') + '"';
 const name = new URL(url).pathname.slice(1),
   restoreName = name + "_restore_test",
@@ -171,8 +177,18 @@ describe("serialized migration execution against backed-up/restored isolated dat
     expect((await runFullMigrations(client, specs)).applied).toEqual([]);
     expect(await ledger()).toEqual(before);
   });
-  it("rejects an unknown historical article-tags hash before any pending DDL", async () => {
+  it("keeps the reviewed staging article-tags row and still applies pending migrations in order", async () => {
     await client`insert into drizzle.__drizzle_migrations(hash,created_at) values('c15754b2f47e236cf7f308f5e7a5d7c279eba015369efc4f5ef51c8b1d1120c6',1790477016170)`;
+    const before = await ledger();
+    expect((await runFullMigrations(client, specs)).applied).toEqual([
+      "0017_account_deletion",
+      "0018_english_session_identity",
+    ]);
+    expect((await ledger()).slice(0, before.length)).toEqual(before);
+    expect(await identityTables()).toBe(3);
+  });
+  it("rejects the article-tags hash under any other timestamp before DDL", async () => {
+    await client`insert into drizzle.__drizzle_migrations(hash,created_at) values('c15754b2f47e236cf7f308f5e7a5d7c279eba015369efc4f5ef51c8b1d1120c6',1790477016171)`;
     const before = await ledger();
     await expect(runFullMigrations(client, specs)).rejects.toThrow(
       "UNKNOWN_MIGRATION_HASH",

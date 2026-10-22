@@ -80,7 +80,7 @@ No `/api/me/*`, `/api/admin/*`, `/api/internal/*`, `/api/webhooks/*`, `/api/auth
 | `/api/auth/*` | NOT_FOUND | Follow intent namespace available | NOT_IMPLEMENTED |
 | `/auth/kakao/*` | NOT_FOUND | OAuth browser routes available | NOT_IMPLEMENTED |
 
-Current health body is `{status:"ok", service:"admissionradar"}`, while section 82 illustrates `service:"preppy"`. Keep the endpoint semantics and choose one stable service identifier in implementation/tests; this naming mismatch is not an API-contract conflict.
+Current health body is `{status:"ok", service:"preppy"}`, while section 82 illustrates `service:"preppy"`. Keep the endpoint semantics and choose one stable service identifier in implementation/tests; this naming mismatch is not an API-contract conflict.
 
 ## 3.2 Runtime and Package Evidence
 

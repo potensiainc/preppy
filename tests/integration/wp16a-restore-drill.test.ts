@@ -6,14 +6,17 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { runRestoreDrill } from "@/src/modules/production-safety/restore-drill.server";
 import { runRehearsal } from "@/src/modules/production-preflight/rehearsal.server";
 import { assertDedicatedTestDatabaseUrl } from "@/tests/support/test-database";
+import { EXPECTED_REPOSITORY_MIGRATIONS } from "@/src/modules/production-safety/migration-manifest";
+
+const LATEST_MIGRATION = EXPECTED_REPOSITORY_MIGRATIONS.at(-1)!.identifier;
 
 const testDatabaseUrl = process.env.TEST_DATABASE_URL;
 if (!testDatabaseUrl) throw new Error("TEST_DATABASE_URL must be set");
 assertDedicatedTestDatabaseUrl(testDatabaseUrl);
 
 const base = new URL(testDatabaseUrl);
-const sourceName = "admissionradar_wp16a_rehearsal";
-const targetName = "admissionradar_wp16a_restore";
+const sourceName = "preppy_wp16a_rehearsal";
+const targetName = "preppy_wp16a_restore";
 const sourceUrl = new URL(base);
 sourceUrl.pathname = `/${sourceName}`;
 const targetUrl = new URL(base);
@@ -302,7 +305,7 @@ async function seedRepresentativeFixture() {
 
 describe("WP-16A real non-production backup/restore drill", () => {
   beforeAll(async () => {
-    await maintenance`select pg_advisory_lock(hashtext('admissionradar-schema-tests'))`;
+    await maintenance`select pg_advisory_lock(hashtext('preppy-schema-tests'))`;
     await recreate(sourceName);
     await recreate(targetName);
   }, 60_000);
@@ -310,7 +313,7 @@ describe("WP-16A real non-production backup/restore drill", () => {
   afterAll(async () => {
     await maintenance.unsafe(`drop database if exists "${targetName}"`);
     await maintenance.unsafe(`drop database if exists "${sourceName}"`);
-    await maintenance`select pg_advisory_unlock(hashtext('admissionradar-schema-tests'))`;
+    await maintenance`select pg_advisory_unlock(hashtext('preppy-schema-tests'))`;
     await maintenance.end({ timeout: 5 });
   }, 60_000);
 
@@ -335,7 +338,7 @@ describe("WP-16A real non-production backup/restore drill", () => {
       externalSideEffectsEnabled: false,
       sourceDatabaseLabel: sourceName,
       artifactPathClass: "OS_TEMP/WP16A",
-      migrationLatest: "0017_account_deletion",
+      migrationLatest: LATEST_MIGRATION,
       criticalTableCountsMatch: true,
       invariants: "PASS",
       readSmoke: "PASS",

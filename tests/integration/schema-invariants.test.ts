@@ -174,7 +174,7 @@ async function createMeaningfulChange(
 
 describe("STEP 2 PostgreSQL invariants", () => {
   beforeAll(async () => {
-    await sql`select pg_advisory_lock(hashtext('admissionradar-schema-tests'))`;
+    await sql`select pg_advisory_lock(hashtext('preppy-schema-tests'))`;
     await migrateDatabase(databaseUrl);
   });
 
@@ -183,7 +183,7 @@ describe("STEP 2 PostgreSQL invariants", () => {
   });
 
   afterAll(async () => {
-    await sql`select pg_advisory_unlock(hashtext('admissionradar-schema-tests'))`;
+    await sql`select pg_advisory_unlock(hashtext('preppy-schema-tests'))`;
     await sql.end({ timeout: 5 });
   });
 

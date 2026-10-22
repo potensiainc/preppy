@@ -5,8 +5,7 @@ import {
   parseSideEffectEnv,
 } from "@/src/config/runtime-env";
 
-const DATABASE_URL =
-  "postgres://user:password@localhost:5432/admissionradar_test";
+const DATABASE_URL = "postgres://user:password@localhost:5432/preppy_test";
 
 describe("parseRuntimeDatabaseEnv", () => {
   it("uses a bounded local/test default without unrelated provider settings", () => {

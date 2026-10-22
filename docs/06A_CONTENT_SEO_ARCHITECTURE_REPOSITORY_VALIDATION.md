@@ -2,7 +2,7 @@
 
 ## 0. Purpose and Scope
 
-이 문서는 `docs/06_CONTENT_SEO_ARCHITECTURE.md`를 다시 설계하지 않는다. 확정된 Content/SEO Architecture를 현재 AdmissionRadar Repository의 실제 Next.js version, App Router tree, schema, migrations, metadata/cache capability, dependencies, tests와 대조해 구현 가능성을 검증한다.
+이 문서는 `docs/06_CONTENT_SEO_ARCHITECTURE.md`를 다시 설계하지 않는다. 확정된 Content/SEO Architecture를 현재 PREPPY Legacy Repository의 실제 Next.js version, App Router tree, schema, migrations, metadata/cache capability, dependencies, tests와 대조해 구현 가능성을 검증한다.
 
 검증 기준일은 2026-08-22이다. 다음 문서를 지정된 순서와 기존 validation 연속성에 따라 확인했다.
 

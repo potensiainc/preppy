@@ -29,7 +29,7 @@ safe side-effect defaults
 
 이번 Phase의 핵심 목적은:
 
-> 기존 AdmissionRadar `schools`를 파괴하거나 rename하지 않고, PREPPY의 canonical `Institution`을 추가하고, legacy School과 안전하게 0..1 ↔ 0..1 bridge할 수 있게 만드는 것.
+> 기존 PREPPY Legacy `schools`를 파괴하거나 rename하지 않고, PREPPY의 canonical `Institution`을 추가하고, legacy School과 안전하게 0..1 ↔ 0..1 bridge할 수 있게 만드는 것.
 
 ## 1. 반드시 먼저 읽을 문서
 

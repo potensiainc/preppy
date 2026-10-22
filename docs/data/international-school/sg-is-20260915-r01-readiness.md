@@ -45,7 +45,7 @@
 
 ## 테스트 DB 반입 리허설
 
-깨끗한 PostgreSQL 테스트 DB `admissionradar_verify1603`에서 마이그레이션 14개를 적용한 뒤 전체 통합 검증을 실행했어요.
+깨끗한 PostgreSQL 테스트 DB `preppy_verify1603`에서 마이그레이션 14개를 적용한 뒤 전체 통합 검증을 실행했어요.
 
 ### 첫 반입
 

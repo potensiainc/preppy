@@ -11,7 +11,7 @@ bypass, package addition, schema change, or migration in this fixture.
 
 - Application: `http://127.0.0.1:3311`
 - Fake issuer: `http://127.0.0.1:3312`
-- Dedicated database: `admissionradar_wp11_browser_verify13`
+- Dedicated database: `preppy_wp11_browser_verify13`
 - Browser: Python Playwright, headless Chromium `143.0.7499.4`
 - Application/issuer launcher: the `webapp-testing` skill's `with_server.py`
 - Application runtime: bounded `next dev`; final review reruns used the default

@@ -20,6 +20,7 @@ import {
   buildPreflightReport,
   exitCodeForPreflight,
 } from "@/src/modules/production-preflight/report";
+import { withoutKnownHistoricalLedgerRows } from "@/src/modules/production-safety/migration-manifest";
 
 type Environment = Record<string, string | undefined>;
 
@@ -110,7 +111,8 @@ function migrationInventory(
   }
   return compareMigrationLedgers(
     repository,
-    rows.map((row, index) => ({
+    // Production preflight never accepts staging-only ledger history.
+    withoutKnownHistoricalLedgerRows(rows, false).map((row, index) => ({
       identifier: repository[index]?.identifier ?? `database_only_${row.id}`,
       hash: row.hash,
       appliedOrder: index,

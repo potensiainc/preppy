@@ -5,7 +5,7 @@
 > **Status:** Target v1.0 — Repository validation required before migration/implementation  
 > **Decision Baseline:** `00_PRODUCT_REQUIREMENTS_BASELINE.md`  
 > **Audit Input:** `01_EXISTING_ARCHITECTURE_AUDIT.md`  
-> **Purpose:** PREPPY MVP의 Product Loop를 가장 빠르게 구현하면서도 AdmissionRadar에서 이미 구축한 신뢰·이력·전달 기반을 보존하고, 향후 School Intelligence / Education Opportunities / Personal Education Intelligence로 확장할 수 있는 목표 아키텍처를 정의한다.
+> **Purpose:** PREPPY MVP의 Product Loop를 가장 빠르게 구현하면서도 PREPPY Legacy에서 이미 구축한 신뢰·이력·전달 기반을 보존하고, 향후 School Intelligence / Education Opportunities / Personal Education Intelligence로 확장할 수 있는 목표 아키텍처를 정의한다.
 
 ---
 
@@ -16,7 +16,7 @@
 이 문서의 역할은 다음과 같다.
 
 1. Architecture Audit에서 발견된 P0 문제에 대해 **목표 구조와 경계**를 확정한다.
-2. 기존 AdmissionRadar에서 유지할 자산과 PREPPY 기준으로 교체할 자산의 결합 방식을 정의한다.
+2. 기존 PREPPY Legacy에서 유지할 자산과 PREPPY 기준으로 교체할 자산의 결합 방식을 정의한다.
 3. `Institution / Opportunity / Source / User / Follow / Notification / Article`의 상위 모듈 경계를 확정한다.
 4. Manual-first Monitoring이 실제 End-to-End Product Loop로 연결되는 방식을 정의한다.
 5. 기존 데이터와 이력을 파괴하지 않는 **additive migration 전략**을 정의한다.
@@ -317,7 +317,7 @@ src/
 
 이유:
 
-- 기존 AdmissionRadar FK가 광범위하다.
+- 기존 PREPPY Legacy FK가 광범위하다.
 - Admission cycle/event/version history를 보존해야 한다.
 - 영유는 기존 school type constraint로 표현되지 않는다.
 - 지금 물리 rename을 하면 MVP와 무관한 migration blast radius가 커진다.
@@ -356,7 +356,7 @@ institution_school_links
 
 Public PREPPY code는 가능한 한 `institution_id`를 canonical ID로 사용한다.
 
-Legacy `school_id`는 AdmissionRadar compatibility ID로 취급한다.
+Legacy `school_id`는 PREPPY Legacy compatibility ID로 취급한다.
 
 ## 7.4 Institution Type
 
@@ -883,7 +883,7 @@ Authentication routes는 provider adapter 하위로 둔다.
 
 ## 15.2 Legacy Routes
 
-기존 AdmissionRadar의 `/schools`, `/guides`, `/updates` URL이 이미 외부에 노출된 경우 새 canonical route로 301 redirect한다.
+기존 PREPPY Legacy의 `/schools`, `/guides`, `/updates` URL이 이미 외부에 노출된 경우 새 canonical route로 301 redirect한다.
 
 아직 실제 public traffic이 없더라도 migration registry를 명확히 두어 route naming이 혼재하지 않게 한다.
 
@@ -1977,9 +1977,9 @@ API Contract / Implementation Plan
 
 # 40. Final Architecture Definition
 
-PREPPY의 Target Architecture는 **AdmissionRadar를 폐기하고 새 시스템을 만드는 구조가 아니다.**
+PREPPY의 Target Architecture는 **PREPPY Legacy를 폐기하고 새 시스템을 만드는 구조가 아니다.**
 
-기존 AdmissionRadar의 가장 가치 있는 부분인:
+기존 PREPPY Legacy의 가장 가치 있는 부분인:
 
 ```text
 Source

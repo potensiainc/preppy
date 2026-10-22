@@ -12,7 +12,10 @@ import {
   type RuntimeDatabaseResources,
   type TransactionManager,
 } from "@/src/infrastructure/db/runtime.server";
-import { EXPECTED_REPOSITORY_MIGRATIONS } from "@/src/modules/production-safety/migration-manifest";
+import {
+  EXPECTED_REPOSITORY_MIGRATIONS,
+  withoutKnownHistoricalLedgerRows,
+} from "@/src/modules/production-safety/migration-manifest";
 import { normalizeDiscoveryUrl } from "@/src/modules/http-collector/url-policy";
 
 import {
@@ -144,11 +147,16 @@ function validEvidence(
 export async function assertProductionRolloutMigrationReady(
   executor: DatabaseExecutor,
 ): Promise<void> {
-  let rows: Array<{ hash: string }>;
+  let rows: Array<{ hash: string; createdAt: string }>;
   try {
-    rows = (await executor.raw(sql`
-      select hash from drizzle.__drizzle_migrations order by created_at, id
-    `)) as unknown as Array<{ hash: string }>;
+    rows = withoutKnownHistoricalLedgerRows(
+      (await executor.raw(sql`
+        select hash, created_at as "createdAt"
+        from drizzle.__drizzle_migrations order by created_at, id
+      `)) as unknown as Array<{ hash: string; createdAt: string }>,
+      // The production rollout never accepts staging-only ledger history.
+      false,
+    );
   } catch {
     throw new ProductionFiveSchoolRolloutError(
       "MIGRATION_BLOCKED",
