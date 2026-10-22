@@ -19,6 +19,8 @@ import {
   YANGCHEON_COMPARE_HREF,
 } from "./content";
 
+export const dynamic = "force-dynamic";
+
 export function generateMetadata(): Metadata {
   const appBaseUrl = getSeoAppBaseUrl();
   const title = `${EK_CHECKLIST_TITLE} | PREPPY`;
