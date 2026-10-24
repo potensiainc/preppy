@@ -1,0 +1,2980 @@
+{
+  "schemaVersion": 1,
+  "researchDate": "2026-10-15",
+  "libraryFileId": "libfile_d27f96e991e081918e3cb8e765889609",
+  "schools": [
+    {
+      "schoolId": "kyonggi",
+      "coverage": "primary_inaccessible_secondary_or_no_facts",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "장래 폐쇄·신입생 제한의 일부 단서는 2차 자료에만 있어요. PREPPY의 기존 설명을 독립적인 공식 검증으로 취급하지 않아요."
+      ],
+      "sources": [
+        {
+          "id": "kyonggi_bus",
+          "title": "경기초 통학버스 안내",
+          "url": "https://kyonggi.sen.es.kr/28616/subMenu.do",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "kyonggi_admissions",
+          "title": "경기초 신입생 모집 안내",
+          "url": "https://kyonggi.sen.es.kr/212349/subMenu.do",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "kyonggi_preppy",
+          "title": "PREPPY 경기초 정보",
+          "url": "https://preppy.kr/institutions/kyonggi",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "kyonggi_historical",
+          "title": "경기초 학교버스 셔틀 운행정보",
+          "url": "https://momentforever.tistory.com/entry/%EA%B2%BD%EA%B8%B0%EC%B4%88-%ED%95%99%EA%B5%90%EB%B2%84%EC%8A%A4-%EC%85%94%ED%8B%80-%EC%9A%B4%ED%96%89%EC%A0%95%EB%B3%B4",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": "2023-05-26",
+          "revisionDate": null,
+          "schoolYear": 2023,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        }
+      ]
+    },
+    {
+      "schoolId": "kyungbok",
+      "coverage": "published_timetable_read_not_live_verified",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 정류장 이름에 “경남 현대아파트(2027년 폐쇄)”가 있어요. 정확한 폐쇄일은 없으며 현재 폐쇄됐다는 뜻은 아니에요. 하교 00:00 표시는 시각 미제공이며 자정 출발이 아니에요. 현재 홈페이지의 14개 노선과 과거 경로의 12개 노선을 구분해야 해요."
+      ],
+      "sources": [
+        {
+          "id": "kyungbok_morning",
+          "title": "이동교실 및 배차시간: 등교",
+          "url": "https://www.kbes.kr/bbs/content.php?co_id=1_9_3",
+          "status": "official_verified",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [
+            "Wait 3 minutes before boarding. Routes and times may change with applications/ridership."
+          ],
+          "unresolved": [
+            "The live page states no publication/effective academic year."
+          ]
+        },
+        {
+          "id": "kyungbok_home",
+          "title": "이동교실 및 배차시간: 하교",
+          "url": "https://www.kbes.kr/bbs/content.php?co_id=1_9_4",
+          "status": "official_verified",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [
+            "Stop time 00:00 in map data is an unavailable placeholder, not a midnight departure."
+          ],
+          "unresolved": []
+        },
+        {
+          "id": "kyungbok_legacy",
+          "title": "이동교실: legacy kyungbok2021 path",
+          "url": "https://www.kbes.kr/kyungbok2021/bbs/content.php?co_id=1_9_3",
+          "status": "official_older",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        }
+      ]
+    },
+    {
+      "schoolId": "kyunghee",
+      "coverage": "primary_inaccessible_secondary_or_no_facts",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "장래 폐쇄와 신입생 제한의 2차 자료 단서는 공식 확정으로 반영하지 않았어요. 공식 문서 확인이 필요해요."
+      ],
+      "sources": [
+        {
+          "id": "kyunghee_bus",
+          "title": "경희초 통학버스 노선표",
+          "url": "https://kyunghee.sen.es.kr/148944/subMenu.do",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "kyunghee_secondary2026",
+          "title": "BRAND CONTENT 동부·성동광진 사립초 조사",
+          "url": "https://brandcontent.co.kr/elem-seoul-gwangjin",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "kyunghee_historical",
+          "title": "경희초 학교버스 셔틀 운행정보",
+          "url": "https://momentforever.tistory.com/entry/%EA%B2%BD%ED%9D%AC%EC%B4%88-%ED%95%99%EA%B5%90%EB%B2%84%EC%8A%A4-%EC%85%94%ED%8B%80-%EC%9A%B4%ED%96%89%EC%A0%95%EB%B3%B4",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": "2023-06-06",
+          "revisionDate": null,
+          "schoolYear": 2023,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        }
+      ]
+    },
+    {
+      "schoolId": "gyeseong",
+      "coverage": "published_timetable_read_not_live_verified",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "하교의 “20분”은 소요분이며 정차 시각이 아니에요. 등교의 “9호”는 다른 노선 참조예요. 서석대·한티역·뱅뱅사거리의 요일 배정 설명이 페이지마다 달라 자동으로 하나를 선택하지 않았어요."
+      ],
+      "sources": [
+        {
+          "id": "gyeseong_bus",
+          "title": "계성초 학교버스 1호 및 공식 노선 선택 메뉴",
+          "url": "https://www.gyeseong1882.es.kr/bbs/s_view.html?category=info_bus&seq=1085",
+          "status": "official_verified",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [
+            "Wait 5 minutes before boarding.",
+            "Homebound buses 7 and 9 run only on Wednesday and whole-school dismissal days, including shortened-day periods.",
+            "Cross-route assignments depend on weekday; preserve the original per-route notes."
+          ],
+          "unresolved": [
+            "No visible publication/effective academic year.",
+            "Official inconsistency: 서석대 weekday homebound is bus 1 on the bus-1 page but bus 10 on the bus-9 page.",
+            "Official inconsistency: 한티역 and 뱅뱅사거리 weekday homebound are bus 6 on bus-9 page but bus 11 on bus-11 page."
+          ]
+        },
+        {
+          "id": "gyeseong_bus_1101",
+          "title": "학교버스 2호 스쿨버스",
+          "url": "https://www.gyeseong1882.es.kr/bbs/s_view.html?category=info_bus&seq=1101",
+          "status": "official_verified",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": [
+            "Effective year unknown. Cross-route inconsistencies described in overview."
+          ]
+        },
+        {
+          "id": "gyeseong_bus_1104",
+          "title": "학교버스 3호 스쿨버스",
+          "url": "https://www.gyeseong1882.es.kr/bbs/s_view.html?category=info_bus&seq=1104",
+          "status": "official_verified",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": [
+            "Effective year unknown. Cross-route inconsistencies described in overview."
+          ]
+        },
+        {
+          "id": "gyeseong_bus_1106",
+          "title": "학교버스 5호 스쿨버스",
+          "url": "https://www.gyeseong1882.es.kr/bbs/s_view.html?category=info_bus&seq=1106",
+          "status": "official_verified",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": [
+            "Effective year unknown. Cross-route inconsistencies described in overview."
+          ]
+        },
+        {
+          "id": "gyeseong_bus_1108",
+          "title": "학교버스 6호 스쿨버스",
+          "url": "https://www.gyeseong1882.es.kr/bbs/s_view.html?category=info_bus&seq=1108",
+          "status": "official_verified",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": [
+            "Effective year unknown. Cross-route inconsistencies described in overview."
+          ]
+        },
+        {
+          "id": "gyeseong_bus_1110",
+          "title": "학교버스 7호 스쿨버스",
+          "url": "https://www.gyeseong1882.es.kr/bbs/s_view.html?category=info_bus&seq=1110",
+          "status": "official_verified",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": [
+            "Effective year unknown. Cross-route inconsistencies described in overview."
+          ]
+        },
+        {
+          "id": "gyeseong_bus_1112",
+          "title": "학교버스 8호 스쿨버스",
+          "url": "https://www.gyeseong1882.es.kr/bbs/s_view.html?category=info_bus&seq=1112",
+          "status": "official_verified",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": [
+            "Effective year unknown. Cross-route inconsistencies described in overview."
+          ]
+        },
+        {
+          "id": "gyeseong_bus_307444",
+          "title": "학교버스 9호 스쿨버스",
+          "url": "https://www.gyeseong1882.es.kr/bbs/s_view.html?category=info_bus&seq=307444",
+          "status": "official_verified",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": [
+            "Effective year unknown. Cross-route inconsistencies described in overview."
+          ]
+        },
+        {
+          "id": "gyeseong_bus_307541",
+          "title": "학교버스 10호 스쿨버스",
+          "url": "https://www.gyeseong1882.es.kr/bbs/s_view.html?category=info_bus&seq=307541",
+          "status": "official_verified",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": [
+            "Effective year unknown. Cross-route inconsistencies described in overview."
+          ]
+        },
+        {
+          "id": "gyeseong_bus_2607822",
+          "title": "학교버스 11호 스쿨버스",
+          "url": "https://www.gyeseong1882.es.kr/bbs/s_view.html?category=info_bus&seq=2607822",
+          "status": "official_verified",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": [
+            "Effective year unknown. Cross-route inconsistencies described in overview."
+          ]
+        }
+      ]
+    },
+    {
+      "schoolId": "kwangwoon",
+      "coverage": "historical_official_reference_only",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "2026 입찰에 포함된 자료라도 내부 적용일이 2025년인 자료는 2025년 참고자료로 구분해요."
+      ],
+      "sources": [
+        {
+          "id": "kwangwoon_bus",
+          "title": "광운초 학교버스 안내",
+          "url": "https://kwangwoon.sen.es.kr/65022/subMenu.do",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "kwangwoon_tender_routes",
+          "title": "2026학년도 통학버스 노선표(임시).pdf",
+          "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01272887&bidPbancOrd=000&fileSeq=3&fileType=&prcmBsneSeCd=03",
+          "status": "official_older",
+          "documentRole": "procurement",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2025,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": [
+            "Is the attachment copied from 2025? Obtain a final 2026 timetable."
+          ]
+        },
+        {
+          "id": "kwangwoon_tender_index",
+          "title": "광운초 2026 통학버스 용역 입찰공고 index",
+          "url": "https://jodaln.com/bid/R26BK01272887/000",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": "2026-01-14",
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "kwangwoon_secondary2026",
+          "title": "BRAND CONTENT 성북·강북 사립초 조사",
+          "url": "https://brandcontent.co.kr/elem-seoul-seongbuk",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        }
+      ]
+    },
+    {
+      "schoolId": "kumsung",
+      "coverage": "official_notice_read_routes_inaccessible",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요."
+      ],
+      "sources": [
+        {
+          "id": "kumsung_term_notice",
+          "title": "2026학년도 학교 통학버스 운행 시간표",
+          "url": "https://www.kumsung.net/bbs/board.php?bo_table=5_14&wr_id=46",
+          "status": "official_verified",
+          "documentRole": "school_information",
+          "publicationDate": "2026-06-09",
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": [
+            "Exact route/stop table could not be read."
+          ]
+        },
+        {
+          "id": "kumsung_term_download",
+          "title": "2026학년도 학교 통학버스 운행 시간표.hwp",
+          "url": "https://www.kumsung.net/bbs/download.php?bo_table=5_14&no=0&wr_id=46",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "kumsung_vacation_notice",
+          "title": "2026학년도 여름 및 겨울방학 방과후학교 통학버스 운행 시간표",
+          "url": "https://www.kumsung.net/bbs/board.php?bo_table=5_14&wr_id=45",
+          "status": "official_verified",
+          "documentRole": "school_information",
+          "publicationDate": "2026-01-20",
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [
+            "Vacation after-school scope; do not merge with normal term routes."
+          ],
+          "unresolved": []
+        },
+        {
+          "id": "kumsung_vacation_download",
+          "title": "2026 방학 방과후 통학버스 시간표.hwp",
+          "url": "https://www.kumsung.net/bbs/download.php?bo_table=5_14&no=0&wr_id=45",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        }
+      ]
+    },
+    {
+      "schoolId": "daegwang",
+      "coverage": "primary_inaccessible_secondary_or_no_facts",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요."
+      ],
+      "sources": [
+        {
+          "id": "daegwang_home",
+          "title": "대광초 공식 홈페이지",
+          "url": "https://daegwang.sen.es.kr/",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "daegwang_secondary2026",
+          "title": "BRAND CONTENT 성북·강북 사립초 조사",
+          "url": "https://brandcontent.co.kr/elem-seoul-seongbuk",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "daegwang_blog2026",
+          "title": "대광초 입학 관련 학부모 정보",
+          "url": "https://content71923.tistory.com/29?category=1324674",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": "2026-10-10",
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        }
+      ]
+    },
+    {
+      "schoolId": "donggwang",
+      "coverage": "historical_official_reference_only",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요."
+      ],
+      "sources": [
+        {
+          "id": "donggwang_home",
+          "title": "동광초 공식 홈페이지",
+          "url": "https://donggwang.sen.es.kr/",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "donggwang_secondary2026",
+          "title": "BRAND CONTENT 서울 남부 사립초 조사",
+          "url": "https://brandcontent.co.kr/elem-seoul-south",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "donggwang_tender_index",
+          "title": "[긴급] 2026학년도 동광초등학교 통학버스 및 안전도우미 위탁용역 입찰공고",
+          "url": "https://www.bidpro.co.kr/n0_ipchal/konggo/svc/konggo_view.asp?num=3040035",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "donggwang_earlier_tender",
+          "title": "동광초등학교 공고 제2026-5호",
+          "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01307280&bidPbancOrd=000&fileSeq=1&fileType=&prcmBsneSeCd=03",
+          "status": "official_older",
+          "documentRole": "procurement",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": [
+            "Clarify inconsistent year and superseding tender."
+          ]
+        }
+      ]
+    },
+    {
+      "schoolId": "dongbuk",
+      "coverage": "primary_inaccessible_secondary_or_no_facts",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요."
+      ],
+      "sources": [
+        {
+          "id": "dongbuk_home",
+          "title": "동북초 공식 홈페이지",
+          "url": "https://dongbuk.sen.es.kr/",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "dongbuk_tender_index",
+          "title": "2026학년도 동북초등학교 학생통학버스 운행 위탁용역 업체선정 긴급입찰공고",
+          "url": "https://daparatoy.com/detail.php?id=826301",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "dongbuk_provisional_xlsx",
+          "title": "통학버스노선표(가안).xlsx",
+          "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01292552&bidPbancOrd=000&fileSeq=2&fileType=&prcmBsneSeCd=03",
+          "status": "inaccessible",
+          "documentRole": "procurement",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        }
+      ]
+    },
+    {
+      "schoolId": "dongsan",
+      "coverage": "primary_inaccessible_secondary_or_no_facts",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요."
+      ],
+      "sources": [
+        {
+          "id": "dongsan_bus",
+          "title": "동산초 통학버스 안내",
+          "url": "https://seoul-dongsan.sen.es.kr/182131/subMenu.do",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "dongsan_tender_index",
+          "title": "2026학년도 스쿨버스 및 안전도우미 임차 위탁 장기계속계약",
+          "url": "https://www.bidpro.co.kr/n0_ipchal/konggo/svc/konggo_view.asp?num=3006715",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "dongsan_historical",
+          "title": "동산초 학교버스 셔틀 운행정보",
+          "url": "https://momentforever.tistory.com/entry/%EB%8F%99%EC%82%B0%EC%B4%88-%ED%95%99%EA%B5%90%EB%B2%84%EC%8A%A4-%EC%85%94%ED%8B%80-%EC%9A%B4%ED%96%89%EC%A0%95%EB%B3%B4",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        }
+      ]
+    },
+    {
+      "schoolId": "lila",
+      "coverage": "procurement_plan_read_not_live_verified",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요."
+      ],
+      "sources": [
+        {
+          "id": "lila_live",
+          "title": "리라초 학교버스 안내",
+          "url": "https://www.lila.es.kr/kr/about/school_bus.php",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "lila_tender_routes",
+          "title": "2026 통학버스 운행 예정 노선안(등하교)",
+          "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01299256&bidPbancOrd=000&fileSeq=3&fileType=&prcmBsneSeCd=03",
+          "status": "official_verified",
+          "documentRole": "procurement",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [
+            "Document expressly labels routes planned and says stops/times can change, with finalization expected in February. It is not a verified final operating schedule."
+          ],
+          "unresolved": []
+        },
+        {
+          "id": "lila_historical",
+          "title": "리라초 학교버스 셔틀 운행 정보",
+          "url": "https://momentforever.tistory.com/entry/%EB%A6%AC%EB%9D%BC%EC%B4%88-%ED%95%99%EA%B5%90%EB%B2%84%EC%8A%A4-%EC%85%94%ED%8B%80-%EC%9A%B4%ED%96%89-%EC%A0%95%EB%B3%B4",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": "2023-05-22",
+          "revisionDate": null,
+          "schoolYear": 2023,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        }
+      ]
+    },
+    {
+      "schoolId": "maewon",
+      "coverage": "primary_inaccessible_secondary_or_no_facts",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요."
+      ],
+      "sources": [
+        {
+          "id": "maewon_home",
+          "title": "매원초 공식 홈페이지",
+          "url": "https://maewon.sen.es.kr/",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "maewon_bus",
+          "title": "매원초 학교버스 노선 안내",
+          "url": "https://maewon.sen.es.kr/122969/subMenu.do",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "maewon_secondary2026",
+          "title": "BRAND CONTENT 성북·강북 사립초 조사",
+          "url": "https://brandcontent.co.kr/elem-seoul-seongbuk",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "maewon_tender_index",
+          "title": "[긴급] 2026학년도 통학버스 용역 입찰 재공고",
+          "url": "https://daparatoy.com/detail.php?id=335987",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "maewon_provisional_hwp",
+          "title": "2026학년도 학교버스 노선표(임시).hwp",
+          "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R25BK01245806&bidPbancOrd=000&fileSeq=5&fileType=&prcmBsneSeCd=03",
+          "status": "inaccessible",
+          "documentRole": "procurement",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "maewon_conditions_hwp",
+          "title": "매원초등학교 통학버스 운행 조건.hwp",
+          "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R25BK01245806&bidPbancOrd=000&fileSeq=4&fileType=&prcmBsneSeCd=03",
+          "status": "inaccessible",
+          "documentRole": "procurement",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "maewon_historical",
+          "title": "매원초 학교버스 셔틀 운행 정보",
+          "url": "https://momentforever.tistory.com/entry/%EB%A7%A4%EC%9B%90%EC%B4%88-%ED%95%99%EA%B5%90%EB%B2%84%EC%8A%A4-%EC%85%94%ED%8B%80-%EC%9A%B4%ED%96%89-%EC%A0%95%EB%B3%B4",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": "2023-05-23",
+          "revisionDate": null,
+          "schoolYear": 2023,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        }
+      ]
+    },
+    {
+      "schoolId": "myongji",
+      "coverage": "published_timetable_read_not_live_verified",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "43개 기록은 방향·요일·회차별 기록이에요. 적용 학년도는 명시되지 않았어요. URL의 date=261006을 게시일이나 시행일로 해석하지 않았어요. 이전 입찰표로 현재 연결 자료를 덮어쓰면 안 돼요."
+      ],
+      "sources": [
+        {
+          "id": "myongji_morning",
+          "title": "명지초 학교버스 등교",
+          "url": "https://www.myongji.net/subpage.php?p=m19",
+          "status": "official_verified",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [
+            "Wait 5 minutes before scheduled boarding."
+          ],
+          "unresolved": []
+        },
+        {
+          "id": "myongji_home_weekdays",
+          "title": "명지초 학교버스 하교 월화목금",
+          "url": "https://www.myongji.net/subpage.php?p=m19_01",
+          "status": "official_verified",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "myongji_home_wed",
+          "title": "명지초 학교버스 하교 수요일",
+          "url": "https://www.myongji.net/subpage.php?p=m19_02",
+          "status": "official_verified",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "myongji_script",
+          "title": "Official bus page stop/time data",
+          "url": "https://www.myongji.net/js/bus_positions.js?date=261006",
+          "status": "official_verified",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": [
+            "date=261006 is a cache-busting parameter, not a verified publication/effective date. No stated year on the live route data."
+          ]
+        },
+        {
+          "id": "myongji_tender_routes",
+          "title": "2026학년도 학생통학버스 운행노선 및 시간",
+          "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01320400&bidPbancOrd=000&fileSeq=3&fileType=&prcmBsneSeCd=03",
+          "status": "official_older",
+          "documentRole": "procurement",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        }
+      ]
+    },
+    {
+      "schoolId": "sangmyung-ae",
+      "coverage": "primary_inaccessible_secondary_or_no_facts",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요."
+      ],
+      "sources": [
+        {
+          "id": "sangmyung-ae-home",
+          "title": "상명사대부초 공식 홈페이지",
+          "url": "https://sangmyung-ae.sen.es.kr/",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "secondary-jungbu",
+          "title": "서울 사립초 중부 6곳",
+          "url": "https://brandcontent.co.kr/elem-seoul-jungbu",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "naver-public",
+          "title": "Naver public blog/cafe retrieval attempts",
+          "url": "https://blog.naver.com/",
+          "status": "inaccessible",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "naver-cafe",
+          "title": "Naver public cafe access",
+          "url": "https://cafe.naver.com/",
+          "status": "inaccessible",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "sangmyung-review",
+          "title": "상명대학교사범대학부속초등학교 공개 학교 후기",
+          "url": "https://www.studyholic.com/eduinfo/school/SchoolView.asp?idx=26619",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": "2026-02-10",
+          "revisionDate": null,
+          "schoolYear": 2023,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        }
+      ]
+    },
+    {
+      "schoolId": "sangmyeong",
+      "coverage": "no_current_commute_document_found",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요."
+      ],
+      "sources": [
+        {
+          "id": "sangmyeong-home",
+          "title": "상명초 공식 홈페이지",
+          "url": "https://smcho.sen.es.kr/",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "naver-public",
+          "title": "Naver public blog/cafe retrieval attempts",
+          "url": "https://blog.naver.com/",
+          "status": "inaccessible",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "naver-cafe",
+          "title": "Naver public cafe access",
+          "url": "https://cafe.naver.com/",
+          "status": "inaccessible",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "sangmyeong-promo",
+          "title": "상명초등학교 학교 홍보 홈페이지",
+          "url": "https://www.sangmyeong.net/",
+          "status": "official_verified",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "sangmyeong-channel",
+          "title": "상명초등학교 입학 안내 채널",
+          "url": "https://pf.kakao.com/_BxaMVK",
+          "status": "official_verified",
+          "documentRole": "school_information",
+          "publicationDate": "2025-10-22",
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "sangmyeong-news2019",
+          "title": "상명초 관련 2019 입학 보도",
+          "url": "https://www.wowtv.co.kr/NewsCenter/News/Read?articleId=A201911050214",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": "2019-11-05",
+          "revisionDate": null,
+          "schoolYear": 2020,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        }
+      ]
+    },
+    {
+      "schoolId": "seoul36",
+      "coverage": "primary_inaccessible_secondary_or_no_facts",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요."
+      ],
+      "sources": [
+        {
+          "id": "seoul36-home",
+          "title": "서울삼육초 공식 홈페이지",
+          "url": "https://seoul36.sen.es.kr/",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "secondary-gwangjin",
+          "title": "서울 사립초 광진·동부권",
+          "url": "https://brandcontent.co.kr/elem-seoul-gwangjin",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "naver-public",
+          "title": "Naver public blog/cafe retrieval attempts",
+          "url": "https://blog.naver.com/",
+          "status": "inaccessible",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "naver-cafe",
+          "title": "Naver public cafe access",
+          "url": "https://cafe.naver.com/",
+          "status": "inaccessible",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "seoul36-directory",
+          "title": "동부교육지원청 학교 안내 서울삼육초",
+          "url": "https://dbedu.sen.go.kr/CMS/introduction/introduction06/introduction0601/introduction060103/1206962_2959.html",
+          "status": "official_verified",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "seoul36-tender-index",
+          "title": "2026학년도 서울삼육초 통학버스 용역",
+          "url": "https://sujubut.com/bid/domestic/168977/",
+          "status": "secondary_unverified",
+          "documentRole": "procurement",
+          "publicationDate": "2026-02-03",
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "seoul36-spec",
+          "title": "2026학년도 통학버스 과업설명서.pdf",
+          "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01313416&bidPbancOrd=000&fileSeq=2&fileType=&prcmBsneSeCd=03",
+          "status": "inaccessible",
+          "documentRole": "procurement",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        }
+      ]
+    },
+    {
+      "schoolId": "sunil",
+      "coverage": "historical_official_reference_only",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요."
+      ],
+      "sources": [
+        {
+          "id": "sunil-home",
+          "title": "선일초 공식 홈페이지",
+          "url": "https://sunil.sen.es.kr/",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "secondary-west",
+          "title": "서울 사립초 서부권",
+          "url": "https://brandcontent.co.kr/elem-seoul-west",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "naver-public",
+          "title": "Naver public blog/cafe retrieval attempts",
+          "url": "https://blog.naver.com/",
+          "status": "inaccessible",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "naver-cafe",
+          "title": "Naver public cafe access",
+          "url": "https://cafe.naver.com/",
+          "status": "inaccessible",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "sunil-tender-index",
+          "title": "2026학년도 선일초 통학버스 운행 위탁 용역",
+          "url": "https://sujubut.com/bid/domestic/643771/",
+          "status": "secondary_unverified",
+          "documentRole": "procurement",
+          "publicationDate": "2025-12-04",
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "sunil-oldroutes",
+          "title": "2025학년도 스쿨버스 노선도(참고용).xlsx",
+          "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R25BK01202564&bidPbancOrd=000&fileSeq=2&fileType=&prcmBsneSeCd=03",
+          "status": "official_older",
+          "documentRole": "procurement",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2025,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "sunil-plan-transcript",
+          "title": "선일초 2026 통학버스 입찰 정보",
+          "url": "https://www.bidpro.co.kr/n0_ipchal/konggo/svc/konggo_view.asp?num=2986868",
+          "status": "secondary_unverified",
+          "documentRole": "procurement",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        }
+      ]
+    },
+    {
+      "schoolId": "sungdong",
+      "coverage": "primary_inaccessible_secondary_or_no_facts",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요."
+      ],
+      "sources": [
+        {
+          "id": "sungdong-home",
+          "title": "성동초 공식 홈페이지",
+          "url": "https://www.sungdong.es.kr/",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "secondary-gwangjin",
+          "title": "서울 사립초 광진·동부권",
+          "url": "https://brandcontent.co.kr/elem-seoul-gwangjin",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "naver-public",
+          "title": "Naver public blog/cafe retrieval attempts",
+          "url": "https://blog.naver.com/",
+          "status": "inaccessible",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "naver-cafe",
+          "title": "Naver public cafe access",
+          "url": "https://cafe.naver.com/",
+          "status": "inaccessible",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "sungdong-tender-index",
+          "title": "2026학년도 성동초 통학버스 용역",
+          "url": "https://daparatoy.com/detail.php?id=791884",
+          "status": "secondary_unverified",
+          "documentRole": "procurement",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "sungdong-routes",
+          "title": "2026학년도 운행시간표.xlsx",
+          "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01287685&bidPbancOrd=000&fileSeq=2&fileType=&prcmBsneSeCd=03",
+          "status": "inaccessible",
+          "documentRole": "procurement",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "sungdong-kiosk",
+          "title": "성동초등학교 학교 소개 키오스크",
+          "url": "https://sungdong.onebykiosk.com/kiosk/",
+          "status": "secondary_unverified",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        }
+      ]
+    },
+    {
+      "schoolId": "sungshin",
+      "coverage": "primary_inaccessible_secondary_or_no_facts",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요."
+      ],
+      "sources": [
+        {
+          "id": "sungshin-home",
+          "title": "성신초 공식 홈페이지",
+          "url": "https://sungshin.sen.es.kr/",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "secondary-seongbuk",
+          "title": "서울 사립초 성북·강북 6곳",
+          "url": "https://brandcontent.co.kr/elem-seoul-seongbuk",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "naver-public",
+          "title": "Naver public blog/cafe retrieval attempts",
+          "url": "https://blog.naver.com/",
+          "status": "inaccessible",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "naver-cafe",
+          "title": "Naver public cafe access",
+          "url": "https://cafe.naver.com/",
+          "status": "inaccessible",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "sungshin-tender-index",
+          "title": "2026학년도 성신초 통학버스 용역 재공고",
+          "url": "https://daparatoy.com/detail.php?id=822017",
+          "status": "secondary_unverified",
+          "documentRole": "procurement",
+          "publicationDate": "2026-01-23",
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "sungshin-routes",
+          "title": "26학년도 학교버스 노선도.hwp",
+          "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01292142&bidPbancOrd=000&fileSeq=3&fileType=&prcmBsneSeCd=03",
+          "status": "inaccessible",
+          "documentRole": "procurement",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "sungshin-blog2026",
+          "title": "성신초등학교 영어 분반 구조와 학비, 돌봄교실까지 정리",
+          "url": "https://content71923.tistory.com/27",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        }
+      ]
+    },
+    {
+      "schoolId": "sejong",
+      "coverage": "historical_official_reference_only",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요."
+      ],
+      "sources": [
+        {
+          "id": "sejong-home",
+          "title": "세종초 공식 홈페이지",
+          "url": "https://sejong.sen.es.kr/",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "secondary-gwangjin",
+          "title": "서울 사립초 광진·동부권",
+          "url": "https://brandcontent.co.kr/elem-seoul-gwangjin",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "naver-public",
+          "title": "Naver public blog/cafe retrieval attempts",
+          "url": "https://blog.naver.com/",
+          "status": "inaccessible",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "naver-cafe",
+          "title": "Naver public cafe access",
+          "url": "https://cafe.naver.com/",
+          "status": "inaccessible",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "sejong-tender-index",
+          "title": "2026학년도 세종초 학생통학버스 임차용역",
+          "url": "https://daparatoy.com/detail.php?id=333205",
+          "status": "secondary_unverified",
+          "documentRole": "procurement",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "sejong-spec",
+          "title": "2026학년도 세종초등학교 학생 통학버스 임차용역 과업지시서.hwp",
+          "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R25BK01245882&bidPbancOrd=000&fileSeq=2&fileType=&prcmBsneSeCd=03",
+          "status": "inaccessible",
+          "documentRole": "procurement",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "sejong-admission2024",
+          "title": "세종초등학교 온라인 입학 안내",
+          "url": "https://sites.google.com/sje.sejong.ac.kr/sejongcho-online",
+          "status": "official_older",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2024,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        }
+      ]
+    },
+    {
+      "schoolId": "soongeui",
+      "coverage": "primary_inaccessible_secondary_or_no_facts",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요."
+      ],
+      "sources": [
+        {
+          "id": "soongeui-home",
+          "title": "숭의초 공식 홈페이지",
+          "url": "https://soongeui.sen.es.kr/",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "secondary-jungbu",
+          "title": "서울 사립초 중부 6곳",
+          "url": "https://brandcontent.co.kr/elem-seoul-jungbu",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "naver-public",
+          "title": "Naver public blog/cafe retrieval attempts",
+          "url": "https://blog.naver.com/",
+          "status": "inaccessible",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "naver-cafe",
+          "title": "Naver public cafe access",
+          "url": "https://cafe.naver.com/",
+          "status": "inaccessible",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "soongeui-busline",
+          "title": "숭의초 통학버스 노선도 사이트",
+          "url": "https://soongeui.es.kr/busline/",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        }
+      ]
+    },
+    {
+      "schoolId": "shinkwang",
+      "coverage": "primary_inaccessible_secondary_or_no_facts",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요."
+      ],
+      "sources": [
+        {
+          "id": "shinkwang-home",
+          "title": "신광초 공식 홈페이지",
+          "url": "https://skes.sen.es.kr/",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "secondary-jungbu",
+          "title": "서울 사립초 중부 6곳",
+          "url": "https://brandcontent.co.kr/elem-seoul-jungbu",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "naver-public",
+          "title": "Naver public blog/cafe retrieval attempts",
+          "url": "https://blog.naver.com/",
+          "status": "inaccessible",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "naver-cafe",
+          "title": "Naver public cafe access",
+          "url": "https://cafe.naver.com/",
+          "status": "inaccessible",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "shinkwang-tender-index",
+          "title": "2026학년도 신광초 학생 통학버스 용역 입찰 재공고",
+          "url": "https://daparatoy.com/detail.php?id=752462",
+          "status": "secondary_unverified",
+          "documentRole": "procurement",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "shinkwang-routes",
+          "title": "2026학년도 학교 버스 운행 노선.hwp",
+          "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01280686&bidPbancOrd=000&fileSeq=3&fileType=&prcmBsneSeCd=03",
+          "status": "inaccessible",
+          "documentRole": "procurement",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        }
+      ]
+    },
+    {
+      "schoolId": "younghoon",
+      "coverage": "published_timetable_read_not_live_verified",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "공식 게시물의 현재 첨부파일은 파일명에 2026-09-15 개정일이 있어요. 본문에 더 오래된 날짜가 있어 실제 시행일은 확인이 필요해요. 전체 시간표를 추출한 자료는 아니에요."
+      ],
+      "sources": [
+        {
+          "id": "secondary-seongbuk",
+          "title": "서울 사립초 성북·강북 6곳",
+          "url": "https://brandcontent.co.kr/elem-seoul-seongbuk",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "naver-public",
+          "title": "Naver public blog/cafe retrieval attempts",
+          "url": "https://blog.naver.com/",
+          "status": "inaccessible",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "naver-cafe",
+          "title": "Naver public cafe access",
+          "url": "https://cafe.naver.com/",
+          "status": "inaccessible",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "younghoon-post",
+          "title": "2026학년도 학교버스 노선표",
+          "url": "https://www.younghoon.es.kr/younghoon_e/school-life/various-sheeps-wages.do?article.offset=0&articleLimit=10&articleNo=58702&mode=view",
+          "status": "official_verified",
+          "documentRole": "school_information",
+          "publicationDate": "2026-02-04T17:15:00+09:00",
+          "revisionDate": "2026-09-15",
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "younghoon-currentpdf",
+          "title": "2026학교버스운행시간표(26.9.15.).pdf",
+          "url": "https://www.younghoon.es.kr/younghoon_e/school-life/various-sheeps-wages.do?articleNo=58702&attachNo=43896&mode=fileDownload",
+          "status": "official_verified",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": "2026-09-15",
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "younghoon-oldpdf",
+          "title": "2026학년도 영훈초 통학버스 운행 노선표 이전 첨부",
+          "url": "https://younghoon.ms.kr/younghoon_e/school-life/various-sheeps-wages.do?articleNo=58702&attachNo=42967&mode=fileDownload",
+          "status": "official_older",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "younghoon-faq",
+          "title": "2026학년도 신입생 입학설명회 사전질의 및 답변",
+          "url": "https://www.younghoon.ms.kr/younghoon_e/admission/frequently-asked-questions-faqs.do?articleNo=55870&attachNo=41325&mode=fileDownload",
+          "status": "official_verified",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "younghoon-blog2026",
+          "title": "영훈초등학교 원어민 26명과 1학급 2담임제, 학비·하교시간 정리",
+          "url": "https://content71923.tistory.com/30",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        }
+      ]
+    },
+    {
+      "schoolId": "yale",
+      "coverage": "procurement_plan_read_not_live_verified",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "2026 조달 계획에는 파란 표시 정류장을 2026 신입생부터 신청할 수 없다는 조건이 있어요. 색상으로 지정된 정류장을 판독하지 못해 특정 정류장의 이용 자격을 판단할 수 없어요. 계약 종료 연도와 일부 시각에도 모순이 있어요."
+      ],
+      "sources": [
+        {
+          "id": "yale-home",
+          "title": "예일초 공식 홈페이지",
+          "url": "https://yale.sen.es.kr/",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "secondary-west",
+          "title": "서울 사립초 서부권",
+          "url": "https://brandcontent.co.kr/elem-seoul-west",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "naver-public",
+          "title": "Naver public blog/cafe retrieval attempts",
+          "url": "https://blog.naver.com/",
+          "status": "inaccessible",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "naver-cafe",
+          "title": "Naver public cafe access",
+          "url": "https://cafe.naver.com/",
+          "status": "inaccessible",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "yale-tender-index",
+          "title": "2026학년도 예일초 통학버스 입찰 공고",
+          "url": "https://seenthis.kr/bid/497809",
+          "status": "secondary_unverified",
+          "documentRole": "procurement",
+          "publicationDate": "2026-02-10",
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "yale-notice",
+          "title": "2026학년도 예일초 통학버스 입찰공고문 및 과업지시서.pdf",
+          "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01330012&bidPbancOrd=000&fileSeq=2&fileType=&prcmBsneSeCd=03",
+          "status": "official_verified",
+          "documentRole": "procurement",
+          "publicationDate": "2026-02-05",
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        }
+      ]
+    },
+    {
+      "schoolId": "uchon",
+      "coverage": "procurement_plan_read_not_live_verified",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "19대는 최초 조달 계획이에요. 이후 재공고는 내용을 읽지 못했고 참고 노선은 2025년 자료예요. 현재 운행 대수로 확정할 수 없어요."
+      ],
+      "sources": [
+        {
+          "id": "uchon-home",
+          "title": "우촌초 공식 홈페이지",
+          "url": "https://uchon.es.kr/",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "secondary-seongbuk",
+          "title": "서울 사립초 성북·강북 6곳",
+          "url": "https://brandcontent.co.kr/elem-seoul-seongbuk",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "naver-public",
+          "title": "Naver public blog/cafe retrieval attempts",
+          "url": "https://blog.naver.com/",
+          "status": "inaccessible",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "naver-cafe",
+          "title": "Naver public cafe access",
+          "url": "https://cafe.naver.com/",
+          "status": "inaccessible",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "uchon-tender-index",
+          "title": "2026학년도 우촌초 통학버스 용역 입찰 공고",
+          "url": "https://sujubut.com/bid/domestic/167552/",
+          "status": "secondary_unverified",
+          "documentRole": "procurement",
+          "publicationDate": "2026-02-02",
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "uchon-retender-index",
+          "title": "2026학년도 우촌초 통학버스 용역 입찰 재공고",
+          "url": "https://sujubut.com/bid/domestic/173815/",
+          "status": "secondary_unverified",
+          "documentRole": "procurement",
+          "publicationDate": "2026-02-10",
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "uchon-notice",
+          "title": "2026학년도 우촌초등학교 학생 통학버스 용역 입찰 공고.pdf",
+          "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01308891&bidPbancOrd=000&fileSeq=6&fileType=&prcmBsneSeCd=03",
+          "status": "official_verified",
+          "documentRole": "procurement",
+          "publicationDate": "2026-02-02",
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "uchon-retender",
+          "title": "2026학년도 우촌초등학교 학생 통학버스 용역 입찰 재공고.pdf",
+          "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01330167&bidPbancOrd=000&fileSeq=3&fileType=&prcmBsneSeCd=03",
+          "status": "inaccessible",
+          "documentRole": "procurement",
+          "publicationDate": "2026-02-10",
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "uchon-old-wednesday",
+          "title": "2025학년도 우촌초등학교 통학버스 노선도(하교;수요일).jpeg",
+          "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01308891&bidPbancOrd=000&fileSeq=4&fileType=&prcmBsneSeCd=03",
+          "status": "official_older",
+          "documentRole": "procurement",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2025,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "uchon-blog2026",
+          "title": "우촌초등학교 학비 월 101만원, 버스 노선별 비용과 예체능 프로그램 정리",
+          "url": "https://content71923.tistory.com/28",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": "2026-10-10",
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "uchon-official-route-lead",
+          "title": "우촌초 스쿨버스 메뉴 링크",
+          "url": "https://uchon.sen.es.kr/173260/subMenu.do",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        }
+      ]
+    },
+    {
+      "schoolId": "unhyun",
+      "coverage": "primary_inaccessible_secondary_or_no_facts",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "미운행 주장은 공식 확인 전인 2차 자료예요. 자료 확인 실패를 버스 미운행으로 해석하면 안 돼요."
+      ],
+      "sources": [
+        {
+          "id": "unhyun-home",
+          "title": "운현초 공식 홈페이지",
+          "url": "https://unhyun.sen.es.kr/",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "secondary-jungbu",
+          "title": "서울 사립초 중부 6곳",
+          "url": "https://brandcontent.co.kr/elem-seoul-jungbu",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "naver-public",
+          "title": "Naver public blog/cafe retrieval attempts",
+          "url": "https://blog.naver.com/",
+          "status": "inaccessible",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "naver-cafe",
+          "title": "Naver public cafe access",
+          "url": "https://cafe.naver.com/",
+          "status": "inaccessible",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        }
+      ]
+    },
+    {
+      "schoolId": "yooseok",
+      "coverage": "primary_inaccessible_secondary_or_no_facts",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요."
+      ],
+      "sources": [
+        {
+          "id": "yooseok-school",
+          "title": "유석초등학교 공식 홈페이지",
+          "url": "https://yooseok.sen.es.kr/",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "yooseok-secondary",
+          "title": "서울 남서권 사립초는 네 곳이고 강남서초·동작관악·강서양천·남부 교육지원청에 한 곳씩이다",
+          "url": "https://brandcontent.co.kr/elem-seoul-south",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2025,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "yooseok-blog2023",
+          "title": "유석초등학교 학교버스 셔틀 운행정보",
+          "url": "https://momentforever.tistory.com/entry/유석초등학교-학교버스-셔틀-운행정보",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": "2023-06-13",
+          "revisionDate": null,
+          "schoolYear": 2023,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        }
+      ]
+    },
+    {
+      "schoolId": "eunseok",
+      "coverage": "primary_inaccessible_secondary_or_no_facts",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요."
+      ],
+      "sources": [
+        {
+          "id": "eunseok-school",
+          "title": "은석초 스쿨버스노선 메뉴",
+          "url": "https://eunseok.sen.es.kr/111448/subMenu.do",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "eunseok-tender-list",
+          "title": "2026학년도 은석초등학교 통학버스 용역 입찰",
+          "url": "https://sujubut.com/bid/domestic/642708/",
+          "status": "secondary_unverified",
+          "documentRole": "procurement",
+          "publicationDate": "2025-12-03",
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "eunseok-spec",
+          "title": "2.2026학년도 은석초등학교 통학버스 과업지시서 및 특수요건.hwp",
+          "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R25BK01198337&bidPbancOrd=000&fileSeq=2&fileType=&prcmBsneSeCd=03",
+          "status": "inaccessible",
+          "documentRole": "procurement",
+          "publicationDate": "2025-12-03",
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "eunseok-table2025",
+          "title": "3.2025학년도 은석초등학교 통학버스 운행표.hwp",
+          "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R25BK01198337&bidPbancOrd=000&fileSeq=3&fileType=&prcmBsneSeCd=03",
+          "status": "inaccessible",
+          "documentRole": "procurement",
+          "publicationDate": "2025-12-03",
+          "revisionDate": null,
+          "schoolYear": 2025,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "eunseok-secondary",
+          "title": "동부·성동광진 사립초 여덟 곳은 서울 사립초 38곳 중 두 교육지원청 관할 전부다",
+          "url": "https://brandcontent.co.kr/elem-seoul-gwangjin",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        }
+      ]
+    },
+    {
+      "schoolId": "ewha",
+      "coverage": "procurement_plan_read_not_live_verified",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요."
+      ],
+      "sources": [
+        {
+          "id": "ewha-school",
+          "title": "이대부초 공식 메뉴",
+          "url": "https://ewha.sen.es.kr/113300/subMenu.do",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "ewha-list",
+          "title": "2026학년도 이대부속초 학생 통학버스 임차 용역 변경공고",
+          "url": "https://sujubut.com/bid/domestic/173558/",
+          "status": "secondary_unverified",
+          "documentRole": "procurement",
+          "publicationDate": "2026-02-10",
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "ewha-spec",
+          "title": "2026학년도 이대부속초등학교 학생 통학버스 임차 용역_과업지시서.pdf",
+          "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01308154&bidPbancOrd=001&fileSeq=2&fileType=&prcmBsneSeCd=03",
+          "status": "official_verified",
+          "documentRole": "procurement",
+          "publicationDate": "2026-02-10",
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "ewha-secondary",
+          "title": "서울 사립초 서부 8곳은 서대문 4·은평 3·마포 1로 나뉘고 여덟 중 둘이 이름 앞에 대학을 달고 있다",
+          "url": "https://brandcontent.co.kr/elem-seoul-west",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        }
+      ]
+    },
+    {
+      "schoolId": "cau",
+      "coverage": "primary_inaccessible_secondary_or_no_facts",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요."
+      ],
+      "sources": [
+        {
+          "id": "cau-school",
+          "title": "중대부초 학교버스 메뉴",
+          "url": "https://cau.sen.es.kr/140931/subMenu.do",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "cau-list",
+          "title": "2026학년도 중앙대학교사범대학부속초등학교 통학버스 용역",
+          "url": "https://daparatoy.com/detail.php?id=664474",
+          "status": "secondary_unverified",
+          "documentRole": "procurement",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "cau-date",
+          "title": "2026학년도 중대부초 통학버스 입찰공고",
+          "url": "https://www.bidpro.co.kr/n0_ipchal/konggo/svc/konggo_view.asp?num=3014009",
+          "status": "secondary_unverified",
+          "documentRole": "procurement",
+          "publicationDate": "2026-01-14",
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "cau-xlsx",
+          "title": "3.노선표.xlsx",
+          "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01272973&bidPbancOrd=000&fileSeq=3&fileType=&prcmBsneSeCd=03",
+          "status": "inaccessible",
+          "documentRole": "procurement",
+          "publicationDate": "2026-01-14",
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "cau-secondary",
+          "title": "서울 남서권 사립초는 네 곳이고 강남서초·동작관악·강서양천·남부 교육지원청에 한 곳씩이다",
+          "url": "https://brandcontent.co.kr/elem-seoul-south",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "cau-blog",
+          "title": "② 중대부초_가장 빡센 학습식(?) 사립초",
+          "url": "https://mejiiii604.tistory.com/4",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        }
+      ]
+    },
+    {
+      "schoolId": "cheongwon",
+      "coverage": "procurement_plan_read_not_live_verified",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요."
+      ],
+      "sources": [
+        {
+          "id": "cheongwon-school",
+          "title": "청원초 통학버스 메뉴",
+          "url": "https://cheongwon.sen.es.kr/184766/subMenu.do",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "cheongwon-list",
+          "title": "2026학년도 청원초 통학버스 운행 용역",
+          "url": "https://sujubut.com/bid/domestic/114915/",
+          "status": "secondary_unverified",
+          "documentRole": "procurement",
+          "publicationDate": "2026-01-19",
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "cheongwon-spec",
+          "title": "2026학년도 청원초등학교 통학버스 운행용역 과업지시서",
+          "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01279038&bidPbancOrd=000&fileSeq=2&fileType=&prcmBsneSeCd=03",
+          "status": "official_verified",
+          "documentRole": "procurement",
+          "publicationDate": "2026-01-19",
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "cheongwon-blog",
+          "title": "경기북부 학부모가 비교한 서울 사립초 4곳 — 한신초·상명초·동북초·청원초",
+          "url": "https://goma1.tistory.com/entry/경기북부-학부모가-비교한-서울-사립초-4곳-–-한신초-상명초-동북초-청원초-어디가-좋을까",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": "2025-06-06",
+          "revisionDate": null,
+          "schoolYear": 2025,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        }
+      ]
+    },
+    {
+      "schoolId": "chugye",
+      "coverage": "primary_inaccessible_secondary_or_no_facts",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요."
+      ],
+      "sources": [
+        {
+          "id": "chugye-school",
+          "title": "추계초 스쿨버스 메뉴",
+          "url": "https://chugye.sen.es.kr/99108/subMenu.do",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "chugye-list",
+          "title": "2026학년도 추계초등학교 통학버스 임차 용역",
+          "url": "https://daparatoy.com/detail.php?id=569182",
+          "status": "secondary_unverified",
+          "documentRole": "procurement",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "chugye-plan",
+          "title": "2026학년도_예정_스쿨버스_노선표.pdf",
+          "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01264791&bidPbancOrd=000&fileSeq=3&fileType=&prcmBsneSeCd=03",
+          "status": "inaccessible",
+          "documentRole": "procurement",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "chugye-spec",
+          "title": "2026학년도 통학버스_운행_과업지시서.pdf",
+          "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01264791&bidPbancOrd=000&fileSeq=2&fileType=&prcmBsneSeCd=03",
+          "status": "inaccessible",
+          "documentRole": "procurement",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "chugye-retender",
+          "title": "2026학년도 추계초 통학버스 재공고",
+          "url": "https://jodaln.com/bid/R26BK01288882/000",
+          "status": "inaccessible",
+          "documentRole": "procurement",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "chugye-secondary",
+          "title": "서울 사립초 서부 8곳은 서대문 4·은평 3·마포 1로 나뉘고 여덟 중 둘이 이름 앞에 대학을 달고 있다",
+          "url": "https://brandcontent.co.kr/elem-seoul-west",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2025,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        }
+      ]
+    },
+    {
+      "schoolId": "choongam",
+      "coverage": "primary_inaccessible_secondary_or_no_facts",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요."
+      ],
+      "sources": [
+        {
+          "id": "choongam-school",
+          "title": "충암초 공식 홈페이지",
+          "url": "https://choongam.sen.es.kr/",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "choongam-oldsite",
+          "title": "충암초 2022학년도 입학 안내: 스쿨 버스 노선",
+          "url": "https://sites.google.com/choongam.es.kr/caes/2022학년도-입학-안내/스쿨-버스-노선?authuser=0",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2022,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "choongam-brochure",
+          "title": "2026학년도 충암행복교육",
+          "url": "https://fliphtml5.com/choongam/extw/2026학년도_충암행복교육/",
+          "status": "secondary_unverified",
+          "documentRole": "school_information",
+          "publicationDate": "2025-09-08",
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "choongam-secondary",
+          "title": "서울 사립초 서부 8곳은 서대문 4·은평 3·마포 1로 나뉘고 여덟 중 둘이 이름 앞에 대학을 달고 있다",
+          "url": "https://brandcontent.co.kr/elem-seoul-west",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2025,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        }
+      ]
+    },
+    {
+      "schoolId": "taegang",
+      "coverage": "procurement_plan_read_not_live_verified",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "일부 하교 추출 시각이 출발 시각보다 이르거나 앞뒤 순서와 맞지 않아 운행 시각으로 반영하지 않았어요. 원문 오기인지 추출 문제인지 확인 전이에요."
+      ],
+      "sources": [
+        {
+          "id": "taegang-am",
+          "title": "2026학년도 태강삼육초등학교 통학차량 노선표(등교)",
+          "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R25BK01222628&bidPbancOrd=000&fileSeq=4&fileType=&prcmBsneSeCd=03",
+          "status": "official_verified",
+          "documentRole": "procurement",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "taegang-pm",
+          "title": "2026학년도 태강삼육초등학교 통학차량 노선표(하교)",
+          "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R25BK01222628&bidPbancOrd=000&fileSeq=5&fileType=&prcmBsneSeCd=03",
+          "status": "official_verified",
+          "documentRole": "procurement",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "taegang-list",
+          "title": "2026학년도 태강삼육초 통학버스 입찰",
+          "url": "https://jodaln.com/bid/R25BK01222628/000",
+          "status": "secondary_unverified",
+          "documentRole": "procurement",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        }
+      ]
+    },
+    {
+      "schoolId": "hansin",
+      "coverage": "procurement_plan_read_not_live_verified",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요."
+      ],
+      "sources": [
+        {
+          "id": "hansin-school",
+          "title": "한신초 스쿨버스 메뉴",
+          "url": "https://ihansin.sen.es.kr/190109/subMenu.do",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "hansin-list",
+          "title": "2026학년도 한신초 통학버스 입찰 재공고",
+          "url": "https://sujubut.com/bid/domestic/177467/",
+          "status": "secondary_unverified",
+          "documentRole": "procurement",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "hansin-notice",
+          "title": "(한신초) 2026 한신초등학교 학생 통학버스 입찰 재공고문.pdf",
+          "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01342804&bidPbancOrd=000&fileSeq=1&fileType=&prcmBsneSeCd=03",
+          "status": "official_verified",
+          "documentRole": "procurement",
+          "publicationDate": "2026-02-19",
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "hansin-spec",
+          "title": "2026 한신초 학생 통학버스 과업지시서 HWP",
+          "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01342804&bidPbancOrd=000&fileSeq=2&fileType=&prcmBsneSeCd=03",
+          "status": "inaccessible",
+          "documentRole": "procurement",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "hansin-community",
+          "title": "한신초등학교 학교리뷰",
+          "url": "https://www.studyholic.com/eduinfo/school/SchoolView.asp?idx=26672",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": "2026-03-04",
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        }
+      ]
+    },
+    {
+      "schoolId": "hanyang",
+      "coverage": "primary_inaccessible_secondary_or_no_facts",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요."
+      ],
+      "sources": [
+        {
+          "id": "hanyang-school",
+          "title": "한양초 학교버스운행",
+          "url": "https://hye.or.kr/hancho/bus/bus.action?mgcode=1&mcode=BBUS&pcode=11_3",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "hanyang-list",
+          "title": "2026학년도 한양초등학교 통학버스 재공고",
+          "url": "https://sujubut.com/bid/domestic/653748/",
+          "status": "secondary_unverified",
+          "documentRole": "procurement",
+          "publicationDate": "2025-12-18",
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "hanyang-spec",
+          "title": "(재공고)2026학년도 한양초등학교 통학버스 용역 과업설명서.hwp",
+          "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R25BK01237895&bidPbancOrd=000&fileSeq=2&fileType=&prcmBsneSeCd=03",
+          "status": "inaccessible",
+          "documentRole": "procurement",
+          "publicationDate": "2025-12-18",
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "hanyang-secondary",
+          "title": "동부·성동광진 사립초 여덟 곳은 서울 사립초 38곳 중 두 교육지원청 관할 전부다",
+          "url": "https://brandcontent.co.kr/elem-seoul-gwangjin",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "hanyang-community",
+          "title": "한양초등학교 학교리뷰",
+          "url": "https://www.studyholic.com/eduinfo/school/SchoolView.asp?idx=27079",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": "2026-07-04",
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "hanyang-older-brochure",
+          "title": "한양초등학교 브로슈어 최종_2, p55",
+          "url": "https://online.flipbuilder.com/arjv/sicn/files/basic-html/page55.html",
+          "status": "secondary_unverified",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        }
+      ]
+    },
+    {
+      "schoolId": "hongik",
+      "coverage": "primary_inaccessible_secondary_or_no_facts",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요."
+      ],
+      "sources": [
+        {
+          "id": "hongik-school",
+          "title": "홍대부초 학교버스 메뉴",
+          "url": "https://hongik.sen.es.kr/56203/subMenu.do",
+          "status": "inaccessible",
+          "documentRole": "school_information",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": null,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "hongik-list",
+          "title": "2026학년도 홍익대학교사범대학부속초등학교 통학버스 용역",
+          "url": "https://sujubut.com/bid/domestic/123081/",
+          "status": "secondary_unverified",
+          "documentRole": "procurement",
+          "publicationDate": "2026-01-30",
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "hongik-spec",
+          "title": "2026학년도 통학버스 임차용역 과업지시서(수정).hwp",
+          "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01306684&bidPbancOrd=000&fileSeq=2&fileType=&prcmBsneSeCd=03",
+          "status": "inaccessible",
+          "documentRole": "procurement",
+          "publicationDate": "2026-01-30",
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "hongik-secondary",
+          "title": "서울 사립초 서부 8곳은 서대문 4·은평 3·마포 1로 나뉘고 여덟 중 둘이 이름 앞에 대학을 달고 있다",
+          "url": "https://brandcontent.co.kr/elem-seoul-west",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": null,
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "hongik-blog2023",
+          "title": "홍익대학교사범대학부속초등학교(홍대부초) 학교버스 셔틀 운행정보",
+          "url": "https://momentforever.tistory.com/entry/홍익대학교사범대학부속초등학교홍대부초-학교버스-셔틀-운행정보",
+          "status": "secondary_unverified",
+          "documentRole": "secondary_report",
+          "publicationDate": "2023-06-12",
+          "revisionDate": null,
+          "schoolYear": 2023,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        }
+      ]
+    },
+    {
+      "schoolId": "hwarang",
+      "coverage": "procurement_plan_read_not_live_verified",
+      "currentOperationVerified": false,
+      "notes": [
+        "게시된 자료나 조달 계획을 읽은 범위예요. 실제 현재 운행·좌석·신입생 이용 자격·2027학년도 운행은 확인 전이에요.",
+        "계약 기간의 추출 문장이 “2026년 3월 1일 ~ 2027월 2월 28일”로 나와요. 실제 이미지 글자를 확인하지 못해 종료일은 미확인이에요. 2027-02-28을 확정 종료일로 반영하지 않았어요."
+      ],
+      "sources": [
+        {
+          "id": "hwarang-list",
+          "title": "2026학년도 화랑초등학교 통학버스 임차 재공고",
+          "url": "https://www.bidpro.co.kr/n0_ipchal/konggo/svc/konggo_view.asp?num=3024875",
+          "status": "secondary_unverified",
+          "documentRole": "procurement",
+          "publicationDate": "2026-01-27",
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        },
+        {
+          "id": "hwarang-spec",
+          "title": "2026학년도 화랑초등학교 통학버스 임차 과업지시서",
+          "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01298768&bidPbancOrd=000&fileSeq=2&fileType=&prcmBsneSeCd=03",
+          "status": "official_verified",
+          "documentRole": "procurement",
+          "publicationDate": "2026-01-27",
+          "revisionDate": null,
+          "schoolYear": 2026,
+          "fetchedDate": "2026-10-15",
+          "conditions": [],
+          "unresolved": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "archive_title": "PREPPY Seoul private elementary school commute public-source research",
+  "collected_on": "2026-10-15",
+  "files": [
+    {
+      "name": "README.md",
+      "bytes": 9342,
+      "sha256": "e8be445d5a2f30803be06e23a936de124c1188aa07838dc3b77d86410fd028b3"
+    },
+    {
+      "name": "facts.csv",
+      "bytes": 51444,
+      "sha256": "f6bec896476eb8c81783f9783a1c1c839912a08b26344b92164ed790aeaa4ac0"
+    },
+    {
+      "name": "facts.json",
+      "bytes": 132064,
+      "sha256": "dbc49e6d0b90e5085df0190a4cb07b62710f59ba9db5bbafe3f7a96f99d6d0a0"
+    },
+    {
+      "name": "research.json",
+      "bytes": 771642,
+      "sha256": "fbc6a5f2a94f323364ab3732b4cacad43a423ea72cc7f05db568c5f290791769"
+    },
+    {
+      "name": "route-stops.csv",
+      "bytes": 306080,
+      "sha256": "653c1f6c566cf50c4b057204596a9fd4c048f308ceb3f9ea39d250b226be87b4"
+    },
+    {
+      "name": "routes.json",
+      "bytes": 376622,
+      "sha256": "d7872a890e30e7ec2b599984cc941d1d098706a5919b8bcfa1eae7cb40dfb04c"
+    },
+    {
+      "name": "schools.csv",
+      "bytes": 22908,
+      "sha256": "b83ae732110924a81ed6f2018492051cbeb12f619bf0a8b73762b30834027102"
+    },
+    {
+      "name": "schools.json",
+      "bytes": 75082,
+      "sha256": "f17b6662587cce986bb874eb75ad5b954120bd4bf62991a40759e2baab948cf2"
+    },
+    {
+      "name": "sources.csv",
+      "bytes": 63095,
+      "sha256": "b584befdc33877ddaa50fec3371e06d13b5aa0362c603057f73a683ee4ba3e91"
+    },
+    {
+      "name": "sources.json",
+      "bytes": 138614,
+      "sha256": "e97f6f15f67f7dcd08e5d3c0876a2cd36082750cdce0620950fabe8e05f2c4ef"
+    },
+    {
+      "name": "validation.json",
+      "bytes": 1933,
+      "sha256": "c938d6b4251cf1acf6409bddfdfea026c81c9945ea9b1319234bc7e2b372370a"
+    }
+  ]
+}

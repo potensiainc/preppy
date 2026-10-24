@@ -1,0 +1,759 @@
+[
+  {
+    "schoolId": "kyonggi",
+    "commuteName": "경기초",
+    "commuteAddress": "서울 서대문구 경기대로9길 10",
+    "status": "public_identity_matched",
+    "candidates": [
+      {
+        "slug": "kyonggi",
+        "name": "경기초등학교",
+        "address": "서울특별시 서대문구 경기대로9길 10"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/kyonggi",
+    "pageSha256": "dc7c62874f02f2cf65b3015a405651fb0756d62a6064702dbe990d214705d914",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": true,
+    "institutionId": "28f80b0a-1ae9-5e7b-81eb-6fd72486452c",
+    "officialName": "경기초등학교"
+  },
+  {
+    "schoolId": "kyungbok",
+    "commuteName": "경복초",
+    "commuteAddress": "서울 광진구 천호대로130길 58",
+    "status": "public_identity_matched",
+    "candidates": [
+      {
+        "slug": "kbes",
+        "name": "경복초등학교",
+        "address": "서울특별시 광진구 천호대로130길 58"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/kbes",
+    "pageSha256": "e7346006e80d488922ab118987a7b0595841d50619e1771a7d26976196cd79c1",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": true,
+    "institutionId": "abcb72f0-a6aa-53b1-9104-77d318660f8a",
+    "officialName": "경복초등학교"
+  },
+  {
+    "schoolId": "kyunghee",
+    "commuteName": "경희초",
+    "commuteAddress": "서울 동대문구 경희대로 26",
+    "status": "public_identity_matched",
+    "candidates": [
+      {
+        "slug": "kyunghee",
+        "name": "경희초등학교",
+        "address": "서울특별시 동대문구 경희대로 26"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/kyunghee",
+    "pageSha256": "c281207da78caffc2d353b9419f430d136156b149e9abf468e2aef8a4e565d35",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": true,
+    "institutionId": "d4460d1b-cf80-5cb7-b49c-d13557060d1f",
+    "officialName": "경희초등학교"
+  },
+  {
+    "schoolId": "gyeseong",
+    "commuteName": "계성초",
+    "commuteAddress": "서울 서초구 신반포로19길 23",
+    "status": "public_identity_matched",
+    "candidates": [
+      {
+        "slug": "gyeseong1882",
+        "name": "계성초등학교",
+        "address": "서울특별시 서초구 신반포로19길 23"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/gyeseong1882",
+    "pageSha256": "125af9f743ea17d2969531cf91b10cb9228e3e28d8f297c16f53f99a80c3c3d5",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": true,
+    "institutionId": "fe7b3e2f-e401-5ec8-9e97-c0d8182cfd53",
+    "officialName": "계성초등학교"
+  },
+  {
+    "schoolId": "kwangwoon",
+    "commuteName": "광운초",
+    "commuteAddress": "서울 성북구 한천로 693",
+    "status": "unresolved",
+    "candidates": [
+      {
+        "slug": "kwangwoon",
+        "name": "광운초등학교",
+        "address": "서울특별시 성북구 한천로 694"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/kwangwoon",
+    "pageSha256": "c89b397fdbf4ea00116d066570d50418a91aef85bd1a98c0bc6399cc2ae269a3",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": false,
+    "reason": "Exact name/address/one UUID checks did not all match"
+  },
+  {
+    "schoolId": "kumsung",
+    "commuteName": "금성초",
+    "commuteAddress": "서울 중랑구 신내로21길 55",
+    "status": "public_identity_matched",
+    "candidates": [
+      {
+        "slug": "kumsung",
+        "name": "금성초등학교",
+        "address": "서울특별시 중랑구 신내로21길 55"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/kumsung",
+    "pageSha256": "ee3605fd0926835c5c5763d8ae9988097cdc568659d7dc9af714c3645bb4de9e",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": true,
+    "institutionId": "9550da3f-04eb-5eee-877d-877491461201",
+    "officialName": "금성초등학교"
+  },
+  {
+    "schoolId": "daegwang",
+    "commuteName": "대광초",
+    "commuteAddress": "서울 성북구 안암로 5",
+    "status": "public_identity_matched",
+    "candidates": [
+      {
+        "slug": "daegwang",
+        "name": "대광초등학교",
+        "address": "서울특별시 성북구 안암로 5"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/daegwang",
+    "pageSha256": "a2d9c5692044605950275f2994500478913bb1020068944849e39de35bdf63c9",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": true,
+    "institutionId": "4902ef41-0b2a-55f0-8e9b-2602e9fdd702",
+    "officialName": "대광초등학교"
+  },
+  {
+    "schoolId": "donggwang",
+    "commuteName": "동광초",
+    "commuteAddress": "서울 금천구 탑골로10길 45",
+    "status": "public_identity_matched",
+    "candidates": [
+      {
+        "slug": "donggwang",
+        "name": "동광초등학교",
+        "address": "서울특별시 금천구 탑골로10길 45"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/donggwang",
+    "pageSha256": "3bc0c5333a07b1859957bb3b6d191922456f376fca96d18671a9f83f924f96f4",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": true,
+    "institutionId": "301c71ed-7d55-591a-9499-a66332a9a783",
+    "officialName": "동광초등학교"
+  },
+  {
+    "schoolId": "dongbuk",
+    "commuteName": "동북초",
+    "commuteAddress": "서울 도봉구 시루봉로 53",
+    "status": "public_identity_matched",
+    "candidates": [
+      {
+        "slug": "dongbuk",
+        "name": "동북초등학교",
+        "address": "서울특별시 도봉구 시루봉로 53"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/dongbuk",
+    "pageSha256": "d8c7ff31c86b009a7382ba0005c2db54f70d4f224066f94c43b0c0639ce66b0a",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": true,
+    "institutionId": "442d7449-7fbd-5f94-a3cf-68895897b1bd",
+    "officialName": "동북초등학교"
+  },
+  {
+    "schoolId": "dongsan",
+    "commuteName": "동산초",
+    "commuteAddress": "서울 중구 매봉18길 109",
+    "status": "public_identity_matched",
+    "candidates": [
+      {
+        "slug": "seoul-dongsan",
+        "name": "동산초등학교",
+        "address": "서울특별시 중구 매봉18길 109"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/seoul-dongsan",
+    "pageSha256": "9ec3e02f2f346e23e292107d67f851534e365b01325044122bc3d5329ba23797",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": true,
+    "institutionId": "261bd28b-6f4c-54f7-9950-2e7b78f8c291",
+    "officialName": "동산초등학교"
+  },
+  {
+    "schoolId": "lila",
+    "commuteName": "리라초",
+    "commuteAddress": "서울 중구 소파로2길 7",
+    "status": "public_identity_matched",
+    "candidates": [
+      {
+        "slug": "lila",
+        "name": "리라초등학교",
+        "address": "서울특별시 중구 소파로2길 7"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/lila",
+    "pageSha256": "a78a94f029800de1a6f28e6ebd74cc5c964331f93d30361eb3a0b3232613d529",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": true,
+    "institutionId": "9aa75c7b-e7de-55bc-ba67-03201af8cb6e",
+    "officialName": "리라초등학교"
+  },
+  {
+    "schoolId": "maewon",
+    "commuteName": "매원초",
+    "commuteAddress": "서울 성북구 북악산로 870",
+    "status": "public_identity_matched",
+    "candidates": [
+      {
+        "slug": "maewon",
+        "name": "매원초등학교",
+        "address": "서울특별시 성북구 북악산로 870"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/maewon",
+    "pageSha256": "16b2ed3bc025a11fee93f6ff71d095f59a902e835d5b5281f0d7607aa3b563f5",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": true,
+    "institutionId": "a65efc5c-8ebc-5fc8-9d2b-88ed461d39a3",
+    "officialName": "매원초등학교"
+  },
+  {
+    "schoolId": "myongji",
+    "commuteName": "명지초",
+    "commuteAddress": "서울 서대문구 명지2길 32-20",
+    "status": "public_identity_matched",
+    "candidates": [
+      {
+        "slug": "myongji",
+        "name": "명지초등학교",
+        "address": "서울특별시 서대문구 명지2길 32-20"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/myongji",
+    "pageSha256": "fd33d8c28a5ec54a02beacff295175484766aadcda9058eaf9c037178bc59611",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": true,
+    "institutionId": "4b732452-6f4b-5f7e-9303-456667250a67",
+    "officialName": "명지초등학교"
+  },
+  {
+    "schoolId": "sangmyung-ae",
+    "commuteName": "상명사대부초",
+    "commuteAddress": "서울 종로구 홍지문2길 1",
+    "status": "public_identity_matched",
+    "candidates": [
+      {
+        "slug": "sangmyung-ae",
+        "name": "상명대학교사범대학부속초등학교",
+        "address": "서울특별시 종로구 홍지문2길 1"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/sangmyung-ae",
+    "pageSha256": "71accb7f4b5eff77a36e71738e1c289433a1ab74545705ded90ed498de2b4c5e",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": true,
+    "institutionId": "1d459c6d-cd3d-5f2d-98e5-a41e60079404",
+    "officialName": "상명대학교사범대학부속초등학교"
+  },
+  {
+    "schoolId": "sangmyeong",
+    "commuteName": "상명초",
+    "commuteAddress": "서울 노원구 덕릉로 541",
+    "status": "public_identity_matched",
+    "candidates": [
+      {
+        "slug": "smcho",
+        "name": "상명초등학교",
+        "address": "서울특별시 노원구 덕릉로 541"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/smcho",
+    "pageSha256": "5cf85c55912bad39de2060d5cdc922221d1e8313ddf36892c1eda37818b74cff",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": true,
+    "institutionId": "445bcd41-2388-529a-a51b-74ddd99c7cb7",
+    "officialName": "상명초등학교"
+  },
+  {
+    "schoolId": "seoul36",
+    "commuteName": "서울삼육초",
+    "commuteAddress": "서울 동대문구 회기로10길 63",
+    "status": "public_identity_matched",
+    "candidates": [
+      {
+        "slug": "seoul36",
+        "name": "서울삼육초등학교",
+        "address": "서울특별시 동대문구 회기로10길 63"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/seoul36",
+    "pageSha256": "d9e8698deb05eb659833441ee65f388d5e2238aa04d3a9a6fdd7c7e2e9ce76a4",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": true,
+    "institutionId": "50ad011d-dac6-55a6-9c39-16615a495f9f",
+    "officialName": "서울삼육초등학교"
+  },
+  {
+    "schoolId": "sunil",
+    "commuteName": "선일초",
+    "commuteAddress": "서울 은평구 갈현로29길 27",
+    "status": "public_identity_matched",
+    "candidates": [
+      {
+        "slug": "sunil",
+        "name": "선일초등학교",
+        "address": "서울특별시 은평구 갈현로29길 27"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/sunil",
+    "pageSha256": "77b70cbc0add84db43c8b2f540b5bac017f2543e3998a344d6cb6e90d346b25c",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": true,
+    "institutionId": "3c0f61b7-d66b-56b6-be6e-ba33f99f03f5",
+    "officialName": "선일초등학교"
+  },
+  {
+    "schoolId": "sungdong",
+    "commuteName": "성동초",
+    "commuteAddress": "서울 광진구 자양로4길 63",
+    "status": "public_identity_matched",
+    "candidates": [
+      {
+        "slug": "sungdong",
+        "name": "성동초등학교",
+        "address": "서울특별시 광진구 자양로4길 63"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/sungdong",
+    "pageSha256": "c1a629f88bf7b9ae045ec57589909a5d5194d27cda2630f86a24765f6c128ae6",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": true,
+    "institutionId": "10367b3a-a743-57df-9906-c4fb6bfe97d5",
+    "officialName": "성동초등학교"
+  },
+  {
+    "schoolId": "sungshin",
+    "commuteName": "성신초",
+    "commuteAddress": "서울 성북구 북악산로 918",
+    "status": "public_identity_matched",
+    "candidates": [
+      {
+        "slug": "sungshin",
+        "name": "성신초등학교",
+        "address": "서울특별시 성북구 북악산로 918"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/sungshin",
+    "pageSha256": "ac88de870ebe78738ebc541dfd25a5fe080ae48f9773e0b30bb138a819ac1619",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": true,
+    "institutionId": "b7a5ec9e-3447-5822-af34-20f95290e0a8",
+    "officialName": "성신초등학교"
+  },
+  {
+    "schoolId": "sejong",
+    "commuteName": "세종초",
+    "commuteAddress": "서울 광진구 능동로 209",
+    "status": "unresolved",
+    "candidates": [
+      {
+        "slug": "sejong",
+        "name": "세종초등학교",
+        "address": "서울특별시 광진구 군자로 114"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/sejong",
+    "pageSha256": "a4dbd1c5dae535cf231d381524e5b52cd922fe5fc53ca276108b9ce830689178",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": false,
+    "reason": "Exact name/address/one UUID checks did not all match"
+  },
+  {
+    "schoolId": "soongeui",
+    "commuteName": "숭의초",
+    "commuteAddress": "서울 중구 소파로2길 10",
+    "status": "public_identity_matched",
+    "candidates": [
+      {
+        "slug": "soongeui",
+        "name": "숭의초등학교",
+        "address": "서울특별시 중구 소파로2길 10"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/soongeui",
+    "pageSha256": "7e2141b6a4a5fc95d9127da0e861c053fd29ca3c24ea3ae653baf8a8563311c7",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": true,
+    "institutionId": "fa8c1bbf-4e79-500d-9109-dafa1a620df0",
+    "officialName": "숭의초등학교"
+  },
+  {
+    "schoolId": "shinkwang",
+    "commuteName": "신광초",
+    "commuteAddress": "서울 용산구 청파로 263",
+    "status": "public_identity_matched",
+    "candidates": [
+      {
+        "slug": "skes",
+        "name": "신광초등학교",
+        "address": "서울특별시 용산구 청파로 263"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/skes",
+    "pageSha256": "8a6b0528c828e25d6f94f3539b201db3110eeeb588dfce168fc2a5e6f7e3d660",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": true,
+    "institutionId": "030ac9b0-b1f8-5307-9dca-e8fcb8945bb0",
+    "officialName": "신광초등학교"
+  },
+  {
+    "schoolId": "younghoon",
+    "commuteName": "영훈초",
+    "commuteAddress": "서울 강북구 도봉로13가길 19",
+    "status": "public_identity_matched",
+    "candidates": [
+      {
+        "slug": "younghoon",
+        "name": "영훈초등학교",
+        "address": "서울특별시 강북구 도봉로13가길 19"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/younghoon",
+    "pageSha256": "d5ebe0e6d1135597be5c9e3611c3c4742e27fc53367487d56d9d12cd44bf2bf1",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": true,
+    "institutionId": "626f9b01-1855-536f-b7cc-1608ab65eb9b",
+    "officialName": "영훈초등학교"
+  },
+  {
+    "schoolId": "yale",
+    "commuteName": "예일초",
+    "commuteAddress": "서울 은평구 연서로 117",
+    "status": "public_identity_matched",
+    "candidates": [
+      {
+        "slug": "yale",
+        "name": "예일초등학교",
+        "address": "서울특별시 은평구 연서로 117"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/yale",
+    "pageSha256": "deba31adecc7dccf41a057b455bd93e43cd8d3841e6897613351163e56e8b930",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": true,
+    "institutionId": "af494821-037e-5730-a54e-809cb7253e41",
+    "officialName": "예일초등학교"
+  },
+  {
+    "schoolId": "uchon",
+    "commuteName": "우촌초",
+    "commuteAddress": "서울 성북구 성북로4길 52-1",
+    "status": "public_identity_matched",
+    "candidates": [
+      {
+        "slug": "uchon",
+        "name": "우촌초등학교",
+        "address": "서울특별시 성북구 성북로4길 52-1"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/uchon",
+    "pageSha256": "cf4c0e7e87cfa1882a2b8aadfbc531fcd0cbfd68ade765635fa0bf442a19a8f0",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": true,
+    "institutionId": "37de5a08-cbb8-5dec-95d1-faca0a5d8009",
+    "officialName": "우촌초등학교"
+  },
+  {
+    "schoolId": "unhyun",
+    "commuteName": "운현초",
+    "commuteAddress": "서울 종로구 삼일대로 460",
+    "status": "public_identity_matched",
+    "candidates": [
+      {
+        "slug": "unhyun",
+        "name": "운현초등학교",
+        "address": "서울특별시 종로구 삼일대로 460"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/unhyun",
+    "pageSha256": "d61a4f613a9be05d2a65d7224297a788d538b4f5778d085a42fdc951b358f936",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": true,
+    "institutionId": "b1204d52-f578-5601-b066-543e15680e9a",
+    "officialName": "운현초등학교"
+  },
+  {
+    "schoolId": "yooseok",
+    "commuteName": "유석초",
+    "commuteAddress": "서울 강서구 화곡로69길 9",
+    "status": "public_identity_matched",
+    "candidates": [
+      {
+        "slug": "yooseok",
+        "name": "유석초등학교",
+        "address": "서울특별시 강서구 화곡로69길 9"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/yooseok",
+    "pageSha256": "27e3c60b460067ce14c9935f352e954b48da4c8ae6342e345924e3f5c30f887a",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": true,
+    "institutionId": "d8acf075-8300-516c-94b5-bc485c485b5e",
+    "officialName": "유석초등학교"
+  },
+  {
+    "schoolId": "eunseok",
+    "commuteName": "은석초",
+    "commuteAddress": "서울 동대문구 장안벚꽃로 205",
+    "status": "public_identity_matched",
+    "candidates": [
+      {
+        "slug": "eunseok",
+        "name": "은석초등학교",
+        "address": "서울특별시 동대문구 장안벚꽃로 205"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/eunseok",
+    "pageSha256": "2ee389345ab64645910e7d22030231d6f9c9a9236f8f435dd95c18f9bd2b94ab",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": true,
+    "institutionId": "0af8b3c4-626f-55f5-81ee-ee36800d75d3",
+    "officialName": "은석초등학교"
+  },
+  {
+    "schoolId": "ewha",
+    "commuteName": "이대부초",
+    "commuteAddress": "서울 서대문구 성산로 512-39",
+    "status": "public_identity_matched",
+    "candidates": [
+      {
+        "slug": "ewha",
+        "name": "이화여자대학교사범대학부속초등학교",
+        "address": "서울특별시 서대문구 성산로 512-39"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/ewha",
+    "pageSha256": "3055a4f9083924380f4e7d58ff2883df77794e75630f6b5f639e5f6e975725ad",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": true,
+    "institutionId": "3df6cf6c-2016-5626-83a4-3c78a87be1fb",
+    "officialName": "이화여자대학교사범대학부속초등학교"
+  },
+  {
+    "schoolId": "cau",
+    "commuteName": "중대부초",
+    "commuteAddress": "서울 동작구 서달로 135",
+    "status": "public_identity_matched",
+    "candidates": [
+      {
+        "slug": "cau",
+        "name": "중앙대학교사범대학부속초등학교",
+        "address": "서울특별시 동작구 서달로 135"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/cau",
+    "pageSha256": "d1ef6020015e4287eb5cdea600d158471466f3fc2418e4ef7d1dba269fbc80f2",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": true,
+    "institutionId": "1968cc29-a427-54e6-9326-6750e711d27a",
+    "officialName": "중앙대학교사범대학부속초등학교"
+  },
+  {
+    "schoolId": "cheongwon",
+    "commuteName": "청원초",
+    "commuteAddress": "서울 노원구 한글비석로 506",
+    "status": "public_identity_matched",
+    "candidates": [
+      {
+        "slug": "cheongwon",
+        "name": "청원초등학교",
+        "address": "서울특별시 노원구 한글비석로 506"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/cheongwon",
+    "pageSha256": "2158778f3403bb244842feedba3a712023e1af27430f88d0dc8bfb2d972cdd3c",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": true,
+    "institutionId": "98064bab-136b-5320-b7a4-894ff3e767fc",
+    "officialName": "청원초등학교"
+  },
+  {
+    "schoolId": "chugye",
+    "commuteName": "추계초",
+    "commuteAddress": "서울 서대문구 북아현로11가길 7",
+    "status": "public_identity_matched",
+    "candidates": [
+      {
+        "slug": "chugye",
+        "name": "추계초등학교",
+        "address": "서울특별시 서대문구 북아현로11가길 7"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/chugye",
+    "pageSha256": "9e14a1e16d30dc5462672bc80c93ab762a799dcb6adf8c99b24b74cc84788be8",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": true,
+    "institutionId": "7bd27832-3120-5335-acb1-b3ebc6c09707",
+    "officialName": "추계초등학교"
+  },
+  {
+    "schoolId": "choongam",
+    "commuteName": "충암초",
+    "commuteAddress": "서울 은평구 가좌로5길 5",
+    "status": "public_identity_matched",
+    "candidates": [
+      {
+        "slug": "choongam",
+        "name": "충암초등학교",
+        "address": "서울특별시 은평구 가좌로5길 5"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/choongam",
+    "pageSha256": "e527f1e60578e4496a5354bd8fd80b88af4e3a5798d130aafe6186ba64ffd7f6",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": true,
+    "institutionId": "6f6df02f-3bf9-5cdb-bf2d-80353a0ee646",
+    "officialName": "충암초등학교"
+  },
+  {
+    "schoolId": "taegang",
+    "commuteName": "태강삼육초",
+    "commuteAddress": "서울 노원구 화랑로 815",
+    "status": "public_identity_matched",
+    "candidates": [
+      {
+        "slug": "taegang",
+        "name": "태강삼육초등학교",
+        "address": "서울특별시 노원구 화랑로 815"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/taegang",
+    "pageSha256": "7b36bdc890a29d16fc9fe609085ba2830f76f535fe0d467c4d68d04ca95b7fdd",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": true,
+    "institutionId": "dfb38543-f8b0-57df-915f-38e35da21b06",
+    "officialName": "태강삼육초등학교"
+  },
+  {
+    "schoolId": "hansin",
+    "commuteName": "한신초",
+    "commuteAddress": "서울 도봉구 노해로49길 69",
+    "status": "public_identity_matched",
+    "candidates": [
+      {
+        "slug": "ihansin",
+        "name": "한신초등학교",
+        "address": "서울특별시 도봉구 노해로49길 69"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/ihansin",
+    "pageSha256": "c013e6601c1f9e63370a5b59a5ac007e2d21f8d0e70950e4b30a03580cdd1b69",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": true,
+    "institutionId": "409f2fe0-f572-5c0f-89ab-9c11cd726424",
+    "officialName": "한신초등학교"
+  },
+  {
+    "schoolId": "hanyang",
+    "commuteName": "한양초",
+    "commuteAddress": "서울 성동구 왕십리로 222",
+    "status": "unresolved",
+    "candidates": [
+      {
+        "slug": "hye",
+        "name": "한양초등학교",
+        "address": "서울특별시 성동구 살곶이길 208"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/hye",
+    "pageSha256": "de62ef8a54fcf6a15e798e13f0f86dce228562d8efa412f6011f1cb02651a39d",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": false,
+    "reason": "Exact name/address/one UUID checks did not all match"
+  },
+  {
+    "schoolId": "hongik",
+    "commuteName": "홍대부초",
+    "commuteAddress": "서울 마포구 성미산로 51",
+    "status": "public_identity_matched",
+    "candidates": [
+      {
+        "slug": "hongik",
+        "name": "홍익대학교사범대학부속초등학교",
+        "address": "서울특별시 마포구 성미산로 51"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/hongik",
+    "pageSha256": "2bf72c805d5b01e293872fefca600b4bc5723ef354a5f632670dd2ce9cd13669",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": true,
+    "institutionId": "34c9f6bd-b46b-5fcc-aac8-a8cc77d3dc3e",
+    "officialName": "홍익대학교사범대학부속초등학교"
+  },
+  {
+    "schoolId": "hwarang",
+    "commuteName": "화랑초",
+    "commuteAddress": "서울 노원구 화랑로 621",
+    "status": "public_identity_matched",
+    "candidates": [
+      {
+        "slug": "hwarang-s",
+        "name": "화랑초등학교",
+        "address": "서울특별시 노원구 화랑로 621"
+      }
+    ],
+    "publicPageUrl": "https://preppy-web-production.up.railway.app/institutions/hwarang-s",
+    "pageSha256": "92993d9228ba07de9c1d33026c609f8864dec1ce0e56734461de03da6537450e",
+    "namePresent": true,
+    "seedAddressPresent": true,
+    "commuteAddressMatchesSeed": true,
+    "institutionId": "bbad0468-6d31-5061-8a48-dcc9acb50167",
+    "officialName": "화랑초등학교"
+  }
+]

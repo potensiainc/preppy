@@ -1,0 +1,54 @@
+{
+  "validated_on": "2026-10-15",
+  "counts": {
+    "schools": 38,
+    "source_records": 163,
+    "unique_source_urls": 151,
+    "fact_records": 143,
+    "route_variants": 81,
+    "route_stop_records": 709,
+    "source_evidence_status": {
+      "inaccessible": 58,
+      "secondary_unverified": 64,
+      "official_verified": 33,
+      "official_older": 8
+    },
+    "school_coverage_class": {
+      "primary_inaccessible_secondary_or_no_facts": 20,
+      "published_timetable_read_not_live_verified": 4,
+      "historical_official_reference_only": 4,
+      "official_notice_read_routes_inaccessible": 1,
+      "procurement_plan_read_not_live_verified": 8,
+      "no_current_commute_document_found": 1
+    },
+    "fact_integration_use": {
+      "unverified_lead_only": 48,
+      "labelled_published_fact_only": 38,
+      "historical_reference_only": 6,
+      "source_metadata_only": 1,
+      "labelled_plan_only": 44,
+      "comparison_only": 2,
+      "quarantined_quality_issue": 3,
+      "quarantined_date_inference": 1
+    },
+    "current_operation_verified_schools": 0,
+    "verified_2027_academic_year_timetables": 0
+  },
+  "checks": {
+    "exact_38_school_identity_coverage": true,
+    "source_and_fact_references_valid": true,
+    "mobile_phone_pattern_count": 0,
+    "private_identifier_key_count": 0,
+    "current_operation_claim_count": 0,
+    "verified_2027_schedule_claim_count": 0,
+    "commute_eta_support_claim_count": 0,
+    "admission_eligibility_support_claim_count": 0,
+    "original_collection_files_modified": false
+  },
+  "limitations": [
+    "PII validation combines schema/content review and pattern scans; it is not a general-purpose proof that all conceivable identifiers are absent.",
+    "No new source retrieval was performed during consolidation. Research records, URLs, warnings and internal cross-references were checked.",
+    "Source reachability may change after collection."
+  ],
+  "errors": []
+}

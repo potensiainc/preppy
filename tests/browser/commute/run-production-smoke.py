@@ -1,102 +1,184 @@
+"""Chromium viewport emulation, not a real-device certification."""
 import os
-import tempfile
-
+import mimetypes
+import json
+from urllib.parse import urlsplit,unquote
+from pathlib import Path
 from playwright.sync_api import sync_playwright
-
-
-BASE_URL = os.environ.get("COMMUTE_SMOKE_BASE_URL", "http://127.0.0.1:3312")
-
-
-def assert_no_horizontal_overflow(page) -> None:
-    overflow = page.evaluate(
-        "document.documentElement.scrollWidth - document.documentElement.clientWidth"
-    )
-    assert overflow <= 1, f"document has {overflow}px horizontal overflow"
-
-
-with sync_playwright() as playwright:
-    browser = playwright.chromium.launch(headless=True)
-    console_errors: list[str] = []
-    page_errors: list[str] = []
-
-    desktop = browser.new_page(viewport={"width": 1440, "height": 900})
-    desktop.on(
-        "console",
-        lambda message: console_errors.append(message.text)
-        if message.type == "error"
-        else None,
-    )
-    desktop.on("pageerror", lambda error: page_errors.append(str(error)))
-    desktop.goto(f"{BASE_URL}/commute?area=서초구")
-    desktop.wait_for_load_state("networkidle")
-    desktop.locator(".school-card").first.wait_for(state="visible")
-
-    assert desktop.url.endswith(
-        "/commute/index.html?area=%EC%84%9C%EC%B4%88%EA%B5%AC"
-    )
-    assert desktop.locator("#page-title").inner_text().startswith(
-        "우리 아이의 학교 가는 길"
-    )
-    assert desktop.locator(".school-card").count() == 12
-    assert "2026년 8월 31일" in desktop.locator(".explorer-foot").inner_text()
-
-    desktop_wordmark = desktop.locator(".site-header .wordmark")
-    assert desktop_wordmark.evaluate("element => element.tagName") == "A"
-    assert desktop_wordmark.inner_text() == "PREPPY"
-    assert desktop_wordmark.get_attribute("href") == "/"
-    assert desktop.evaluate(
-        "performance.getEntriesByType('resource').some(entry => entry.name.endsWith('/vendor/DM-Sans-Latin.woff2'))"
-    )
-    assert desktop_wordmark.evaluate(
-        """element => {
-          const style = getComputedStyle(element);
-          return {
-            color: style.color,
-            fontFamily: style.fontFamily,
-            fontSize: style.fontSize,
-            fontWeight: style.fontWeight,
-            letterSpacing: style.letterSpacing,
-          };
-        }"""
-    ) == {
-        "color": "rgb(49, 92, 80)",
-        "fontFamily": '"DM Sans", "DM Sans Fallback", "IBM Plex Sans KR", "IBM Plex Sans KR Fallback", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif',
-        "fontSize": "16.8px",
-        "fontWeight": "600",
-        "letterSpacing": "1.848px",
-    }
-
-    desktop.locator(".school-open").first.click()
-    desktop.locator("#school-detail").wait_for(state="visible")
-    assert desktop.locator("#school-detail .detail-directions button").count() == 3
-    assert_no_horizontal_overflow(desktop)
-
-    mobile = browser.new_page(viewport={"width": 390, "height": 844})
-    mobile.goto(f"{BASE_URL}/commute?area=서초구&school=soongeui&scope=all")
-    mobile.wait_for_load_state("networkidle")
-    mobile.locator("#school-detail").wait_for(state="visible")
-    assert "mobile-map" in (mobile.locator("body").get_attribute("class") or "")
-    assert "route-summary" in (mobile.locator("body").get_attribute("class") or "")
-    assert mobile.locator(".map-pane").is_visible()
-    assert mobile.locator(".mobile-detail-action").is_visible()
-    assert mobile.locator("#school-detail").bounding_box()["height"] <= 231
-    assert mobile.locator(".site-header .wordmark").evaluate(
-        "element => getComputedStyle(element).fontSize"
-    ) == "15.68px"
-    assert_no_horizontal_overflow(mobile)
-
-    home_check = browser.new_page(viewport={"width": 1440, "height": 900})
-    home_check.goto(f"{BASE_URL}/commute")
-    home_check.wait_for_load_state("networkidle")
-    home_check.locator(".site-header .wordmark").click()
-    home_check.wait_for_url(f"{BASE_URL}/")
-    home_check.close()
-
-    screenshot = os.path.join(tempfile.gettempdir(), "preppy-commute-production.png")
-    mobile.screenshot(path=screenshot, full_page=True)
-
+BASE_URL=os.environ.get('COMMUTE_SMOKE_BASE_URL','http://127.0.0.1:3312')
+OUTPUT=Path(os.environ.get('COMMUTE_SMOKE_OUTPUT','test-results/schoolmap'))
+OUTPUT.mkdir(parents=True,exist_ok=True)
+def no_overflow(page):
+    assert page.evaluate('document.documentElement.scrollWidth-document.documentElement.clientWidth')<=1
+def touch_targets(page):
+    small=page.locator('button,select').evaluate_all("""items=>items.filter(e=>e.getClientRects().length&&getComputedStyle(e).visibility!=='hidden').map(e=>({label:e.getAttribute('aria-label')||e.textContent,rect:e.getBoundingClientRect()})).filter(x=>x.rect.width<43.9||x.rect.height<43.9).map(x=>({label:x.label,width:x.rect.width,height:x.rect.height}))""")
+    assert not small,small
+with sync_playwright() as p:
+    browser=p.chromium.launch(headless=True,timeout=20000)
+    errors=[]
+    def local_files(route):
+        path=unquote(urlsplit(route.request.url).path)
+        if path=='/schoolmap':path='/commute/index.html'
+        root=Path(__file__).resolve().parents[3]/'public'
+        file=(root/path.lstrip('/')).resolve()
+        if not file.is_relative_to(root.resolve()) or not file.is_file():
+            route.fulfill(status=404,body='Not found');return
+        route.fulfill(status=200,body=file.read_bytes(),content_type=mimetypes.guess_type(file)[0] or 'application/octet-stream')
+    def configure(page,block_map=True):
+        if os.environ.get('COMMUTE_SMOKE_LOCAL_FILES')=='1':page.route(f'{BASE_URL}/**',local_files)
+        if block_map:page.route('**/vendor/maplibre-gl.js',lambda route:route.abort())
+    for width,height in [(360,800),(390,844),(430,932),(844,390),(1440,900)]:
+        page=browser.new_page(viewport={'width':width,'height':height},reduced_motion='reduce')
+        page.on('pageerror',lambda e:errors.append(str(e)))
+        configure(page)
+        page.goto(f'{BASE_URL}/schoolmap')
+        page.locator('.school-card').first.wait_for()
+        assert page.locator('.school-card').count()==38
+        assert page.locator('.wordmark').text_content()=='preppy.'
+        assert page.locator('.wordmark').get_attribute('href')=='/'
+        assert '전체' in page.locator('#current-scope').inner_text()
+        no_overflow(page)
+        if width<=760:touch_targets(page)
+        page.screenshot(path=str(OUTPUT/f'list-{width}.png'))
+        if width<=760:
+            page.evaluate('window.scrollTo(0,1000)')
+            assert page.locator('#search').bounding_box()['y']>=0
+            assert page.locator('#search').bounding_box()['y']<180
+            page.evaluate('window.scrollTo(0,0)')
+        page.locator('.heart-button').first.click()
+        assert '이 브라우저' in page.locator('#toast').inner_text()
+        page.reload();page.locator('.school-card').first.wait_for()
+        assert page.locator('.heart-button.saved').count()==1
+        page.locator('#search').fill('목동')
+        assert page.locator('.search-result').count()>12
+        assert '목1동' in page.locator('#search-results').inner_text()
+        assert '등교' in page.locator('#search-results').inner_text()
+        page.locator('#search').press('ArrowDown')
+        assert page.locator('.search-result').first.evaluate('e=>e===document.activeElement')
+        page.keyboard.press('Escape')
+        page.locator('#search').fill('')
+        page.locator('.school-open').first.click()
+        page.locator('#school-detail').wait_for(state='visible')
+        assert '적용 학년 미확인' in page.locator('.detail-scope').inner_text()
+        no_overflow(page)
+        if width<=760:page.locator('.mobile-detail-action').click()
+        options=page.locator('#detail-route option').evaluate_all('items=>items.map(o=>o.value).filter(Boolean)')
+        if options:
+            page.locator('#detail-route').select_option(options[0])
+            page.locator('.stop-row').first.wait_for(state='visible')
+            page.locator('.stop-row').first.click()
+            page.locator('.desktop-detail-action').click()
+            page.screenshot(path=str(OUTPUT/f'precomparison-{width}.png'))
+            page.locator('[data-action="compare-open"]').click()
+            assert page.locator('.compare-stop').count()==1
+            assert '적용 학년' in page.locator('#compare-content').inner_text()
+            assert '시간 미확인' in page.locator('#compare-content').inner_text()
+            page.screenshot(path=str(OUTPUT/f'comparison-{width}.png'),full_page=True)
+            page.locator('[data-close="compare-dialog"]').click()
+            url=page.url
+            page.reload();page.locator('#school-detail').wait_for(state='visible')
+            assert page.url==url
+            assert page.locator('#detail-route').input_value()==options[0]
+            assert page.locator('.stop-row.active').count()==1
+        page.screenshot(path=str(OUTPUT/f'timetable-{width}.png'),full_page=True)
+        no_overflow(page)
+        page.close()
+    page=browser.new_page(viewport={'width':390,'height':844},reduced_motion='reduce')
+    configure(page)
+    page.goto(f'{BASE_URL}/schoolmap?area=강북구&school=kyonggi&scope=all')
+    page.locator('.scope-warning').wait_for(state='visible')
+    page.locator('[data-action="retry-map"]').wait_for(state='visible')
+    assert not page.locator('.map-actions').is_visible()
+    assert page.locator('.mobile-detail-action').is_visible()
+    page.screenshot(path=str(OUTPUT/'map-unavailable-mismatch-390.png'),full_page=True)
+    page.set_viewport_size({'width':390,'height':420})
+    page.locator('#search').fill('경기')
+    page.locator('#search').press('ArrowDown')
+    page.keyboard.press('Enter')
+    no_overflow(page)
+    page.screenshot(path=str(OUTPUT/'keyboard-viewport-390.png'),full_page=True)
+    # Storage denial must preserve a usable session without claiming durable saves.
+    page=browser.new_page(viewport={'width':390,'height':844},reduced_motion='reduce')
+    configure(page)
+    page.add_init_script("Object.defineProperty(window,'localStorage',{get(){throw new Error('blocked storage fixture')}})")
+    page.goto(f'{BASE_URL}/schoolmap');page.locator('.heart-button').first.click()
+    assert '현재 화면에서만' in page.locator('#toast').inner_text()
+    page.reload();page.locator('.school-card').first.wait_for()
+    assert page.locator('.heart-button.saved').count()==0
+    # Successful local WebGL map with external background intentionally unavailable.
+    page=browser.new_page(viewport={'width':390,'height':844},reduced_motion='reduce')
+    page.on('pageerror',lambda e:errors.append(str(e)))
+    configure(page,block_map=False)
+    page.route('https://tiles.openfreemap.org/**',lambda route:route.abort())
+    page.goto(f'{BASE_URL}/schoolmap')
+    page.locator('.school-card').first.wait_for()
+    assert page.locator('#map canvas').count()==0 # mobile list does not initialize WebGL
+    page.locator('#mobile-view-toggle').click()
+    page.locator('#map canvas').wait_for(state='visible')
+    assert page.locator('#search').is_visible()
+    assert page.locator('#mobile-view-toggle').get_attribute('aria-pressed')=='true'
+    page.screenshot(path=str(OUTPUT/'map-local-390.png'))
+    page.locator('#mobile-view-toggle').click()
+    assert page.locator('.school-card').first.is_visible()
+    page.screenshot(path=str(OUTPUT/'list-after-map-390.png'))
+    page.goto(f'{BASE_URL}/schoolmap?area=강북구&school=kyonggi&scope=all')
+    page.locator('#map canvas').wait_for(state='visible')
+    page.locator('.scope-warning').wait_for(state='visible')
+    assert page.locator('#search').is_visible()
+    page.screenshot(path=str(OUTPUT/'map-sheet-mismatch-390.png'))
+    page.locator('.mobile-detail-action').click()
+    assert page.locator('.route-list').is_visible()
+    no_overflow(page)
+    # Synthetic evidence fixture validates presentation; it is never shipped as research.
+    page=browser.new_page(viewport={'width':390,'height':844},reduced_motion='reduce')
+    configure(page)
+    evidence={'schemaVersion':1,'records':[{'schoolId':'kyonggi','field':'TEST FIXTURE','sourceUrl':'https://school.example/test','verificationStatus':'conflicting','sourcePublicationDate':'2026-09-02','documentDate':'2025-09-01','attachmentRevisionDate':'2026-09-15','effectiveSchoolYear':'2027','operatingStatus':'TEST 예정','conditions':['TEST 적용 조건 전체 문장'],'conflicts':['TEST 날짜가 달라요.']}]}
+    page.route('**/commute/provenance.json',lambda route:route.fulfill(content_type='application/json',body=json.dumps(evidence)))
+    page.goto(f'{BASE_URL}/schoolmap?school=kyonggi')
+    page.locator('.field-sources summary').click()
+    text=page.locator('.field-sources').inner_text()
+    for expected in ['2026-09-02','2025-09-01','2026-09-15','2027','TEST 적용 조건 전체 문장','TEST 날짜가 달라요.']:assert expected in text
+    page.screenshot(path=str(OUTPUT/'evidence-synthetic-fixture-390.png'),full_page=True)
+    # Regression: scope changes clear a selected comparison stop outside the new scope.
+    page=browser.new_page(viewport={'width':390,'height':844},reduced_motion='reduce');configure(page)
+    page.goto(f'{BASE_URL}/schoolmap?area=양천구&school=kyonggi&route=kyonggi:0&way=등교&stop=0')
+    page.locator('.stop-row').first.wait_for();page.locator('.stop-row').first.click()
+    page.locator('.desktop-detail-action').click();page.locator('[data-action="compare-open"]').click()
+    assert page.locator('.compare-stop').input_value()=='kyonggi:0|등교|0'
+    page.locator('[data-close="compare-dialog"]').click()
+    page.locator('#region-button').click();page.locator('button[data-region="강서구"]').click()
+    page.locator('[data-action="compare-open"]').click()
+    assert page.locator('.compare-stop').input_value()==''
+    assert '선택 전' in page.locator('#compare-content').inner_text()
+    assert '목동 14단지' not in page.locator('#compare-content').inner_text()
+    page.screenshot(path=str(OUTPUT/'comparison-scope-cleared-390.png'),full_page=True)
+    # Regression: rotation out of the mobile list initializes the lazy map.
+    page=browser.new_page(viewport={'width':390,'height':844},reduced_motion='reduce');configure(page,False)
+    page.route('https://tiles.openfreemap.org/**',lambda route:route.abort())
+    page.goto(f'{BASE_URL}/schoolmap');page.locator('.school-card').first.wait_for()
+    assert page.locator('#map canvas').count()==0
+    page.set_viewport_size({'width':844,'height':390});page.locator('#map canvas').wait_for(state='visible')
+    no_overflow(page);page.screenshot(path=str(OUTPUT/'rotation-lazy-map-844.png'))
+    page.locator('.school-open').first.click()
+    choice=page.locator('#detail-route option').evaluate_all('items=>items.map(o=>o.value).filter(Boolean)[0]')
+    page.locator('#detail-route').select_option(choice)
+    touch_targets(page) # Wide touch layout must retain 44px overview-return target.
+    # Regression: explicit stop-map action from a list-opened route loads and focuses a map.
+    page=browser.new_page(viewport={'width':390,'height':844},reduced_motion='reduce');configure(page,False)
+    page.route('https://tiles.openfreemap.org/**',lambda route:route.abort())
+    page.goto(f'{BASE_URL}/schoolmap');page.locator('.school-open').first.click();page.locator('.mobile-detail-action').click()
+    option=page.locator('#detail-route option').evaluate_all('items=>items.map(o=>o.value).filter(Boolean)[0]')
+    page.locator('#detail-route').select_option(option)
+    page.locator('[data-action="peek-route"]').click();page.locator('#map canvas').wait_for(state='visible')
+    assert 'mobile-map' in page.locator('body').get_attribute('class')
+    assert page.locator('.stop-row.active').count()==1
+    touch_targets(page);no_overflow(page)
+    page.screenshot(path=str(OUTPUT/'list-route-stop-map-390.png'),full_page=True)
+    page=browser.new_page(viewport={'width':390,'height':844},reduced_motion='reduce');configure(page)
+    page.goto(f'{BASE_URL}/schoolmap?school=yale');page.locator('.school-sources summary').first.click()
+    assert '파란 표시' in page.locator('.school-sources').inner_text()
+    assert '조달 계획' in page.locator('.school-sources').inner_text()
+    page.screenshot(path=str(OUTPUT/'research-yale-390.png'),full_page=True)
     browser.close()
-
-    assert not page_errors, page_errors
-    assert not console_errors, console_errors
-    print(f"commute browser smoke passed; screenshot={screenshot}")
+    assert not errors,errors
+print(f'PASS: five emulated viewports, reload saves, search, keyboard navigation, comparison, URL restore, map failure. Screenshots: {OUTPUT}')
