@@ -73,7 +73,7 @@ function appendCookies(
 }
 
 function adminLoginDenialResponse(
-  status: 400 | 403 | 429 | 502 | 503,
+  status: 400 | 403 | 429 | 503,
   options: {
     retryAfterSeconds?: number;
     cookies?: readonly SerializableCookie[];
@@ -194,7 +194,7 @@ function capabilitiesMatch(actual: string, expected: string): boolean {
 }
 
 function callbackFailure(
-  status: 400 | 403 | 502 | 503,
+  status: 400 | 403 | 503,
   clearedFlowCookies: readonly ClearAdminOidcFlowCookieDescriptor[],
 ): Response {
   return adminLoginDenialResponse(status, { cookies: clearedFlowCookies });
@@ -362,7 +362,8 @@ export async function handleAdminLoginCallbackRoute(
       now: nowSeconds,
     });
   } catch {
-    return callbackFailure(502, clearedFlowCookies);
+    // 503, not 502: Cloudflare replaces 502 bodies with its own error page.
+    return callbackFailure(503, clearedFlowCookies);
   }
 
   let admin;

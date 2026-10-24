@@ -461,7 +461,7 @@ describe("WP-08 auth Route Handler factories", () => {
       ),
     );
     const failedBody = await failed.text();
-    expect(failed.status).toBe(502);
+    expect(failed.status).toBe(503);
     expect(failedBody).toContain("잠시 후 다시 시도해 주세요");
     expect(failedBody).not.toContain("provider token");
     expect(failedBody).not.toContain("database");
