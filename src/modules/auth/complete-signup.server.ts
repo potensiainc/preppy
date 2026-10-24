@@ -25,6 +25,7 @@ import {
   activatePendingUser,
   appendConsentDecision,
   findUserEmail,
+  deleteUserEmail,
   findUserForUpdate,
   replaceUserInterestCategories,
   replaceUserInterestRegions,
@@ -76,6 +77,7 @@ const completeSignupInputSchema = z
     serviceEmailUpdatesPolicyVersion: z.string().trim().min(1).max(64),
     serviceEmailUpdatesConsent: z.boolean(),
     email: optionalEmailSchema,
+    removeEmail: z.boolean().optional().default(false),
     interestRegions: z
       .array(regionCodeSchema)
       .max(20)
@@ -97,6 +99,13 @@ const completeSignupInputSchema = z
   })
   .strict()
   .superRefine((input, context) => {
+    if (input.removeEmail && input.email !== undefined) {
+      context.addIssue({
+        code: "custom",
+        path: ["email"],
+        message: "An email cannot be both provided and removed",
+      });
+    }
     for (const requiredType of [
       "TERMS_OF_SERVICE",
       "PRIVACY_POLICY",
@@ -135,6 +144,7 @@ export type CompleteSignupResult = {
 export type CompleteSignupPersistence = {
   findUserForUpdate: typeof findUserForUpdate;
   findUserEmail: typeof findUserEmail;
+  deleteUserEmail: typeof deleteUserEmail;
   appendConsentDecision: typeof appendConsentDecision;
   upsertUserInputEmail: typeof upsertUserInputEmail;
   upsertUserProfile: typeof upsertUserProfile;
@@ -147,6 +157,7 @@ export type CompleteSignupPersistence = {
 export const defaultCompleteSignupPersistence: CompleteSignupPersistence = {
   findUserForUpdate,
   findUserEmail,
+  deleteUserEmail,
   appendConsentDecision,
   upsertUserInputEmail,
   upsertUserProfile,
@@ -232,7 +243,9 @@ async function persistSignup(
     decidedAt: now,
   });
 
-  if (input.email !== undefined) {
+  if (input.removeEmail) {
+    await persistence.deleteUserEmail(executor, userId);
+  } else if (input.email !== undefined) {
     const existingEmail = await persistence.findUserEmail(executor, userId);
     if (existingEmail?.emailNormalized !== input.email) {
       await persistence.upsertUserInputEmail(executor, {

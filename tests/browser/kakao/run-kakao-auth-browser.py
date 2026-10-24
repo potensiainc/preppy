@@ -128,8 +128,8 @@ def complete_onboarding(page: Page, email: str | None) -> None:
     page.get_by_label(re.compile("서비스 이용약관에 동의해요")).check()
     page.get_by_label(re.compile("개인정보 수집·이용에 동의해요")).check()
     if email is not None:
-        page.get_by_label("알림 이메일 (선택)").fill(email)
-    page.get_by_role("button", name="동의하고 가입하기").click()
+        page.get_by_label("알림 이메일", exact=True).fill(email)
+    page.get_by_role("button", name=re.compile("동의하고 가입하기")).click()
 
 
 def scenario(name: str):
@@ -157,7 +157,7 @@ def new_signup_from_follow(browser: Browser) -> None:
     button.click()
     page.wait_for_url(f"{BASE_URL}/onboarding")
     expect(page.get_by_label("이어갈 관심기관")).to_contain_text(INSTITUTION_NAME)
-    expect(page.get_by_label("알림 이메일 (선택)")).to_have_value(
+    expect(page.get_by_label("알림 이메일", exact=True)).to_have_value(
         f"kakao{subject(1)}@example.test"
     )
     require(user_row(subject(1)) == "PENDING", "user must be PENDING before onboarding")
@@ -215,7 +215,8 @@ def signup_without_email(browser: Browser) -> None:
     page = context.new_page()
     page.goto(f"{BASE_URL}/auth/kakao/start")
     page.wait_for_url(f"{BASE_URL}/onboarding")
-    expect(page.get_by_label("알림 이메일 (선택)")).to_have_value("")
+    expect(page.get_by_role("switch", name="알림 이메일 제공 (선택)")).not_to_be_checked()
+    expect(page.get_by_label("알림 이메일", exact=True)).to_have_count(0)
     shot(page, "03-onboarding-mobile.png")
     complete_onboarding(page, None)
     page.wait_for_url(re.compile(f"{re.escape(BASE_URL)}/(my-preppy)?$"))
@@ -360,6 +361,35 @@ def pending_follow_after_header_login(browser: Browser) -> None:
     context.close()
 
 
+@scenario("12. 선택 토글: 모두 동의 버튼 문구, 이메일 제공 끄면 저장 이메일 삭제 (데스크톱)")
+def optional_toggles(browser: Browser) -> None:
+    context = new_context(browser)
+    fake_kakao(context, f"e2e.{subject(6)}.verified")
+    page = context.new_page()
+    page.goto(f"{BASE_URL}/auth/kakao/start")
+    page.wait_for_url(f"{BASE_URL}/onboarding")
+    email_switch = page.get_by_role("switch", name="알림 이메일 제공 (선택)")
+    updates_switch = page.get_by_role("switch", name="남들보다 빠르게 입학정보 받아볼래요 (선택)")
+    submit = page.locator("button[type=submit]")
+    expect(email_switch).to_be_checked()
+    expect(submit).to_have_text("필수 동의하고 가입하기")
+    updates_switch.check()
+    expect(submit).to_have_text("모두 동의하고 가입하기")
+    shot(page, "09-onboarding-all-agreed-desktop.png")
+    email_switch.uncheck()
+    expect(submit).to_have_text("필수 동의하고 가입하기")
+    expect(page.get_by_text("알림을 받으려면 알림 이메일 제공을 켜 주세요.")).to_be_visible()
+    updates_switch.uncheck()
+    complete_onboarding(page, None)
+    page.wait_for_url(re.compile(f"{re.escape(BASE_URL)}/(my-preppy)?$"))
+    emails = sql(
+        "select count(*) from user_emails e join auth_identities a on a.user_id=e.user_id "
+        f"where a.provider_subject='{subject(6)}'"
+    )
+    require(emails == "0", f"turning email off must remove the Kakao email, found {emails}")
+    context.close()
+
+
 def main() -> None:
     EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
     require(
@@ -380,6 +410,7 @@ def main() -> None:
             logout,
             header_login,
             pending_follow_after_header_login,
+            optional_toggles,
         ):
             check(browser)
         browser.close()

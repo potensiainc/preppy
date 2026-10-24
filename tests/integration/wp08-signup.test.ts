@@ -785,6 +785,43 @@ describe("CompleteSignup", () => {
     ).resolves.toEqual(before);
   });
 
+  it("removes a stored Kakao email when the visitor turns the email item off", async () => {
+    const userId = await createUserFixture({ withExistingData: true });
+    const before = await runtime.client`
+      select * from user_emails where user_id = ${userId}
+    `;
+    expect(before.length).toBe(1);
+
+    await completeSignup(
+      signupContext(userId),
+      signupInput({ serviceEmailUpdatesConsent: false, removeEmail: true }),
+      {
+        transactionManager: runtime.transactionManager,
+        isLegalPublicationReady: () => true,
+        tracker: new TestAnalyticsTracker(),
+      },
+    );
+
+    await expect(
+      runtime.client`select * from user_emails where user_id = ${userId}`,
+    ).resolves.toEqual([]);
+  });
+
+  it("rejects an email that is both provided and removed", async () => {
+    const userId = await createUserFixture({ withExistingData: true });
+    await expect(
+      completeSignup(
+        signupContext(userId),
+        signupInput({ email: "parent@example.test", removeEmail: true }),
+        {
+          transactionManager: runtime.transactionManager,
+          isLegalPublicationReady: () => true,
+          tracker: new TestAnalyticsTracker(),
+        },
+      ),
+    ).rejects.toThrow();
+  });
+
   it.each([
     [
       "verified and usable",
@@ -1096,12 +1133,21 @@ describe("CompleteSignup", () => {
         },
         { pendingFollow: { institutionId } },
       ),
-    ).resolves.toMatchObject({ userId, userState: "ACTIVE", follow: { institutionId, state: "ACTIVE" } });
+    ).resolves.toMatchObject({
+      userId,
+      userState: "ACTIVE",
+      follow: { institutionId, state: "ACTIVE" },
+    });
     await expect(
       runtime.client`select status from users where id = ${userId}`,
     ).resolves.toEqual([{ status: "ACTIVE" }]);
     expect(await followStateForUser(userId)).toEqual({
-      follows: [expect.objectContaining({ institution_id: institutionId, status: "ACTIVE" })],
+      follows: [
+        expect.objectContaining({
+          institution_id: institutionId,
+          status: "ACTIVE",
+        }),
+      ],
       episodes: [expect.objectContaining({ deactivated_at: null })],
     });
     expect(tracker.snapshot()).toEqual([
