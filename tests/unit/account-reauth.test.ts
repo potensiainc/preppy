@@ -154,6 +154,9 @@ describe("OAuth authentication time", () => {
   );
   it.each([
     "/my-preppy/settings",
+    "/my-preppy",
+    "/my-preppy/",
+    "/my-preppy/../admin",
     "https://evil.example",
     "//evil.example",
     "/my-preppy/settings?delete=1",
@@ -197,7 +200,9 @@ describe("OAuth authentication time", () => {
       );
       expect(response.status).toBe(303);
       expect(response.headers.get("location")).toBe(
-        target === "/my-preppy/settings" ? target : "/",
+        target === "/my-preppy/settings" || target === "/my-preppy"
+          ? target
+          : "/",
       );
       expect(
         readUserSession(cookie(response, USER_SESSION_COOKIE_NAME), {

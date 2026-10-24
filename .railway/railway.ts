@@ -15,7 +15,7 @@ export default defineRailway((context) => {
     build: "npm run build",
     start: "npm run start",
     // release-integrity verifies the environment name, approved icons and
-    // the absent header login; /api/health is liveness only.
+    // the header login control; /api/health is liveness only.
     healthcheck: "/api/release-integrity",
     healthcheckTimeout: 120,
     replicas: 1,

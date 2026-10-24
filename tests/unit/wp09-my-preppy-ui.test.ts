@@ -35,7 +35,9 @@ describe("WP-09 My Preppy UI and private route", () => {
     expect(source).toContain('export const fetchCache = "force-no-store"');
     expect(source).toMatch(/noStore\(\)/);
     expect(source).toMatch(/robots:\s*\{\s*index:\s*false,\s*follow:\s*false/);
-    expect(source).toContain('redirect("/auth/kakao/start")');
+    expect(source).toContain(
+      'redirect("/auth/kakao/start?returnTo=%2Fmy-preppy")',
+    );
     expect(source).toContain('redirect("/onboarding")');
     expect(source).toMatch(/notFound\(\)|access === "DENIED"/);
     expect(source).not.toMatch(/searchParams|userId=/);
@@ -132,7 +134,7 @@ describe("WP-09 My Preppy UI and private route", () => {
     },
   );
 
-  it("keeps private account controls available without restoring public Kakao login", () => {
+  it("keeps private account controls and offers login when signed out", () => {
     const active = renderToStaticMarkup(
       createElement(AuthControlPresentation, {
         authenticated: true,
@@ -150,7 +152,8 @@ describe("WP-09 My Preppy UI and private route", () => {
         onLogout: () => undefined,
       }),
     );
-    expect(anonymous).toBe("");
+    expect(anonymous).toContain("로그인");
+    expect(anonymous).not.toContain('href="/my-preppy"');
   });
 
   it("offers a direct heart action and verifies the server deletion", async () => {

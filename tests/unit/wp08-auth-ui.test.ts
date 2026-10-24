@@ -37,14 +37,19 @@ const detail: InstitutionDetailDTO = {
 };
 
 describe("WP-08 auth-aware public UI", () => {
-  it("hides the Kakao login navigation item until provider approval while preserving signed-in controls", () => {
+  it("shows Kakao login to visitors and 내 프레피·logout to members", () => {
     const anonymousMarkup = renderToStaticMarkup(
       createElement(AuthControlPresentation, {
         authenticated: false,
         onLogout: () => undefined,
       }),
     );
-    expect(anonymousMarkup).toBe("");
+    expect(anonymousMarkup).toContain(
+      'href="/auth/kakao/start?returnTo=%2Fmy-preppy"',
+    );
+    expect(anonymousMarkup).toContain('aria-label="카카오 로그인"');
+    expect(anonymousMarkup).toContain(">로그인<");
+    expect(anonymousMarkup).not.toContain("로그아웃");
 
     const authenticatedMarkup = renderToStaticMarkup(
       createElement(AuthControlPresentation, {
@@ -54,7 +59,7 @@ describe("WP-08 auth-aware public UI", () => {
     );
     expect(authenticatedMarkup).toContain("내 프레피");
     expect(authenticatedMarkup).toContain("로그아웃");
-    expect(authenticatedMarkup).not.toContain("카카오로 로그인");
+    expect(authenticatedMarkup).not.toContain("auth/kakao/start");
   });
 
   it("renders a real Follow CTA with canonical Institution inputs and no fake completion state", () => {
@@ -198,7 +203,7 @@ describe("WP-08 auth-aware public UI", () => {
     expect(detailSource).toContain("returnPath=");
   });
 
-  it("keeps authentication controls out of the public header", async () => {
+  it("renders the client auth control in the public header", async () => {
     const [headerSource, controlSource] = await Promise.all([
       readFile(
         new URL("../../app/_components/site-header.tsx", import.meta.url),
@@ -210,8 +215,9 @@ describe("WP-08 auth-aware public UI", () => {
       ),
     ]);
     const markup = renderToStaticMarkup(createElement(SiteHeader));
-    expect(headerSource).not.toMatch(/AuthControl|auth-control|auth\/kakao\/start|카카오/);
-    expect(markup).not.toMatch(/auth-control|auth\/kakao\/start|카카오/);
+    expect(headerSource).toContain("<AuthControl />");
+    // The session is read on the client, so server markup carries no login state.
+    expect(markup).not.toMatch(/auth\/kakao\/start|로그아웃/);
     expect(markup).toContain('aria-label="주요 메뉴"');
     expect(markup).toContain('aria-label="모바일 주요 메뉴"');
     expect(headerSource).not.toMatch(
@@ -226,7 +232,6 @@ describe("WP-08 auth-aware public UI", () => {
     expect(controlSource).toContain("new URL(path, window.location.origin)");
     expect(controlSource).toContain('href="/my-preppy"');
     expect(controlSource).toContain("내 프레피");
-    expect(controlSource).not.toContain("카카오로 로그인");
     expect(controlSource).not.toMatch(/userEmail|emailAddress|@example/);
   });
 

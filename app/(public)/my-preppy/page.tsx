@@ -23,7 +23,8 @@ export default async function MyPreppyPage() {
     cookieStore.get(USER_SESSION_COOKIE_NAME)?.value ?? null,
   );
 
-  if (result.access === "ANONYMOUS") redirect("/auth/kakao/start");
+  if (result.access === "ANONYMOUS")
+    redirect("/auth/kakao/start?returnTo=%2Fmy-preppy");
   if (result.access === "PENDING") redirect("/onboarding");
   if (result.access === "DENIED") notFound();
 

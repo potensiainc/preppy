@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AuthControl } from "./auth-control";
 import { PublicNavigation, SiteMenu } from "./site-menu";
 import styles from "./curation.module.css";
 
@@ -12,6 +13,7 @@ export function SiteHeader() {
           </Link>
           <PublicNavigation />
           <div className={styles.tools}>
+            <AuthControl />
             <Link
               className={styles.iconButton}
               href="/institutions"

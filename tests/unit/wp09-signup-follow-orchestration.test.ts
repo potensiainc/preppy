@@ -60,8 +60,15 @@ function fakeProvider(): KakaoAuthProvider {
   };
 }
 
-function callbackRequest(intentCookie: string): Request {
-  const issued = createOAuthState({ secret: stateSecret, now });
+function callbackRequest(
+  intentCookie: string,
+  returnTo?: "/my-preppy" | "/my-preppy/settings",
+): Request {
+  const issued = createOAuthState({
+    secret: stateSecret,
+    now,
+    ...(returnTo ? { returnTo } : {}),
+  });
   return cookieRequest(
     `${appBaseUrl}/auth/kakao/callback?code=provider-code&state=${issued.state}`,
     {
@@ -371,6 +378,50 @@ describe("WP-09 signup and pending Follow HTTP orchestration", () => {
     );
   });
 
+  it.each([
+    ["/my-preppy", true],
+    ["/my-preppy/settings", false],
+  ] as const)(
+    "with returnTo %s, completes the pending Follow: %s",
+    async (returnTo, activates) => {
+      // Mutation caught: a header login (returnTo /my-preppy) dropping the
+      // Follow the visitor chose, or settings re-auth gaining a side effect.
+      const activateFollow = vi.fn(async () => ({
+        followId: "7ba7b810-9dad-11d1-80b4-00c04fd430c8",
+        institutionId,
+        state: "ACTIVE" as const,
+        activatedAt: now.toISOString(),
+        created: true,
+        reactivated: false,
+        activeFollowCount: 1,
+      }));
+      const response = await createKakaoCallbackHandler({
+        ...callbackDependencies(),
+        activateFollow,
+      })(callbackRequest(validIntent(), returnTo));
+
+      expect(response.status).toBe(303);
+      expect(response.headers.get("location")).toBe(returnTo);
+      expect(activateFollow).toHaveBeenCalledTimes(activates ? 1 : 0);
+    },
+  );
+
+  it("keeps the protected return destination on the failure page retry link", async () => {
+    const failing = callbackDependencies();
+    failing.provider.exchangeCode = vi.fn(async () => {
+      throw new Error("provider down");
+    });
+    const response = await createKakaoCallbackHandler({
+      ...failing,
+      activateFollow: vi.fn(),
+    })(callbackRequest(validIntent(), "/my-preppy"));
+
+    expect(response.status).toBe(502);
+    expect(await response.text()).toContain(
+      'href="/auth/kakao/start?returnTo=%2Fmy-preppy"',
+    );
+  });
+
   it("preserves a valid ACTIVE callback intent and returns safe auth failure when Follow activation fails", async () => {
     // Mutation caught: swallowing the command failure, clearing the retryable
     // intent, or exposing the internal failure.
@@ -384,7 +435,7 @@ describe("WP-09 signup and pending Follow HTTP orchestration", () => {
     const body = await response.text();
 
     expect(response.status).toBe(502);
-    expect(body).toContain("로그인을 완료하지 못했습니다");
+    expect(body).toContain("로그인을 완료하지 못했어요");
     expect(body).not.toContain("raw database secret");
     expect(setCookieHeader(response)).not.toContain(
       PENDING_FOLLOW_INTENT_COOKIE_NAME,

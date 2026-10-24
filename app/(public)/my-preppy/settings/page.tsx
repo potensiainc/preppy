@@ -5,6 +5,7 @@ import { getAuthRuntime } from "@/src/modules/auth/runtime.server";
 import { USER_SESSION_COOKIE_NAME } from "@/src/modules/auth/session.server";
 import { isAccountDeletionAvailable } from "@/src/modules/account-deletion/runtime.server";
 import { DeletionControl } from "./deletion-control";
+import { LogoutControl } from "./logout-control";
 import styles from "./settings.module.css";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -36,6 +37,12 @@ export default async function AccountSettingsPage() {
         </p>
         <a href="mailto:potensiainc@gmail.com">potensiainc@gmail.com</a>
       </section>
+      {authenticated ? (
+        <section>
+          <h2>로그아웃</h2>
+          <LogoutControl />
+        </section>
+      ) : null}
       <section>
         <h2>회원 탈퇴</h2>
         <DeletionControl

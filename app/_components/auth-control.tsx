@@ -1,13 +1,13 @@
 "use client";
 
-// Parked: the Owner removed login from the public header (see AGENTS.md).
-// This control and /api/auth/session + /api/auth/logout are kept, tested,
-// so header login can return once the Owner approves it. Do not render it
-// from site-header, site-menu or site-footer without that approval.
+// Public header login (Owner decision 2026-10-24, see AGENTS.md): signed-out
+// visitors get a Kakao login link, signed-in members get 내 프레피 and logout.
 
 import { useEffect, useState } from "react";
 
 type Fetcher = typeof fetch;
+
+export const HEADER_LOGIN_PATH = "/auth/kakao/start?returnTo=%2Fmy-preppy";
 type Navigate = (path: string) => void;
 
 export async function loadAuthStatus(
@@ -67,8 +67,17 @@ export function AuthControlPresentation({
     );
   }
   if (!authenticated) {
-    // Keep the provider hidden from public navigation until Kakao developer approval.
-    return null;
+    // Header login lands on 내 프레피; members who are still signing up go to
+    // onboarding first, as every Kakao callback does.
+    return (
+      <a
+        className="auth-control"
+        href={HEADER_LOGIN_PATH}
+        aria-label="카카오 로그인"
+      >
+        로그인
+      </a>
+    );
   }
 
   return (
