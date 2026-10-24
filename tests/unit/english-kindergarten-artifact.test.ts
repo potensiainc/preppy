@@ -247,6 +247,101 @@ describe("English-kindergarten snapshot contracts", () => {
     expect(report.checksumsValid).toBe(false);
   });
 
+  it("limits a published-update package to listed coverage and facts", () => {
+    const fixture = packageFixture();
+    const campus = {
+      ...fixture.campuses[0]!,
+      district: "양천구",
+      legalDong: "목동",
+    };
+    const item = fixture.snapshot.institutions.find(
+      (candidate) => candidate.campusId === campus.campusId,
+    )!;
+    const evidence = fixture.evidence.filter(
+      (candidate) => candidate.campusId === campus.campusId,
+    );
+    const build = (
+      overrides: Partial<typeof item>,
+    ): EnglishKindergartenImportPackage => {
+      const snapshot = {
+        schemaVersion: 2 as const,
+        packageId: fixture.snapshot.packageId,
+        institutions: [
+          {
+            ...item,
+            publicationState: "PUBLISHED" as const,
+            coverages: item.coverages.filter(
+              (coverage) => coverage.section === "TUITION",
+            ),
+            ...overrides,
+          },
+        ],
+      };
+      return {
+        ...fixture,
+        campuses: [campus],
+        evidence,
+        snapshot,
+        progress: {
+          ...fixture.progress,
+          confirmed: 1,
+          recordsReviewed: 1,
+          districts: { 양천구: 1 },
+          legalDongs: { 목동: 1 },
+          sourceFetches: {
+            success: evidence.filter(
+              (candidate) =>
+                candidate.claimType === "IDENTITY" &&
+                candidate.fetchOutcome === "SUCCESS",
+            ).length,
+            accessFailed: 0,
+            checkedNotFound: 0,
+          },
+        },
+        manifest: {
+          ...fixture.manifest,
+          preppyImportChecksum: canonicalJsonSha256(snapshot),
+        },
+      };
+    };
+
+    expect(validateEnglishKindergartenPackage(build({})).errors).toEqual([]);
+    expect(
+      validateEnglishKindergartenPackage(build({ publicationState: "DRAFT" }))
+        .status,
+    ).toBe("FAIL");
+    expect(
+      validateEnglishKindergartenPackage(
+        build({
+          coverages: item.coverages.filter(
+            (coverage) => coverage.section === "INFORMATION_SESSION",
+          ),
+        }),
+      ).status,
+    ).toBe("FAIL");
+
+    // The first-rollout version keeps its exact 25-campus scope.
+    const firstRollout = build({});
+    const asVersionOne = {
+      ...firstRollout,
+      snapshot: { ...firstRollout.snapshot, schemaVersion: 1 as const },
+    };
+    expect(
+      validateEnglishKindergartenPackage({
+        ...asVersionOne,
+        manifest: {
+          ...asVersionOne.manifest,
+          preppyImportChecksum: canonicalJsonSha256(asVersionOne.snapshot),
+        },
+      }).errors,
+    ).toEqual(
+      expect.arrayContaining([
+        "기관 행 수가 25가 아닙니다.",
+        `${campus.campusId}: 첫 반입 패키지는 DRAFT 기관만 받을 수 있습니다.`,
+      ]),
+    );
+  });
+
   it("loads valid NDJSON and rejects malformed rows, unsafe/full-document evidence, and mismatched hashes", async () => {
     const valid = await loadEnglishKindergartenPackage(await writePackage());
     expect(validateEnglishKindergartenPackage(valid).status).toBe("PASS");

@@ -57,7 +57,8 @@ export type EnglishKindergartenImportReject = Readonly<{
     | "SLUG_COLLISION"
     | "IDENTITY_COLLISION"
     | "SOURCE_COLLISION"
-    | "OPPORTUNITY_COLLISION";
+    | "OPPORTUNITY_COLLISION"
+    | "PUBLISHED_TARGET_MISSING";
   campusId?: string;
   message: string;
 }>;
@@ -112,7 +113,7 @@ export type InstitutionAction = Readonly<{
     publicationState: "DRAFT" | "PUBLISHED";
     regionCode: "KR-11";
     city: "서울특별시";
-    district: "강남구" | "서초구";
+    district: string;
     addressLine: string;
     websiteUrl: string | null;
     shortDescription: null;
@@ -445,9 +446,26 @@ export async function planEnglishKindergartenImport(
   const institutionBySlug = new Map(
     existingInstitutions.map((row) => [row.slug, row]),
   );
+  const expectedStateByCampusId = new Map(
+    packageValue.snapshot.institutions.map((item) => [
+      item.campusId,
+      item.publicationState,
+    ]),
+  );
   const resolvedInstitutionIds = new Map<string, string>();
   for (const campus of packageValue.campuses) {
     const existing = institutionBySlug.get(campus.slug);
+    if (
+      expectedStateByCampusId.get(campus.campusId) === "PUBLISHED" &&
+      existing?.publicationState !== "PUBLISHED"
+    ) {
+      rejects.push({
+        code: "PUBLISHED_TARGET_MISSING",
+        campusId: campus.campusId,
+        message: `${campus.slug} slug의 공개 기관을 찾지 못했어요.`,
+      });
+      continue;
+    }
     const generatedId = deterministicUuid(`institution:${campus.campusId}`);
     const websiteUrl =
       campus.officialChannels.find((channel) => channel.kind === "WEBSITE")
