@@ -1,7 +1,7 @@
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { load } from "cheerio";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, onTestFinished, vi } from "vitest";
 import {
   AdmissionSessions,
   ReviewedAdmissions,
@@ -190,6 +190,12 @@ describe("unified school-cycle admission experience", () => {
   });
 
   it("preserves date-only precision, unknown end, cancellation and sorts known dates before unknown", () => {
+    // The fixture dates must stay upcoming; past sessions sort to the back.
+    vi.useFakeTimers({
+      toFake: ["Date"],
+      now: new Date("2026-10-01T00:00:00Z"),
+    });
+    onTestFinished(() => void vi.useRealTimers());
     const $ = load(
       renderToStaticMarkup(
         createElement(AdmissionSessions, {

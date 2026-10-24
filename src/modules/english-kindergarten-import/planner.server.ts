@@ -859,12 +859,28 @@ export async function planEnglishKindergartenImport(
         current &&
         canonicalJson(current.valueJson) === canonicalJson(valueJson) &&
         current.displayText === fact.displayText;
-      const deterministicVersionId = deterministicUuid(
+      const contentVersionId = deterministicUuid(
         `fact-version:${factId}:${canonicalJsonSha(valueJson)}:${fact.displayText ?? ""}`,
       );
-      const existingVersion = exactCurrent
-        ? current
-        : existingFactVersions.find((row) => row.id === deterministicVersionId);
+      // A replayed older package never brings back a historical value, but a
+      // newer verification does: it re-confirms the current value with fresh
+      // evidence, or restores an earlier value on purpose.
+      const verifiedAt = new Date(fact.verifiedAt);
+      const newerVerification =
+        current !== undefined &&
+        verifiedAt.getTime() >
+          (current.verifiedAt?.getTime() ?? Number.NEGATIVE_INFINITY);
+      const deterministicVersionId = newerVerification
+        ? deterministicUuid(
+            `fact-version:${factId}:${canonicalJsonSha(valueJson)}:${fact.displayText ?? ""}:${verifiedAt.toISOString()}`,
+          )
+        : contentVersionId;
+      const existingVersion =
+        exactCurrent && !newerVerification
+          ? current
+          : existingFactVersions.find(
+              (row) => row.id === deterministicVersionId,
+            );
       const versionId = existingVersion?.id ?? deterministicVersionId;
       const versionOperation = existingVersion ? "NONE" : "CREATE";
       actions.factVersions.push({

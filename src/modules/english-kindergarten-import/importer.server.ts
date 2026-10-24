@@ -62,6 +62,17 @@ export type EnglishKindergartenImportReport = Readonly<{
 
 type SideEffectCounts = EnglishKindergartenImportReport["sideEffects"];
 
+/** Rows written by an apply: new rows plus rows changed in place. */
+function writtenCounts(plan: EnglishKindergartenImportPlan) {
+  return Object.fromEntries(
+    Object.keys(plan.created).map((key) => [
+      key,
+      plan.created[key as keyof ImportCountSet] +
+        plan.updated[key as keyof ImportCountSet],
+    ]),
+  ) as ImportCountSet;
+}
+
 function zeroAppliedCounts(plan: EnglishKindergartenImportPlan) {
   return Object.fromEntries(
     Object.keys(plan.created).map((key) => [key, 0]),
@@ -351,7 +362,7 @@ async function runImport(
       packageId: plan.packageId,
       packageChecksum: plan.packageChecksum,
       plan,
-      appliedCounts: plan.created,
+      appliedCounts: writtenCounts(plan),
       sideEffects: delta,
     };
   });

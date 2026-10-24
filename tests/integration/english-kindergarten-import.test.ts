@@ -208,7 +208,10 @@ function withVersionedDetails(
  * A version-2 package that updates one already-published campus, moved to
  * 양천구 so the first rollout's district limits cannot be what lets it pass.
  */
-function publishedUpdatePackage(): EnglishKindergartenImportPackage {
+function publishedUpdatePackage(
+  amount = 1_230_000,
+  factVerifiedAt = "2026-10-24T01:00:00.000Z",
+): EnglishKindergartenImportPackage {
   const campusId = "sg-ek-012";
   const campus = {
     ...packageValue.campuses.find((item) => item.campusId === campusId)!,
@@ -258,8 +261,8 @@ function publishedUpdatePackage(): EnglishKindergartenImportPackage {
               validityNote: null,
               billingCadence: "MONTHLY" as const,
               currency: "KRW" as const,
-              amountMin: 1_230_000,
-              amountMax: 1_230_000,
+              amountMin: amount,
+              amountMax: amount,
               programFees: [],
               extraCosts: [],
               includedItems: [],
@@ -268,7 +271,7 @@ function publishedUpdatePackage(): EnglishKindergartenImportPackage {
             },
             displayText: null,
             evidenceIds: [`${campusId}-classification`],
-            verifiedAt: checkedAt,
+            verifiedAt: factVerifiedAt,
           },
         ],
         opportunities: [],
@@ -471,6 +474,7 @@ describe("English-kindergarten snapshot import", () => {
     );
     expect(applied.applied).toBe(true);
     expect(applied.plan.updated.coverages).toBe(2);
+    expect(applied.appliedCounts.coverages).toBe(2);
     expect(applied.plan.created.facts).toBe(1);
     expect(applied.sideEffects).toEqual({
       outboxEvents: 0,
@@ -517,6 +521,87 @@ describe("English-kindergarten snapshot import", () => {
     expect(replay.plan.rejects).toEqual([]);
     expect(replay.plan.created.total).toBe(0);
     expect(replay.plan.updated.total).toBe(0);
+  });
+
+  it("lets a newer verification refresh or restore a published fact", async () => {
+    await applyEnglishKindergartenImport(
+      {
+        packageValue,
+        expectedChecksum: validation.packageChecksum,
+        occurredAt: new Date("2026-09-07T02:00:00.000Z"),
+      },
+      { transactionManager: runtime.transactionManager },
+    );
+    await runtime.client`
+      update institutions
+      set district='양천구', publication_state='PUBLISHED',
+        published_at='2026-09-07T03:00:00.000Z'
+      where slug='psa-apgujeong'
+    `;
+    async function apply(update: EnglishKindergartenImportPackage) {
+      const result = await applyEnglishKindergartenImport(
+        {
+          packageValue: update,
+          expectedChecksum:
+            validateEnglishKindergartenPackage(update).packageChecksum,
+        },
+        { transactionManager: runtime.transactionManager },
+      );
+      expect(result.applied).toBe(true);
+      return result;
+    }
+    async function currentTuition() {
+      const rows = await runtime.client<
+        { amount: number; verifiedAt: Date | string; evidence: number }[]
+      >`
+        select (fv.value_json->>'amountMin')::int as amount,
+          fv.verified_at as "verifiedAt",
+          (select count(*)::int from institution_fact_version_evidence e
+            where e.institution_fact_version_id=fv.id) as evidence
+        from institution_fact_versions fv
+        join institution_facts f on f.id=fv.institution_fact_id
+        join institutions i on i.id=f.institution_id
+        where i.slug='psa-apgujeong' and f.fact_type='TUITION'
+          and fv.is_current=true
+      `;
+      expect(rows).toHaveLength(1);
+      return {
+        ...rows[0]!,
+        verifiedAt: new Date(rows[0]!.verifiedAt).toISOString(),
+      };
+    }
+
+    await apply(publishedUpdatePackage(1_230_000, "2026-10-24T01:00:00.000Z"));
+    await apply(publishedUpdatePackage(1_300_000, "2026-10-25T01:00:00.000Z"));
+    // The older package replayed: the newer value stays current.
+    const stale = await dryRunEnglishKindergartenImport(
+      {
+        packageValue: publishedUpdatePackage(
+          1_230_000,
+          "2026-10-24T01:00:00.000Z",
+        ),
+      },
+      { transactionManager: runtime.transactionManager },
+    );
+    expect(stale.plan.created.factVersions).toBe(0);
+
+    const restored = await apply(
+      publishedUpdatePackage(1_230_000, "2026-10-26T01:00:00.000Z"),
+    );
+    expect(restored.appliedCounts.factVersions).toBe(1);
+    expect(await currentTuition()).toEqual({
+      amount: 1_230_000,
+      verifiedAt: "2026-10-26T01:00:00.000Z",
+      evidence: 1,
+    });
+
+    // Same value re-checked later: a new version records the new check date.
+    await apply(publishedUpdatePackage(1_230_000, "2026-10-27T01:00:00.000Z"));
+    expect(await currentTuition()).toEqual({
+      amount: 1_230_000,
+      verifiedAt: "2026-10-27T01:00:00.000Z",
+      evidence: 1,
+    });
   });
 
   it("imports a future review insight with evidence and remains idempotent", async () => {
