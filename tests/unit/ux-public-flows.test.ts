@@ -263,6 +263,10 @@ describe("public/member UX state and action truth", () => {
       false,
     );
     expect($("button[type=submit]").text()).toBe("필수 동의하고 가입하기");
+    // The 24-hour signup window runs from first collection, not from this visit.
+    expect($("#required-privacy-notice").text()).toContain(
+      "최초 수집 후 24시간",
+    );
     expect(
       $("input[name=interestCategories]")
         .map((_, el) => $(el).attr("value"))
