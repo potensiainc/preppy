@@ -30,8 +30,10 @@ export const campusRecordSchema = z
     displayName: nonEmpty,
     slug: identifier,
     addressLine: nonEmpty,
-    district: z.enum(["강남구", "서초구"]),
-    legalDong: z.enum(["신사동", "잠원동", "반포동"]),
+    // Version 1 packages are further limited to the first rollout's districts
+    // and legal dongs by the validator.
+    district: z.string().regex(/^[가-힣]{1,4}구$/u),
+    legalDong: z.string().regex(/^[가-힣0-9]{1,8}동$/u),
     operationalState: z.enum(["ACTIVE", "UNKNOWN"]),
     classificationState: z.literal("CONFIRMED"),
     officialChannels: z.array(
@@ -170,21 +172,30 @@ export const importInstitutionSchema = z
   .object({
     campusId: identifier,
     category: z.literal("ENGLISH_KINDERGARTEN"),
-    publicationState: z.literal("DRAFT"),
+    // DRAFT rows may create new roots; PUBLISHED rows only update institutions
+    // that are already public. The validator enforces the per-version rules.
+    publicationState: z.enum(["DRAFT", "PUBLISHED"]),
     coverages: z
       .array(coverageImportSchema)
-      .length(englishKindergartenSectionValues.length),
+      .min(1)
+      .max(englishKindergartenSectionValues.length),
     facts: z.array(factImportSchema),
     opportunities: z.array(opportunityImportSchema),
     reviewInsight: reviewInsightImportSchema.nullable(),
   })
   .strict();
 
+/**
+ * Version 1 is the first Gangnam/Seocho rollout of 25 DRAFT campuses.
+ * Version 2 updates campuses that are already published: it changes only the
+ * listed coverage sections and facts, and never creates or publishes roots or
+ * information sessions.
+ */
 export const importSnapshotSchema = z
   .object({
-    schemaVersion: z.literal(1),
+    schemaVersion: z.union([z.literal(1), z.literal(2)]),
     packageId: identifier,
-    institutions: z.array(importInstitutionSchema).length(25),
+    institutions: z.array(importInstitutionSchema).min(1).max(100),
   })
   .strict();
 
@@ -195,16 +206,8 @@ export const progressSchema = z
     excluded: z.number().int().nonnegative(),
     held: z.number().int().nonnegative(),
     recordsReviewed: z.number().int().nonnegative(),
-    districts: z
-      .object({ 강남구: z.number().int(), 서초구: z.number().int() })
-      .strict(),
-    legalDongs: z
-      .object({
-        신사동: z.number().int(),
-        잠원동: z.number().int(),
-        반포동: z.number().int(),
-      })
-      .strict(),
+    districts: z.record(z.string(), z.number().int()),
+    legalDongs: z.record(z.string(), z.number().int()),
     sourceFetches: z
       .object({
         success: z.number().int().nonnegative(),
