@@ -78,13 +78,16 @@ def kakao_redirect(context: BrowserContext, build_callback) -> None:
     def navigation(route):
         if route.request.resource_type != "document":
             return route.continue_()
-        response = route.fetch(max_redirects=0)
+        first = route.fetch(max_redirects=0)
+        response = first
         location = response.headers.get("location", "")
+        # Look ahead through app redirects only to find a Kakao hand-off; any
+        # other chain is returned as its first redirect so the browser URL moves.
         while location.startswith("/") and response.status in (302, 303, 307, 308):
             response = route.fetch(url=f"{BASE_URL}{location}", max_redirects=0)
             location = response.headers.get("location", "")
         if not location.startswith("https://kauth.kakao.com/"):
-            return route.fulfill(response=response)
+            return route.fulfill(response=first)
         require(
             location.startswith("https://kauth.kakao.com/oauth/authorize?"),
             f"start must redirect to Kakao authorize, got {location!r}",
@@ -335,6 +338,28 @@ def header_login(browser: Browser) -> None:
         context.close()
 
 
+@scenario("11. 관심기관 등록 중 카카오 취소 → 헤더 로그인하면 그 관심기관이 등록됨")
+def pending_follow_after_header_login(browser: Browser) -> None:
+    context = new_context(browser)
+    fake_kakao(context, None, error="access_denied")
+    page = context.new_page()
+    page.goto(f"{BASE_URL}/institutions/{INSTITUTION_SLUG}")
+    page.get_by_role("button", name="카카오 로그인 후 관심기관 등록").first.click()
+    page.wait_for_url(re.compile("/auth/kakao/callback"))
+    context.unroute(f"{BASE_URL}/**")
+    fake_kakao(context, f"e2e.{subject(2)}.none")
+    page.goto(BASE_URL)
+    page.locator("header").first.get_by_role("link", name="카카오 로그인").click()
+    page.wait_for_url(f"{BASE_URL}/my-preppy")
+    expect(page.get_by_text(INSTITUTION_NAME).first).to_be_visible()
+    follows = sql(
+        "select count(*) from follows f join auth_identities a on a.user_id=f.user_id "
+        f"where a.provider_subject='{subject(2)}' and f.status='ACTIVE'"
+    )
+    require(follows == "1", f"pending follow must activate on header login, got {follows}")
+    context.close()
+
+
 def main() -> None:
     EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
     require(
@@ -354,6 +379,7 @@ def main() -> None:
             forged_and_replayed_callback,
             logout,
             header_login,
+            pending_follow_after_header_login,
         ):
             check(browser)
         browser.close()

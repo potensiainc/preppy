@@ -22,6 +22,7 @@ import {
   createOAuthState,
   parseOAuthReturnPath,
   readOAuthReturnTo,
+  type OAuthReturnPath,
   OAUTH_STATE_COOKIE_NAME,
   OAUTH_STATE_TTL_SECONDS,
   oauthStateCookieAttributes,
@@ -296,8 +297,13 @@ function loginFailureResponse(options: {
   retryable?: boolean;
   cancelled?: boolean;
   retryAfterSeconds?: number;
+  retryReturnTo?: OAuthReturnPath | null;
   stateCookieSecure: boolean;
 }): Response {
+  // The destination comes from the fixed allowlist, so it is safe in markup.
+  const retryHref = options.retryReturnTo
+    ? `/auth/kakao/start?returnTo=${encodeURIComponent(options.retryReturnTo)}`
+    : "/auth/kakao/start";
   const heading = options.cancelled
     ? "카카오 로그인을 취소했어요"
     : "로그인을 완료하지 못했어요";
@@ -308,7 +314,7 @@ function loginFailureResponse(options: {
       : options.retryable
         ? "로그인 처리 중 문제가 생겼어요. 잠시 후 다시 시도해 주세요."
         : "로그인 정보를 확인하지 못했어요. 처음부터 다시 시도해 주세요.";
-  const body = `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>${heading} | PREPPY</title><style>${LOGIN_FAILURE_STYLE}</style></head><body><main><p class="brand">PREPPY</p><h1>${heading}</h1><p>${detail}</p><nav><a class="primary" href="/auth/kakao/start">카카오 로그인 다시 시도</a><a href="/">PREPPY 홈으로 이동</a></nav></main></body></html>`;
+  const body = `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>${heading} | PREPPY</title><style>${LOGIN_FAILURE_STYLE}</style></head><body><main><p class="brand">PREPPY</p><h1>${heading}</h1><p>${detail}</p><nav><a class="primary" href="${retryHref}">카카오 로그인 다시 시도</a><a href="/">PREPPY 홈으로 이동</a></nav></main></body></html>`;
   const headers = privateHeaders({
     "content-type": "text/html; charset=utf-8",
   });
@@ -513,6 +519,11 @@ export function createKakaoCallbackHandler(dependencies: {
       dependencies.production ?? process.env.NODE_ENV === "production";
     const url = new URL(request.url);
     const browserState = url.searchParams.get("state");
+    // A failed attempt keeps its protected destination for the retry link.
+    const retryReturnTo = readOAuthReturnTo(
+      readCookie(request, OAUTH_STATE_COOKIE_NAME),
+      { secret: dependencies.oauthStateSecret, now },
+    );
     const validState = validateOAuthState({
       browserState,
       cookieValue: readCookie(request, OAUTH_STATE_COOKIE_NAME),
@@ -522,6 +533,7 @@ export function createKakaoCallbackHandler(dependencies: {
     if (!validState) {
       return loginFailureResponse({
         status: 400,
+        retryReturnTo,
         stateCookieSecure: production,
       });
     }
@@ -535,12 +547,14 @@ export function createKakaoCallbackHandler(dependencies: {
       return loginFailureResponse({
         status: 503,
         retryable: true,
+        retryReturnTo,
         stateCookieSecure: production,
       });
     }
     if (replayStatus === "CONSUMED") {
       return loginFailureResponse({
         status: 400,
+        retryReturnTo,
         stateCookieSecure: production,
       });
     }
@@ -555,6 +569,7 @@ export function createKakaoCallbackHandler(dependencies: {
         status: 400,
         // Kakao sends access_denied when the user cancels on its screen.
         cancelled: url.searchParams.get("error") === "access_denied",
+        retryReturnTo,
         stateCookieSecure: production,
       });
     }
@@ -571,6 +586,7 @@ export function createKakaoCallbackHandler(dependencies: {
       return loginFailureResponse({
         status: 503,
         retryable: true,
+        retryReturnTo,
         stateCookieSecure: production,
       });
     }
@@ -578,6 +594,7 @@ export function createKakaoCallbackHandler(dependencies: {
       return loginFailureResponse({
         status: 429,
         retryAfterSeconds: rateLimitDecision.retryAfterSeconds,
+        retryReturnTo,
         stateCookieSecure: production,
       });
     }
@@ -618,7 +635,13 @@ export function createKakaoCallbackHandler(dependencies: {
         });
       }
       let completedActiveFollow = false;
-      if (user.status === "ACTIVE" && validPendingIntent && !returnTo) {
+      // Settings re-authentication never has side effects; a 내 프레피 return
+      // still completes the follow the visitor chose before logging in.
+      if (
+        user.status === "ACTIVE" &&
+        validPendingIntent &&
+        returnTo !== "/my-preppy/settings"
+      ) {
         await dependencies.activateFollow(
           {
             userId: user.id,
@@ -684,6 +707,7 @@ export function createKakaoCallbackHandler(dependencies: {
       return loginFailureResponse({
         status: 502,
         retryable: true,
+        retryReturnTo,
         stateCookieSecure: production,
       });
     }
