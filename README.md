@@ -110,7 +110,7 @@ npm run test:db
 | `CACHE_REVALIDATION_ENABLED` | worker가 캐시 갱신 이벤트를 처리하고, web의 `/api/internal/cache/revalidate`가 요청을 받아요. `false`면 이벤트는 `PENDING`으로 남고 web은 503으로 거절해요. web과 worker를 함께 켜요 |
 | `ANALYTICS_ENABLED`          | 프로덕션에서 GA4 이벤트를 보내요                                                                                                                                                     |
 
-탈퇴 기능은 `ACCOUNT_DELETION_ENABLED=true`, `ACCOUNT_DELETION_READINESS=verified`이고 DB에 마이그레이션 `0017`의 테이블·제약·트리거가 실제로 있을 때만 동작해요. 플래그가 켜져 있어도 0017이 없으면 API는 503을 반환하고, 화면에는 문의처 안내만 보여요. 관리자 운영 화면에는 `ACCOUNT_DELETION_SCHEMA_MISSING` 경보가 떠요. 탈퇴 후속 처리는 `npm run account-deletion:once`로 실행해요.
+탈퇴 기능은 `ACCOUNT_DELETION_ENABLED=true`, `ACCOUNT_DELETION_READINESS=verified`이고 DB에 마이그레이션 `0017`의 테이블·제약·트리거가 실제로 있을 때만 동작해요. 플래그가 켜져 있어도 0017이 없으면 API는 503을 반환하고, 화면에는 문의처 안내만 보여요. 관리자 운영 화면에는 `ACCOUNT_DELETION_SCHEMA_MISSING` 경보가 떠요. 탈퇴 후속 처리(카카오 연결 끊기 웹훅 반영, 만료된 가입 정리, 카카오 연결 해제)는 5분마다 도는 `worker:once` 크론이 탈퇴 기능이 켜진 환경에서 함께 실행해요. 별도 크론 서비스는 없어요. 수동으로 한 번 실행할 때는 `npm run account-deletion:once`를 써요. worker 서비스에는 `KAKAO_ADMIN_KEY`, `ACCOUNT_DELETION_KEY`, `ACCOUNT_DELETION_ENABLED`, `ACCOUNT_DELETION_READINESS`가 필요해요.
 
 관리자 화면의 Resend 결과 대조는 `EMAIL_SEND_ENABLED=true`이고 web에 `RESEND_API_KEY`와 `EMAIL_FROM`이 있을 때만 실행돼요.
 
