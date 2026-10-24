@@ -263,7 +263,13 @@ describe("WP-08 auth-aware public UI", () => {
     expect(markup).toContain('action="/api/me/onboarding/complete"');
     expect(markup).toContain('name="termsPolicyVersion" value="2026-08-23"');
     expect(markup).toContain('name="privacyPolicyVersion" value="2026-08-23"');
-    expect(markup).toContain('name="email"');
+    // No stored email: the optional email toggle starts off and opts out.
+    expect(markup).not.toContain('name="email"');
+    expect(markup).toContain('name="emailOptOut" value="on"');
+    expect(markup).toContain('role="switch"');
+    expect(markup).toContain("필수 동의하고 가입하기");
+    expect(markup).not.toContain("모두 동의하고 가입하기");
+    expect(markup).not.toContain("가입 취소");
     expect(markup).not.toContain('name="childBirthYear"');
     expect(markup).not.toContain('name="interestRegions"');
     expect(markup).not.toContain("KR-11");

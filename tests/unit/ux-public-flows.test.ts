@@ -236,6 +236,71 @@ describe("public/member UX state and action truth", () => {
     expect($("a[href='/institutions/school']").length).toBe(1);
   });
 
+  it("shows the stored Kakao email with the optional email toggle on", () => {
+    const $ = load(
+      renderToStaticMarkup(
+        createElement(OnboardingForm, {
+          legalPublicationReady: true,
+          defaults: {
+            email: "parent@example.test",
+            interestRegions: [],
+            interestCategories: [],
+            serviceEmailUpdatesConsent: false,
+          },
+          policyVersions: {
+            TERMS_OF_SERVICE: "2026-08-23",
+            PRIVACY_POLICY: "2026-08-23",
+            SERVICE_EMAIL_UPDATES: "2026-08-23",
+          },
+          pendingInstitution: null,
+        }),
+      ),
+    );
+    expect($("input[name=email]").val()).toBe("parent@example.test");
+    expect($("input[name=emailOptOut]").length).toBe(0);
+    // Optional consent is never pre-agreed, so the CTA names only required consent.
+    expect($("input[name=serviceEmailUpdatesConsent]").is(":checked")).toBe(
+      false,
+    );
+    expect($("button[type=submit]").text()).toBe("필수 동의하고 가입하기");
+    // The 24-hour signup window runs from first collection, not from this visit.
+    expect($("#required-privacy-notice").text()).toContain(
+      "최초 수집 후 24시간",
+    );
+    expect(
+      $("input[name=interestCategories]")
+        .map((_, el) => $(el).attr("value"))
+        .get(),
+    ).toEqual([
+      "ENGLISH_KINDERGARTEN",
+      "PRIVATE_ELEMENTARY",
+      "INTERNATIONAL_SCHOOL",
+    ]);
+  });
+
+  it("labels the CTA as all-agree when every optional consent is on", () => {
+    const $ = load(
+      renderToStaticMarkup(
+        createElement(OnboardingForm, {
+          legalPublicationReady: true,
+          defaults: {
+            email: "parent@example.test",
+            interestRegions: [],
+            interestCategories: [],
+            serviceEmailUpdatesConsent: true,
+          },
+          policyVersions: {
+            TERMS_OF_SERVICE: "2026-08-23",
+            PRIVACY_POLICY: "2026-08-23",
+            SERVICE_EMAIL_UPDATES: "2026-08-23",
+          },
+          pendingInstitution: null,
+        }),
+      ),
+    );
+    expect($("button[type=submit]").text()).toBe("모두 동의하고 가입하기");
+  });
+
   it("does not claim server state is unchanged after an ambiguous unfollow failure", () => {
     // Network failure may occur after commit; UI must not promise a preserved follow.
     const $ = load(

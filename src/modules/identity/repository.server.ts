@@ -176,6 +176,17 @@ export async function upsertUserInputEmail(
   return email!;
 }
 
+// Onboarding "do not provide email": removes the Kakao-provided or typed
+// address so declining the optional item leaves nothing stored.
+export async function deleteUserEmail(
+  executor: TransactionExecutor,
+  userId: string,
+) {
+  await executor.drizzle
+    .delete(userEmails)
+    .where(eq(userEmails.userId, userId));
+}
+
 export async function findUserEmail(
   executor: DatabaseExecutor,
   userId: string,

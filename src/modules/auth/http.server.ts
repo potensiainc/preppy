@@ -779,7 +779,12 @@ function onboardingInput(
     serviceEmailUpdatesPolicyVersion:
       form.get("serviceEmailUpdatesPolicyVersion") ?? "",
     serviceEmailUpdatesConsent: form.has("serviceEmailUpdatesConsent"),
-    ...(email ? { email } : {}),
+    // The email toggle sends emailOptOut when the visitor declines the item.
+    ...(form.get("emailOptOut") === "on"
+      ? { removeEmail: true }
+      : email
+        ? { email }
+        : {}),
     interestRegions: form.getAll("interestRegions").filter(Boolean),
     interestCategories: form.getAll("interestCategories").filter(Boolean),
   };
