@@ -109,7 +109,7 @@ export function UnfollowControl({
         },
         reauthenticate: () => {
           onRestore?.();
-          window.location.replace("/auth/kakao/start");
+          window.location.replace("/auth/kakao/start?returnTo=%2Fmy-preppy");
         },
         reauthorize: () => {
           onRestore?.();

@@ -403,7 +403,7 @@ describe("WP-08 auth Route Handler factories", () => {
       })(request);
 
       expect(response.status).toBe(400);
-      expect(await response.text()).toContain("로그인을 완료하지 못했습니다");
+      expect(await response.text()).toContain("로그인을 완료하지 못했어요");
       expect(response.headers.get("set-cookie")).toMatch(
         new RegExp(`${OAUTH_STATE_COOKIE_NAME}=;.*Max-Age=0`),
       );
@@ -434,7 +434,8 @@ describe("WP-08 auth Route Handler factories", () => {
     );
     const deniedBody = await denied.text();
     expect(denied.status).toBe(400);
-    expect(deniedBody).toContain("로그인을 완료하지 못했습니다");
+    expect(deniedBody).toContain("카카오 로그인을 취소했어요");
+    expect(deniedBody).toContain('name="viewport"');
     expect(deniedBody).not.toContain("access_denied");
     expect(deniedBody).not.toContain("private-provider-detail");
     expect(deniedProvider.exchangeCode).not.toHaveBeenCalled();

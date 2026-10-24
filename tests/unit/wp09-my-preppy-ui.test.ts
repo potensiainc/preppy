@@ -35,7 +35,9 @@ describe("WP-09 My Preppy UI and private route", () => {
     expect(source).toContain('export const fetchCache = "force-no-store"');
     expect(source).toMatch(/noStore\(\)/);
     expect(source).toMatch(/robots:\s*\{\s*index:\s*false,\s*follow:\s*false/);
-    expect(source).toContain('redirect("/auth/kakao/start")');
+    expect(source).toContain(
+      'redirect("/auth/kakao/start?returnTo=%2Fmy-preppy")',
+    );
     expect(source).toContain('redirect("/onboarding")');
     expect(source).toMatch(/notFound\(\)|access === "DENIED"/);
     expect(source).not.toMatch(/searchParams|userId=/);

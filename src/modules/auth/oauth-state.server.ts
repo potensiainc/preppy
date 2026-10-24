@@ -12,11 +12,23 @@ import {
 export const OAUTH_STATE_COOKIE_NAME = "preppy_oauth_state";
 export const OAUTH_STATE_TTL_SECONDS = 10 * 60;
 const OAUTH_STATE_PURPOSE = "oauth-state";
+// Only these fixed pages may be resumed after login; nothing else is accepted.
+export const OAUTH_RETURN_PATHS = [
+  "/my-preppy",
+  "/my-preppy/settings",
+] as const;
+export type OAuthReturnPath = (typeof OAUTH_RETURN_PATHS)[number];
+
+export function parseOAuthReturnPath(
+  value: string | null | undefined,
+): OAuthReturnPath | null {
+  return OAUTH_RETURN_PATHS.find((path) => path === value) ?? null;
+}
 const oauthStatePayloadSchema = z
   .object({
     version: z.literal(1),
     stateHash: z.string().regex(/^[A-Za-z0-9_-]{43}$/),
-    returnTo: z.literal("/my-preppy/settings").optional(),
+    returnTo: z.enum(OAUTH_RETURN_PATHS).optional(),
   })
   .strict();
 
@@ -31,7 +43,7 @@ function hashState(state: string): Buffer {
 export function createOAuthState(options: {
   secret: string;
   now?: Date;
-  returnTo?: "/my-preppy/settings";
+  returnTo?: OAuthReturnPath;
 }): {
   state: string;
   cookieValue: string;
@@ -43,7 +55,7 @@ export function createOAuthState(options: {
       {
         version: 1,
         stateHash: hashState(state).toString("base64url"),
-        ...(options.returnTo === "/my-preppy/settings"
+        ...(parseOAuthReturnPath(options.returnTo)
           ? { returnTo: options.returnTo }
           : {}),
       },
@@ -91,7 +103,7 @@ export function validateOAuthState(options: {
 export function readOAuthReturnTo(
   cookieValue: string | null | undefined,
   options: { secret: string; now?: Date },
-): "/my-preppy/settings" | null {
+): OAuthReturnPath | null {
   const parsed = oauthStatePayloadSchema.safeParse(
     openSecureCookie(cookieValue, {
       purpose: OAUTH_STATE_PURPOSE,

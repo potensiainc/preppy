@@ -155,6 +155,7 @@ worker는 한 번 처리하고 종료해요. 주기 실행은 Railway cron 설�
 
 - staging/production web의 Railway Healthcheck Path는 `/api/release-integrity`로 유지해요(`.railway/railway.ts`에도 같은 값이에요). 이 경로는 배포 환경 일치, 브랜드 아이콘, 헤더 로그인 미노출을 검사해요. 환경 일치 검사를 위해 shared variable `PREPPY_ENVIRONMENT`를 각 환경 이름(`staging`, `production`)으로 설정해야 해요. `/api/health`는 항상 200을 반환하는 liveness 확인용이에요.
 - Owner가 지시하기 전까지 공개 헤더에 카카오 로그인 UI를 추가하지 않아요.
+- 카카오 가입·로그인 브라우저 E2E는 `tests/browser/kakao/run-kakao-auth-browser.py`에 있어요. 실행 방법은 파일 상단 설명을 따르고, 가짜 카카오 응답(`fake-kakao-fetch.mjs`)은 로컬 테스트 서버에서만 불러요.
 - 빌드·시작 과정에서는 마이그레이션이 실행되지 않아요.
 
 ## 문서

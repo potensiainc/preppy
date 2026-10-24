@@ -20,6 +20,7 @@ import type {
 } from "@/src/modules/auth/kakao-provider.server";
 import {
   createOAuthState,
+  parseOAuthReturnPath,
   readOAuthReturnTo,
   OAUTH_STATE_COOKIE_NAME,
   OAUTH_STATE_TTL_SECONDS,
@@ -285,19 +286,29 @@ function bodyErrorStatus(error: unknown): number {
   return error instanceof BodyReadError ? error.status : 400;
 }
 
+// Self-contained styles: this page is a raw route response, outside the app
+// layout. Colors follow the :root tokens in app/globals.css.
+const LOGIN_FAILURE_STYLE =
+  "*{box-sizing:border-box}body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px 16px;background:#fbfbf8;color:#171a18;font-family:'Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;line-height:1.6}main{width:100%;max-width:440px;background:#fff;border:1px solid #e5e8e3;border-radius:16px;padding:32px 24px}.brand{margin:0 0 16px;color:#315c50;font-weight:700;letter-spacing:.08em;font-size:14px}h1{margin:0 0 12px;font-size:22px;line-height:1.4}p{margin:0 0 24px;color:#676d68}nav{display:flex;flex-direction:column;gap:12px}a{display:block;text-align:center;padding:14px 16px;border-radius:10px;border:1px solid #e5e8e3;color:#171a18;text-decoration:none;font-weight:600}a.primary{background:#315c50;border-color:#315c50;color:#fff}a.primary:hover{background:#244a40}";
+
 function loginFailureResponse(options: {
   status: 400 | 429 | 502 | 503;
   retryable?: boolean;
+  cancelled?: boolean;
   retryAfterSeconds?: number;
   stateCookieSecure: boolean;
 }): Response {
-  const detail =
-    options.status === 429
-      ? "로그인 요청이 너무 많습니다. 잠시 후 다시 시도해 주세요."
+  const heading = options.cancelled
+    ? "카카오 로그인을 취소했어요"
+    : "로그인을 완료하지 못했어요";
+  const detail = options.cancelled
+    ? "로그인하지 않아도 입학정보는 계속 볼 수 있어요. 관심기관 등록과 알림은 로그인 후에 이용할 수 있어요."
+    : options.status === 429
+      ? "로그인 요청이 많아 지금은 처리하지 못했어요. 잠시 후 다시 시도해 주세요."
       : options.retryable
-        ? "인증 서비스 연결이 원활하지 않습니다. 잠시 후 다시 시도해 주세요."
-        : "로그인을 완료하지 못했습니다. 처음부터 다시 시도해 주세요.";
-  const body = `<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="robots" content="noindex"><title>로그인 오류 | PREPPY</title><body><main><h1>로그인을 완료하지 못했습니다</h1><p>${detail}</p><p><a href="/auth/kakao/start">카카오 로그인 다시 시도</a></p><p><a href="/">PREPPY 홈으로 돌아가기</a></p></main></body></html>`;
+        ? "로그인 처리 중 문제가 생겼어요. 잠시 후 다시 시도해 주세요."
+        : "로그인 정보를 확인하지 못했어요. 처음부터 다시 시도해 주세요.";
+  const body = `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>${heading} | PREPPY</title><style>${LOGIN_FAILURE_STYLE}</style></head><body><main><p class="brand">PREPPY</p><h1>${heading}</h1><p>${detail}</p><nav><a class="primary" href="/auth/kakao/start">카카오 로그인 다시 시도</a><a href="/">PREPPY 홈으로 이동</a></nav></main></body></html>`;
   const headers = privateHeaders({
     "content-type": "text/html; charset=utf-8",
   });
@@ -423,27 +434,23 @@ export function createKakaoStartHandler(dependencies: {
       return safeMutationFailure(503);
     }
     if (!decision.allowed) {
-      return new Response(
-        "로그인 요청이 너무 많습니다. 잠시 후 다시 시도해 주세요.",
-        {
-          status: 429,
-          headers: privateHeaders({
-            "content-type": "text/plain; charset=utf-8",
-            "retry-after": String(decision.retryAfterSeconds),
-          }),
-        },
-      );
+      return loginFailureResponse({
+        status: 429,
+        retryAfterSeconds: decision.retryAfterSeconds,
+        stateCookieSecure:
+          dependencies.production ?? process.env.NODE_ENV === "production",
+      });
     }
 
+    const returnTo = parseOAuthReturnPath(
+      new URL(request.url).searchParams.get("returnTo"),
+    );
     let issued: ReturnType<typeof createOAuthState>;
     try {
       issued = createOAuthState({
         secret: dependencies.oauthStateSecret,
         now,
-        ...(new URL(request.url).searchParams.get("returnTo") ===
-        "/my-preppy/settings"
-          ? { returnTo: "/my-preppy/settings" as const }
-          : {}),
+        ...(returnTo ? { returnTo } : {}),
       });
     } catch {
       return safeMutationFailure(503);
@@ -546,6 +553,8 @@ export function createKakaoCallbackHandler(dependencies: {
     if (url.searchParams.has("error") || !url.searchParams.get("code")) {
       return loginFailureResponse({
         status: 400,
+        // Kakao sends access_denied when the user cancels on its screen.
+        cancelled: url.searchParams.get("error") === "access_denied",
         stateCookieSecure: production,
       });
     }

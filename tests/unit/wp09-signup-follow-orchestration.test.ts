@@ -384,7 +384,7 @@ describe("WP-09 signup and pending Follow HTTP orchestration", () => {
     const body = await response.text();
 
     expect(response.status).toBe(502);
-    expect(body).toContain("로그인을 완료하지 못했습니다");
+    expect(body).toContain("로그인을 완료하지 못했어요");
     expect(body).not.toContain("raw database secret");
     expect(setCookieHeader(response)).not.toContain(
       PENDING_FOLLOW_INTENT_COOKIE_NAME,
