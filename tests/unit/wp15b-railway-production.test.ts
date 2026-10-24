@@ -104,19 +104,6 @@ describe("WP-15B Railway production contract", () => {
       PREPPY_ENVIRONMENT: { reference: "shared:PREPPY_ENVIRONMENT" },
     });
     expect(web.env?.DATABASE_URL).not.toBe(worker.env?.DATABASE_URL);
-    expect(worker.env).toMatchObject({
-      KAKAO_ADMIN_KEY: { reference: "shared:KAKAO_ADMIN_KEY" },
-      ACCOUNT_DELETION_KEY: { reference: "shared:ACCOUNT_DELETION_KEY" },
-      ACCOUNT_DELETION_READINESS: {
-        reference: "shared:ACCOUNT_DELETION_READINESS",
-      },
-    });
-    expect(web.env).toMatchObject({
-      KAKAO_APP_ID: { reference: "shared:KAKAO_APP_ID" },
-      ACCOUNT_DELETION_RECEIPT_SECRET: {
-        reference: "shared:ACCOUNT_DELETION_RECEIPT_SECRET",
-      },
-    });
 
     for (const command of [web.build, web.start, worker.build, worker.start]) {
       expect(command).not.toMatch(/migrat|backfill/i);

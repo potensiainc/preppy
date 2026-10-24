@@ -33,12 +33,6 @@ export default defineRailway((context) => {
       USER_SESSION_SECRET: context.shared.USER_SESSION_SECRET,
       OAUTH_STATE_SECRET: context.shared.OAUTH_STATE_SECRET,
       FOLLOW_INTENT_SECRET: context.shared.FOLLOW_INTENT_SECRET,
-      KAKAO_ADMIN_KEY: context.shared.KAKAO_ADMIN_KEY,
-      KAKAO_APP_ID: context.shared.KAKAO_APP_ID,
-      ACCOUNT_DELETION_READINESS: context.shared.ACCOUNT_DELETION_READINESS,
-      ACCOUNT_DELETION_KEY: context.shared.ACCOUNT_DELETION_KEY,
-      ACCOUNT_DELETION_RECEIPT_SECRET:
-        context.shared.ACCOUNT_DELETION_RECEIPT_SECRET,
       ADMIN_AUTH_ISSUER: context.shared.ADMIN_AUTH_ISSUER,
       ADMIN_AUTH_CLIENT_ID: context.shared.ADMIN_AUTH_CLIENT_ID,
       ADMIN_AUTH_CLIENT_SECRET: context.shared.ADMIN_AUTH_CLIENT_SECRET,
@@ -66,10 +60,6 @@ export default defineRailway((context) => {
       APP_BASE_URL: context.shared.APP_BASE_URL,
       RESEND_API_KEY: context.shared.RESEND_API_KEY,
       EMAIL_FROM: context.shared.EMAIL_FROM,
-      // The scheduled worker also runs the account-deletion pass.
-      KAKAO_ADMIN_KEY: context.shared.KAKAO_ADMIN_KEY,
-      ACCOUNT_DELETION_READINESS: context.shared.ACCOUNT_DELETION_READINESS,
-      ACCOUNT_DELETION_KEY: context.shared.ACCOUNT_DELETION_KEY,
       GA4_MEASUREMENT_ID: context.shared.GA4_MEASUREMENT_ID,
       GA4_API_SECRET: context.shared.GA4_API_SECRET,
       CACHE_REVALIDATION_SECRET: context.shared.CACHE_REVALIDATION_SECRET,

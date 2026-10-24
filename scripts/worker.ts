@@ -1,8 +1,6 @@
 import { pathToFileURL } from "node:url";
 
 import { getServerAnalyticsTracker } from "@/src/analytics/runtime.server";
-import { isAccountDeletionEnabled } from "@/src/modules/account-deletion/runtime.server";
-import { runAccountDeletionPass } from "@/src/modules/account-deletion/scheduled-pass.server";
 import {
   getSideEffectEnv,
   parseNotificationMaxSignalAgeMs,
@@ -174,25 +172,6 @@ export async function runWorkerCommand(arguments_: readonly string[]) {
   }
 }
 
-// The scheduled worker is also the deletion scheduler, so account deletion
-// needs no separate cron service. It runs only when the readiness gate is on.
-export async function runScheduledAccountDeletion(
-  enabled: boolean = isAccountDeletionEnabled(),
-) {
-  if (!enabled) return null;
-  try {
-    const result = await runAccountDeletionPass(getRuntimeDatabase());
-    return {
-      exitCode: 0,
-      output: JSON.stringify({ accountDeletion: result }),
-    };
-  } catch {
-    return { exitCode: 1, output: "ACCOUNT_DELETION_WORKER_FAILED" };
-  } finally {
-    await closeRuntimeDatabase();
-  }
-}
-
 const invokedPath = process.argv[1]
   ? pathToFileURL(process.argv[1]).href
   : undefined;
@@ -215,17 +194,6 @@ if (invokedPath === import.meta.url) {
     const stream = result.exitCode === 0 ? process.stdout : process.stderr;
     stream.write(`${result.output}\n`);
     process.exitCode = result.exitCode;
-    // Exit 2 is a usage or configuration error; stop there.
-    if (result.exitCode !== 2) {
-      const deletion = await runScheduledAccountDeletion();
-      if (deletion) {
-        const deletionStream =
-          deletion.exitCode === 0 ? process.stdout : process.stderr;
-        deletionStream.write(`${deletion.output}\n`);
-        if (deletion.exitCode !== 0 && result.exitCode === 0)
-          process.exitCode = deletion.exitCode;
-      }
-    }
   } finally {
     cancelHardTimeout?.();
   }

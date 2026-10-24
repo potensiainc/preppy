@@ -40,7 +40,7 @@ All checks run in one transaction that holds the migration advisory lock and the
 
 1. Confirm `/admin/operations/health` shows migration `MATCH` and no `ACCOUNT_DELETION_SCHEMA_MISSING`.
 2. Account deletion stays off until `ACCOUNT_DELETION_ENABLED=true`, `ACCOUNT_DELETION_READINESS=verified`, `ACCOUNT_DELETION_KEY`, `ACCOUNT_DELETION_RECEIPT_SECRET`, `KAKAO_ADMIN_KEY` and `KAKAO_APP_ID` are set. The IaC pins `ACCOUNT_DELETION_ENABLED` to `false`; turning it on is a separate Owner decision.
-3. The scheduled `worker:once` cron runs one deletion pass after the Outbox pass whenever account deletion is enabled, so no separate cron service is needed. The worker service needs `KAKAO_ADMIN_KEY`, `ACCOUNT_DELETION_KEY`, `ACCOUNT_DELETION_ENABLED` and `ACCOUNT_DELETION_READINESS`. `npm run account-deletion:once` runs a single pass by hand.
+3. The deletion worker runs with `npm run account-deletion:once`.
 
 ## Validation
 

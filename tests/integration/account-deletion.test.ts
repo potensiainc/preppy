@@ -15,7 +15,6 @@ import {
 } from "@/src/modules/account-deletion/repository.server";
 import { completeReviewedDeletion } from "@/src/modules/account-deletion/review.server";
 import { runDeletionWorker } from "@/src/modules/account-deletion/worker.server";
-import { runAccountDeletionPass } from "@/src/modules/account-deletion/scheduled-pass.server";
 import { assertDedicatedTestDatabaseUrl } from "@/tests/support/test-database";
 const url = process.env.TEST_DATABASE_URL;
 const key = "ab".repeat(32);
@@ -75,36 +74,6 @@ describe.skipIf(!url)(
       );
     });
 
-    it("runs the scheduled deletion pass end to end with the Kakao admin key", async () => {
-      const id = randomUUID();
-      const subject = `7${Date.now()}`;
-      await db.executor.raw(
-        sql`insert into users(id,status) values(${id},'ACTIVE')`,
-      );
-      await db.executor.raw(
-        sql`insert into auth_identities(user_id,provider,provider_subject,status) values(${id},'KAKAO',${subject},'ACTIVE')`,
-      );
-      const { receiptId } = await requestAccountDeletion(db, id, key);
-      const unlinked: Array<[string, string]> = [];
-      for (let pass = 0; pass < 20; pass++) {
-        const result = await runAccountDeletionPass(
-          db,
-          { ACCOUNT_DELETION_KEY: key, KAKAO_ADMIN_KEY: "test-admin-key" },
-          async (received, adminKey) => {
-            unlinked.push([received, adminKey]);
-          },
-        );
-        if (!result.processed) break;
-      }
-      expect(unlinked).toContainEqual([subject, "test-admin-key"]);
-      expect(
-        await db.executor.raw(sql`select id from users where id=${id}`),
-      ).toHaveLength(0);
-      const [job] = await db.executor.raw(
-        sql`select status from account_deletion_jobs where id=${receiptId}`,
-      );
-      expect(job.status).toBe("EXTERNAL_REVIEW");
-    });
     it("persists revocation, deletes PII, retries provider failure, and never claims external cleanup is complete", async () => {
       const id = randomUUID();
       const subject = `9${Date.now()}`;
