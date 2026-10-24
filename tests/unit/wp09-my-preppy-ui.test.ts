@@ -134,7 +134,7 @@ describe("WP-09 My Preppy UI and private route", () => {
     },
   );
 
-  it("keeps private account controls available without restoring public Kakao login", () => {
+  it("keeps private account controls and offers login when signed out", () => {
     const active = renderToStaticMarkup(
       createElement(AuthControlPresentation, {
         authenticated: true,
@@ -152,7 +152,8 @@ describe("WP-09 My Preppy UI and private route", () => {
         onLogout: () => undefined,
       }),
     );
-    expect(anonymous).toBe("");
+    expect(anonymous).toContain("로그인");
+    expect(anonymous).not.toContain('href="/my-preppy"');
   });
 
   it("offers a direct heart action and verifies the server deletion", async () => {

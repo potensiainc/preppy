@@ -38,7 +38,7 @@ export function checkReleaseBaseline() {
   // Guard diagnostics go to stderr so stdout carries only the JSON result.
   execFileSync(
     process.execPath,
-    [path.join(root, "scripts/deploy/assert-header-auth-absence.mjs")],
+    [path.join(root, "scripts/deploy/assert-header-auth.mjs")],
     { cwd: root, stdio: ["ignore", 2, 2] },
   );
   execFileSync(

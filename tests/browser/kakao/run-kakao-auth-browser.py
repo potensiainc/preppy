@@ -296,32 +296,42 @@ def forged_and_replayed_callback(browser: Browser) -> None:
     context.close()
 
 
-@scenario("9. 로그아웃하면 세션 종료")
+@scenario("9. 계정 설정의 로그아웃 버튼으로 로그아웃")
 def logout(browser: Browser) -> None:
     context = new_context(browser)
     fake_kakao(context, f"e2e.{subject(1)}.verified")
     page = context.new_page()
     page.goto(f"{BASE_URL}/auth/kakao/start")
     page.wait_for_url(f"{BASE_URL}/")
-    response = page.request.post(
-        f"{BASE_URL}/api/auth/logout", headers={"origin": BASE_URL}
-    )
-    require(response.status == 204, f"logout returned {response.status}")
+    page.goto(f"{BASE_URL}/my-preppy/settings")
+    page.get_by_role("main").get_by_role("button", name="로그아웃").click()
+    page.wait_for_url(f"{BASE_URL}/")
     session = page.request.get(f"{BASE_URL}/api/auth/session").json()
     require(session.get("authenticated") is False, "session must end after logout")
     context.close()
 
 
-@scenario("10. 공개 헤더에 카카오 로그인 미노출 (데스크톱·모바일)")
-def header_has_no_login(browser: Browser) -> None:
+@scenario("10. 헤더 로그인 → 내 프레피, 헤더 로그아웃 (데스크톱·모바일)")
+def header_login(browser: Browser) -> None:
     for mobile in (False, True):
         context = new_context(browser, mobile=mobile)
+        fake_kakao(context, f"e2e.{subject(1)}.verified")
         page = context.new_page()
         page.goto(BASE_URL)
         header = page.locator("header").first
-        text = header.inner_text()
-        links = header.locator("a[href*='/auth/kakao']").count()
-        require("로그인" not in text and links == 0, "header exposes login")
+        login = header.get_by_role("link", name="카카오 로그인")
+        expect(login).to_be_visible()
+        expect(header.get_by_role("link", name="내 프레피")).to_have_count(0)
+        shot(page, f"07-header-signed-out-{'mobile' if mobile else 'desktop'}.png")
+        login.click()
+        page.wait_for_url(f"{BASE_URL}/my-preppy")
+        header = page.locator("header").first
+        expect(header.get_by_role("link", name="내 프레피")).to_be_visible()
+        expect(header.get_by_role("link", name="카카오 로그인")).to_have_count(0)
+        shot(page, f"08-header-signed-in-{'mobile' if mobile else 'desktop'}.png")
+        header.get_by_role("button", name="로그아웃").click()
+        page.wait_for_url(f"{BASE_URL}/")
+        expect(page.locator("header").first.get_by_role("link", name="카카오 로그인")).to_be_visible()
         context.close()
 
 
@@ -343,7 +353,7 @@ def main() -> None:
             kakao_upstream_error,
             forged_and_replayed_callback,
             logout,
-            header_has_no_login,
+            header_login,
         ):
             check(browser)
         browser.close()

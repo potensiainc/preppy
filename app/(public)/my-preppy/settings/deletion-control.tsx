@@ -63,7 +63,11 @@ export function DeletionControl({
   if (state.kind === "pending" || state.kind === "completed")
     return (
       <div aria-live="polite">
-        <h3>{state.kind === "pending" ? "계정 정보 삭제 처리 중" : "계정 정보 삭제 완료"}</h3>
+        <h3>
+          {state.kind === "pending"
+            ? "계정 정보 삭제 처리 중"
+            : "계정 정보 삭제 완료"}
+        </h3>
         <p>
           {state.kind === "pending"
             ? "계정 정보 삭제 요청을 접수했어요. 계정 이용과 새 알림 발송을 중단했어요. 정보 삭제와 카카오 연결 해제를 처리하고 있어요."

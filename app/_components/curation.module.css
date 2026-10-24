@@ -83,6 +83,16 @@
 .iconButton:hover {
   background: #28372e;
 }
+.tools :global(.auth-control) {
+  color: #e5eee7;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 8px;
+}
+.tools :global(.auth-control:hover) {
+  color: #ffffff;
+}
 .bottomNav {
   display: none;
 }
