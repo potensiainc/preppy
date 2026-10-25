@@ -293,7 +293,9 @@ const LOGIN_FAILURE_STYLE =
   "*{box-sizing:border-box}body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px 16px;background:#fbfbf8;color:#171a18;font-family:'Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;line-height:1.6}main{width:100%;max-width:440px;background:#fff;border:1px solid #e5e8e3;border-radius:16px;padding:32px 24px}.brand{margin:0 0 16px;color:#315c50;font-weight:700;letter-spacing:.08em;font-size:14px}h1{margin:0 0 12px;font-size:22px;line-height:1.4}p{margin:0 0 24px;color:#676d68}nav{display:flex;flex-direction:column;gap:12px}a{display:block;text-align:center;padding:14px 16px;border-radius:10px;border:1px solid #e5e8e3;color:#171a18;text-decoration:none;font-weight:600}a.primary{background:#315c50;border-color:#315c50;color:#fff}a.primary:hover{background:#244a40}";
 
 function loginFailureResponse(options: {
-  status: 400 | 429 | 502 | 503;
+  // No 502: Cloudflare in front of preppy.kr replaces 502 bodies with its own
+  // "error code: 502" page, so retryable failures use 503 instead.
+  status: 400 | 429 | 503;
   retryable?: boolean;
   cancelled?: boolean;
   retryAfterSeconds?: number;
@@ -705,7 +707,7 @@ export function createKakaoCallbackHandler(dependencies: {
       return new Response(null, { status: 303, headers });
     } catch {
       return loginFailureResponse({
-        status: 502,
+        status: 503,
         retryable: true,
         retryReturnTo,
         stateCookieSecure: production,

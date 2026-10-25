@@ -681,7 +681,7 @@ describe("WP-11 Admin OIDC callback", () => {
             throw new Error("code/access/refresh/token endpoint internals");
           }),
         }),
-        status: 502,
+        status: 503,
         consumed: true,
       },
     ];
@@ -730,7 +730,7 @@ describe("WP-11 Admin OIDC callback", () => {
       () => runtime,
     );
 
-    expect(response.status).toBe(502);
+    expect(response.status).toBe(503);
     expectAllFlowCookiesCleared(response);
     expect(runtime.verifyIdToken).not.toHaveBeenCalled();
     expect(responseCookieValue(response, "preppy_admin_session")).toBeNull();

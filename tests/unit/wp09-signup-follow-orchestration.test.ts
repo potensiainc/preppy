@@ -416,7 +416,7 @@ describe("WP-09 signup and pending Follow HTTP orchestration", () => {
       activateFollow: vi.fn(),
     })(callbackRequest(validIntent(), "/my-preppy"));
 
-    expect(response.status).toBe(502);
+    expect(response.status).toBe(503);
     expect(await response.text()).toContain(
       'href="/auth/kakao/start?returnTo=%2Fmy-preppy"',
     );
@@ -434,7 +434,7 @@ describe("WP-09 signup and pending Follow HTTP orchestration", () => {
     })(callbackRequest(validIntent()));
     const body = await response.text();
 
-    expect(response.status).toBe(502);
+    expect(response.status).toBe(503);
     expect(body).toContain("로그인을 완료하지 못했어요");
     expect(body).not.toContain("raw database secret");
     expect(setCookieHeader(response)).not.toContain(
