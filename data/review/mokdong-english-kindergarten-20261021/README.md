@@ -29,3 +29,31 @@
 - 학년도 표기가 없는 원비는 학년도를 추정해서 채우지 않아요. 게시 기준일을 함께 보여줘요.
 - 설명회 신청 마감과 행사 종료는 따로 표시해요. 이미 지난 회차는 "지난 일정"으로 보여줘요.
 - 접속 실패(라이즈·엘란)와 "공식 안내에서 찾지 못함"을 구분해요. 화면에서는 `ACCESS_FAILED`와 `CHECKED_NOT_FOUND`로 저장해요.
+
+## 2026-10-25 재확인과 원비·연령·셔틀 반영 준비
+
+`published-update.review.json`에 반영할 값을 정리했어요. 7곳이 대상이고, 설명회는 이 파일에 넣지 않아요(설명회 도구로 따로 반영).
+
+- 재확인: 2026-10-25 08:55 KST에 공식 출처를 다시 불러왔어요.
+  - 그대로인 것: 폴리 게시표·설명회표·셔틀 페이지, SLP 신청서(7세 10/28 회차 마감 표기 없음), YBM 공지·셔틀 노선, PSA 설명회·지점 페이지, 러닝베이 블로그(최신 글 2024-09-25)는 10/21과 같아요.
+  - 이미지 게시표(SLP·YBM·PSA)는 글이 그대로 있는 것만 확인했어요. 금액은 10/21 이미지 판독값이에요.
+- 바뀐 것: 라이즈 설명회 안내(`/landing/seminar2`)가 브라우저에서 열렸어요. 목동캠퍼스 `[오전유치부/5-7세] 10/31 (토) 오전 11:00 원내 02-2646-1368`. 운영 연령을 CONFIRMED로 넣었고, 원비·셔틀은 캠퍼스 페이지가 열리지 않아 ACCESS_FAILED로 둬요.
+- 제외 (2곳)
+  - 월넛: 공식 홈페이지가 http만 제공해서 반입 도구의 HTTPS 근거 조건을 충족하지 못해요.
+  - 프랜시스파커: 10/25에 403으로 응답해 다시 확인하지 못했어요.
+- 엘란: Owner 결정대로 원비·연령·셔틀을 모두 ACCESS_FAILED로 둬요(홈페이지 502).
+- 로컬 리허설: 운영과 같은 형식으로 7곳을 넣고 dry-run → apply → 재실행까지 확인했어요. 알림·발송·변경 기록은 0건이었고, 재실행 시 변경은 0건이었어요. 비교표에서 원비·연령·셔틀과 항목별 확인일(2026년 10월 25일)이 보였어요.
+
+### 운영 반영 순서 (워크스페이스 토큰이 있는 세션)
+
+1. 운영 DB 백업 (`pg_dump`, Railway 컨테이너 안에서).
+2. 운영 DB에서 7곳의 신원 행을 읽어 identity 파일로 저장해요(읽기 전용):
+   `select json_agg(json_build_object('slug',slug,'displayName',display_name,'addressLine',address_line,'district',district,'websiteUrl',website_url,'operationalState',operational_state) order by slug) from institutions where category='ENGLISH_KINDERGARTEN' and slug in (…7곳…)`
+3. 패키지를 만들어요:
+   `npx tsx --tsconfig scripts/db/tsconfig.json scripts/data/build-english-kindergarten-published-update.ts --review data/review/mokdong-english-kindergarten-20261021/published-update.review.json --identity <identity.json> --out <dir>`
+4. 패키지를 컨테이너로 옮겨 `npm run data:import-english-kindergarten-mvp -- --package <dir> --dry-run`을 실행해요. 운영 이미지에는 `data/`가 없어요.
+5. dry-run 결과(생성·갱신 수, 거부 0건, 부수효과 0건)를 Owner에게 보여주고 승인을 받아요.
+6. `ALLOW_PRODUCTION_ENGLISH_KINDERGARTEN_IMPORT=1`과 `--apply --expected-checksum <dry-run의 packageChecksum>`으로 반영해요.
+7. preppy.kr 비교표와 기관 상세에서 값과 확인일을 확인해요.
+
+반영하는 날이 10/25가 아니면 공식 출처를 다시 확인하고 `checkedAt`과 바뀐 값을 고쳐요.
