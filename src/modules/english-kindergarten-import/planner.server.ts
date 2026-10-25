@@ -57,7 +57,8 @@ export type EnglishKindergartenImportReject = Readonly<{
     | "SLUG_COLLISION"
     | "IDENTITY_COLLISION"
     | "SOURCE_COLLISION"
-    | "OPPORTUNITY_COLLISION";
+    | "OPPORTUNITY_COLLISION"
+    | "PUBLISHED_TARGET_MISSING";
   campusId?: string;
   message: string;
 }>;
@@ -112,7 +113,7 @@ export type InstitutionAction = Readonly<{
     publicationState: "DRAFT" | "PUBLISHED";
     regionCode: "KR-11";
     city: "서울특별시";
-    district: "강남구" | "서초구";
+    district: string;
     addressLine: string;
     websiteUrl: string | null;
     shortDescription: null;
@@ -445,9 +446,26 @@ export async function planEnglishKindergartenImport(
   const institutionBySlug = new Map(
     existingInstitutions.map((row) => [row.slug, row]),
   );
+  const expectedStateByCampusId = new Map(
+    packageValue.snapshot.institutions.map((item) => [
+      item.campusId,
+      item.publicationState,
+    ]),
+  );
   const resolvedInstitutionIds = new Map<string, string>();
   for (const campus of packageValue.campuses) {
     const existing = institutionBySlug.get(campus.slug);
+    if (
+      expectedStateByCampusId.get(campus.campusId) === "PUBLISHED" &&
+      existing?.publicationState !== "PUBLISHED"
+    ) {
+      rejects.push({
+        code: "PUBLISHED_TARGET_MISSING",
+        campusId: campus.campusId,
+        message: `${campus.slug} slug의 공개 기관을 찾지 못했어요.`,
+      });
+      continue;
+    }
     const generatedId = deterministicUuid(`institution:${campus.campusId}`);
     const websiteUrl =
       campus.officialChannels.find((channel) => channel.kind === "WEBSITE")
@@ -841,12 +859,28 @@ export async function planEnglishKindergartenImport(
         current &&
         canonicalJson(current.valueJson) === canonicalJson(valueJson) &&
         current.displayText === fact.displayText;
-      const deterministicVersionId = deterministicUuid(
+      const contentVersionId = deterministicUuid(
         `fact-version:${factId}:${canonicalJsonSha(valueJson)}:${fact.displayText ?? ""}`,
       );
-      const existingVersion = exactCurrent
-        ? current
-        : existingFactVersions.find((row) => row.id === deterministicVersionId);
+      // A replayed older package never brings back a historical value, but a
+      // newer verification does: it re-confirms the current value with fresh
+      // evidence, or restores an earlier value on purpose.
+      const verifiedAt = new Date(fact.verifiedAt);
+      const newerVerification =
+        current !== undefined &&
+        verifiedAt.getTime() >
+          (current.verifiedAt?.getTime() ?? Number.NEGATIVE_INFINITY);
+      const deterministicVersionId = newerVerification
+        ? deterministicUuid(
+            `fact-version:${factId}:${canonicalJsonSha(valueJson)}:${fact.displayText ?? ""}:${verifiedAt.toISOString()}`,
+          )
+        : contentVersionId;
+      const existingVersion =
+        exactCurrent && !newerVerification
+          ? current
+          : existingFactVersions.find(
+              (row) => row.id === deterministicVersionId,
+            );
       const versionId = existingVersion?.id ?? deterministicVersionId;
       const versionOperation = existingVersion ? "NONE" : "CREATE";
       actions.factVersions.push({

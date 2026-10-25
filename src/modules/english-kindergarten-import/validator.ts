@@ -278,13 +278,44 @@ export function validateEnglishKindergartenPackage(
   const evidenceById = new Map(
     packageValue.evidence.map((evidence) => [evidence.evidenceId, evidence]),
   );
+  const firstRollout = packageValue.snapshot.schemaVersion === 1;
   const crossFileErrors: string[] = [];
   for (const item of packageValue.snapshot.institutions) {
     const sections = item.coverages.map((coverage) => coverage.section);
-    if (duplicates(sections).length > 0 || new Set(sections).size !== 8) {
+    if (
+      duplicates(sections).length > 0 ||
+      (firstRollout && new Set(sections).size !== 8)
+    ) {
       crossFileErrors.push(
         `${item.campusId}: coverage 항목 구성이 올바르지 않습니다.`,
       );
+    }
+    if (firstRollout && item.publicationState !== "DRAFT") {
+      crossFileErrors.push(
+        `${item.campusId}: 첫 반입 패키지는 DRAFT 기관만 받을 수 있습니다.`,
+      );
+    }
+    if (!firstRollout) {
+      if (item.publicationState !== "PUBLISHED") {
+        crossFileErrors.push(
+          `${item.campusId}: 공개 기관 갱신 패키지는 PUBLISHED 기관만 받을 수 있습니다.`,
+        );
+      }
+      // Information sessions and their coverage are owned by the session
+      // registration tool, which also handles notifications for public rows.
+      if (
+        item.opportunities.length > 0 ||
+        sections.includes("INFORMATION_SESSION")
+      ) {
+        crossFileErrors.push(
+          `${item.campusId}: 공개 기관 갱신 패키지는 설명회를 바꿀 수 없습니다.`,
+        );
+      }
+      if (item.reviewInsight) {
+        crossFileErrors.push(
+          `${item.campusId}: 공개 기관 갱신 패키지는 후기 요약을 바꿀 수 없습니다.`,
+        );
+      }
     }
     const references = [
       ...item.coverages.flatMap((coverage) =>
@@ -345,16 +376,21 @@ export function validateEnglishKindergartenPackage(
     }
   }
 
+  const firstRolloutErrors = firstRollout
+    ? [
+        ...(packageValue.campuses.length === 25
+          ? []
+          : ["기관 행 수가 25가 아닙니다."]),
+        ...(canonicalJson(districtCounts) === canonicalJson(exactDistricts)
+          ? []
+          : ["자치구 합계가 13/12와 일치하지 않습니다."]),
+        ...(canonicalJson(legalDongCounts) === canonicalJson(exactLegalDongs)
+          ? []
+          : ["법정동 합계가 13/1/11과 일치하지 않습니다."]),
+      ]
+    : [];
   const errors = [
-    ...(packageValue.campuses.length === 25
-      ? []
-      : ["기관 행 수가 25가 아닙니다."]),
-    ...(canonicalJson(districtCounts) === canonicalJson(exactDistricts)
-      ? []
-      : ["자치구 합계가 13/12와 일치하지 않습니다."]),
-    ...(canonicalJson(legalDongCounts) === canonicalJson(exactLegalDongs)
-      ? []
-      : ["법정동 합계가 13/1/11과 일치하지 않습니다."]),
+    ...firstRolloutErrors,
     ...(duplicateCampusIds.length ? ["중복 campusId가 있습니다."] : []),
     ...(duplicateSlugs.length ? ["중복 slug가 있습니다."] : []),
     ...(duplicateEvidenceIds.length ? ["중복 evidenceId가 있습니다."] : []),

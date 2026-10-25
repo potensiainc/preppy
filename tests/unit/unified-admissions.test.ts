@@ -1,7 +1,7 @@
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { load } from "cheerio";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, onTestFinished, vi } from "vitest";
 import {
   AdmissionSessions,
   ReviewedAdmissions,
@@ -190,17 +190,12 @@ describe("unified school-cycle admission experience", () => {
   });
 
   it("preserves date-only precision, unknown end, cancellation and sorts known dates before unknown", () => {
-    // The fixture date is fixed; pin "now" before it so the test does not
-    // start failing once 2026-10-24 has passed in Korea.
-    vi.useFakeTimers({ now: new Date("2026-10-20T00:00:00+09:00") });
-    try {
-      assertDateOnlyOrdering();
-    } finally {
-      vi.useRealTimers();
-    }
-  });
-
-  function assertDateOnlyOrdering() {
+    // The fixture dates must stay upcoming; past sessions sort to the back.
+    vi.useFakeTimers({
+      toFake: ["Date"],
+      now: new Date("2026-10-01T00:00:00Z"),
+    });
+    onTestFinished(() => void vi.useRealTimers());
     const $ = load(
       renderToStaticMarkup(
         createElement(AdmissionSessions, {
@@ -223,7 +218,7 @@ describe("unified school-cycle admission experience", () => {
     expect($("article").first().text()).toContain("취소");
     expect($("article").first().text()).toContain("종료 시각 미확인");
     expect($("time[datetime='2026-10-24']").text()).not.toContain("00:00");
-  }
+  });
 
   it("redirects only an exact official guide with the requested child actually present", () => {
     const child = {

@@ -147,6 +147,16 @@ npx tsx --tsconfig scripts/db/tsconfig.json scripts/data/import-english-kinderga
 - 상세 페이지에서는 각 설명회 회차의 날짜·시간과 근거를 삭제하지 않는다.
 - 상세 정보가 아직 충분하지 않은 영어유치원 페이지는 `noindex, follow`로 유지한다.
 
+## 공개 기관 갱신 패키지 (schemaVersion 2)
+
+첫 반입 패키지(`schemaVersion: 1`)는 강남구·서초구 25곳, 전 항목 coverage, DRAFT 기관만 받는다. 이미 공개된 기관의 원비·운영 연령·셔틀 등을 갱신할 때는 같은 명령(`npm run data:import-english-kindergarten-mvp`)에 `schemaVersion: 2` 패키지를 쓴다.
+
+- 대상 기관은 모두 `publicationState: "PUBLISHED"`로 적고, DB에 이미 공개된 기관과 slug·이름·주소·웹사이트가 정확히 같아야 한다. 공개되지 않은 기관은 `PUBLISHED_TARGET_MISSING`으로 거부한다.
+- 패키지에 적은 coverage 항목과 fact만 바꾼다. 적지 않은 항목은 그대로 둔다.
+- 설명회(`opportunities`, `INFORMATION_SESSION` coverage)와 후기 요약은 받지 않는다. 설명회는 `register-english-kindergarten-sessions`로 반영한다.
+- 기관 수와 자치구·법정동 분포는 고정하지 않는다. 대신 `progress.json` 합계가 원장과 맞아야 한다.
+- 공개 상태와 `publishedAt`은 바꾸지 않고, outbox·알림·발송·변경 기록은 0건이어야 한다.
+
 ## UX Writing 검토
 
 **UX Writing: PASS**
