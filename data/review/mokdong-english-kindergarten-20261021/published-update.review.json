@@ -1,0 +1,558 @@
+{
+  "packageId": "ek-yangcheon-20261025-r01",
+  "checkedAt": "2026-10-24T23:55:00.000Z",
+  "excluded": [
+    {
+      "slug": "seoul-ek-nw-017",
+      "reason": "월넛어학원 공식 홈페이지가 http만 제공해 반입 도구의 HTTPS 근거 조건을 충족하지 못해요. 설명회는 1단계 설명회 도구로 따로 다뤄요."
+    },
+    {
+      "slug": "seoul-ek-nw-016",
+      "reason": "2026-10-25 재확인에서 md.francisparker.kr이 403으로 응답해 오늘 날짜로 다시 확인하지 못했어요. 반영하는 날 다시 확인해요."
+    }
+  ],
+  "campuses": [
+    {
+      "slug": "seoul-ek-nw-003",
+      "legalDong": "목동",
+      "evidence": {
+        "main": {
+          "url": "https://www.poly-english.com/admission/admissionLandingPage.do",
+          "sourceType": "OFFICIAL_ADMISSION_PAGE",
+          "fetchOutcome": "SUCCESS",
+          "excerpt": "2027 Poly 입학설명회 일정 캠퍼스명 유치부 (27년 3월 연령기준) ... 목동 11/07(토) 10:30 5, 6, 7세 11/09(월) 10:30 5, 6, 7세 11/11(수) 10:30 5, 6, 7세 11/13(금) 10:30 5, 6, 7세 12/12(토) 10:30 예비초1 02-2644-7659"
+        },
+        "fee": {
+          "url": "https://www.poly-english.com/campus/campusBoardView.do?campusBoardNo=374751&searchClientCode=0601012&searchBoardMenuNo=738&searchBoardMenuGbn=03&searchBoardType=01&searchBoardCatetorieType=2270",
+          "sourceType": "OFFICIAL_NOTICE_BOARD",
+          "fetchOutcome": "CHECKED_NOT_FOUND",
+          "excerpt": "학원 정보 및 교습비 안내 2021-02-27 제목: 교습비 규정 안내 ... 교습과정 교습시간 교습비 기타경비 ECP영어(유아) 주 5회 (6,300분/월) 1,240,000 차량비 100,000. 2027학년도에 적용되는 교습비 안내는 찾지 못했어요."
+        },
+        "bus": {
+          "url": "https://www.poly-english.com/campus/campusShuttleBusView.do?searchClientCode=0601012",
+          "sourceType": "OFFICIAL_SCHOOL_PAGE",
+          "fetchOutcome": "SUCCESS",
+          "excerpt": "Shuttle Bus 안전하고 편안한 아이들의 등·하원을 약속 드립니다. 호차 선택 1호차 2호차 3호차 5호차 ... 16호차"
+        }
+      },
+      "identityEvidence": "main",
+      "coverages": [
+        {
+          "section": "TUITION",
+          "status": "CHECKED_NOT_FOUND",
+          "evidence": "fee",
+          "academicYearLabel": "2027학년도",
+          "publicNote": "공식 홈페이지의 교습비 게시표는 2021년 2월 게시 자료라 표시하지 않았어요.",
+          "internalNote": "2021-02-27 게시표: ECP영어(유아) 주 5회 1,240,000원, 차량비 100,000원. 현재 금액인지 확인되지 않음."
+        },
+        {
+          "section": "TARGET_AGE_GRADE",
+          "status": "CONFIRMED",
+          "evidence": "main",
+          "academicYearLabel": "2027학년도",
+          "publicNote": null,
+          "internalNote": null
+        },
+        {
+          "section": "TRANSPORT",
+          "status": "CONFIRMED",
+          "evidence": "bus",
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": "노선도는 호차 선택 시 동적으로 표시돼 텍스트로 확인하지 못함."
+        }
+      ],
+      "facts": [
+        {
+          "factType": "TARGET_AGE_GRADE",
+          "value": {
+            "academicYearLabel": "2027학년도",
+            "ageBasis": "INSTITUTION_DEFINED",
+            "minAge": 5,
+            "maxAge": 7,
+            "classes": [],
+            "midyearAdmission": null
+          },
+          "displayText": "유치부 5·6·7세 (2027년 3월 연령 기준)",
+          "evidence": ["main"]
+        },
+        {
+          "factType": "TRANSPORT",
+          "value": {
+            "isAvailable": true,
+            "serviceAreas": [],
+            "routes": [],
+            "restrictions": null,
+            "inquiryRequired": true
+          },
+          "displayText": "셔틀 운행 (노선·차량비는 원내 문의)",
+          "evidence": ["bus"]
+        }
+      ]
+    },
+    {
+      "slug": "seoul-ek-nw-008",
+      "legalDong": "목동",
+      "evidence": {
+        "form": {
+          "url": "https://docs.google.com/forms/d/e/1FAIpQLSdzfaQMEouPQwgpXa0xEkGxzty2AolVbJh5w0lXXb9OirhuRQ/viewform",
+          "sourceType": "OFFICIAL_APPLICATION_PORTAL",
+          "fetchOutcome": "SUCCESS",
+          "excerpt": "목동SLP 2027 유치부 입학설명회 참석 대상 및 일시 5세반 (23년생) / 6세반 (22년생) [1차 일정 마감] / [2차 일정 마감] [3차 설명회 대기] : 2026년 11월 중 ... 7세반 (21년생) 2026년 10월 28일 (수) 오전 10:30"
+        },
+        "fee": {
+          "url": "https://blog.naver.com/slpmokdong/224413699151",
+          "sourceType": "OFFICIAL_SOCIAL",
+          "fetchOutcome": "SUCCESS",
+          "excerpt": "목동 SLP 교습비등 게시표 (2026. 9. 16. 게시) 교습비등 게시표(제8조 관련) | 영어 | 유치부1 | 12 | 6,405분 | 1,230,000원 | 1개월 | 피복(1회) 78,000 / 급식(매월) 150,000 — 수강료는 1개월 기준입니다. 급식비 및 피복비 등 기타 항목은 별도 청구됩니다."
+        },
+        "bus": {
+          "url": "https://blog.naver.com/slpmokdong/224426751678",
+          "sourceType": "OFFICIAL_SOCIAL",
+          "fetchOutcome": "SUCCESS",
+          "excerpt": "목동 SLP에 13단지·14단지 신규 셔틀 노선이 추가되었습니다."
+        }
+      },
+      "identityEvidence": "form",
+      "coverages": [
+        {
+          "section": "TUITION",
+          "status": "CONFIRMED",
+          "evidence": "fee",
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": "게시표는 이미지라 금액은 이미지 판독값이에요. 학년도 표기 없음."
+        },
+        {
+          "section": "TARGET_AGE_GRADE",
+          "status": "CONFIRMED",
+          "evidence": "form",
+          "academicYearLabel": "2027학년도",
+          "publicNote": null,
+          "internalNote": null
+        },
+        {
+          "section": "TRANSPORT",
+          "status": "CONFIRMED",
+          "evidence": "bus",
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": "전체 노선과 차량비는 공식 안내에서 찾지 못함."
+        }
+      ],
+      "facts": [
+        {
+          "factType": "TUITION",
+          "value": {
+            "academicYearLabel": null,
+            "validityNote": "2026년 9월 16일 게시된 교습비등 게시표 기준이에요.",
+            "billingCadence": "MONTHLY",
+            "currency": "KRW",
+            "amountMin": 1230000,
+            "amountMax": 1230000,
+            "programFees": [],
+            "extraCosts": [
+              {
+                "label": "피복",
+                "amount": 78000,
+                "cadence": "ONE_TIME"
+              },
+              {
+                "label": "급식",
+                "amount": 150000,
+                "cadence": "MONTHLY"
+              }
+            ],
+            "includedItems": [],
+            "refundTerms": null,
+            "changeNote": null
+          },
+          "displayText": "유치부1 월 1,230,000원 (2026년 9월 16일 게시 기준) · 피복 1회 78,000원, 급식 월 150,000원 별도",
+          "evidence": ["fee"]
+        },
+        {
+          "factType": "TARGET_AGE_GRADE",
+          "value": {
+            "academicYearLabel": "2027학년도",
+            "ageBasis": "INSTITUTION_DEFINED",
+            "minAge": 5,
+            "maxAge": 7,
+            "classes": [
+              {
+                "name": "5세반 (2023년생)",
+                "minAge": 5,
+                "maxAge": 5
+              },
+              {
+                "name": "6세반 (2022년생)",
+                "minAge": 6,
+                "maxAge": 6
+              },
+              {
+                "name": "7세반 (2021년생)",
+                "minAge": 7,
+                "maxAge": 7
+              }
+            ],
+            "midyearAdmission": null
+          },
+          "displayText": "5세반(2023년생)·6세반(2022년생)·7세반(2021년생)",
+          "evidence": ["form"]
+        },
+        {
+          "factType": "TRANSPORT",
+          "value": {
+            "isAvailable": true,
+            "serviceAreas": [],
+            "routes": [],
+            "restrictions": null,
+            "inquiryRequired": true
+          },
+          "displayText": "셔틀 운행 (13·14단지 노선 추가 안내, 전체 노선·차량비는 원내 문의)",
+          "evidence": ["bus"]
+        }
+      ]
+    },
+    {
+      "slug": "seoul-ek-nw-014",
+      "legalDong": "목동",
+      "evidence": {
+        "seminar": {
+          "url": "https://www.risekorea.com/landing/seminar2",
+          "sourceType": "OFFICIAL_ADMISSION_PAGE",
+          "fetchOutcome": "SUCCESS",
+          "excerpt": "2027 라이즈어학원 캠퍼스별 설명회 일정 ... 서울 목동캠퍼스 [오전유치부/5-7세] 10/31 (토) 오전 11:00 원내 02-2646-1368"
+        }
+      },
+      "identityEvidence": "seminar",
+      "coverages": [
+        {
+          "section": "TUITION",
+          "status": "ACCESS_FAILED",
+          "evidence": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": "2026-10-25 www.risekorea.com/mokdong이 브라우저에서도 40초 안에 열리지 않음. 설명회 안내 페이지에는 원비가 없음."
+        },
+        {
+          "section": "TARGET_AGE_GRADE",
+          "status": "CONFIRMED",
+          "evidence": "seminar",
+          "academicYearLabel": "2027학년도",
+          "publicNote": null,
+          "internalNote": "10/21에는 자동 접근 차단으로 실패, 10/25 브라우저로 설명회 안내 페이지 확인."
+        },
+        {
+          "section": "TRANSPORT",
+          "status": "ACCESS_FAILED",
+          "evidence": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": "캠퍼스 페이지 접속 실패."
+        }
+      ],
+      "facts": [
+        {
+          "factType": "TARGET_AGE_GRADE",
+          "value": {
+            "academicYearLabel": "2027학년도",
+            "ageBasis": "INSTITUTION_DEFINED",
+            "minAge": 5,
+            "maxAge": 7,
+            "classes": [],
+            "midyearAdmission": null
+          },
+          "displayText": "오전유치부 5-7세 (2027학년도 설명회 대상 기준)",
+          "evidence": ["seminar"]
+        }
+      ]
+    },
+    {
+      "slug": "ek-ybm-ecc-109",
+      "legalDong": "신정동",
+      "evidence": {
+        "main": {
+          "url": "https://www.ybmecc.com/mokdong",
+          "sourceType": "OFFICIAL_SCHOOL_PAGE",
+          "fetchOutcome": "SUCCESS",
+          "excerpt": "셔틀 버스 안내 다양한 노선의 운행 범위를 한눈에 확인하실 수 있습니다. 셔틀 관련 문의 전화 02-2652-0509 노선별 주요 정류장 1호차 목동1~7단지 2호차 신정네거리,목동 9,10 단지 3호차 개봉동, 고척, 신도림 5호차 당산,양평동 6호차 목동 11~14단지 8호차 신월동,신정뉴타운, 목동 8단지 11호차 영등포,문래동 12호차 등촌동, 파라곤,뚝방현대 ... 상호명: 와이비엠이씨씨목동어학원 주소: 서울특별시 양천구 목동동로12길 20 (신정동) 목동하버드빌딩 3층"
+        },
+        "notice": {
+          "url": "https://www.ybmecc.com/mokdong/notice/430506",
+          "sourceType": "OFFICIAL_NOTICE_BOARD",
+          "fetchOutcome": "SUCCESS",
+          "excerpt": "2027년 오전유치부 신입생 설명회 안내(임박) 2026.10.12 목동ECC 2027 오전유치부 설명회가 예정되어있습니다. 목동ECC 2학기 오전유치부 설명회를 5세 6세 7세 나눠서 설명회를 진행합니다."
+        },
+        "fee": {
+          "url": "https://blog.naver.com/izoa4_/224406752692",
+          "sourceType": "OFFICIAL_SOCIAL",
+          "fetchOutcome": "SUCCESS",
+          "excerpt": "와이비엠이씨씨목동어학원 교습비등 게시표(제8조 관련) 2026년 05월 26일 현재 | 영어유치1 | 영어 | 12명 | 6195분 | 1,200,000원 | 1개월 | 급식비 174,000원 / 차량비 80,000원 / 피복비 340,000원"
+        }
+      },
+      "identityEvidence": "main",
+      "coverages": [
+        {
+          "section": "TUITION",
+          "status": "CONFIRMED",
+          "evidence": "fee",
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": "게시표는 이미지라 금액은 이미지 판독값이에요. 게시표에 '오전유치부' 명칭은 없어 과정명 그대로 표시해요. 기타경비 납부 주기 표기 없음."
+        },
+        {
+          "section": "TARGET_AGE_GRADE",
+          "status": "CONFIRMED",
+          "evidence": "notice",
+          "academicYearLabel": "2027학년도",
+          "publicNote": null,
+          "internalNote": null
+        },
+        {
+          "section": "TRANSPORT",
+          "status": "CONFIRMED",
+          "evidence": "main",
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null
+        }
+      ],
+      "facts": [
+        {
+          "factType": "TUITION",
+          "value": {
+            "academicYearLabel": null,
+            "validityNote": "2026년 5월 26일 현재 교습비등 게시표 기준이에요.",
+            "billingCadence": "MONTHLY",
+            "currency": "KRW",
+            "amountMin": 1200000,
+            "amountMax": 1200000,
+            "programFees": [],
+            "extraCosts": [
+              {
+                "label": "급식비",
+                "amount": 174000,
+                "cadence": null
+              },
+              {
+                "label": "차량비",
+                "amount": 80000,
+                "cadence": null
+              },
+              {
+                "label": "피복비",
+                "amount": 340000,
+                "cadence": null
+              }
+            ],
+            "includedItems": [],
+            "refundTerms": null,
+            "changeNote": null
+          },
+          "displayText": "영어유치1 월 1,200,000원 (2026년 5월 26일 기준) · 급식비 174,000원, 차량비 80,000원, 피복비 340,000원 별도",
+          "evidence": ["fee"]
+        },
+        {
+          "factType": "TARGET_AGE_GRADE",
+          "value": {
+            "academicYearLabel": "2027학년도",
+            "ageBasis": "INSTITUTION_DEFINED",
+            "minAge": 5,
+            "maxAge": 7,
+            "classes": [],
+            "midyearAdmission": null
+          },
+          "displayText": "오전유치부 5·6·7세 (2027학년도 설명회 대상 기준)",
+          "evidence": ["notice"]
+        },
+        {
+          "factType": "TRANSPORT",
+          "value": {
+            "isAvailable": true,
+            "serviceAreas": [
+              "목동1~7단지",
+              "신정네거리",
+              "목동 9·10단지",
+              "개봉동",
+              "고척",
+              "신도림",
+              "당산",
+              "양평동",
+              "목동 11~14단지",
+              "신월동",
+              "신정뉴타운",
+              "목동 8단지",
+              "영등포",
+              "문래동",
+              "등촌동",
+              "파라곤",
+              "뚝방현대"
+            ],
+            "routes": [],
+            "restrictions": null,
+            "inquiryRequired": false
+          },
+          "displayText": "셔틀 운행 (8개 노선 · 문의 02-2652-0509)",
+          "evidence": ["main"]
+        }
+      ]
+    },
+    {
+      "slug": "psa-mokdong",
+      "legalDong": "신정동",
+      "evidence": {
+        "main": {
+          "url": "https://www.ybmpine.com/psa/mokdong",
+          "sourceType": "OFFICIAL_SCHOOL_PAGE",
+          "fetchOutcome": "CHECKED_NOT_FOUND",
+          "excerpt": "PSA Mokdong 피에스에이목동어학학원 (제6096호) 서울특별시 양천구 중앙로 181 (신정동, 복합메디컬타운) 2층 02-2691-0509 08:30 ~ 19:00 상담예약 설명회 예약 지도 & 교습과정 보기. 셔틀 운행 안내는 찾지 못했어요."
+        },
+        "briefing": {
+          "url": "https://www.ybmpine.com/briefing",
+          "sourceType": "OFFICIAL_ADMISSION_PAGE",
+          "fetchOutcome": "SUCCESS",
+          "excerpt": "PSA Program (Age 5-7) / Appletree Program은 4세부터 시작하는 첫 영어 교육 과정입니다. / Appletree Program at PSA ... PSA 목동 신정동 1268 02-2691-0509"
+        },
+        "fee": {
+          "url": "https://blog.naver.com/psa_official/224424711222",
+          "sourceType": "OFFICIAL_SOCIAL",
+          "fetchOutcome": "CHECKED_NOT_FOUND",
+          "excerpt": "PSA 지점별 교습비 안내 — 교습비등 게시표 2026년 09월 29일 현재 (단위 : 원) | 외국어회화1(유아) | 6 | 20 | 319,000 | [징수단위 공란] | 피복비 195000 | 급식비 150000 | 차량비 130000. 과목별 금액만 있고 영어유치부 월 합계 원비는 찾지 못했어요."
+        }
+      },
+      "identityEvidence": "briefing",
+      "coverages": [
+        {
+          "section": "TUITION",
+          "status": "CHECKED_NOT_FOUND",
+          "evidence": "fee",
+          "academicYearLabel": null,
+          "publicNote": "교습비등 게시표(2026년 9월 29일 현재)에는 과목별 금액만 있고 월 합계 원비는 없어요.",
+          "internalNote": "게시표 징수단위 열이 모든 행에서 공란."
+        },
+        {
+          "section": "TARGET_AGE_GRADE",
+          "status": "CONFIRMED",
+          "evidence": "briefing",
+          "academicYearLabel": "2027학년도",
+          "publicNote": null,
+          "internalNote": null
+        },
+        {
+          "section": "TRANSPORT",
+          "status": "CHECKED_NOT_FOUND",
+          "evidence": "main",
+          "academicYearLabel": null,
+          "publicNote": "공식 페이지에서 셔틀 운행 안내를 찾지 못했어요. 교습비등 게시표에는 차량비 항목이 있어요.",
+          "internalNote": "게시표 외국어회화1(유아) 차량비 130000."
+        }
+      ],
+      "facts": [
+        {
+          "factType": "TARGET_AGE_GRADE",
+          "value": {
+            "academicYearLabel": "2027학년도",
+            "ageBasis": "INSTITUTION_DEFINED",
+            "minAge": 4,
+            "maxAge": 7,
+            "classes": [
+              {
+                "name": "Appletree Program (4세)",
+                "minAge": 4,
+                "maxAge": 4
+              },
+              {
+                "name": "PSA Program (5~7세)",
+                "minAge": 5,
+                "maxAge": 7
+              }
+            ],
+            "midyearAdmission": null
+          },
+          "displayText": "4세(Appletree, 2027년 3월부터) · 5~7세(PSA Program)",
+          "evidence": ["briefing"]
+        }
+      ]
+    },
+    {
+      "slug": "seoul-ek-nw-018",
+      "legalDong": "목동",
+      "evidence": {
+        "kakao": {
+          "url": "https://pf.kakao.com/_aAQDxj",
+          "sourceType": "OFFICIAL_SOCIAL",
+          "fetchOutcome": "SUCCESS",
+          "excerpt": "목동엘란유치부 공식채널 ... 2026년 엘란유치 5세반 추가 개설 안내 오는 9월 2학기에 유치 5세 1개반을 추가 개설하고자 다음과 같이 안내해 드립니다."
+        }
+      },
+      "identityEvidence": "kakao",
+      "coverages": [
+        {
+          "section": "TUITION",
+          "status": "ACCESS_FAILED",
+          "evidence": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": "2026-10-25 www.elankorea.com 접속 실패(upstream 502). 카카오 채널에는 원비 안내 없음."
+        },
+        {
+          "section": "TARGET_AGE_GRADE",
+          "status": "ACCESS_FAILED",
+          "evidence": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": "공식 홈페이지 접속 실패. 카카오 채널에는 2027학년도 운영 연령 안내 없음(2026-08 5세반 추가 개설 공지만 있음)."
+        },
+        {
+          "section": "TRANSPORT",
+          "status": "ACCESS_FAILED",
+          "evidence": null,
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": "공식 홈페이지 접속 실패. 카카오 채널에 셔틀 언급 없음."
+        }
+      ],
+      "facts": []
+    },
+    {
+      "slug": "seoul-ek-nw-019",
+      "legalDong": "목동",
+      "evidence": {
+        "blog": {
+          "url": "https://blog.naver.com/elbmd",
+          "sourceType": "OFFICIAL_SOCIAL",
+          "fetchOutcome": "CHECKED_NOT_FOUND",
+          "excerpt": "잉글리쉬러닝베이 목동 공식 블로그. 최신 글 2024. 9. 25. 2027학년도 원비·운영 연령·셔틀 안내는 찾지 못했어요."
+        }
+      },
+      "identityEvidence": "blog",
+      "coverages": [
+        {
+          "section": "TUITION",
+          "status": "CHECKED_NOT_FOUND",
+          "evidence": "blog",
+          "academicYearLabel": "2027학년도",
+          "publicNote": "공식 블로그의 마지막 글이 2024년 9월이에요.",
+          "internalNote": "NEIS에서 같은 이름의 등록 학원을 찾지 못함. 운영 여부 전화 확인 필요."
+        },
+        {
+          "section": "TARGET_AGE_GRADE",
+          "status": "CHECKED_NOT_FOUND",
+          "evidence": "blog",
+          "academicYearLabel": "2027학년도",
+          "publicNote": "공식 블로그의 마지막 글이 2024년 9월이에요.",
+          "internalNote": "2024-08-08 공지의 '대상: 6,7세'는 2024년 오후유치부 모집 안내."
+        },
+        {
+          "section": "TRANSPORT",
+          "status": "CHECKED_NOT_FOUND",
+          "evidence": "blog",
+          "academicYearLabel": null,
+          "publicNote": null,
+          "internalNote": null
+        }
+      ],
+      "facts": []
+    }
+  ]
+}

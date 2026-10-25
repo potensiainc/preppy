@@ -739,17 +739,38 @@ export async function planEnglishKindergartenImport(
       evidence,
     );
   }
-  for (const first of bindingEvidence.values()) {
+  // An institution has at most one active primary main source. Only the
+  // official identity source can become it, and only when the institution has
+  // none yet; other official sources attach as supporting bindings.
+  const identitySourceKeys = new Set(
+    packageValue.evidence
+      .filter((evidence) => evidence.claimType === "IDENTITY")
+      .map((evidence) => `${evidence.campusId}\u0000${evidence.sourceUrl}`),
+  );
+  const institutionsWithPrimaryMain = new Set(
+    existingBindings
+      .filter(
+        (row) => row.isPrimary && row.isActive && row.role === "OFFICIAL_MAIN",
+      )
+      .map((row) => row.institutionId),
+  );
+  for (const [bindingKey, first] of bindingEvidence) {
     const url = first.sourceUrl;
     const institutionId = resolvedInstitutionIds.get(first.campusId)!;
     const sourceId = resolvedSourceIds.get(url)!;
     const role: "OFFICIAL_MAIN" | "OTHER" =
-      first.authorityLevel === "PRIMARY" ? "OFFICIAL_MAIN" : "OTHER";
+      first.authorityLevel === "PRIMARY" && identitySourceKeys.has(bindingKey)
+        ? "OFFICIAL_MAIN"
+        : "OTHER";
+    const isPrimary =
+      role === "OFFICIAL_MAIN" &&
+      !institutionsWithPrimaryMain.has(institutionId);
+    if (isPrimary) institutionsWithPrimaryMain.add(institutionId);
     const desired = {
       institutionId,
       sourceId,
       role,
-      isPrimary: role === "OFFICIAL_MAIN",
+      isPrimary,
       isActive: true as const,
     };
     const operation = bindingKeys.has(
