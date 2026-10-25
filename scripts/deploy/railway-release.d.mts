@@ -15,3 +15,7 @@ export function assertImageBuiltFrom(
   image: string,
   publishedDigest: string,
 ): void;
+export function assertProductionFromMain(baseline: {
+  gitSha: string;
+  mainSha: string;
+}): void;

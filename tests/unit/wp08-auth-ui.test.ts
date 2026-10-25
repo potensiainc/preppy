@@ -278,12 +278,7 @@ describe("WP-08 auth-aware public UI", () => {
     expect(markup).toContain('aria-live="polite"');
     expect(markup).toContain("선택");
     expect(markup).toContain("서울국제학교");
-    expect(markup).toContain(
-      "기본 설정을 완료하면 이 기관도 관심기관으로 등록돼요",
-    );
-    expect(markup).toContain(
-      "가입을 완료해야 관심기관 등록과 이메일 수신 설정이 반영돼요",
-    );
+    expect(markup).toContain("가입하면 이 기관도 관심기관으로 등록돼요");
     expect(markup).not.toMatch(/팔로우 완료|관심기관 등록이 완료/);
   });
 

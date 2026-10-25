@@ -26,12 +26,8 @@ export default async function OnboardingPage() {
   return (
     <div className="page-container onboarding-page">
       <header className="onboarding-page__intro">
-        <p className="eyebrow">PREPPY 시작하기</p>
         <h1>프레피 시작하기</h1>
-        <p>
-          회원 기능은 모두 무료예요. 선택 항목에 동의하지 않아도 가입할 수
-          있어요.
-        </p>
+        <p>선택 항목은 동의하지 않아도 가입할 수 있어요.</p>
       </header>
       <OnboardingForm {...state} />
     </div>

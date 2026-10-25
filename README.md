@@ -150,7 +150,7 @@ worker는 한 번 처리하고 종료해요. 주기 실행은 Railway cron 설�
 
 1. 최신 `main`을 통합하고 단위 테스트와 타입 검사를 통과시켜요.
 2. 업로드 직전에 `npm run deploy:preflight`를 실행해요. 최신 원격 main 미포함, 미커밋 파일, 헤더 로그인 누락이 있으면 배포를 중단해요.
-3. 같은 커밋을 staging에서 검증한 뒤 production에 배포해요.
+3. 같은 커밋을 staging에서 검증한 뒤 production에 배포해요. production은 최신 origin/main 커밋 이미지만 받아요. 작업 브랜치 이미지는 `deploy:railway`가 거부해요.
 4. 배포 커밋과 환경별 배포 ID를 기록해요.
 
 - staging/production web의 Railway Healthcheck Path는 `/api/release-integrity`로 유지해요(`.railway/railway.ts`에도 같은 값이에요). 이 경로는 배포 환경 일치, 브랜드 아이콘, 헤더 로그인 노출을 검사해요. 환경 일치 검사를 위해 shared variable `PREPPY_ENVIRONMENT`를 각 환경 이름(`staging`, `production`)으로 설정해야 해요. `/api/health`는 항상 200을 반환하는 liveness 확인용이에요.

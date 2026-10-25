@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   assertImageBuiltFrom,
+  assertProductionFromMain,
   assertStagingVerified,
   parseReleaseArgs,
 } from "../../scripts/deploy/railway-release.mjs";
@@ -59,5 +60,17 @@ describe("railway image release", () => {
     expect(() =>
       assertImageBuiltFrom(image, `sha256:${"b".repeat(64)}`),
     ).toThrow("checked-out commit");
+  });
+
+  it("deploys production only from the latest main commit", () => {
+    const main = "c".repeat(40);
+    expect(() =>
+      assertProductionFromMain({ gitSha: main, mainSha: main }),
+    ).not.toThrow();
+    // A branch that merged main is still not main: changes merged after its
+    // image was built would be rolled back.
+    expect(() =>
+      assertProductionFromMain({ gitSha: "d".repeat(40), mainSha: main }),
+    ).toThrow("latest origin/main");
   });
 });

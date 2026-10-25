@@ -53,6 +53,14 @@ export function assertStagingVerified(stagingServices, image) {
     );
 }
 
+// Production runs only latest main. A branch image (even one that contains
+// main) can lack changes merged since it was built and silently roll them back.
+export function assertProductionFromMain(baseline) {
+  if (baseline.gitSha !== baseline.mainSha)
+    throw new Error(
+      "Production deploys only the latest origin/main commit. Merge the PR, check out origin/main and deploy its image.",
+    );
+}
 // release-image publishes main and other branches; only the image built
 // from the preflighted commit may ship.
 export function assertImageBuiltFrom(image, publishedDigest) {
@@ -153,6 +161,7 @@ async function waitForDeployment(request, deploymentId) {
 
 async function release({ target, image, apply }) {
   const baseline = checkReleaseBaseline();
+  if (target === "production") assertProductionFromMain(baseline);
   assertImageBuiltFrom(image, await publishedDigestFor(baseline.gitSha));
   const config = RELEASE_TARGETS[target];
   const request = client(tokenFor(target));
