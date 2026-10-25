@@ -160,9 +160,32 @@ describe("public/member UX state and action truth", () => {
       ),
     );
     expect($("[role=alert]").text()).toMatch(/로그아웃.*다시/);
-    expect($("a[href='/my-preppy']").length).toBe(1);
-    expect($("button").text()).toContain("로그아웃");
+    // 내 프레피 stays reachable (header shortcut and menu item) and the menu
+    // stays open so the failed logout and its retry are visible.
+    expect($("a[href='/my-preppy']").length).toBeGreaterThan(0);
+    expect($("[role=menu]").attr("hidden")).toBeUndefined();
+    expect($("[role=menuitem]").text()).toContain("로그아웃");
     expect($("a[href='/auth/kakao/start']").length).toBe(0);
+  });
+
+  it("shows one account button with a closed menu once signed in", () => {
+    const $ = load(
+      renderToStaticMarkup(
+        createElement(AuthControlPresentation, {
+          authenticated: true,
+          onLogout: vi.fn(),
+        }),
+      ),
+    );
+    const trigger = $("button[aria-haspopup=menu]");
+    expect(trigger.attr("aria-label")).toBe("내 계정 메뉴");
+    expect(trigger.attr("aria-expanded")).toBe("false");
+    expect($("[role=menu]").attr("hidden")).toBeDefined();
+    expect(
+      $("[role=menuitem]")
+        .map((_, el) => $(el).text())
+        .get(),
+    ).toEqual(["내 프레피", "계정 설정", "로그아웃"]);
   });
 
   it("does not turn failed or malformed session checks into signed-out state", async () => {

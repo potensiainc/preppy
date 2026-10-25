@@ -93,6 +93,85 @@
 .tools :global(.auth-control:hover) {
   color: #ffffff;
 }
+.tools :global(.account-menu) {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.tools :global(.account-menu__trigger) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #e5eee7;
+  cursor: pointer;
+}
+.tools :global(.account-menu__trigger:hover),
+.tools :global(.account-menu__trigger[aria-expanded="true"]) {
+  background: #28372e;
+}
+.tools :global(.account-menu__trigger:focus-visible),
+.tools :global(.account-menu__item:focus-visible) {
+  outline: 2px solid #bfd5c3;
+  outline-offset: 2px;
+}
+.tools :global(.account-menu__panel) {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 40;
+  display: grid;
+  min-width: 184px;
+  padding: 6px;
+  border: 1px solid #39463d;
+  border-radius: 12px;
+  background: #222d27;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+}
+.tools :global(.account-menu__panel[hidden]) {
+  display: none;
+}
+.tools :global(.account-menu__item) {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #e5eee7;
+  font: inherit;
+  font-size: 0.92rem;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+.tools :global(.account-menu__item:hover) {
+  background: #2c3a32;
+}
+.tools :global(.account-menu__divider) {
+  margin: 4px 6px;
+  border: 0;
+  border-top: 1px solid #39463d;
+}
+.tools :global(.account-menu__error) {
+  margin: 6px 8px 4px;
+  color: #f0b4ad;
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+.tools :global(.visually-hidden) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
 .bottomNav {
   display: none;
 }
@@ -683,6 +762,11 @@
   .tools :global(.auth-control__active) {
     flex-wrap: wrap;
     max-width: 150px;
+  }
+  /* Narrow headers show only the account button; 내 프레피 is its first
+     menu item. */
+  .tools :global(.account-menu__shortcut) {
+    display: none;
   }
   .home :global(.public-card) {
     padding: 20px;

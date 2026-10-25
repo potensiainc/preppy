@@ -328,10 +328,28 @@ def header_login(browser: Browser) -> None:
         login.click()
         page.wait_for_url(f"{BASE_URL}/my-preppy")
         header = page.locator("header").first
-        expect(header.get_by_role("link", name="내 프레피")).to_be_visible()
         expect(header.get_by_role("link", name="카카오 로그인")).to_have_count(0)
+        menu_button = header.get_by_role("button", name="내 계정 메뉴")
+        expect(menu_button).to_be_visible()
+        # Signed-in header is one row: account button on the same line as the logo.
+        logo = header.get_by_role("link", name="PREPPY 홈").bounding_box()
+        account = menu_button.bounding_box()
+        require(
+            logo is not None and account is not None
+            and abs((logo["y"] + logo["height"] / 2) - (account["y"] + account["height"] / 2)) < 12,
+            f"account button must sit on the logo row: logo={logo} account={account}",
+        )
+        if not mobile:
+            expect(header.get_by_role("link", name="내 프레피")).to_be_visible()
+        expect(header.get_by_role("menuitem", name="로그아웃")).to_be_hidden()
+        menu_button.click()
+        expect(header.get_by_role("menuitem", name="내 프레피")).to_be_visible()
+        expect(header.get_by_role("menuitem", name="계정 설정")).to_be_visible()
         shot(page, f"08-header-signed-in-{'mobile' if mobile else 'desktop'}.png")
-        header.get_by_role("button", name="로그아웃").click()
+        page.keyboard.press("Escape")
+        expect(header.get_by_role("menuitem", name="로그아웃")).to_be_hidden()
+        menu_button.click()
+        header.get_by_role("menuitem", name="로그아웃").click()
         page.wait_for_url(f"{BASE_URL}/")
         expect(page.locator("header").first.get_by_role("link", name="카카오 로그인")).to_be_visible()
         context.close()
