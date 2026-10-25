@@ -32,6 +32,7 @@ Owner 결정(2026-10-24): 공개 사이트 헤더에 카카오 로그인을 노�
 
 - staging/production 웹 업로드 직전 `npm run deploy:preflight`를 실행한다. 최신 원격 main 미포함, 미커밋 파일, 헤더 로그인 누락이면 배포를 중단한다. 검사를 우회한 `railway up` 직접 실행은 금지한다.
 - 작업 브랜치별로 운영을 덮어쓰지 않는다. 최신 main과 승인된 변경을 통합하고 단위 테스트·타입 검사를 통과한 깨끗한 동일 커밋을 staging에서 검증한 후 production에 배포한다.
+- production은 최신 origin/main 커밋의 이미지만 배포한다(`npm run deploy:railway`가 강제, 2026-10-25 Owner 지시). 작업 브랜치 이미지는 main을 합쳤더라도 그 뒤에 merge된 변경이 빠질 수 있으므로 staging에서만 쓴다.
 - 두 환경 사이에 코드나 최신 main이 바뀌면 재통합·재검증한다. 배포 커밋과 환경별 배포 ID를 기록하고, 운영 헤더의 로그인 노출과 주요 메뉴를 확인한다.
 - staging/production 웹 서비스의 Railway Healthcheck Path는 `/api/release-integrity`로 유지한다. 이 경로는 배포 환경, 승인된 아이콘 자산, 공개 헤더의 로그인 노출을 검사한다. 구형 브랜치 직접 업로드가 기존 배포를 덮지 못하도록 경로를 되돌리지 않는다.
 
