@@ -1,3 +1,5 @@
+import { createHash } from "node:crypto";
+
 import postgres from "postgres";
 import { sql } from "drizzle-orm";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
@@ -34,7 +36,10 @@ const packageDirectory =
 const packageValue = await loadEnglishKindergartenPackage(packageDirectory);
 const validation = validateEnglishKindergartenPackage(packageValue);
 const slugs = packageValue.campuses.map((campus) => campus.slug);
-const urls = [...new Set(packageValue.evidence.map((item) => item.sourceUrl))];
+const urls = [
+  ...new Set(packageValue.evidence.map((item) => item.sourceUrl)),
+  "https://example.test/psa-apgujeong/fee",
+];
 
 async function targetCounts() {
   const [row] = await runtime.client<
@@ -218,9 +223,26 @@ function publishedUpdatePackage(
     district: "양천구",
     legalDong: "목동",
   };
-  const evidence = packageValue.evidence.filter(
-    (item) => item.campusId === campusId,
-  );
+  // A second official source, as a published campus usually has: it must
+  // attach without becoming another primary main source.
+  const feeExcerpt = "교습비등 게시표 | 유치부 | 1,230,000원 | 1개월";
+  const evidence = [
+    ...packageValue.evidence.filter((item) => item.campusId === campusId),
+    {
+      ...packageValue.evidence.find(
+        (item) => item.evidenceId === `${campusId}-classification`,
+      )!,
+      evidenceId: `${campusId}-fee`,
+      claimType: "FACT" as const,
+      sourceUrl: "https://example.test/psa-apgujeong/fee",
+      finalUrl: "https://example.test/psa-apgujeong/fee",
+      sourceTextExcerpt: feeExcerpt,
+      boundedExcerpt: feeExcerpt,
+      sourceContentSha256: createHash("sha256")
+        .update(feeExcerpt)
+        .digest("hex"),
+    },
+  ];
   const checkedAt = "2026-10-24T01:00:00.000Z";
   const snapshot = {
     schemaVersion: 2 as const,
@@ -234,7 +256,7 @@ function publishedUpdatePackage(
           {
             section: "TUITION" as const,
             status: "CONFIRMED" as const,
-            evidenceId: `${campusId}-classification`,
+            evidenceId: `${campusId}-fee`,
             academicYearLabel: "2026학년도",
             publicNote: null,
             internalNote: null,
@@ -270,7 +292,7 @@ function publishedUpdatePackage(
               changeNote: null,
             },
             displayText: null,
-            evidenceIds: [`${campusId}-classification`],
+            evidenceIds: [`${campusId}-fee`],
             verifiedAt: factVerifiedAt,
           },
         ],
@@ -503,6 +525,22 @@ describe("English-kindergarten snapshot import", () => {
       TUITION: "CONFIRMED",
       TRANSPORT: "ACCESS_FAILED",
     });
+    const bindings = await runtime.client<
+      { url: string; role: string; isPrimary: boolean }[]
+    >`
+      select s.canonical_url as url, b.role, b.is_primary as "isPrimary"
+      from institution_source_bindings b
+      join sources s on s.id=b.source_id
+      join institutions i on i.id=b.institution_id
+      where i.slug='psa-apgujeong' and b.is_active
+      order by s.canonical_url
+    `;
+    expect(bindings.filter((row) => row.isPrimary)).toHaveLength(1);
+    expect(
+      bindings.find(
+        (row) => row.url === "https://example.test/psa-apgujeong/fee",
+      ),
+    ).toMatchObject({ role: "OTHER", isPrimary: false });
     const [institution] = await runtime.client<
       { publicationState: string; publishedAt: string | Date }[]
     >`
