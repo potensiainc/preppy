@@ -223,10 +223,14 @@ describe("public/member UX state and action truth", () => {
     );
     expect($("form").attr("action")).toBe("/api/me/onboarding/complete");
     expect(
-      $("input[required]")
+      $("input[aria-required=true]")
         .map((_, el) => $(el).attr("name"))
         .get(),
     ).toEqual(["adultConfirmed", "termsConsent", "privacyConsent"]);
+    // The CTA agrees to required items itself, so no native "required"
+    // bubble blocks it, and no box starts pre-checked.
+    expect($("input[required]").length).toBe(0);
+    expect($("input[aria-required=true]:checked").length).toBe(0);
     expect($("input[name=privacyPolicyVersion]").val()).toBe("2026-08-23");
     expect($("input[name=termsPolicyVersion]").val()).toBe("2026-08-23");
     expect($("input[name=interestRegions]").length).toBe(0);
@@ -343,7 +347,7 @@ describe("public/member UX state and action truth", () => {
     );
     expect($(".onboarding-form__notice").text()).not.toMatch(/관심기관 등록/);
     expect($(".onboarding-intent").length).toBe(0);
-    expect($("input[name=termsConsent]").attr("required")).toBeDefined();
+    expect($("input[name=termsConsent]").attr("aria-required")).toBe("true");
   });
 
   it("distinguishes retryable load failure from an unavailable page", () => {

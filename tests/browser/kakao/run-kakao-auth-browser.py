@@ -123,10 +123,8 @@ def new_context(browser: Browser, mobile: bool = False) -> BrowserContext:
 
 
 def complete_onboarding(page: Page, email: str | None) -> None:
+    # One tap on the CTA agrees to every required item (no manual checks).
     expect(page.get_by_role("heading", name="프레피 시작하기")).to_be_visible()
-    page.get_by_label(re.compile("만 19세 이상이에요")).check()
-    page.get_by_label(re.compile("서비스 이용약관에 동의해요")).check()
-    page.get_by_label(re.compile("개인정보 수집·이용에 동의해요")).check()
     if email is not None:
         page.get_by_label("알림 이메일", exact=True).fill(email)
     page.get_by_role("button", name=re.compile("동의하고 가입하기")).click()
@@ -390,6 +388,41 @@ def optional_toggles(browser: Browser) -> None:
     context.close()
 
 
+@scenario("13. 필수 체크 포커스 이동과 모바일 한 화면·플로팅 버튼")
+def required_focus_and_fit(browser: Browser) -> None:
+    context = new_context(browser, mobile=True)
+    fake_kakao(context, f"e2e.{subject(7)}.verified")
+    page = context.new_page()
+    page.goto(f"{BASE_URL}/auth/kakao/start")
+    page.wait_for_url(f"{BASE_URL}/onboarding")
+    adult = page.get_by_label("만 19세 이상이에요. (필수)")
+    terms = page.get_by_label("서비스 이용약관에 동의해요. (필수)")
+    privacy = page.get_by_label("개인정보 수집·이용에 동의해요. (필수)")
+    submit = page.locator("button[type=submit]")
+    shot(page, "10-onboarding-mobile-fold.png")
+    viewport = page.viewport_size or {"height": 844}
+    box = submit.bounding_box()
+    require(
+        box is not None and box["y"] + box["height"] <= viewport["height"],
+        f"CTA must float inside the first mobile screen, got {box}",
+    )
+    # Every item, down to the last interest chip, sits above the floating CTA
+    # on the first mobile screen without scrolling.
+    last_chip = page.locator(".onboarding-chip").last.bounding_box()
+    require(
+        last_chip is not None and box is not None
+        and last_chip["y"] + last_chip["height"] <= box["y"],
+        f"all items must fit above the CTA on one screen: chip={last_chip} cta={box}",
+    )
+    privacy.check()
+    expect(adult).to_be_focused()
+    adult.check()
+    expect(terms).to_be_focused()
+    terms.check()
+    expect(submit).to_be_focused()
+    context.close()
+
+
 def main() -> None:
     EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
     require(
@@ -411,6 +444,7 @@ def main() -> None:
             header_login,
             pending_follow_after_header_login,
             optional_toggles,
+            required_focus_and_fit,
         ):
             check(browser)
         browser.close()

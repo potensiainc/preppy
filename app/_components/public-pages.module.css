@@ -558,3 +558,150 @@
     gap: 24px;
   }
 }
+/* Compact onboarding: fits one mobile screen with a floating CTA. */
+.pages :global(.onboarding-page__intro h1) {
+  margin: 0 0 4px;
+}
+.pages :global(.onboarding-page__intro p) {
+  margin: 0;
+  font-size: 0.88rem;
+}
+.pages :global(.onboarding-form) {
+  gap: 14px;
+}
+.pages :global(.onboarding-form fieldset) {
+  gap: 6px;
+  padding: 0 0 12px;
+}
+.pages :global(.onboarding-form legend) {
+  margin-bottom: 6px;
+  font-size: 1rem;
+}
+.pages :global(.onboarding-intent) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 8px;
+  padding: 10px 12px;
+  font-size: 0.86rem;
+}
+.pages :global(.onboarding-row) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.pages :global(.onboarding-row a) {
+  flex: none;
+  color: #9fb3a5;
+  font-size: 0.84rem;
+}
+.pages :global(.onboarding-details summary) {
+  color: #9fb3a5;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+.pages :global(.onboarding-details[open] summary) {
+  margin-bottom: 8px;
+}
+.pages :global(.onboarding-toggle) {
+  min-height: 40px;
+  padding: 6px 12px;
+}
+.pages :global(.onboarding-email) {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid #39463d;
+  border-radius: 8px;
+  background: #1f2a23;
+  color: #e5eee7;
+}
+.pages :global(.onboarding-categories) {
+  gap: 8px;
+}
+.pages :global(.onboarding-chip) {
+  position: relative;
+  cursor: pointer;
+}
+.pages :global(.onboarding-chip input) {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  cursor: pointer;
+}
+.pages :global(.onboarding-chip span) {
+  display: inline-block;
+  padding: 6px 12px;
+  border: 1px solid #39463d;
+  border-radius: 999px;
+  font-size: 0.86rem;
+}
+.pages :global(.onboarding-chip input:checked + span) {
+  border-color: #bfd5c3;
+  background: #bfd5c3;
+  color: #1b3025;
+}
+.pages :global(.onboarding-chip input:focus-visible + span) {
+  outline: 2px solid #bfd5c3;
+  outline-offset: 2px;
+}
+.pages :global(.onboarding-form__status) {
+  min-height: 0;
+}
+.pages :global(.onboarding-cta) {
+  position: sticky;
+  bottom: 16px;
+  z-index: 5;
+  padding-top: 8px;
+  background: linear-gradient(to bottom, rgba(37, 49, 41, 0), #253129 40%);
+}
+@media (max-width: 759px) {
+  .pages :global(.onboarding-cta) {
+    bottom: calc(70px + env(safe-area-inset-bottom));
+  }
+  .pages :global(.onboarding-page) {
+    gap: 10px;
+    padding-top: 16px;
+  }
+  .pages :global(.onboarding-page__intro h1) {
+    font-size: 22px;
+  }
+  .pages :global(.onboarding-form) {
+    gap: 10px;
+    padding: 12px 14px;
+  }
+  .pages :global(.onboarding-form fieldset) {
+    gap: 4px;
+    padding-bottom: 8px;
+  }
+  .pages :global(.onboarding-form legend) {
+    margin-bottom: 4px;
+    font-size: 0.95rem;
+  }
+  .pages :global(.onboarding-check) {
+    min-height: 30px;
+  }
+  .pages :global(.onboarding-toggle) {
+    min-height: 36px;
+    padding: 4px 10px;
+    font-size: 0.9rem;
+  }
+  .pages :global(.onboarding-email) {
+    padding: 7px 10px;
+  }
+  .pages :global(.onboarding-chip span) {
+    padding: 5px 10px;
+  }
+  .pages :global(.onboarding-form .onboarding-form__submit) {
+    min-height: 48px;
+  }
+}
+.pages :global(.onboarding-form legend.visually-hidden) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
