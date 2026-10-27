@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bash scripts/data/publish-english-kindergarten.sh prepare *)",
+      "Bash(bash scripts/data/publish-english-kindergarten.sh apply *)"
+    ]
+  }
+}
