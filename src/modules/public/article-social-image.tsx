@@ -3,9 +3,46 @@ import { join } from "node:path";
 
 import { ImageResponse } from "next/og";
 
-const fontData = readFile(
+// Brand palette shared with the public header (curation.module.css).
+const BRAND = {
+  background: "#1b2420",
+  rule: "#39463d",
+  logo: "#bfd5c3",
+  dot: "#e4b28e",
+  title: "#f4f1e8",
+  muted: "#8fa597",
+} as const;
+
+const koreanFontData = readFile(
   join(process.cwd(), "public/fonts/IBMPlexSansKR-SemiBold.ttf"),
 );
+// Georgia-metric serif for the "preppy." wordmark (OFL, latin subset).
+const logoFontData = readFile(
+  join(process.cwd(), "public/fonts/Gelasio-Bold-latin.woff"),
+);
+
+export type SocialImageFormat = "og" | "x" | "square" | "portrait";
+
+const FORMATS: Record<
+  SocialImageFormat,
+  Readonly<{ width: number; height: number; padding: string; scale: number }>
+> = {
+  og: { width: 1200, height: 630, padding: "60px 76px 52px", scale: 1 },
+  x: { width: 1200, height: 600, padding: "56px 76px 48px", scale: 1 },
+  square: { width: 1080, height: 1080, padding: "84px 80px 72px", scale: 1.18 },
+  portrait: {
+    width: 1080,
+    height: 1350,
+    padding: "96px 84px 84px",
+    scale: 1.45,
+  },
+};
+
+export function isSocialImageFormat(
+  value: unknown,
+): value is SocialImageFormat {
+  return typeof value === "string" && Object.hasOwn(FORMATS, value);
+}
 
 export function articleImageFontSize(title: string): number {
   const length = Array.from(title).length;
@@ -17,47 +54,48 @@ export function articleImageFontSize(title: string): number {
   return 64;
 }
 
-export async function renderArticleSocialImage(
-  rawTitle: string,
-  height: 630 | 600,
+export async function renderSocialImage(
+  options: Readonly<{
+    title: string;
+    eyebrow?: string | null;
+    format?: SocialImageFormat;
+  }>,
 ): Promise<ImageResponse> {
-  const title = rawTitle.replace(/\s+/gu, " ").trim();
-  const fontSize = articleImageFontSize(title);
-  const font = await fontData;
+  const format = FORMATS[options.format ?? "og"];
+  const title = options.title.replace(/\s+/gu, " ").trim();
+  const eyebrow = options.eyebrow?.replace(/\s+/gu, " ").trim() || null;
+  const fontSize = Math.round(articleImageFontSize(title) * format.scale);
+  const [koreanFont, logoFont] = await Promise.all([
+    koreanFontData,
+    logoFontData,
+  ]);
 
   return new ImageResponse(
     <div
       style={{
         display: "flex",
         flexDirection: "column",
-        width: 1200,
-        height,
-        padding: "65px 80px 60px",
-        borderLeft: "16px solid #315C50",
-        background: "#F7F8F4",
-        color: "#17251F",
+        width: format.width,
+        height: format.height,
+        padding: format.padding,
+        background: BRAND.background,
+        color: BRAND.title,
         fontFamily: "IBM Plex Sans KR",
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: 68,
-            height: 68,
-            borderRadius: 12,
-            background: "#244A40",
-            color: "white",
-            fontSize: 47,
-          }}
-        >
-          P
-        </div>
-        <div style={{ color: "#244A40", fontSize: 35, letterSpacing: 3 }}>
-          PREPPY
-        </div>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "baseline",
+          fontFamily: "Gelasio",
+          fontSize: Math.round(62 * format.scale),
+          letterSpacing: -3,
+          lineHeight: 1,
+          color: BRAND.logo,
+        }}
+      >
+        preppy
+        <span style={{ color: BRAND.dot }}>.</span>
       </div>
 
       <div
@@ -69,15 +107,25 @@ export async function renderArticleSocialImage(
           width: "100%",
         }}
       >
-        <div style={{ color: "#315C50", fontSize: 25, marginBottom: 22 }}>
-          입학 준비 아티클
-        </div>
+        {eyebrow ? (
+          <div
+            style={{
+              display: "flex",
+              color: BRAND.dot,
+              fontSize: Math.round(27 * format.scale),
+              marginBottom: Math.round(22 * format.scale),
+            }}
+          >
+            {eyebrow}
+          </div>
+        ) : null}
         <div
           style={{
             display: "flex",
             fontSize,
-            lineHeight: 1.25,
+            lineHeight: 1.28,
             letterSpacing: -1.5,
+            wordBreak: "keep-all",
             overflowWrap: "anywhere",
           }}
         >
@@ -89,27 +137,43 @@ export async function renderArticleSocialImage(
         style={{
           display: "flex",
           justifyContent: "space-between",
-          borderTop: "2px solid #D8E3DA",
-          paddingTop: 23,
-          color: "#51635A",
-          fontSize: 24,
+          borderTop: `2px solid ${BRAND.rule}`,
+          paddingTop: Math.round(22 * format.scale),
+          color: BRAND.muted,
+          fontSize: Math.round(24 * format.scale),
         }}
       >
-        <div>입학 준비에 필요한 정보, 한곳에서</div>
+        <div>영유·사립초·국제학교 입학 정보</div>
         <div>preppy.kr</div>
       </div>
     </div>,
     {
-      width: 1200,
-      height,
+      width: format.width,
+      height: format.height,
+      headers: {
+        "cache-control": "public, max-age=600, s-maxage=3600",
+      },
       fonts: [
         {
           name: "IBM Plex Sans KR",
-          data: font,
+          data: koreanFont,
           weight: 600,
           style: "normal",
         },
+        { name: "Gelasio", data: logoFont, weight: 700, style: "normal" },
       ],
     },
   );
+}
+
+export function renderArticleSocialImage(
+  rawTitle: string,
+  height: 630 | 600,
+  eyebrow?: string | null,
+): Promise<ImageResponse> {
+  return renderSocialImage({
+    title: rawTitle,
+    eyebrow: eyebrow ?? null,
+    format: height === 600 ? "x" : "og",
+  });
 }

@@ -48,7 +48,6 @@ export function OpportunitySection({
   );
 }
 
-
 export function ArticleSection({
   articles,
   standalone = false,
@@ -175,22 +174,22 @@ export function HomePageView({ data }: { data: HomePageDTO }) {
             className={styles.hero}
             event={{
               name: "hero_primary_cta_click",
-              properties: { cta: "INSTITUTIONS" },
+              properties: { cta: "PE_2027_HUB" },
             }}
-            href="/institutions?category=INTERNATIONAL_SCHOOL"
+            href="/guides/seoul-private-elementary-2027"
           >
             <div className={styles.heroCopy}>
-              <span className={styles.heroTag}>국제학교 · 입학 안내</span>
+              <span className={styles.heroTag}>2027 서울 사립초 · 38개교</span>
               <h2>
-                우리 아이에게 맞는
+                사립초 원서접수·추첨·등록
                 <br />
-                국제학교 알아보기
+                일정 한눈에 보기
               </h2>
-              <p>학교별 입학 안내와 지원 조건을 살펴보세요.</p>
+              <p>접수 11/6~11/11 · 추첨 11/16 · 등록 11/17~11/19</p>
             </div>
             <CampusIllustration />
             <span className={styles.heroAction}>
-              국제학교 살펴보기 <span aria-hidden="true">↗</span>
+              학교별 일정 확인하기 <span aria-hidden="true">↗</span>
             </span>
           </AnalyticsLink>
           <div className={styles.storyGrid}>

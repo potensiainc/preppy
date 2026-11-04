@@ -14,6 +14,7 @@ import {
   OpportunityCard,
 } from "@/app/_components/public-cards";
 import { PageContainer, SectionHeader } from "@/app/_components/ui-primitives";
+import { ShareAction } from "./share-action";
 import {
   articleTypeLabel,
   categoryLabel,
@@ -81,6 +82,10 @@ export function ArticleDetailView({ article }: { article: PublicArticleDTO }) {
               {publicProse(article.excerpt)}
             </p>
           ) : null}
+          <ShareAction
+            path={`/articles/${article.slug}`}
+            title={article.title}
+          />
         </header>
 
         <PageNavigation

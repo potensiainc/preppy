@@ -3,6 +3,7 @@ import "server-only";
 import type { Metadata } from "next";
 import { publicAdmissionText } from "./admission-copy";
 import { publicProse } from "./ux-writing";
+import { institutionSearchTitle } from "./social-labels";
 
 import { sanitizeArticleHtmlV1 } from "@/src/modules/editorial/sanitizer.server";
 import type {
@@ -156,13 +157,44 @@ export function buildInstitutionListMetadata(
   };
 }
 
+function withPageImage(
+  social: Pick<Metadata, "openGraph" | "twitter">,
+  imageUrl: string,
+  alt: string,
+): Pick<Metadata, "openGraph" | "twitter"> {
+  return {
+    openGraph: {
+      ...social.openGraph,
+      images: [
+        { url: imageUrl, width: 1200, height: 630, alt, type: "image/png" },
+      ],
+    },
+    twitter: { ...social.twitter, images: [{ url: imageUrl, alt }] },
+  };
+}
+
+function institutionDescription(dto: InstitutionDetailDTO): string {
+  const { name, category, district } = dto.institution;
+  const place = district ? `${district} ` : "";
+  switch (category) {
+    case "PRIVATE_ELEMENTARY":
+      return `${place}${name}의 2027학년도 모집 일정, 원서접수·추첨·등록 기간, 학비와 지원 자격을 공식 안내 기준으로 정리했어요.`;
+    case "ENGLISH_KINDERGARTEN":
+      return `${place}${name}의 원비, 입학설명회, 모집 일정과 운영 정보를 공식 안내 기준으로 확인해 보세요.`;
+    case "INTERNATIONAL_SCHOOL":
+      return `${name}의 입학 조건, 학비, 입학 일정과 커리큘럼을 공식 안내 기준으로 확인해 보세요.`;
+  }
+}
+
 export function buildInstitutionMetadata(
   dto: InstitutionDetailDTO,
   appBaseUrl: string,
 ): Metadata {
-  const title = `${dto.institution.name} | PREPPY`;
-  const description = `${dto.institution.name}의 기관 정보와 공식 안내를 확인해 보세요.`;
+  const searchTitle = institutionSearchTitle(dto.institution);
+  const title = `${searchTitle} | PREPPY`;
+  const description = institutionDescription(dto);
   const path = `/institutions/${dto.institution.slug}`;
+  const revision = encodeURIComponent(dto.institution.lastVerifiedAt ?? "0");
   return {
     title,
     description,
@@ -170,8 +202,95 @@ export function buildInstitutionMetadata(
       canonical: canonical(appBaseUrl, path),
     },
     robots: robots(dto.indexability),
-    ...buildSocialMetadata(appBaseUrl, path, title, description),
+    ...withPageImage(
+      buildSocialMetadata(appBaseUrl, path, searchTitle, description),
+      canonical(appBaseUrl, `${path}/og.png?v=${revision}`),
+      `${searchTitle} | PREPPY`,
+    ),
   };
+}
+
+export type InstitutionJsonLd = Readonly<Record<string, unknown>> & {
+  "@context": "https://schema.org";
+};
+
+function institutionSchemaType(
+  category: InstitutionDetailDTO["institution"]["category"],
+): string {
+  switch (category) {
+    case "PRIVATE_ELEMENTARY":
+      return "ElementarySchool";
+    case "INTERNATIONAL_SCHOOL":
+      return "School";
+    case "ENGLISH_KINDERGARTEN":
+      return "EducationalOrganization";
+  }
+}
+
+function regionName(region: string | null): string | undefined {
+  if (!region) return undefined;
+  if (region === "KR-11") return "서울특별시";
+  if (region === "KR-41") return "경기도";
+  if (region === "KR-28") return "인천광역시";
+  return /^[가-힣]+$/u.test(region) ? region : undefined;
+}
+
+/** Only for indexable pages; facts come from the same verified DTO the page renders. */
+export function buildInstitutionJsonLd(
+  dto: InstitutionDetailDTO,
+  appBaseUrl: string,
+): readonly InstitutionJsonLd[] {
+  if (dto.indexability !== "INDEX") return [];
+  const { institution } = dto;
+  const url = canonical(appBaseUrl, `/institutions/${institution.slug}`);
+  const officialUrl = dto.officialSources
+    .map((source) => safeAbsoluteImage(source.url))
+    .find((value): value is string => value !== null);
+  const address =
+    institution.address || institution.district || institution.region
+      ? {
+          "@type": "PostalAddress",
+          addressCountry: "KR",
+          ...(regionName(institution.region)
+            ? { addressRegion: regionName(institution.region) }
+            : {}),
+          ...(institution.district
+            ? { addressLocality: institution.district }
+            : {}),
+          ...(institution.address
+            ? { streetAddress: institution.address }
+            : {}),
+        }
+      : undefined;
+  const organization: InstitutionJsonLd = {
+    "@context": "https://schema.org",
+    "@type": institutionSchemaType(institution.category),
+    name: institution.name,
+    url,
+    description: institutionDescription(dto),
+    ...(officialUrl ? { sameAs: [officialUrl] } : {}),
+    ...(address ? { address } : {}),
+  };
+  const breadcrumb: InstitutionJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "홈",
+        item: canonical(appBaseUrl, "/"),
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "학교·기관",
+        item: canonical(appBaseUrl, "/institutions"),
+      },
+      { "@type": "ListItem", position: 3, name: institution.name, item: url },
+    ],
+  };
+  return [organization, breadcrumb];
 }
 
 export function buildOpportunityMetadata(
@@ -183,6 +302,7 @@ export function buildOpportunityMetadata(
     publicProse(publicAdmissionText(dto.summary)) ??
     `${dto.institution.name}의 입학 안내를 확인해 보세요.`;
   const path = `/opportunities/${dto.slug}`;
+  const revision = encodeURIComponent(dto.lastVerifiedAt ?? "0");
   return {
     title,
     description,
@@ -190,7 +310,11 @@ export function buildOpportunityMetadata(
       canonical: canonical(appBaseUrl, path),
     },
     robots: robots(dto.indexability),
-    ...buildSocialMetadata(appBaseUrl, path, title, description),
+    ...withPageImage(
+      buildSocialMetadata(appBaseUrl, path, title, description),
+      canonical(appBaseUrl, `${path}/og.png?v=${revision}`),
+      title,
+    ),
   };
 }
 
@@ -310,7 +434,7 @@ export function buildArticleBreadcrumbJsonLd(
 }
 
 export function serializeJsonLd(
-  value: ArticleJsonLd | ArticleBreadcrumbJsonLd,
+  value: ArticleJsonLd | ArticleBreadcrumbJsonLd | InstitutionJsonLd,
 ): string {
   return JSON.stringify(value).replace(/</gu, "\\u003c");
 }

@@ -3092,35 +3092,104 @@ h3 {
 }
 
 /* Favorite hearts: save state only, independent of email readiness. */
-.follow-cta { min-width: 0; }
-.favorite-heart-wrap { display: inline-flex; }
-.favorite-heart, .follow-cta .favorite-heart, .my-preppy-card .favorite-heart {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 48px; height: 48px; min-width: 48px; min-height: 48px;
-  padding: 0; border: 1px solid #d7dfda; border-radius: 50%;
-  background: #fff; color: #68756f; cursor: pointer;
-  transition: color 140ms ease, background-color 140ms ease, transform 140ms ease;
+.follow-cta {
+  min-width: 0;
 }
-.favorite-heart[aria-pressed="true"], .follow-cta .favorite-heart[aria-pressed="true"], .my-preppy-card .favorite-heart[aria-pressed="true"] {
-  color: #c74862; border-color: #edc8d0; background: #fff3f5;
+.favorite-heart-wrap {
+  display: inline-flex;
 }
-.favorite-heart:hover:not(:disabled) { transform: scale(1.05); }
-.favorite-heart:focus-visible { outline: 3px solid #285d4c; outline-offset: 3px; }
-.favorite-heart:disabled { opacity: .5; cursor: wait; }
-.favorite-heart svg { flex: none; }
-.institution-card { position: relative; }
-.institution-card > .follow-cta { position: absolute; right: 16px; top: 16px; z-index: 2; }
-.institution-card .card-kicker, .institution-card h3, .institution-card h4 { padding-right: 56px; }
-.ek-card__header > .follow-cta { flex: none; }
-.ek-detail__hero { position: relative; }
-.ek-detail__hero > h1 { padding-right: 64px; }
-.ek-detail__hero > .follow-cta { position: absolute; top: 24px; right: 0; }
-.my-preppy-card { position: relative; }
-.my-preppy-card__identity { padding-right: 56px; }
-.my-preppy-card__actions { position: absolute; top: 20px; right: 20px; border: 0; padding: 0; }
-@media (prefers-reduced-motion: reduce) { .favorite-heart { transition: none; } }
+.favorite-heart,
+.follow-cta .favorite-heart,
+.my-preppy-card .favorite-heart {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  min-height: 48px;
+  padding: 0;
+  border: 1px solid #d7dfda;
+  border-radius: 50%;
+  background: #fff;
+  color: #68756f;
+  cursor: pointer;
+  transition:
+    color 140ms ease,
+    background-color 140ms ease,
+    transform 140ms ease;
+}
+.favorite-heart[aria-pressed="true"],
+.follow-cta .favorite-heart[aria-pressed="true"],
+.my-preppy-card .favorite-heart[aria-pressed="true"] {
+  color: #c74862;
+  border-color: #edc8d0;
+  background: #fff3f5;
+}
+.favorite-heart:hover:not(:disabled) {
+  transform: scale(1.05);
+}
+.favorite-heart:focus-visible {
+  outline: 3px solid #285d4c;
+  outline-offset: 3px;
+}
+.favorite-heart:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+.favorite-heart svg {
+  flex: none;
+}
+.institution-card {
+  position: relative;
+}
+.institution-card > .follow-cta {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  z-index: 2;
+}
+.institution-card .card-kicker,
+.institution-card h3,
+.institution-card h4 {
+  padding-right: 56px;
+}
+.ek-card__header > .follow-cta {
+  flex: none;
+}
+.ek-detail__hero {
+  position: relative;
+}
+.ek-detail__hero > h1 {
+  padding-right: 64px;
+}
+.ek-detail__hero > .follow-cta {
+  position: absolute;
+  top: 24px;
+  right: 0;
+}
+.my-preppy-card {
+  position: relative;
+}
+.my-preppy-card__identity {
+  padding-right: 56px;
+}
+.my-preppy-card__actions {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  border: 0;
+  padding: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .favorite-heart {
+    transition: none;
+  }
+}
 
-.my-preppy-card__truth { padding-right: 56px; }
+.my-preppy-card__truth {
+  padding-right: 56px;
+}
 
 .ek-badges {
   display: flex;
@@ -3455,4 +3524,143 @@ h3 {
   margin: 2px 0 0;
   color: var(--muted-ink);
   font-size: 0.78rem;
+}
+
+/* Share actions (KakaoTalk first; most PREPPY sharing happens in group chats) */
+.share-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+.share-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.share-actions__kakao {
+  border: 0;
+  background: #fee500;
+  color: #191600;
+}
+.share-actions__link {
+  border: 1px solid var(--rule);
+  background: var(--surface);
+  color: var(--ink);
+}
+.share-actions__notice {
+  font-size: 13px;
+  color: var(--muted-ink);
+}
+.share-actions--compact {
+  margin-top: 0;
+}
+
+/* Seoul private elementary 2027 hub */
+.pe-hub {
+  max-width: var(--reading-width);
+  margin: 0 auto;
+}
+.pe-hub__status {
+  margin: 20px 0 8px;
+  padding: 18px 20px;
+  border-radius: 14px;
+  background: #1b2420;
+  color: #f4f1e8;
+}
+.pe-hub__status strong {
+  display: block;
+  font-size: 22px;
+  line-height: 1.35;
+}
+.pe-hub__status span {
+  display: block;
+  margin-top: 6px;
+  color: #bfd5c3;
+  font-size: 14px;
+}
+.pe-hub__timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--rule);
+}
+.pe-hub__timeline li {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.pe-hub__timeline li[data-current="true"] {
+  background: var(--secondary-surface);
+}
+.pe-hub__timeline b {
+  font-size: 15px;
+}
+.pe-hub__timeline small {
+  display: block;
+  color: var(--muted-ink);
+  font-size: 13px;
+  margin-top: 2px;
+}
+.pe-hub__district {
+  margin: 22px 0 6px;
+  font-size: 14px;
+  color: var(--muted-ink);
+}
+.pe-hub__schools {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.pe-hub__schools a {
+  display: block;
+  padding: 12px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 15px;
+}
+.pe-hub__schools a small {
+  display: block;
+  font-weight: 400;
+  color: var(--muted-ink);
+  font-size: 12px;
+  margin-top: 2px;
+}
+.pe-hub section {
+  margin-top: 32px;
+}
+.pe-hub h2 {
+  font-size: 20px;
+  margin: 0 0 12px;
+}
+.pe-hub__faq dt {
+  font-weight: 600;
+  margin-top: 14px;
+}
+.pe-hub__faq dd {
+  margin: 4px 0 0;
+  color: var(--muted-ink);
+  line-height: 1.6;
+}
+.pe-hub__note {
+  font-size: 13px;
+  color: var(--muted-ink);
+  line-height: 1.6;
 }

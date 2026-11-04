@@ -26,6 +26,7 @@ import {
 import styles from "./admissions.module.css";
 import { publicAdmissionText } from "@/src/modules/public/admission-copy";
 import { publicProse } from "@/src/modules/public/ux-writing";
+import { ShareAction } from "./share-action";
 
 export function OpportunityDetailView({
   opportunity,
@@ -84,6 +85,10 @@ export function OpportunityDetailView({
               <StateBadge state={opportunity.businessState} />
             </div>
           </div>
+          <ShareAction
+            path={`/opportunities/${opportunity.slug}`}
+            title={opportunity.title}
+          />
           {provisional ? (
             <AdmissionNotice text={admissionNoticeText(opportunity.summary)} />
           ) : null}

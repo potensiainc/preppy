@@ -38,6 +38,7 @@ import {
   factLabel,
   opportunityStateLabel,
 } from "@/app/_lib/presentation";
+import { ShareAction } from "./share-action";
 
 const categories = [
   { value: "ENGLISH_KINDERGARTEN", label: "영어유치원" },
@@ -273,6 +274,10 @@ export function InstitutionDetailView({
               {institution.currentAdmissionsState ? (
                 <StateBadge state={institution.currentAdmissionsState} />
               ) : null}
+              <ShareAction
+                path={`/institutions/${institution.slug}`}
+                title={institution.name}
+              />
             </div>
             <FollowCta
               context="INSTITUTION"
