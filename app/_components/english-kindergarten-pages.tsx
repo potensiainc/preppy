@@ -35,6 +35,7 @@ import {
   summaryGap,
   type SummarySection,
 } from "@/app/_lib/english-kindergarten-summary";
+import { ShareAction } from "./share-action";
 
 const detailAnchors = [
   ["tuition", "원비"],
@@ -1239,6 +1240,10 @@ export function EnglishKindergartenDetailView({
             followable={institution.followable}
             context="INSTITUTION"
             returnPath={`/institutions/${institution.slug}`}
+          />
+          <ShareAction
+            path={`/institutions/${institution.slug}`}
+            title={institution.name}
           />
           <p>
             {institution.address ??

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { cache } from "react";
 
 import { InstitutionDetailView } from "@/app/_components/institution-pages";
+import { JsonLd } from "@/app/_components/json-ld";
 import { PageAnalytics } from "@/app/_components/page-analytics";
 import {
   getPublicExecutor,
@@ -9,6 +10,7 @@ import {
 } from "@/app/_lib/public-page.server";
 import { getInstitutionBySlug } from "@/src/modules/public/institution-query.server";
 import {
+  buildInstitutionJsonLd,
   buildInstitutionMetadata,
   getSeoAppBaseUrl,
 } from "@/src/modules/public/seo";
@@ -67,6 +69,9 @@ export default async function InstitutionDetailPage({
         data={data}
         returnTo={typeof returnTo === "string" ? returnTo : undefined}
       />
+      {buildInstitutionJsonLd(data, getSeoAppBaseUrl()).map((value, index) => (
+        <JsonLd key={index} value={value} />
+      ))}
     </>
   );
 }

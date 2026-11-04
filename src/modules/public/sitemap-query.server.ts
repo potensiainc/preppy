@@ -245,6 +245,7 @@ export async function listPublicSitemapEntries(
     { url: `${origin}/institutions` },
     { url: `${origin}/articles` },
     { url: `${origin}/opportunities` },
+    { url: `${origin}/guides/seoul-private-elementary-2027` },
     { url: `${origin}/guides/english-kindergarten-checklist` },
     { url: `${origin}/compare/english-kindergarten/yangcheon` },
   ];

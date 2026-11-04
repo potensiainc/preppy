@@ -165,7 +165,9 @@ export const analyticsEventSchemas = {
   article_to_follow: z
     .object({ articleId: canonicalId, institutionId: canonicalId })
     .strict(),
-  hero_primary_cta_click: z.object({ cta: z.literal("INSTITUTIONS") }).strict(),
+  hero_primary_cta_click: z
+    .object({ cta: z.enum(["INSTITUTIONS", "PE_2027_HUB"]) })
+    .strict(),
   hero_secondary_cta_click: z
     .object({ cta: z.literal("CURRENT_OPPORTUNITIES") })
     .strict(),
